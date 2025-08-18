@@ -330,6 +330,50 @@ class CoreService
         }
     }
 
+    public function checkModulesSymbolicLinks(): void
+    {
+        /**
+         * @var ModulesService $moduleService
+         */
+        $moduleService = app()->make( ModulesService::class );
+
+        /**
+         * @var NotificationService $notificationService
+         */
+        $notificationService = app()->make( NotificationService::class );
+
+        $modules = $moduleService->get();
+
+        foreach( $modules as $module ) {
+            $tolowercase = strtolower( $module[ 'namespace' ] );
+
+            // we'll check if a symbolic exist for each module
+            if ( ! file_exists( public_path( 'modules/' . $tolowercase ) ) ) {
+                $notification = Notification::where( 'identifier', 'symlink-' . $tolowercase )->first();
+
+                if ( ! $notification instanceof Notification ) {
+                    $notificationService->create(
+                        title: sprintf( __( '%s: Symbolic Link Missing' ), $module[ 'name' ] ),
+                        identifier: 'symlink-' . $tolowercase,
+                        source: 'system',
+                        url: 'https://my.nexopos.com/en/documentation/troubleshooting/broken-media-images?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+                        description: sprintf(
+                            __( 'The symbolic link for the module %s is missing. Your medias might be broken and not display.' ),
+                            $module[ 'name' ]
+                        ),
+                        actions: [
+                            [
+                                'label' => __( 'Create Symbolic Link' ),
+                                'url' => ns()->route( 'ns.dashboard.modules-symlink', [ 'namespace' => $tolowercase ] ),
+                                'data' => compact( 'module' ),
+                            ]
+                        ]
+                    )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+                }
+            }
+        }
+    }
+
     public function checkSymbolicLinks(): void
     {
         if ( ! file_exists( public_path( 'storage' ) ) ) {

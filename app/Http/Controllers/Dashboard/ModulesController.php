@@ -10,8 +10,10 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ModuleUploadRequest;
+use App\Models\Notification;
 use App\Services\DateService;
 use App\Services\ModulesService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -139,6 +141,26 @@ class ModulesController extends DashboardController
                 return redirect( ns()->route( 'ns.dashboard.modules-upload' ) )->withErrors( $validator );
             }
         }
+    }
 
+    public function createSymlink( Request $request )
+    {
+        $module = $request->input( 'module' );
+
+        if ( ! $module ) {
+            return response()->json( [
+                'status' => 'error',
+                'message' => __( 'Module not specified.' ),
+            ], 400 );
+        }
+
+        $this->modules->createSymlink( $module[ 'namespace' ] );
+
+        Notification::find( $request->query( 'notification_id' ) )->delete();
+
+        return response()->json( [
+            'status' => 'success',
+            'message' => __( 'Symbolic link created successfully.' ),
+        ] );
     }
 }

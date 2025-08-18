@@ -151,7 +151,7 @@
                                             <div class="px-4 w-full md:w-1/2 lg:w-2/3 flex flex-col justify-center items-center">
                                                 <i class="las la-frown text-7xl"></i>
                                                 <p class="w-full md:w-1/3 py-3 text-center text-sm text-font">{{ __( 'We were not able to load the units. Make sure there are units attached on the unit group selected.' ) }}</p>
-                                                <p><span @click="createUnit( getActiveTab( variation.tabs ) )" class="cursor-pointer text-info-tertiary border-b border-dashed p-1">{{ __( 'Create Unit' ) }}</span></p>
+                                                <p><span @click="createUnit( getActiveTab( variation.tabs ) )" class="cursor-pointer text-info-secondary border-b border-dashed p-1">{{ __( 'Create Unit' ) }}</span></p>
                                             </div>
                                         </template>
                                     </template>
@@ -312,7 +312,7 @@ export default {
             };
         }
     },
-    props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'units-url' ],
+    props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'units-url', 'unitSrc', 'unitSubmitUrl' ],
     methods: {
         __,
         nsCurrency,
@@ -797,8 +797,8 @@ export default {
                 const result: StatusResponse    =   await new Promise( ( resolve, reject ) => {
                     Popup.show( NsCrudForm, {
                         title: __( 'Create Unit' ),
-                        src: '/api/crud/ns.units/form-config',
-                        submitUrl: '/api/crud/ns.units',
+                        src: this.unitSrc,
+                        submitUrl: this.unitSubmitUrl,
                         submitMethod: 'POST',
                         returnUrl: false,
                         resolve,

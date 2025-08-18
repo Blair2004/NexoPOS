@@ -52,7 +52,7 @@ class PermissionAccess extends NsModel
      */
     const USED = 'used';
 
-    public function perm()
+    public function permission()
     {
         return $this->belongsTo( Permission::class, 'permission', 'namespace' );
     }
