@@ -15,7 +15,6 @@
       <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="FieldsTest.php">./tests/Feature</directory>
       <directory suffix="UploadModuleTest.php">./tests/Feature</directory>
-      <directory suffix="FieldsTest.php">./tests/Feature</directory>
       <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
       <directory suffix="OptionSavingTest.php">./tests/Feature</directory>
       <directory suffix="TestOtherGetRoutes.php">./tests/Feature</directory>
@@ -23,7 +22,6 @@
       <directory suffix="RefreshReportForPassDaysTest.php">./tests/Feature</directory>
       <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
       <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
-      <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
       <directory suffix="AuthenticationTest.php">./tests/Feature</directory>
     </testsuite>
