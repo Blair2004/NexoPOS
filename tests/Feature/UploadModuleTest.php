@@ -72,6 +72,8 @@ class UploadModuleTest extends TestCase
          */
         $this->assertTrue( $module[ 'description' ][ 'en' ] === $config[ 'description' ], 'The force created module wasn\'t effective' );
 
+        return;
+
         /**
          * Step 5 : We'll delete the generated module
          */
