@@ -121,7 +121,7 @@ export default {
                 message: action.message || __( 'Are you sure you want to perform this action ?' ),
                 onAction: ( hasConfirmed ) => {
                     if ( hasConfirmed ) {
-                        const verb =   action.data !== undefined ? 'get' : 'post';
+                        const verb =   action.data === undefined ? 'get' : 'post';
 
                         /**
                          * We'll keep the reference of the notification

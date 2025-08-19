@@ -186,7 +186,7 @@
     "src": "resources/css/light.css"
   },
   "resources/css/phosphor.css": {
-    "file": "assets/phosphor-94823307.css",
+    "file": "assets/phosphor-3268eb17.css",
     "isEntry": true,
     "src": "resources/css/phosphor.css"
   },
@@ -310,7 +310,7 @@
       "resources/ts/pages/dashboard/transactions/ns-transactions-rules.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-51264643.js",
+    "file": "assets/app-d272526e.js",
     "imports": [
       "_preload-helper-a4192956.js",
       "_time-583d4bf1.js",
@@ -505,7 +505,7 @@
     "src": "resources/ts/pages/dashboard/modules.vue"
   },
   "resources/ts/pages/dashboard/ns-notifications.vue": {
-    "file": "assets/ns-notifications-00e361ff.js",
+    "file": "assets/ns-notifications-1135f2f1.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_lang-15e8d12f.js",
@@ -715,7 +715,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos.vue"
   },
   "resources/ts/pages/dashboard/procurements/manage-products.vue": {
-    "file": "assets/manage-products-731a61e9.js",
+    "file": "assets/manage-products-925595df.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_ns-prompt-popup-9514c2d0.js",

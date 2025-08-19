@@ -1290,6 +1290,12 @@ class CrudService
 
         return array_merge( [
             /**
+             * Just in case, we provide the entry to the view. It might be used
+             * by a module that need to directly access the entry.
+             */
+            'entry' => $entry,
+            
+            /**
              * We'll provide the form configuration
              */
             'form' => Hook::filter( get_class( $instance ) . '@getForm', $instance->getForm( $entry ) ),
