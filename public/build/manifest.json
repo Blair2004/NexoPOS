@@ -657,7 +657,7 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-cart.vue": {
-    "file": "assets/ns-pos-cart-107bf7c7.js",
+    "file": "assets/ns-pos-cart-3cf3b976.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-5dcbb44b.js",
@@ -693,7 +693,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
-    "file": "assets/ns-pos-4ad0e33f.js",
+    "file": "assets/ns-pos-65dde796.js",
     "imports": [
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
@@ -1106,7 +1106,7 @@
       "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue",
       "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue"
     ],
-    "file": "assets/pos-init-10a907b5.js",
+    "file": "assets/pos-init-4d2e1b8d.js",
     "imports": [
       "_preload-helper-a4192956.js",
       "_ns-pos-shipping-popup-3cba4976.js",
@@ -1129,7 +1129,7 @@
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
     ],
-    "file": "assets/pos-566d8de2.js",
+    "file": "assets/pos-a6e5903b.js",
     "imports": [
       "_preload-helper-a4192956.js",
       "_time-583d4bf1.js",
