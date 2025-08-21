@@ -56,6 +56,7 @@ declare const nsHooks;
 
 export class POS {
     private _cartButtons: BehaviorSubject<{ [key: string]: any }>;
+    private _cartHeaderButtons: BehaviorSubject<{ [key: string]: any }>;
     private _products: BehaviorSubject<OrderProduct[]>;
     private _breadcrumbs: BehaviorSubject<any[]>;
     private _customers: BehaviorSubject<Customer[]>;
@@ -190,6 +191,10 @@ export class POS {
         return this._cartButtons;
     }
 
+    get cartHeaderButtons() {
+        return this._cartHeaderButtons;
+    }
+
     async reset() {
         return new Promise(async (resolve, reject) => {
             try {
@@ -203,6 +208,7 @@ export class POS {
                 this._customers.next([]);
                 this._breadcrumbs.next([]);
                 this._cartButtons.next({});
+                this._cartHeaderButtons.next({});
                 this.defineCurrentScreen();
                 this.setHoldPopupEnabled(true);
 
@@ -235,6 +241,7 @@ export class POS {
         this._order = new BehaviorSubject<Order>(this.defaultOrder());
         this._selectedPaymentType = new BehaviorSubject<PaymentType>(null);
         this._cartButtons = new BehaviorSubject<{ [key: string]: any }>({})
+        this._cartHeaderButtons = new BehaviorSubject<{ [key: string]: any }>({});
         this._orderTypeProcessQueue = [
             delivery,
         ];

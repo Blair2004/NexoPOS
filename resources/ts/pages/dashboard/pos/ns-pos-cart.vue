@@ -14,38 +14,9 @@
                 <div id="cart-toolbox" class="w-full p-2 border-b">
                     <div class="border rounded overflow-hidden">
                         <div class="flex flex-wrap">
-                            <div class="ns-button">
-                                <button @click="openNotePopup()" class="w-full h-10 px-3 outline-hidden">
-                                    <i class="las la-comment"></i>
-                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Comments' ) }}</span>
-                                </button>
-                            </div>
-                            <div class="ns-button">
-                                <button @click="selectTaxGroup()" class="w-full h-10 px-3 outline-hidden flex items-center">
-                                    <i class="las la-balance-scale-left"></i>
-                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Taxes' ) }}</span>
-                                    <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.taxes.length }}</span>
-                                </button>
-                            </div>
-                            <div class="ns-button">
-                                <button @click="selectCoupon()" class="w-full h-10 px-3 outline-hidden flex items-center">
-                                    <i class="las la-tags"></i>
-                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Coupons' ) }}</span>
-                                    <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.coupons.length }}</span>
-                                </button>
-                            </div>
-                            <div class="ns-button">
-                                <button @click="defineOrderSettings()" class="w-full h-10 px-3 outline-hidden flex items-center">
-                                    <i class="las la-tools"></i>
-                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
-                                </button>
-                            </div>
-                            <div class="ns-button" v-if="options.ns_pos_quick_product === 'yes'">
-                                <button @click="openAddQuickProduct()" class="w-full h-10 px-3 outline-hidden flex items-center">
-                                    <i class="las la-plus"></i>
-                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Product' ) }}</span>
-                                </button>
-                            </div>
+                            <template v-for="component of cartHeaderButtons" :key="component">
+                                <component :is="component" :order="order" :settings="settings" :options="options"></component>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -282,6 +253,12 @@ import nsPosHoldButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-hold-butt
 import nsPosDiscountButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-discount-button.vue';
 import nsPosVoidButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-void-button.vue';
 
+import nsPosCartCommentButton from '~/pages/dashboard/pos/cart-header-buttons/ns-pos-cart-comment-button.vue';
+import nsPosCartTaxesButton from '~/pages/dashboard/pos/cart-header-buttons/ns-pos-cart-taxes-button.vue';
+import nsPosCartCouponsButton from '~/pages/dashboard/pos/cart-header-buttons/ns-pos-cart-coupons-button.vue';
+import nsPosCartSettingsButton from '~/pages/dashboard/pos/cart-header-buttons/ns-pos-cart-settings-button.vue';
+import nsPosCartQuickProductButton from '~/pages/dashboard/pos/cart-header-buttons/ns-pos-cart-quick-product-button.vue';
+
 import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
 import PosConfirmPopup from '~/popups/ns-pos-confirm-popup.vue';
 import nsPosOrderTypePopupVue from '~/popups/ns-pos-order-type-popup.vue';
@@ -314,9 +291,18 @@ export default {
                 nsPosDiscountButton: markRaw( nsPosDiscountButton ),
                 nsPosVoidButton: markRaw( nsPosVoidButton ),
             },
+            cartHeaderButtons: {},
+            defaultCartHeaderButtons: {
+                nsPosCartCommentButton: markRaw( nsPosCartCommentButton ),
+                nsPosCartTaxesButton: markRaw( nsPosCartTaxesButton ),
+                nsPosCartCouponsButton: markRaw( nsPosCartCouponsButton ),
+                nsPosCartSettingsButton: markRaw( nsPosCartSettingsButton ),
+                nsPosCartQuickProductButton: markRaw( nsPosCartQuickProductButton ),
+            },
             visibleSection: null,
             visibleSectionSubscriber: null,
             cartButtonsSubscriber: null,
+            cartHeaderButtonSubscriber: null,
             optionsSubscriber: null,
             options: {},
             typeSubscribe: null,
@@ -347,6 +333,10 @@ export default {
             this.cartButtons    =   cartButtons;
         });
 
+        this.cartHeaderButtonSubscriber = POS.cartHeaderButtons.subscribe( buttons => {
+            this.cartHeaderButtons    =   buttons;
+        })
+
         this.optionsSubscriber  =   POS.options.subscribe( options => {
             this.options    =   options;
         });
@@ -375,6 +365,7 @@ export default {
          */
         nsHooks.addAction( 'ns-before-cart-reset', 'ns-pos-cart-buttons', () => {
             POS.cartButtons.next( this.defaultCartButtons );
+            POS.cartHeaderButtons.next( this.defaultCartHeaderButtons );
         });
 
         /**
@@ -414,7 +405,8 @@ export default {
         this.settingsSubscribe.unsubscribe();
         this.optionsSubscriber.unsubscribe();
         this.cartButtonsSubscriber.unsubscribe();
-        
+        this.cartHeaderButtonSubscriber.unsubscribe();
+
         nsHotPress.destroy( 'ns_pos_keyboard_shipping' );
         nsHotPress.destroy( 'ns_pos_keyboard_note' );
     },
