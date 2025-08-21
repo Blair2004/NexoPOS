@@ -1,4 +1,4 @@
----
+ ---
 applyTo: '**'
 ---
 NexoPOS is a point of sale system built on top of Laravel. it uses Vue.js (3) and Tailwind CSS. This document describes how the applications is structured and works.
