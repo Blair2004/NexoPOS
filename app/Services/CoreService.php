@@ -371,6 +371,33 @@ class CoreService
                     )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
                 }
             }
+
+            /**
+             * We'll check if the links is broken
+             */
+            if ( is_link( public_path( 'modules/' . $tolowercase ) ) ) {
+                $notification = Notification::where( 'identifier', 'symlink-' . $tolowercase )->first();
+
+                if ( ! $notification instanceof Notification ) {
+                    $notificationService->create(
+                        title: sprintf( __( '%s: Symbolic Link Broken' ), $module[ 'name' ] ),
+                        identifier: 'symlink-' . $tolowercase,
+                        source: 'system',
+                        url: 'https://my.nexopos.com/en/documentation/troubleshooting/broken-media-images?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+                        description: sprintf(
+                            __( 'The symbolic link for the module %s is broken. The module assets might not load correctly.' ),
+                            $module[ 'name' ]
+                        ),
+                        actions: [
+                            [
+                                'label' => __( 'Fix Symbolic Link' ),
+                                'url' => ns()->route( 'ns.dashboard.modules-symlink', [ 'namespace' => $tolowercase ] ),
+                                'data' => compact( 'module' ),
+                            ]
+                        ]
+                    )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+                }
+            }
         }
     }
 

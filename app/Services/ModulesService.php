@@ -971,26 +971,33 @@ class ModulesService
         $this->checkManagementStatus();
 
         if ( ! is_dir( base_path( 'public/modules' ) ) ) {
-            Storage::disk( 'public' )->makeDirectory( 'modules', 0755, true );
+            Storage::disk( 'ns-public' )->makeDirectory( 'modules', 0755, true );
         }
 
         /**
          * checks if a public directory exists and create a
          * link for that directory
          */
-        if (
-            Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' ) &&
-            ! is_link( base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) )
-        ) {
-            $target = base_path( 'modules/' . $moduleNamespace . '/Public' );
+        if ( Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' ) ) {
+            $linkPath = base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace );
+            
+            // Check if link exists and is broken, then remove it
+            if ( is_link( $linkPath ) && ! file_exists( readlink( $linkPath ) ) ) {
+                unlink( $linkPath );
+            }
+            
+            // Create symlink if it doesn't exist
+            if ( ! is_link( $linkPath ) ) {
+                $target = base_path( 'modules/' . $moduleNamespace . '/Public' );
 
-            if ( ! \windows_os() ) {
-                $link = @\symlink( $target, public_path( '/modules/' . strtolower( $moduleNamespace ) ) );
-            } else {
-                $mode = 'J';
-                $link = public_path( 'modules' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
-                $target = base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' );
-                $link = exec( "mklink /{$mode} \"{$link}\" \"{$target}\"" );
+                if ( ! \windows_os() ) {
+                    $link = @\symlink( $target, public_path( '/modules/' . strtolower( $moduleNamespace ) ) );
+                } else {
+                    $mode = 'J';
+                    $link = public_path( 'modules' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
+                    $target = base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' );
+                    $link = exec( "mklink /{$mode} \"{$link}\" \"{$target}\"" );
+                }
             }
         }
 
@@ -998,19 +1005,26 @@ class ModulesService
          * checks if a lang directory exists and create a
          * link for that directory
          */
-        if (
-            Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' ) &&
-            ! is_link( base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) )
-        ) {
-            $target = base_path( 'modules/' . $moduleNamespace . '/Lang' );
+        if ( Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' ) ) {
+            $linkPath = base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace );
+            
+            // Check if link exists and is broken, then remove it
+            if ( is_link( $linkPath ) && ! file_exists( readlink( $linkPath ) ) ) {
+                unlink( $linkPath );
+            }
+            
+            // Create symlink if it doesn't exist
+            if ( ! is_link( $linkPath ) ) {
+                $target = base_path( 'modules/' . $moduleNamespace . '/Lang' );
 
-            if ( ! \windows_os() ) {
-                $link = @\symlink( $target, public_path( '/modules-lang/' . strtolower( $moduleNamespace ) ) );
-            } else {
-                $mode = 'J';
-                $link = public_path( 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
-                $target = base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' );
-                $link = exec( "mklink /{$mode} \"{$link}\" \"{$target}\"" );
+                if ( ! \windows_os() ) {
+                    $link = @\symlink( $target, public_path( '/modules-lang/' . strtolower( $moduleNamespace ) ) );
+                } else {
+                    $mode = 'J';
+                    $link = public_path( 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
+                    $target = base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' );
+                    $link = exec( "mklink /{$mode} \"{$link}\" \"{$target}\"" );
+                }
             }
         }
     }

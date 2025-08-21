@@ -60,9 +60,6 @@ class ModulesController extends DashboardController
     public function getModules( $argument = '' )
     {
         switch ( $argument ) {
-            case '':
-                $list = $this->modules->get();
-                break;
             case 'enabled':
                 $list = $this->modules->getEnabled();
                 break;
@@ -71,6 +68,10 @@ class ModulesController extends DashboardController
                 break;
             case 'invalid':
                 $list = $this->modules->getInvalid();
+                break;
+            case '':
+            default : 
+                $list = $this->modules->get();
                 break;
         }
 

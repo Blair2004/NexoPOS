@@ -9,7 +9,7 @@ return [
      * This is the core version of NexoPOS. This is used to displays on the
      * dashboard and to ensure a compatibility with the modules.
      */
-    'version' => '6.0.1',
+    'version' => '6.0.2',
 
     /**
      * --------------------------------------------------------------------
