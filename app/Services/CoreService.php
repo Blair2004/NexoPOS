@@ -15,6 +15,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
@@ -405,6 +406,7 @@ class CoreService
     {
         if ( ! file_exists( public_path( 'storage' ) ) ) {
             $notification = Notification::where( 'identifier', NotificationsEnum::NSSYMBOLICLINKSMISSING )
+                ->where( 'user_id', Auth::id() )
                 ->first();
 
             if ( ! $notification instanceof Notification ) {
@@ -417,6 +419,13 @@ class CoreService
                     source: 'system',
                     url: 'https://my.nexopos.com/en/documentation/troubleshooting/broken-media-images?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
                     description: __( 'The Symbolic Links to the public directory is missing. Your medias might be broken and not display.' ),
+                    actions: [
+                        [
+                            'label' => __( 'Fix it' ),
+                            'url' => route( 'ns.dashboard.system.fix-symbolic-links' ),
+                            'type' => 'primary',
+                        ]
+                    ]
                 )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
             }
         } else {
@@ -628,5 +637,16 @@ class CoreService
         }
 
         return $assets->flatten()->join( '' );
+    }
+
+    public function createSymbolicLinks(): void
+    {
+        // we'll first delete any symbolic links that might exists
+        if ( file_exists( public_path( 'storage' ) ) ) {
+            @unlink( public_path( 'storage' ) );
+        }
+
+        // We'll create a symbolic link using the command line
+        Artisan::call( 'storage:link' );
     }
 }

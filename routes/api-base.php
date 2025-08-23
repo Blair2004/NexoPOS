@@ -38,6 +38,7 @@ Route::middleware( [
         include dirname( __FILE__ ) . '/api/units.php';
         include dirname( __FILE__ ) . '/api/users.php';
         include dirname( __FILE__ ) . '/api/permissions.php';
+        include dirname( __FILE__ ) . '/api/system.php';
     } );
 } );
 

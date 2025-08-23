@@ -55,12 +55,25 @@ class AutoTranslateCommand extends Command
 
         $targetFiles = [];
         if ($this->option('file')) {
-            $single = $langPath . DIRECTORY_SEPARATOR . $this->option('file');
-            if (!is_file($single)) {
-                $this->error('Specified file not found: ' . $single);
+            // the option file might consist of multiple files separated by commas
+            $files = explode(',', $this->option('file'));
+
+            foreach ($files as $file) {
+                $file = trim($file);
+                if (empty($file)) { continue; }
+                $single = $langPath . DIRECTORY_SEPARATOR . $file;
+                if (!is_file($single)) {
+                    $this->error('Specified file not found: ' . $single);
+                    return self::FAILURE;
+                }
+                $targetFiles[] = $single;
+            }
+
+            if (empty($targetFiles)) {
+                $this->error('No valid files specified.');
                 return self::FAILURE;
             }
-            $targetFiles[] = $single;
+
         } else {
             foreach (glob($langPath . DIRECTORY_SEPARATOR . '*.json') as $file) {
                 if (basename($file) === 'en.json') { continue; }
@@ -108,13 +121,16 @@ class AutoTranslateCommand extends Command
                 ];
                 try {
                     $response = Http::timeout(30)->post($endpoint . '/translate', $payload);
-                    if ($response->failed()) { $errors++; continue; }
+                    if ($response->failed()) { 
+                        $errors++; continue; 
+                    }
                     $json = $response->json();
                     if (!is_array($json) || !array_key_exists('translated', $json)) { $errors++; continue; }
                     $data[$key] = $json['translated'];
                     $translatedCount++;
                 } catch (\Throwable $e) {
                     $errors++;
+                    $this->error("Error translating key '{$key}': " . $e->getMessage());
                 }
             }
             $this->output->progressFinish();
