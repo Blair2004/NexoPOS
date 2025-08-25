@@ -193,8 +193,7 @@ export default {
 
             if ( result.type === 'grouped' ) {
                 return nsSnackBar
-                    .error( __( 'Unable to add a grouped product.' ) )
-                    .subscribe();
+                    .error( __( 'Unable to add a grouped product.' ) );
             }
 
             try {

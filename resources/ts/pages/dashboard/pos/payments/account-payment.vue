@@ -105,7 +105,7 @@ export default {
                 return nsSnackBar.error( __( 'Not enough funds to add {amount} as a payment. Available balance {balance}.' )
                     .replace( '{amount}', nsCurrency( value ) ) 
                     .replace( '{balance}', nsCurrency( this.order.customer.account_amount ) ) 
-                ).subscribe();
+                );
             }
 
             POS.addPayment({

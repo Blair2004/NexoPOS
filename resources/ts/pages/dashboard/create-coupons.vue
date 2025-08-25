@@ -79,7 +79,7 @@ export default {
                 }, ( error ) => {
                     nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ), undefined, {
                         duration: 5000
-                    }).subscribe();
+                    });
 
                     if ( error.status === 'error' ) {
                         this.formValidation.triggerError( this.form, error.data );

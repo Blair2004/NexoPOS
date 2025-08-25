@@ -237,8 +237,7 @@ export default {
                     this.report     =   result;
                 }, ( error ) => {
                     nsSnackBar
-                        .error( error.message )
-                        .subscribe();
+                        .error( error.message );
                 })
         }
     }

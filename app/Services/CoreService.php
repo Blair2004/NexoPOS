@@ -376,7 +376,7 @@ class CoreService
             /**
              * We'll check if the links is broken
              */
-            if ( is_link( public_path( 'modules/' . $tolowercase ) ) ) {
+            if ( ! is_link( public_path( 'modules/' . $tolowercase ) ) ) {
                 $notification = Notification::where( 'identifier', 'symlink-' . $tolowercase )->first();
 
                 if ( ! $notification instanceof Notification ) {

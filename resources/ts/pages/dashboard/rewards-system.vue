@@ -63,7 +63,7 @@ export default {
                     this.formValidation.enableForm( this.form );
                     nsSnackBar.error( error.data.message || __( 'An unexpected error has occurred' ), undefined, {
                         duration: 5000
-                    }).subscribe();
+                    });
                 })
         },
         handleGlobalChange( event ) {

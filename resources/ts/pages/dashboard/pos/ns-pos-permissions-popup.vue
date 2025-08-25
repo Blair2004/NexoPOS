@@ -230,7 +230,7 @@ const submitCredentials = async () => {
     const data = await response.json()
     
     if (response.ok && data.success) {
-      nsSnackBar.success(__('Permission granted successfully')).subscribe()
+      nsSnackBar.success(__('Permission granted successfully'));
       emit('granted', [props.permissionName])
     } else {
       errorMessage.value = data.message || __('Invalid credentials or insufficient permissions')
