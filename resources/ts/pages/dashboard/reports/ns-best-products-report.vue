@@ -202,8 +202,7 @@ export default {
                     }, 
                     error: ( error ) => {
                         nsSnackBar
-                            .error( error.message )
-                            .subscribe();
+                            .error( error.message );
                     }
                 })
         }

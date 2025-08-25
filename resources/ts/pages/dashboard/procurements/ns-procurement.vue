@@ -56,7 +56,7 @@ export default {
                                 }
                             },
                             error: error => {
-                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) ).subscribe();
+                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) );
                             }
                         })
                 }
@@ -231,8 +231,7 @@ export default {
             } catch( exception ) {
                 if ( exception !== false ) {
                     return nsSnackBar
-                        .error( exception.message || __( 'An unexpected error has occured' ) )
-                        .subscribe();
+                        .error( exception.message || __( 'An unexpected error has occured' ) );
                 }
             }
         },
@@ -334,7 +333,7 @@ export default {
                     } else if ( result.length > 1 ) {
                         this.searchResult   =   result;
                     } else {
-                        nsSnackBar.error( __( 'No result match your query.' ) ).subscribe();
+                        nsSnackBar.error( __( 'No result match your query.' ) );
                     }
                 })
         },
@@ -421,8 +420,7 @@ export default {
         addProductList( product ) {
 
             if ( product.unit_quantities === undefined ) {
-                return nsSnackBar.error( __( 'Unable to add product which doesn\'t unit quantities defined.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to add product which doesn\'t unit quantities defined.' ) );
             }
 
             /**
@@ -466,8 +464,7 @@ export default {
         submit() {
 
             if ( this.form.products.length === 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed, no product were provided.' ), __( 'OK' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, no product were provided.' ), __( 'OK' ) );
             }
 
             this.form.products.forEach( (product: any) => {
@@ -483,8 +480,7 @@ export default {
             const invalidProducts   =   this.form.products.filter( product => product.procurement.$invalid );
 
             if ( invalidProducts.length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed, one or more product has incorrect values.' ), __( 'OK' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, one or more product has incorrect values.' ), __( 'OK' ) );
             }
 
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
@@ -494,13 +490,11 @@ export default {
                  */
                 this.setTabActive( this.activeTab );
 
-                return nsSnackBar.error( __( 'Unable to proceed, the procurement form is not valid.' ), __( 'OK' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, the procurement form is not valid.' ), __( 'OK' ) );
             }
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( __( 'Unable to submit, no valid submit URL were provided.' ), __( 'OK' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to submit, no valid submit URL were provided.' ), __( 'OK' ) );
             }
 
             this.formValidation.disableForm( this.form );
@@ -529,7 +523,7 @@ export default {
 
                         nsSnackBar.error( error.message, undefined, {
                             duration: 5000
-                        }).subscribe();
+                        });
 
                         this.formValidation.enableForm( this.form );
                         

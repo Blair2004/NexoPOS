@@ -118,7 +118,7 @@ export default {
                 return nsSnackBar.error( 
                     __( 'The provided quantity can\'t result in any convertion for unit "{destination}"' )
                         .replace( '{destination}', this.unitPair.to.unit.name )
-                ).subscribe();
+                );
             }
 
             if ( this.unitPair.from.quantity !== this.unitPair.from.realQuantity ) {

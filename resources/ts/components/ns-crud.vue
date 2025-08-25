@@ -309,12 +309,10 @@ export default {
                 .subscribe( (result: any) => {
                     setTimeout( () => document.location   =   result.url, 300 );
                     nsSnackBar
-                        .success( __( 'The document has been generated.' ) )
-                        .subscribe()
+                        .success( __( 'The document has been generated.' ) );
                 }, error => {
                     nsSnackBar
-                        .error( error.message || __( 'Unexpected error occurred.' ) )
-                        .subscribe();
+                        .error( error.message || __( 'Unexpected error occurred.' ) );
                 })
         },
 
