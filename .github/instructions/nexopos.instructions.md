@@ -96,3 +96,4 @@ At the root of the directory, we might also have some laravel (or laravel packag
 .github/instructions/nexopos-roles-permissions.instructions.md
 .github/instructions/nexopos-crud.instructions.md
 .github/instructions/nexopos-modules.instructions.md
+.github/instructions/nexopos-httpclient.instructions.mds

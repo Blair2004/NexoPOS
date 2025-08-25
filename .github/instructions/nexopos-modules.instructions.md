@@ -137,32 +137,6 @@ class FooBarModule extends ModuleService
     public function __construct()
     {
         parent::__construct();
-        
-        $this->namespace = 'FooBar';
-        $this->version = '1.0.0';
-        $this->author = 'Your Name';
-        $this->name = 'Foo Bar Module';
-        $this->description = 'A sample module for demonstration';
-    }
-
-    /**
-     * Boot method called when module is loaded
-     */
-    public function boot()
-    {
-        // Module initialization code
-        $this->loadRoutes();
-        $this->loadViews();
-        $this->loadTranslations();
-        $this->loadMigrations();
-    }
-
-    /**
-     * Register method for service container bindings
-     */
-    public function register()
-    {
-        // Register services, bindings, etc.
     }
 }
 ```
@@ -399,6 +373,9 @@ return new class extends Migration
 };
 ```
 
+However, migration file name aren't required to follow Laravel's timestamp pattern. For a migration that create tables, we'll use the prefix `Create` followed by the table name. For example: `CreateFooBarTable.php`.
+For a migration that alters an existing table, we'll use the prefix `Update` followed by the table name. For example: `UpdateFooBarTable.php`.
+
 ### Models/
 
 Eloquent model classes:
@@ -451,6 +428,8 @@ class FooBarServiceProvider extends ServiceProvider
     }
 }
 ```
+
+There is no need to manually register the service provider as NexoPOS automatically discovers it.
 
 ### Public/
 
@@ -546,6 +525,8 @@ Stylesheet files:
 ```
 
 ### Routes/
+
+Both web.php and api.php routes file doesn't need to be manually registered. NexoPOS discovers it automatically.
 
 #### api.php
 
