@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg ns-box w-95vw md:w-3/6-screen lg:w-1/3-screen">
+    <div class="shadow-lg ns-box w-95vw md:w-[50vw] lg:w-[33.33vw]">
         <div class="border-b ns-box-header p-2 flex justify-between items-center">
             <h3 class="font-bold">{{ __( 'Load Coupon' ) }}</h3>
             <div>

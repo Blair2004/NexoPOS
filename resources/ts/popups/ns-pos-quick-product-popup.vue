@@ -1,5 +1,5 @@
 <template>
-    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-3/5-screen lg:w-2/5-screen md:h-[60vh] ns-box">
+    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-[60vw] lg:w-[40vw] md:h-[60vh] ns-box">
         <div class="header ns-box-header border-b flex justify-between p-2 items-center">
             <h3>{{ __( 'Product / Service' ) }}</h3>
             <div>

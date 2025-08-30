@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg w-6/7-screen lg:w-3/5-screen ns-box overflow-hidden flex flex-col">
+    <div class="shadow-lg w-[85.71vw] lg:w-[60vw] ns-box overflow-hidden flex flex-col">
         <div class="p-2 border-b ns-box-header text-fontcolor text-center font-medium flex justify-between items-center">
             <div>
                 {{ __( 'Previewing :' ) }} {{ product.name }}

@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
+    <div class="ns-box shadow-lg w-95vw md:w-[60vw] lg:w-[40vw]">
         <div class="popup-heading ns-box-header">
             <h3>{{ __( 'Product Price' ) }}</h3>
             <div>

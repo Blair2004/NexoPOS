@@ -1,5 +1,5 @@
 <template>
-    <div id="confirm-popup" :class="size" class="rounded-lg overflow-hidden flex flex-col shadow-lg w-5/7-screen md:w-4/7-screen lg:w-2/7-screen">
+    <div id="confirm-popup" :class="size" class="rounded-lg overflow-hidden flex flex-col shadow-lg w-[71.43vw] md:w-[57.14vw] lg:w-[28.57vw]">
         <div class="flex items-center justify-center flex-col flex-auto p-4">
             <h2 class="text-xl md:text-2xl text-center">{{ title }}</h2>
             <p class="py-4 text-sm md:text-base text-center">{{ message }}</p>
@@ -25,7 +25,7 @@ export default {
     },
     computed: {
         size() {
-            return this.popup.params.size || 'h-full w-full'
+            return this.popup.params.size || ''
         }
     },
     mounted() {

@@ -113,6 +113,67 @@ The `manifest.json` file controls which files are included or excluded when the 
 
 Both properties support glob patterns for flexible file matching.
 
+## Vite Configuration
+NexoPOS is built on top of Vite, Vue and Tailwind. If module can use their own frontend framework, it's recommended to stick to this stack. Therefore, we'll create a default vite.config.js. We'll make use of the following packages:
+
+- laravel-vite-plugin
+- @vitejs/plugin-vue
+- @tailwindcss/vite
+
+As Vue is already included on NexoPOS, it's not required to use it on our module. In fact, we want our component to work seamlessly with NexoPOS, we'll then use it's API. Typically here is how a vite.config.js looks like:
+
+```js
+import { defineConfig, loadEnv } from 'vite';
+
+import { fileURLToPath } from 'node:url';
+import laravel from 'laravel-vite-plugin';
+import path from 'node:path';
+import vuePlugin from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
+
+const Vue = fileURLToPath(
+	new URL(
+		'vue',
+		import.meta.url
+	)
+);
+
+export default ({ mode }) => {
+    return defineConfig({
+        base: '/',
+        plugins: [
+            vuePlugin(),
+            laravel({
+                hotFile: 'Public/hot',
+                input: [
+                    'Resources/css/style.css',
+                    'Resources/ts/main.ts',
+                ],
+                refresh: [ 
+                    'Resources/**', 
+                ]
+            }),
+            tailwindcss(),
+        ],
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, 'Resources/ts'),
+            }
+        },
+        build: {
+            outDir: 'Public/build',
+            manifest: true,
+            rollupOptions: {
+                input: [
+                    './Resources/css/style.css',
+                    './Resources/ts/main.ts',
+                ],
+            }
+        }        
+    });
+}
+```
+
 ## Main Module Class
 
 ### Entry Point

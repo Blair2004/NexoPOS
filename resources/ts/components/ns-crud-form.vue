@@ -248,7 +248,7 @@ export default {
 }
 </script>
 <template>
-    <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'ns-box w-95vw md:w-2/3-screen max-h-[80vh] overflow-hidden flex flex-col' : ''" id="crud-form" >
+    <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'ns-box w-[95vw] md:w-[66vw] max-h-[80vh] overflow-hidden flex flex-col' : ''" id="crud-form" >
         <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center h-full">
             <ns-spinner />
         </div>

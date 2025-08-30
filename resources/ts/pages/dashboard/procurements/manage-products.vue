@@ -393,7 +393,7 @@ export default {
         confirmUnitQuantityDeletion({ group, groups }) {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Your Attention Is Required' ),
-                size: 'w-3/4-screen h-[40vh]',
+                size: 'w-[75vw] h-[40vh]',
                 message: __( 'The current unit you\'re about to delete has a reference on the database and it might have already procured stock. Deleting that reference will remove procured stock. Would you proceed ?' ),
                 onAction: ( action ) => {
                     if ( action ) {

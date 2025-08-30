@@ -14,7 +14,7 @@
 @import './phosphor/_forms.css';
 @import './phosphor/_crud.css';
 @import './phosphor/_dashboard.css';
-/* @import './phosphor/_chart.css'; */
+@import './phosphor/_chart.css';
 @import './phosphor/_menu.css';
 @import './phosphor/_popups.css';
 @import './phosphor/_pos.css';
