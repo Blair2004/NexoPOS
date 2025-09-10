@@ -56,6 +56,8 @@ export default {
                 return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) );
             }
 
+            console.log( valid, extractedFields );
+
             let product       =   this.validation.extractFields( fields );
             
             product.$original   =   () => {
@@ -128,7 +130,10 @@ export default {
                         }
 
                         if ( field.name === 'unit_id' ) {
-                            field.value     =   this.options.ns_pos_quick_product_default_unit;
+                            if ( ! [ 0, null, undefined ].includes( this.options.ns_pos_quick_product_default_unit ) ) {
+                                field.value     =   this.options.ns_pos_quick_product_default_unit;
+                            }
+
                             field.options   =   result[0].map( unit => {
                                 return {
                                     label: unit.name,
@@ -202,7 +207,7 @@ export default {
                     name: 'unit_price',
                     type: 'text',
                     description: __( 'Define what is the sale price of the item.' ),
-                    validation: '',
+                    validation: 'required',
                     value: 0,
                     show( form ) {
                         return form.product_type === 'product';
@@ -213,7 +218,7 @@ export default {
                     type: 'text',
                     value: 1,
                     description: __( 'Set the quantity of the product.' ),
-                    validation: '',
+                    validation: 'required',
                     show( form ) {
                         return form.product_type === 'product';
                     }
@@ -225,7 +230,7 @@ export default {
                         // ...
                     ],
                     description: __( 'Assign a unit to the product.' ),
-                    validation: '',  
+                    validation: 'required',  
                     show( form ) {
                         return form.product_type === 'product';
                     }                  

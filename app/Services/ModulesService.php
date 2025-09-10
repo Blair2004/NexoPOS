@@ -64,6 +64,14 @@ class ModulesService
         }
 
         /**
+         * create the public modules directory
+         * if that doesn't exists
+         */
+        if ( ! is_dir( public_path( 'modules' ) ) ) {
+            Storage::disk( 'ns-public' )->makeDirectory( 'modules' );
+        }
+
+        /**
          * As module might load composer, we need to store current composer
          * configuration and restore them after having loaded all modules.
          */
