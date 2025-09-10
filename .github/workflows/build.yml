@@ -7,12 +7,12 @@ on:
     branches: [ master ]
 jobs:
   laravel-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: 'lts/*'
           check-latest: true
       - run: npm install
       - run: npm run build

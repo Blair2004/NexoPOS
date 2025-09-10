@@ -34,8 +34,8 @@ jobs:
       run: touch tests/database.sqlite
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
-    - name: Execute tests (Unit and Feature tests) via PHPUnit
+    - name: Execute tests (Unit and Feature tests) via Artisan
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
-      run: vendor/bin/phpunit --config phpunit.xml
+      run: php artisan test --stop-on-failure --stop-on-error
