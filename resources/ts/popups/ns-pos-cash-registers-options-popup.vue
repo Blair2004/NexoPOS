@@ -149,7 +149,7 @@ export default {
 }
 </script>
 <template>
-    <div class="shadow-lg w-95vw md:w-3/5-screen lg:w-half ns-box">
+    <div class="shadow-lg w-95vw md:w-[60vw] lg:w-half ns-box">
         <div class="p-2 border-b ns-box-header flex items-center justify-between">
             <h3>{{ __( 'Register Options' ) }}</h3>
             <div>

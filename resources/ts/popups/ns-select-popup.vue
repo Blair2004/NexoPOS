@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-xl ns-box w-6/7-screen md:w-4/7-screen lg:w-3/7-screen max-h-[80vh] overflow-hidden flex flex-col">
+    <div class="shadow-xl ns-box w-[85.71vw] md:w-[57.14vw] lg:w-[42.86vw] max-h-[80vh] overflow-hidden flex flex-col">
         <div class="p-2 flex justify-between border-b items-center ns-box-header">
             <span class="text-semibold text-font">
                 {{ label }}

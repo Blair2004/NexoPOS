@@ -51,7 +51,6 @@ export class Popup {
 
     open( component, params = {}, config = {} ) {
         this.popupBody       =   document.createElement( 'div' );
-        console.log({ component})
 
         if ( typeof component === 'function' ) {
             try {

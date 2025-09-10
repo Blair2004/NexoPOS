@@ -113,6 +113,67 @@ The `manifest.json` file controls which files are included or excluded when the 
 
 Both properties support glob patterns for flexible file matching.
 
+## Vite Configuration
+NexoPOS is built on top of Vite, Vue and Tailwind. If module can use their own frontend framework, it's recommended to stick to this stack. Therefore, we'll create a default vite.config.js. We'll make use of the following packages:
+
+- laravel-vite-plugin
+- @vitejs/plugin-vue
+- @tailwindcss/vite
+
+As Vue is already included on NexoPOS, it's not required to use it on our module. In fact, we want our component to work seamlessly with NexoPOS, we'll then use it's API. Typically here is how a vite.config.js looks like:
+
+```js
+import { defineConfig, loadEnv } from 'vite';
+
+import { fileURLToPath } from 'node:url';
+import laravel from 'laravel-vite-plugin';
+import path from 'node:path';
+import vuePlugin from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
+
+const Vue = fileURLToPath(
+	new URL(
+		'vue',
+		import.meta.url
+	)
+);
+
+export default ({ mode }) => {
+    return defineConfig({
+        base: '/',
+        plugins: [
+            vuePlugin(),
+            laravel({
+                hotFile: 'Public/hot',
+                input: [
+                    'Resources/css/style.css',
+                    'Resources/ts/main.ts',
+                ],
+                refresh: [ 
+                    'Resources/**', 
+                ]
+            }),
+            tailwindcss(),
+        ],
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, 'Resources/ts'),
+            }
+        },
+        build: {
+            outDir: 'Public/build',
+            manifest: true,
+            rollupOptions: {
+                input: [
+                    './Resources/css/style.css',
+                    './Resources/ts/main.ts',
+                ],
+            }
+        }        
+    });
+}
+```
+
 ## Main Module Class
 
 ### Entry Point
@@ -137,32 +198,6 @@ class FooBarModule extends ModuleService
     public function __construct()
     {
         parent::__construct();
-        
-        $this->namespace = 'FooBar';
-        $this->version = '1.0.0';
-        $this->author = 'Your Name';
-        $this->name = 'Foo Bar Module';
-        $this->description = 'A sample module for demonstration';
-    }
-
-    /**
-     * Boot method called when module is loaded
-     */
-    public function boot()
-    {
-        // Module initialization code
-        $this->loadRoutes();
-        $this->loadViews();
-        $this->loadTranslations();
-        $this->loadMigrations();
-    }
-
-    /**
-     * Register method for service container bindings
-     */
-    public function register()
-    {
-        // Register services, bindings, etc.
     }
 }
 ```
@@ -399,6 +434,9 @@ return new class extends Migration
 };
 ```
 
+However, migration file name aren't required to follow Laravel's timestamp pattern. For a migration that create tables, we'll use the prefix `Create` followed by the table name. For example: `CreateFooBarTable.php`.
+For a migration that alters an existing table, we'll use the prefix `Update` followed by the table name. For example: `UpdateFooBarTable.php`.
+
 ### Models/
 
 Eloquent model classes:
@@ -451,6 +489,8 @@ class FooBarServiceProvider extends ServiceProvider
     }
 }
 ```
+
+There is no need to manually register the service provider as NexoPOS automatically discovers it.
 
 ### Public/
 
@@ -546,6 +586,8 @@ Stylesheet files:
 ```
 
 ### Routes/
+
+Both web.php and api.php routes file doesn't need to be manually registered. NexoPOS discovers it automatically.
 
 #### api.php
 

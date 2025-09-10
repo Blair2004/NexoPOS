@@ -1,5 +1,5 @@
 <template>
-    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-3/5-screen lg:w-2/5-screen md:h-[60vh] ns-box">
+    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-[60vw] lg:w-[40vw] md:h-[60vh] ns-box">
         <div class="header ns-box-header border-b flex justify-between p-2 items-center">
             <h3>{{ __( 'Product / Service' ) }}</h3>
             <div>
@@ -55,6 +55,8 @@ export default {
             if ( ! valid ) {
                 return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) );
             }
+
+            console.log( valid, extractedFields );
 
             let product       =   this.validation.extractFields( fields );
             
@@ -128,7 +130,10 @@ export default {
                         }
 
                         if ( field.name === 'unit_id' ) {
-                            field.value     =   this.options.ns_pos_quick_product_default_unit;
+                            if ( ! [ 0, null, undefined ].includes( this.options.ns_pos_quick_product_default_unit ) ) {
+                                field.value     =   this.options.ns_pos_quick_product_default_unit;
+                            }
+
                             field.options   =   result[0].map( unit => {
                                 return {
                                     label: unit.name,
@@ -202,7 +207,7 @@ export default {
                     name: 'unit_price',
                     type: 'text',
                     description: __( 'Define what is the sale price of the item.' ),
-                    validation: '',
+                    validation: 'required',
                     value: 0,
                     show( form ) {
                         return form.product_type === 'product';
@@ -213,7 +218,7 @@ export default {
                     type: 'text',
                     value: 1,
                     description: __( 'Set the quantity of the product.' ),
-                    validation: '',
+                    validation: 'required',
                     show( form ) {
                         return form.product_type === 'product';
                     }
@@ -225,7 +230,7 @@ export default {
                         // ...
                     ],
                     description: __( 'Assign a unit to the product.' ),
-                    validation: '',  
+                    validation: 'required',  
                     show( form ) {
                         return form.product_type === 'product';
                     }                  

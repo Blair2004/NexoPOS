@@ -489,7 +489,7 @@ export default {
 }
 </script>
 <template>
-    <div class="flex md:flex-row flex-col ns-box overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-[95vh] shadow-xl' : 'm-4 w-auto h-full rounded-lg'">
+    <div class="flex md:flex-row flex-col ns-box overflow-hidden" id="ns-media" :class="isPopup ? 'w-[85.71vw] h-[95vh] shadow-xl' : 'm-4 w-auto h-full rounded-lg'">
         <div class="sidebar w-48 md:h-full flex-shrink-0">
             <h3 class="text-xl font-bold my-4 text-center">{{ __( 'Medias Manager' ) }}</h3>
             <ul class="sidebar-menus flex md:block mt-8">

@@ -1762,8 +1762,6 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.sale_price_edit );
 
-        console.log({ result })
-
         quantities.sale_price_without_tax   =   result.price_without_tax;
         quantities.sale_price_with_tax      =   result.price_with_tax;
         quantities.sale_price_tax           =   result.tax_value;
@@ -1894,15 +1892,6 @@ export class POS {
             tax_group, 
             product.tax_type
         );
-
-        console.log({ 
-            result, 
-            unitPrice, 
-            lineSubtotal, 
-            discount: product.discount, 
-            lineAfterDiscount,
-            method: 'tax_after_discount' 
-        });
 
         // For tax calculated on line total, we need to derive per-unit values
         product.tax_value = math.chain( result.tax_value ).divide( product.quantity ).done();

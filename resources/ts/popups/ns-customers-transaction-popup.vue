@@ -1,5 +1,5 @@
 <template>
-    <div class="w-6/7-screen md:w-5/7-screen lg:w-4/7-screen h-[85vh] md:h-[80vh] lg:h-[75vh] overflow-hidden shadow-lg ns-box flex flex-col relative">
+    <div class="w-[85.71vw] md:w-[71.43vw] lg:w-[57.14vw] h-[85vh] md:h-[80vh] lg:h-[75vh] overflow-hidden shadow-lg ns-box flex flex-col relative">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h2 class="font-semibold">{{ __( 'New Transaction' ) }}</h2>
             <div>

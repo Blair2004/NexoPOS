@@ -1,5 +1,5 @@
 <template>
-    <div id="discount-popup" class="ns-box shadow w-6/7-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
+    <div id="discount-popup" class="ns-box shadow w-[85.71vw] md:w-[60vw] lg:w-[60vw] xl:w-[40vw] relative">
         <div class="flex-shrink-0 flex justify-between items-center p-2 border-b ns-box-header">
             <div>
                 <h1 class="text-xl font-bold text-fontcolor text-center" v-if="type === 'product'">{{ __( 'Product Discount' ) }}</h1>

@@ -4,7 +4,7 @@ export default defineComponent({
     props: [ 'popup' ],
     template: `
     <div>
-        <div class="shadow-lg ns-box w-95vw md:w-2/5-screen">
+        <div class="shadow-lg ns-box w-95vw md:w-[40vw]">
             <div class="border-b ns-box-body p-2 flex justify-between items-center">
                 <h3>{{ __( 'Settings' ) }}</h3>
                 <div>

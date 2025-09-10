@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="shadow-lg w-95vw md:w-3/5-screen ns-box" v-if="loaded">
+        <div class="shadow-lg w-[95vw] md:w-[60vw] ns-box" v-if="loaded">
             <div class="border-b ns-box-header p-2 text-fontcolor flex justify-between items-center">
                 <h3 class="font-semibold">{{ title }}</h3>
                 <div><ns-close-button @click="close()"></ns-close-button></div>

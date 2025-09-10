@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-[60vh] ns-box flex flex-col overflow-hidden">
+    <div class="shadow-lg w-95vw h-95vh md:w-[60vw] md:h-[60vh] ns-box flex flex-col overflow-hidden">
         <div class="border-b p-2 flex items-center justify-between ns-box-header">
             <h3>{{ __( 'Order Refunds' ) }}</h3>
             <div class="flex">

@@ -1,6 +1,6 @@
 <template>
     <div class="h-full w-full flex items-center justify-center" id="ns-units-selector">
-        <div class="ns-box w-4/5-screen lg:w-1/3-screen overflow-hidden flex flex-col" v-if="unitsQuantities.length > 0">
+        <div class="ns-box w-[80vw] lg:w-[33.33vw] overflow-hidden flex flex-col" v-if="unitsQuantities.length > 0">
             <div id="header" class="h-16 flex justify-center items-center flex-shrink-0">
                 <h3 class="font-bold text-font">{{ __( '{product} : Units' ).replace( '{product}', productName ) }}</h3>
             </div>

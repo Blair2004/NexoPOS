@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-xl ns-box overflow-hidden w-95vw md:w-2/3-screen lg:w-3/7-screen">
+    <div class="shadow-xl ns-box overflow-hidden w-95vw md:w-[66.67vw] lg:w-[42.86vw]">
         <div class="p-2 flex justify-between ns-box-header">
             <h3 class="font-semibold">{{ __( 'Quantity' ) }}</h3>
             <div>
