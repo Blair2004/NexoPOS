@@ -1,7 +1,7 @@
 {
   "private": true,
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "type": "module",
   "scripts": {
@@ -11,16 +11,16 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.7",
-    "@tailwindcss/vite": "^4.1.4",
-    "@vitejs/plugin-vue": "^5.2.4",
-    "laravel-echo": "^1.17.1",
-    "laravel-vite-plugin": "^1.2.0",
-    "pusher-js": "^8.4.0-rc2",
+    "@tailwindcss/postcss": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.13",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "laravel-echo": "^2.2.0",
+    "laravel-vite-plugin": "^2.0.1",
+    "pusher-js": "^8.4.0",
     "sass": "^1.83.4",
-    "tailwindcss": "^4.1.7",
-    "vite": "^4.5.14",
-    "vite-plugin-mkcert": "^1.17.5"
+    "tailwindcss": "^4.1.13",
+    "vite": "^7.1.5",
+    "vite-plugin-mkcert": "^1.17.8"
   },
   "name": "nexopos",
   "dependencies": {
