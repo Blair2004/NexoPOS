@@ -96,8 +96,11 @@ if ( Auth::check() ) {
     </div>
     @section( 'layout.dashboard.footer' )
         @include( 'common.popups' )
-        @include( 'common.dashboard-footer' )
-        @vite([ 'resources/ts/app.ts' ])
+        @include( 'common.dashboard-footer', [
+            'vite' => [
+                'resources/ts/app.ts'
+            ]
+        ])
     @show
 </body>
 </html>
