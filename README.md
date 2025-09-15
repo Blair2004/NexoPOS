@@ -4,19 +4,46 @@
   <img src="https://user-images.githubusercontent.com/5265663/162700085-40ed00ca-9154-42cb-850a-ccf1c2db2d5d.png" alt="NexoPOS"/>
 </p>
 
-NexoPOS 4 is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS includes a responsive and beautiful dashboard that ease the interaction either on a smartphone, tablet, or desktops.
+NexoPOS is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer most businesses all the tools they need to better manage their store. NexoPOS includes a responsive and beautiful dashboard that eases the interaction on either a smartphone, tablet, or desktop.
 
 Read Review On:
 [![Laravel News](https://user-images.githubusercontent.com/5265663/186377311-c42ddd2c-bc84-465c-a3b6-94e6df8d68bc.jpg)](https://laravel-news.com/nexopos-point-of-sale-for-laravel?utm_source=github.com&utm_medium=readme&utm_campagin=nexopos)
 
-## Demo
-- Regular : https://v4.nexopos.com
-- MultiStore : https://v4-multi.nexopos.com
-- Gastro : https://v4-gastro.nexopos.com
-- Username : demouser
-- Password : 123456
+## Main Features
 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS/tree/v5.0.x&refcode=ebdb80cb0ec7)
+### Product Management
+You can create various types of products with NexoPOS. These products can be organized within categories and sub-categories. This then includes:
+
+- Regular Product with one or more units
+- Grouped Products
+- One-time Product (on the POS)
+
+### Inventory Management
+NexoPOS provides a complete inventory management system that allows you to track your goods as they are purchased and how they are sold. This includes:
+
+- Purchase Order
+- Stock History
+- Stock Reports
+
+### Featureful Point Of Sale Screen
+From the POS (Point of Sale) screen, you can process orders easily. Compatible with a barcode scanner, you can process products quickly by scanning them. You might make use of the Search bar to quickly search products. The layout of the POS is divided in two parts. On the left, the **cart** that shows what the customer is purchasing, and on the right, the **grid** that shows available products in a folder-like exploration system. The POS there includes:
+
+- Responsive Interface (works on mobile devices as well as desktops)
+- Flexible Product Tax Selection
+- Discount on the cart or on a single product
+- One-time product
+- Order Type (Delivery, Take Away)
+- Barcode Support
+- Search Form
+- Wholesale / Regular Prices
+- Hold / Pending Orders
+- Layaway Orders (define an instalment payment mechanism for your orders)
+- Coupon Support
+- Permission Restriction Through Mobile App [NexoPOS Authorizer](https://play.google.com/store/apps/details?id=com.nexopos.permission_access_nexopos)
+
+
+## Demo
+For demo, you can now deploy free instances of NexoPOS (with premium modules) at [NexoPOS Cloud](https://cloud.nexopos.com). The instance will be provided with a custom domain and isolated environment.
 
 ## Documentation
 All the documentation for NexoPOS can be found on [My NexoPOS](https://my.nexopos.com/en/documentation). That includes : 
@@ -40,20 +67,19 @@ We've also created a video tutorial that will help you perform those easily.
 # Get More Using Modules
 NexoPOS available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619) gives access to the premium modules marketplace. While purchasing on CodeCanyon, you get : 
 
-- $40 In credit to [My NexoPOS](https://my.nexopos.com/en/marketplace) balance.
 - Access to NexoPOS marketplace
 - Premium Support & Installation Service
 - You're eligible for customization
 
 ## Changelog & Feature Announcement
-We frequently discuss the future of the app (while waiting discussions are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS.
+We frequently discuss the future of the app (while waiting, discussions are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS.
 
 
 ## Support Terms
 
 1 - The support on NexoPOS only applies to the information provided by the users while creating an issue. This means we won't either do the installation on your server or check an issue on your server. You're therefore invited not to post your server information while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
 
-2 - If you would like to have a dedicated support. Consider registering as a member to [My NexoPOS platform](https://my.nexopos.com/en/account/checkout/premium).
+2 - If you would like to have dedicated support. Consider registering as a member to [My NexoPOS platform](https://my.nexopos.com/en/account/checkout/premium).
 
 ## Troubleshooting
 Here we list the known issues and the way around them. Not everyone is likely to face these issues as it depends on the used environment.
@@ -101,10 +127,10 @@ Thank you for all your support over the years :).
 
 
 ## Screenshots
-The branch 4.7.x introduces the "Dark Mode" which will make working continuously with NexoPOS easier without hurting sight.
+The branch 4.7.x introduces "Dark Mode," which will make continuous working with NexoPOS easier without straining your eyesight.
 
 ### Media Component
-The media components help upload images and manage them. This comes with a field that will ease assigning images to products.
+The media components help upload images and manage them. This feature includes a field that simplifies assigning images to products.
 ![image](https://user-images.githubusercontent.com/5265663/159091815-5b022ec6-9df4-419b-86f0-85db73ce35c5.png)
 
 ### POS Component
