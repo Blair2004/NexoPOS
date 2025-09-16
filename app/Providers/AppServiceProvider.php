@@ -281,11 +281,18 @@ class AppServiceProvider extends ServiceProvider
          * their Vite assets
          */
         Blade::directive( 'moduleViteAssets', function ( $expression ) {
-            $params = explode( ',', $expression );
-            $fileName = trim( $params[0], "'" );
-            $module = trim( $params[1], " '" );
+            $args = str_getcsv( $expression, ',', '"' );
+            $fileName = trim( $args[0], "'" );
+            $module = trim( $args[1], " '" );
+            $options = [];
 
-            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\" ); ?>";
+            try {
+                $options = isset( $args[2] ) ? eval( 'return ' . $args[2] . ';' ) : [];
+            } catch ( \Throwable $th ) {
+                $options = [];
+            }
+
+            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\", " . var_export( $options, true ) . " ); ?>";
         } );
 
         /**
