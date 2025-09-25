@@ -21,7 +21,18 @@ class FormInput
      */
     public static function text( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'text', $errors = [], $data = [], $show = null )
     {
-        return compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type', 'errors', 'data', 'show' );
+        $field = compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type', 'errors', 'data', 'show' );
+
+        /**
+         * the password input relies on the text input. Therefore,
+         * we should include cases where the value is set to "null" by the password and
+         * not displayed on the form.
+         */
+        if ( $field[ 'value' ] === null ) {
+            unset( $field[ 'value' ] );
+        }
+
+        return $field;
     }
 
     /**

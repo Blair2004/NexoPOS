@@ -254,11 +254,11 @@ export default class FormValidation {
 
         if ( form.tabs ) {
             for( let tab in form.tabs ) {
-                if ( formValue[ tab ] === undefined ) {
-                    formValue[ tab ]    =   {};
+                if ( formValue[ form.tabs[ tab ].identifier ] === undefined ) {
+                    formValue[ form.tabs[ tab ].identifier ]    =   {};
                 }
     
-                formValue[ tab ]   =   this.extractFields( form.tabs[ tab ].fields );
+                formValue[ form.tabs[ tab ].identifier ]   =   this.extractFields( form.tabs[ tab ].fields );
             }
         }
 
@@ -280,10 +280,10 @@ export default class FormValidation {
         }
         if ( form.tabs ) {
             for( let tab in form.tabs ) {
-                if ( formValue[ tab ] === undefined ) {
-                    formValue[ tab ]    =   {};
+                if ( formValue[ form.tabs[ tab ].identifier ] === undefined ) {
+                    formValue[ form.tabs[ tab ].identifier ]    =   {};
                 }
-                formValue[ tab ]   =   this.extractFieldsLabels( form.tabs[ tab ].fields );
+                formValue[ form.tabs[ tab ].identifier ]   =   this.extractFieldsLabels( form.tabs[ tab ].fields );
             }
         }
         return formValue;

@@ -40,8 +40,14 @@ trait NsForms
                             foreach ( $field[ 'groups' ] as $index => $groupField ) {
                                 if ( isset( $groupField[ 'fields' ] ) ) {
                                     foreach ( $groupField[ 'fields' ] as $__field ) {
-                                        if ( isset( $__field[ 'validation' ] ) ) {
-                                            $rules[ 'variations' ][ '*' ][ $tabIdentifier ][ $field[ 'name' ] ][ '*' ][ $__field[ 'name' ] ] = $__field[ 'validation' ];
+
+                                        /**
+                                         * we can only extract the field validation if that field is visible
+                                         */
+                                        if ( ! isset( $__field[ 'show' ] ) || ( isset( $__field[ 'show' ] ) && is_callable( $__field[ 'show' ] ) && $__field[ 'show' ]( $model ) ) ) {
+                                            if ( isset( $__field[ 'validation' ] ) ) {
+                                                $rules[ 'variations' ][ '*' ][ $tabIdentifier ][ $field[ 'name' ] ][ '*' ][ $__field[ 'name' ] ] = $__field[ 'validation' ];
+                                            }
                                         }
                                     }
                                 }
@@ -71,7 +77,14 @@ trait NsForms
         foreach ( $form[ 'tabs' ] as $tabIdentifier => $tab ) {
             if ( ! empty( $tab[ 'fields' ] ) ) {
                 foreach ( $tab[ 'fields' ] as $field ) {
-                    if ( isset( $field[ 'validation' ] ) ) {
+                    if ( isset( $field[ 'validation' ] ) && ( 
+                        ! isset( $field[ 'show' ] ) || 
+                        ( 
+                            isset( $field[ 'show' ] ) && 
+                            is_callable( $field[ 'show' ] ) && 
+                            $field[ 'show' ]( $model ) 
+                        ) 
+                    ) ) {
                         $rules[ $tabIdentifier ][ $field[ 'name' ] ] = $field[ 'validation' ];
                     }
                 }
@@ -143,6 +156,14 @@ trait NsForms
              */
             if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
                 foreach ( $tab[ 'fields' ] as $field ) {
+                    /**
+                     * some fields might be hidden. We should implement a logic 
+                     * for ensuring we only extract visible fields
+                     */
+                    if ( isset( $field[ 'show' ] ) && is_callable( $field[ 'show' ] ) && ! $field[ 'show' ]( $model ) ) {
+                        continue;
+                    }
+
                     $value = data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
 
                     /**
@@ -160,10 +181,10 @@ trait NsForms
          * We'll add custom fields
          * that might be added by modules
          */
-        $fieldsToIgnore = array_keys( collect( $form[ 'tabs' ] )->toArray() );
+        $excluded = array_keys( collect( $form[ 'tabs' ] )->toArray() );
 
         foreach ( $fields as $field => $value ) {
-            if ( ! in_array( $field, $fieldsToIgnore ) ) {
+            if ( ! in_array( $field, $excluded ) ) {
                 $data[ $field ] = $value;
             }
         }
@@ -211,6 +232,10 @@ trait NsForms
     public function extractFields( $fields, $formValue = [] )
     {
         foreach ( $fields as $field ) {
+            if ( isset( $field[ 'show' ] ) && is_callable( $field[ 'show' ] ) && ! $field[ 'show' ]() ) {
+                continue;
+            }
+            
             $formValue[$field['name']] = $field['value'] ?? '';
         }
 
