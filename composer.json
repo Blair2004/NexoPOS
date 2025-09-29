@@ -60,7 +60,11 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "Modules\\": "modules/"
-        }
+        },
+        "exclude-from-classmap": [
+            "/modules/*/vendor/",
+            "modules/*/Tests/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
