@@ -19,9 +19,9 @@ class FormInput
      * @param  callable|null $show        A callable that determines whether the input field should be displayed.
      * @return array         An associative array representing the input field configuration.
      */
-    public static function text( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'text', $errors = [], $data = [], $show = null )
+    public static function text( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'text', $errors = [], $data = [], $show = null, $suffix = '', $custom_errors = [] )
     {
-        $field = compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type', 'errors', 'data', 'show' );
+        $field = compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type', 'errors', 'data', 'show', 'suffix', 'custom_errors' );
 
         /**
          * the password input relies on the text input. Therefore,
@@ -47,7 +47,7 @@ class FormInput
      * @param  callable|null $show        A callable that determines whether the password field should be displayed.
      * @return array         An associative array representing the password field configuration.
      */
-    public static function password( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $show = null )
+    public static function password( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $show = null, $custom_errors = [] )
     {
         return self::text(
             label: $label,
@@ -57,7 +57,8 @@ class FormInput
             disabled: $disabled,
             type: 'password',
             value: $value,
-            show: $show
+            show: $show,
+            custom_errors: $custom_errors
         );
     }
 
@@ -73,7 +74,7 @@ class FormInput
      * @param  callable|null $show        A callable that determines whether the email field should be displayed.
      * @return array         An associative array representing the email field configuration.
      */
-    public static function email( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $show = null )
+    public static function email( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $show = null, $custom_errors = [] )
     {
         return self::text(
             label: $label,
@@ -83,7 +84,8 @@ class FormInput
             disabled: $disabled,
             type: 'email',
             value: $value,
-            show: $show
+            show: $show,
+            custom_errors: $custom_errors
         );
     }
 
@@ -100,7 +102,7 @@ class FormInput
      * @param  callable|null $show        A callable that determines whether the number field should be displayed.
      * @return array         An associative array representing the number field configuration.
      */
-    public static function number( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $errors = [], $show = null )
+    public static function number( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $errors = [], $show = null, $custom_errors = [] )
     {
         return self::text(
             label: $label,
@@ -111,7 +113,8 @@ class FormInput
             type: 'number',
             value: $value,
             errors: $errors,
-            show: $show
+            show: $show,
+            custom_errors: $custom_errors
         );
     }
 
@@ -128,7 +131,7 @@ class FormInput
      * @param  callable|null $show        A callable that determines whether the telephone field should be displayed.
      * @return array         An associative array representing the telephone field configuration.
      */
-    public static function tel( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'tel', $show = null )
+    public static function tel( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'tel', $show = null, $custom_errors = [] )
     {
         return self::text(
             label: $label,
@@ -138,7 +141,8 @@ class FormInput
             disabled: $disabled,
             type: 'tel',
             value: $value,
-            show: $show
+            show: $show,
+            custom_errors: $custom_errors
         );
     }
 
@@ -280,7 +284,7 @@ class FormInput
      * @param  callable|null $show        A callable that determines whether the textarea field should be displayed.
      * @return array         An associative array representing the textarea field configuration.
      */
-    public static function textarea( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $data = [], $show = null )
+    public static function textarea( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $data = [], $show = null, $custom_errors = [] )
     {
         return self::text(
             label: $label,
@@ -291,7 +295,8 @@ class FormInput
             type: 'textarea',
             value: $value,
             data: $data,
-            show: $show
+            show: $show,
+            custom_errors: $custom_errors
         );
     }
 
