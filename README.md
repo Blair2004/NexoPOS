@@ -4,17 +4,13 @@
   <img src="https://user-images.githubusercontent.com/5265663/162700085-40ed00ca-9154-42cb-850a-ccf1c2db2d5d.png" alt="NexoPOS"/>
 </p>
 
-NexoPOS 4 is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS includes a responsive and beautiful dashboard that ease the interaction either on a smartphone, tablet, or desktops.
+NexoPOS 4 is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to better manage their store. NexoPOS includes a responsive and beautiful dashboard that ease the interaction either on a smartphone, tablet, or desktop.
 
 Read Review On:
 [![Laravel News](https://user-images.githubusercontent.com/5265663/186377311-c42ddd2c-bc84-465c-a3b6-94e6df8d68bc.jpg)](https://laravel-news.com/nexopos-point-of-sale-for-laravel?utm_source=github.com&utm_medium=readme&utm_campagin=nexopos)
 
 ## Demo
-- Regular : https://v4.nexopos.com
-- MultiStore : https://v4-multi.nexopos.com
-- Gastro : https://v4-gastro.nexopos.com
-- Username : demouser
-- Password : 123456
+Now you can create demo instances on [NexoPOS Cloud](https://cloud.nexopos.com).
 
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS/tree/v5.0.x&refcode=ebdb80cb0ec7)
 
@@ -46,52 +42,45 @@ NexoPOS available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm
 - You're eligible for customization
 
 ## Changelog & Feature Announcement
-We frequently discuss the future of the app (while waiting discussions are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS.
+We frequently discuss the future of the app (while waiting, discussions are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS.
 
 
 ## Support Terms
 
 1 - The support on NexoPOS only applies to the information provided by the users while creating an issue. This means we won't either do the installation on your server or check an issue on your server. You're therefore invited not to post your server information while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
 
-2 - If you would like to have a dedicated support. Consider registering as a member to [My NexoPOS platform](https://my.nexopos.com/en/account/checkout/premium).
+2 - If you would like to have dedicated support. Consider registering as a member to [My NexoPOS platform](https://my.nexopos.com/en/account/checkout/premium).
 
 ## Troubleshooting
-Here we list the known issues and the way around them. Not everyone is likely to face these issues as it depends on the used environment.
+Here we list the known issues and the way around them. Not everyone is likely to face these issues, as it depends on the environment used.
 
 - CSRF error After Installation
 Chances are when you make your installation, you'll have your website URL changed. Unfortunately, if the domain has to change, it must be clearly described on the .env file. We've written a guide that explains how to solve the [CSRF issue on NexoPOS](https://my.nexopos.com/en/documentation/troubleshooting/how-to-fix-csrf-token-mismatch-on-nexopos-4-x).
 
 - Error After Database Details (using `php artisan serve`)
-If you're serving the project using `php artisan serve`, after setting up the database credentials and having them validated, you might stop on an infinite
+If you're serving the project using `php artisan serve`, after setting up the database credentials and having them validated, you might get stuck in an infinite
 loading page. 
 
 ![screenshot-127 0 0 1_8000-2020 10 01-00_33_17](https://user-images.githubusercontent.com/5265663/94781001-17809f00-037e-11eb-9f14-3bf4427054bf.png)
 
-This is caused because during the database setup, the ".env" is updated which causes Laravel to restart the development server and therefore invalidate your session. The way around this is to refresh the page and you'll end up in the application details section.
+This is caused because during the database setup, the ".env" is updated which causes Laravel to restart the development server and therefore invalidate your session. The way around this is to refresh the page, and you'll reach the application details section.
 
 ## Contribution Guidelines
-Do you plan to contribute? That's awesome. We don't have that many developers on it, so we're open to any type of contributions. If you're a developer, you'll start by forking the project and deploying that locally for further tests. Typically, you'll need to build the project (Vue.js) in watch mode. You'll then start by ensuring the .env value "NS_ENV" is set to "dev". From there, you can run the following command :
+Do you plan to contribute? That's awesome. We don't have that many developers on it, so we're open to any type of contributions. If you're a developer, you'll start by forking the project and deploying that locally for further tests. Refer to the package.json file to see the available commands to build the project.
 
 **To install Node.js dependencies**
 ```
 npm install
 ```
 
-**To watch the Vue component changes (Vue.js)**
+**To Launch The Dev Mode (Watch)**
 ```
-npm run dev
-```
-
-**To watch the project changes (TailwindCSS)**
-```
-npm run css-watch
+npx vite
 ```
 
-**To build the project for production, you'll need to only run that command:**
-This will build the JavaScript file and CSS files.
-
+**To Build The Project**
 ```
-npm run prod
+npx vite build
 ```
 
 ## Star History
@@ -112,7 +101,7 @@ The POS is the place where sales are made and handled. The POS is made to provid
 ![image](https://user-images.githubusercontent.com/5265663/159092595-3b2e4371-fef4-471c-84cd-b04cb2b7c611.png)
 
 ### Orders Components
-Every saved sale is listed on the orders list. From there various operations such as opening the receipt, proceeding with a refund, and making payment can be performed.
+Every saved sale is listed on the orders list. From there, various operations such as opening the receipt, proceeding with a refund, and making a payment can be performed.
 ![image](https://user-images.githubusercontent.com/5265663/159092684-53a0c41a-d76d-4b69-b737-4420a20b33a1.png)
 
 ### Products Components
