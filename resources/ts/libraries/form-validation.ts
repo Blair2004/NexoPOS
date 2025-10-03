@@ -254,11 +254,11 @@ export default class FormValidation {
 
         if ( form.tabs ) {
             for( let tab in form.tabs ) {
-                if ( formValue[ form.tabs[ tab ].identifier ] === undefined ) {
-                    formValue[ form.tabs[ tab ].identifier ]    =   {};
+                if ( formValue[ tab ] === undefined ) {
+                    formValue[ tab ]    =   {};
                 }
     
-                formValue[ form.tabs[ tab ].identifier ]   =   this.extractFields( form.tabs[ tab ].fields );
+                formValue[ tab ]   =   this.extractFields( form.tabs[ tab ].fields );
             }
         }
 

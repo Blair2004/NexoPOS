@@ -4,9 +4,9 @@ namespace App\Classes;
 
 class CrudForm extends Form
 {
-    public static function form( $main = [], $tabs = [] )
+    public static function form( $title = '', $description = '', $main = [], $tabs = [] )
     {
-        return compact( 'main', 'tabs' );
+        return compact( 'main', 'tabs', 'title', 'description' );
     }
 
     public static function tabs( ...$args )
