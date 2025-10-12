@@ -15,7 +15,7 @@ class FormInput
      * @param  bool          $disabled    Whether the input field is disabled.
      * @param  string        $type        The type of the input field (e.g., 'text', 'password').
      * @param  array         $errors      An array of error messages for the input field.
-     * @param  array         $data        Additional data attributes for the input field.
+     * @param  array         $data        Additional data attributes for the input field. Now, we might include validation with suffix by adding "validate-with-suffix": true
      * @param  callable|null $show        A callable that determines whether the input field should be displayed.
      * @return array         An associative array representing the input field configuration.
      */

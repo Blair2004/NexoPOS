@@ -435,6 +435,23 @@ export default class FormValidation {
         });
     }
 
+    private getFieldValue( field ) {
+        let fieldValue = field.value;
+
+        /**
+         * We case we have a field that include prefix and suffix, we'll
+         * introduce validation with prefix and suffix.
+         */
+        if ( field.data && field.data['validate-with-suffix'] ) {
+            fieldValue  +=  field.suffix || '';
+        }
+
+        if ( field.data && field.data[ 'validate-with-prefix' ] ) {
+            fieldValue  =   ( field.prefix || '' ) + fieldValue;
+        }
+        return fieldValue;
+    }
+
     /**
      * This methods defines a set of rules that must returns "true" to 
      * indicate the field check was not successful.
@@ -446,38 +463,49 @@ export default class FormValidation {
     fieldPassCheck(field, rule, form, labels ) {
         if (rule !== undefined) {
             const rules = {
-                required: (field, rule) =>
-                    field.value === undefined || field.value === null || field.value.length === 0,
-    
-                email: (field, rule) =>
-                    field.value !== undefined && field.value.length > 0 && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(field.value),
-    
+                required: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
+                    return fieldValue === undefined || fieldValue === null || fieldValue.length === 0;
+                },
+
+                email: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
+                    return fieldValue !== undefined && fieldValue.length > 0 && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(fieldValue);
+                },
+
                 same: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );
                     const ruleHasWildcard = rule.value.includes('*'); 
-                    return ( ! ruleHasWildcard && `${similar}`.length > 0 && field.value !== similar );
+                    const fieldValue = this.getFieldValue( field );
+                    return ( ! ruleHasWildcard && `${similar}`.length > 0 && fieldValue !== similar );
                 },
     
                 different: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );
                     const ruleHasWildcard = rule.value.includes('*'); 
-                    return ! ruleHasWildcard && similar && field.value === similar;
+                    const fieldValue = this.getFieldValue( field );
+                    return ! ruleHasWildcard && similar && fieldValue === similar;
                 },
     
                 min: (field, rule) => {
-                    return field.value && field.value.length < parseInt(rule.value);
+                    const fieldValue = this.getFieldValue( field );
+                    return fieldValue && fieldValue.length < parseInt(rule.value);
+                },
+
+                max: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
+                    return fieldValue && fieldValue.length > parseInt(rule.value);
                 },
     
-                max: (field, rule) =>
-                    field.value && field.value.length > parseInt(rule.value),
-    
                 regex: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
                     const pattern = new RegExp(rule.value);
-                    return !pattern.test(field.value || '');
+                    return !pattern.test(fieldValue || '');
                 },
 
                 number: ( field, rule ) => {
-                    return !/^[0-9]+$/.test( field.value )
+                    const fieldValue = this.getFieldValue( field );
+                    return !/^[0-9]+$/.test( fieldValue )
                 }
             };
     
