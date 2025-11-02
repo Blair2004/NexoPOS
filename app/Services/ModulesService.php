@@ -17,7 +17,6 @@ use App\Models\ModuleMigration;
 use Error as GlobalError;
 use Exception;
 use Illuminate\Contracts\View\View as ViewView;
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -244,9 +243,13 @@ class ModulesService
                 $indexPath = $currentModulePath . ucwords( $config[ 'namespace' ] . 'Module.php' );
                 $webRoutesPath = $currentModulePath . 'Routes' . DIRECTORY_SEPARATOR . 'web.php';
                 $apiRoutesPath = $currentModulePath . 'Routes' . DIRECTORY_SEPARATOR . 'api.php';
+                $consolePath = $currentModulePath . 'Routes' . DIRECTORY_SEPARATOR . 'console.php';
+                $domainRoutesPath = $currentModulePath . 'Routes' . DIRECTORY_SEPARATOR . 'domain.php';
 
                 // check index existence
                 $config[ 'api-file' ] = is_file( $apiRoutesPath ) ? $apiRoutesPath : false;
+                $config[ 'domain-file' ] = is_file( $domainRoutesPath ) ? $domainRoutesPath : false;
+                $config[ 'console-file' ] = is_file( $consolePath ) ? $consolePath : false;
                 $config[ 'composer-installed' ] = Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
                 $config[ 'controllers-path' ] = $currentModulePath . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
                 $config[ 'controllers-relativePath' ] = ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';

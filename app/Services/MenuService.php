@@ -3,12 +3,14 @@
 namespace App\Services;
 
 use App\Classes\AsideMenu;
+use App\Classes\Menu;
 use Illuminate\Support\Facades\Gate;
 use TorMorten\Eventy\Facades\Eventy as Hook;
 
 class MenuService
 {
     protected $menus;
+    protected $accountMenus     =    [];
 
     public function buildMenus()
     {
@@ -595,6 +597,62 @@ class MenuService
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Adds an account menu
+     *
+     * @param string $identifier
+     * @param string $label
+     * @param string $icon
+     * @param string $href
+     */
+    public function setAccountMenu( $identifier, $label, $icon, $href )
+    {
+        $this->accountMenus[ $identifier ] = AsideMenu::menu(
+            label: $label,
+            icon: $icon,
+            identifier: $identifier,
+            href: $href,
+        );
+    }
+
+    /**
+     * Returns the account menus
+     * @return array
+     */
+    public function getAccountMenus(): array
+    {
+        $this->accountMenus = Hook::filter( 'ns-account-menus', Menu::wrapper(
+            Menu::item(
+                label: __( 'Profile' ),
+                identifier: 'profile',
+                icon: 'la-user-tie',
+                href: ns()->route( 'ns.dashboard.users.profile' ),
+                permissions: [ 'manage.profile' ],
+            ),
+            Menu::item(
+                label: __( 'Logout' ),
+                identifier: 'logout',
+                icon: 'la-sign-out-alt',
+                href: ns()->route( 'ns.logout' ),
+            ),
+        ) );
+
+        return collect( $this->accountMenus )->filter( function ( $menu ) {
+            return ( ! isset( $menu[ 'permissions' ] ) || Gate::any( $menu[ 'permissions' ] ) ) && ( ! isset( $menu[ 'show' ] ) || $menu[ 'show' ] === true );
+        } )->toArray();
+    }
+
+    /**
+     * Remove an account menu by its identifier
+     * @param string $identifier
+     */
+    public function removeAccountMenu( $identifier )
+    {
+        if ( isset( $this->accountMenus[ $identifier ] ) ) {
+            unset( $this->accountMenus[ $identifier ] );
         }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Services\CrudEntry;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -14,7 +15,7 @@ class CrudActionEvent
     /**
      * Create a new event instance.
      */
-    public function __construct( public $instance, public $entry )
+    public function __construct( public $instance, public CrudEntry $entry )
     {
         //
     }

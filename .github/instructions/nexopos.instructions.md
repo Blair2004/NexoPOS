@@ -89,13 +89,16 @@ That folder has 3 subfolders:
 At the root of the directory, we might also have some laravel (or laravel packages) migration that are necessary to be executed.
 
 ## Additional Instructions
-.github/instructions/nexopos-widgets.instructions.md
-.github/instructions/nexopos-permissions.instructions.md
-.github/instructions/nexopos-localization.instructions.md
-.github/instructions/nexopos-forminput.instructions.md
-.github/instructions/nexopos-roles-permissions.instructions.md
-.github/instructions/nexopos-crud.instructions.md
-.github/instructions/nexopos-modules.instructions.md
-.github/instructions/nexopos-httpclient.instructions.mds
-.github/instructions/nexopos-tabs.instructions.md
 .github/instructions/nexopos-asidemenu.instructions.md
+.github/instructions/nexopos-blade-layouts.instructions.md
+.github/instructions/nexopos-crud.instructions.md
+.github/instructions/nexopos-forminput.instructions.md
+.github/instructions/nexopos-httpclient.instructions.md
+.github/instructions/nexopos-localization.instructions.md
+.github/instructions/nexopos-middleware.instructions.md
+.github/instructions/nexopos-migrations.instructions.md
+.github/instructions/nexopos-modules.instructions.md
+.github/instructions/nexopos-permissions.instructions.md
+.github/instructions/nexopos-roles-permissions.instructions.md
+.github/instructions/nexopos-tabs.instructions.md
+.github/instructions/nexopos-widgets.instructions.md

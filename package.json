@@ -12,15 +12,15 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
-    "@tailwindcss/vite": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.16",
     "@vitejs/plugin-vue": "^6.0.1",
     "laravel-echo": "^2.2.0",
     "laravel-vite-plugin": "^2.0.1",
     "pusher-js": "^8.4.0",
     "sass": "^1.83.4",
     "tailwindcss": "^4.1.13",
-    "vite": "^7.1.5",
-    "vite-plugin-mkcert": "^1.17.8"
+    "vite": "^7.1.12",
+    "vite-plugin-mkcert": "^1.17.9"
   },
   "name": "nexopos",
   "dependencies": {

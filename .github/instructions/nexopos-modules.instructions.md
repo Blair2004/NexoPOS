@@ -191,13 +191,13 @@ Each module must have a main entry class named `{Namespace}Module.php`. For a mo
 
 namespace Modules\FooBar;
 
-use App\Classes\ModuleService;
+use App\Services\Module;
 
-class FooBarModule extends ModuleService
+class FooBarModule extends Module
 {
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct( __FILE__ );
     }
 }
 ```

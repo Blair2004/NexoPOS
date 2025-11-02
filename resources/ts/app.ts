@@ -1,4 +1,5 @@
 declare const nsHooks: any;
+declare const nsExtraComponents: any;
 
 /**
  * If anything has to happen before mounting
