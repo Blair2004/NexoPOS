@@ -12,6 +12,8 @@ Read Review On:
 ## Demo
 Now you can create demo instances on [NexoPOS Cloud](https://cloud.nexopos.com).
 
+[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostinger.com/vps/docker-hosting?compose_url=https://github.com/Blair2004/NexoPOS/)
+
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS/tree/v5.0.x&refcode=ebdb80cb0ec7)
 
 ## Documentation
