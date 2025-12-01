@@ -197,7 +197,7 @@ class CustomerService
 
         if ( $storeCustomerRole ) {
             $usersService = app()->make( UsersService::class );
-            $user = User::withoutGlobalScopes()->find( $customer->id );
+            $user = User::find( $customer->id );
 
             if ( $user ) {
                 $usersService->setUserRole( $user, [ $storeCustomerRole->id ] );
