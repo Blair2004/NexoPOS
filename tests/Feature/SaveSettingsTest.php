@@ -63,7 +63,7 @@ class SaveSettingsTest extends TestCase
                                             match ( $field[ 'type' ] ) {
                                                 'text', 'textarea' => strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text( 20 ),
                                                 'select' => ! empty( $field[ 'options' ] ) ? ( $rawField[ 'value' ] ?? '' ) : '',
-                                                default => $field[ 'value' ]
+                                                default => $field[ 'value' ] ?? ''
                                             }
                                         )
                                     },

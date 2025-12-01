@@ -32,7 +32,7 @@ class AuthLoginFields extends FieldsService
                 FormInput::password(
                     label: __( 'Password' ),
                     description: __( 'Provide your password.' ),
-                    validation: 'required|min:8',
+                    validation: 'required|min:6',
                     name: 'password',
                 )
             )
