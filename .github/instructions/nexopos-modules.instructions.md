@@ -483,9 +483,7 @@ class FooBarServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        // Boot services
-        $this->loadViewsFrom(__DIR__ . '/../Resources/Views', 'FooBar');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        // ...
     }
 }
 ```
@@ -551,6 +549,97 @@ Resources/Views/
 @endsection
 ```
 
+#### Loading Vite Assets in Views
+
+**IMPORTANT:** When including Vite-compiled assets in module Blade views, you **must** use the `@moduleViteAssets` directive instead of the standard Laravel `@vite` directive.
+
+**Syntax:**
+```blade
+@moduleViteAssets('path/to/asset', 'ModuleNamespace')
+```
+
+**Parameters:**
+1. **Asset Path** (string): Relative path from module root directory (no leading slash)
+2. **Module Namespace** (string): The module identifier from `config.xml`
+
+**Example:**
+```blade
+@push('footer-scripts')
+    @moduleViteAssets('Resources/ts/main.ts', 'FooBar')
+    @moduleViteAssets('Resources/css/style.css', 'FooBar')
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Your module initialization code
+            if (typeof myModuleFunction !== 'undefined') {
+                myModuleFunction();
+            }
+        });
+    </script>
+@endpush
+```
+
+**Common Patterns:**
+
+Loading multiple assets:
+```blade
+@moduleViteAssets('Resources/ts/main.ts', 'FooBar')
+@moduleViteAssets('Resources/css/style.css', 'FooBar')
+@moduleViteAssets('Resources/ts/admin-panel.ts', 'FooBar')
+```
+
+With conditional loading:
+```blade
+@if(auth()->user()->allowedTo('manage.foobar'))
+    @moduleViteAssets('Resources/ts/admin-features.ts', 'FooBar')
+@endif
+```
+
+**Common Mistakes to Avoid:**
+
+❌ **Wrong - Using standard @vite:**
+```blade
+@vite(['modules/FooBar/Resources/ts/main.ts'])
+```
+
+❌ **Wrong - Including leading slash:**
+```blade
+@moduleViteAssets('/Resources/ts/main.ts', 'FooBar')
+```
+
+❌ **Wrong - Using full path:**
+```blade
+@moduleViteAssets('modules/FooBar/Resources/ts/main.ts', 'FooBar')
+```
+
+✅ **Correct:**
+```blade
+@moduleViteAssets('Resources/ts/main.ts', 'FooBar')
+```
+
+**How It Works:**
+
+The `@moduleViteAssets` directive:
+- Resolves the correct module path automatically
+- Reads the module's Vite manifest file (`Public/build/.vite/manifest.json`)
+- Includes the properly hashed and versioned assets
+- Works with hot-reload during development (`npm run dev`)
+- Ensures proper cache busting in production
+
+**Build Output Structure:**
+
+After running `npm run build`, your assets will be in:
+```
+modules/FooBar/Public/build/
+├── .vite/
+│   └── manifest.json
+└── assets/
+    ├── main-[hash].js
+    └── style-[hash].css
+```
+
+The directive automatically resolves these hashed filenames from the manifest.
+
 #### TypeScript (ts/)
 
 TypeScript files for frontend functionality:
@@ -568,22 +657,181 @@ export class ProductManager {
 }
 ```
 
-#### SCSS (scss/)
+**Exporting Components for Blade Templates:**
 
-Stylesheet files:
+When creating Vue components that need to be triggered from Blade templates, export them globally in your main entry file:
 
-```scss
-// Resources/scss/module.scss
-.foobar-product {
-    &__card {
-        @apply bg-white rounded-lg shadow-md p-4;
-    }
-    
-    &__title {
-        @apply text-lg font-semibold text-gray-800;
+```typescript
+// Resources/ts/main.ts
+import { Popup } from '@/libraries/popup';
+import MyComponent from './components/MyComponent.vue';
+
+// Export the component globally for access from Blade templates
+const showMyComponent = () => {
+    Popup.show(MyComponent, {
+        // Component props
+    });
+};
+
+// Make it available on window object
+(window as any).myModuleName = {
+    showMyComponent
+};
+
+export { showMyComponent };
+```
+
+Then in your Blade template:
+
+```blade
+@moduleViteAssets('Resources/ts/main.ts', 'MyModule')
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof myModuleName !== 'undefined' && myModuleName.showMyComponent) {
+            myModuleName.showMyComponent();
+        }
+    });
+</script>
+```
+
+**TypeScript Type Declarations:**
+
+Create a `types.d.ts` file for NexoPOS API type declarations:
+
+```typescript
+// Resources/ts/types.d.ts
+declare module '@/libraries/lang' {
+    export function __(key: string): string;
+    export function __m(key: string, namespace: string): string;
+}
+
+declare module '@/bootstrap' {
+    export const nsHttpClient: any;
+    export const nsSnackBar: any;
+}
+
+declare module '@/libraries/popup' {
+    export class Popup {
+        static show(component: any, params?: any, config?: any): any;
     }
 }
+
+// Global popup components available in NexoPOS
+declare const nsAlertPopup: any;
+declare const nsConfirmPopup: any;
+declare const nsPromptPopup: any;
+declare const nsSelectPopup: any;
+declare const nsMedia: any;
+declare const nsPosLoadingPopup: any;
 ```
+
+#### CSS with Tailwind CSS v4
+
+**IMPORTANT:** NexoPOS modules use Tailwind CSS v4 which has significant changes from v3:
+
+1. **No `tailwind.config.js` file** - Configuration is done directly in CSS
+2. **Prefix required for modules** - Use a unique prefix to avoid class name collisions with core NexoPOS
+3. **New `@import` syntax** - Import Tailwind with the `prefix()` function
+
+**Module CSS Structure:**
+
+```css
+/* Resources/css/style.css */
+@import "tailwindcss" prefix(modulecode);
+```
+
+Where `modulecode` is a short, unique identifier for your module (2-4 characters recommended).
+
+**Examples:**
+- `FooBar` module → `prefix(fb)`
+- `NsQuickConfig` module → `prefix(qc)`
+- `CloudDeployer` module → `prefix(cd)`
+- `InventoryManager` module → `prefix(im)`
+
+**Using Prefixed Classes in Vue Components:**
+
+```vue
+<template>
+    <div class="fb:max-w-3xl fb:mx-auto">
+        <h2 class="fb:text-2xl fb:font-bold fb:mb-6">Title</h2>
+        <p class="fb:text-gray-600 fb:mb-4">Description</p>
+        
+        <input 
+            type="text"
+            class="fb:w-full fb:border fb:border-gray-300 fb:rounded-lg fb:px-4 fb:py-2 focus:fb:ring-2 focus:fb:ring-blue-500"
+        />
+        
+        <button class="fb:bg-blue-500 fb:text-white fb:px-4 fb:py-2 fb:rounded hover:fb:bg-blue-600">
+            Submit
+        </button>
+    </div>
+</template>
+```
+
+**Key Points:**
+
+- **Every Tailwind class must have the prefix** - `fb:text-xl` not `text-xl`
+- **Responsive prefixes come after module prefix** - `fb:md:text-2xl`
+- **Pseudo-classes use module prefix** - `hover:fb:bg-blue-600`, `focus:fb:ring-2`
+- **No tailwind.config.js needed** - Tailwind v4 doesn't use it
+- **Prevents collisions** - Your `fb:text-xl` won't conflict with core's `text-xl`
+
+**Complete Example:**
+
+```css
+/* Resources/css/style.css */
+@import "tailwindcss" prefix(fb);
+
+/* Optional: Add custom CSS for your module */
+.fb-custom-component {
+    /* Custom styles that aren't Tailwind utilities */
+    background-image: linear-gradient(to right, #4f46e5, #7c3aed);
+}
+```
+
+```vue
+<!-- Resources/ts/components/ProductCard.vue -->
+<template>
+    <div class="fb:bg-white fb:rounded-lg fb:shadow-md fb:p-4 fb:hover:shadow-lg fb:transition-shadow">
+        <h3 class="fb:text-lg fb:font-semibold fb:text-gray-800 fb:mb-2">
+            {{ product.name }}
+        </h3>
+        <p class="fb:text-gray-600 fb:text-sm fb:mb-4">
+            {{ product.description }}
+        </p>
+        <div class="fb:flex fb:justify-between fb:items-center">
+            <span class="fb:text-xl fb:font-bold fb:text-green-600">
+                {{ formatPrice(product.price) }}
+            </span>
+            <button class="fb:bg-blue-500 fb:text-white fb:px-4 fb:py-2 fb:rounded fb:text-sm hover:fb:bg-blue-600 fb:transition-colors">
+                Add to Cart
+            </button>
+        </div>
+    </div>
+</template>
+```
+
+**Migration from Tailwind v3:**
+
+If you have existing code with Tailwind v3 (using `tailwind.config.js`):
+
+1. **Delete `tailwind.config.js`** - No longer needed
+2. **Create/update `Resources/css/style.css`** with `@import "tailwindcss" prefix(yourprefix);`
+3. **Add prefix to all Tailwind classes** in your Vue components
+4. **Update vite.config.js** to ensure it includes the CSS file in the input array
+
+**Troubleshooting:**
+
+If you see errors like "Cannot apply unknown utility class `border-gray-300`":
+- Check that your CSS file has the `@import "tailwindcss" prefix(...)` directive
+- Verify all Tailwind classes in your Vue files use your prefix
+- Ensure the CSS file is included in vite.config.js inputs
+- Run `npm run build` to regenerate assets
+
+#### SCSS (scss/) - Legacy
+
+**Note:** SCSS with `@apply` directives is legacy and not recommended with Tailwind v4. Use the CSS + prefix approach above instead.
 
 ### Routes/
 
@@ -744,7 +992,130 @@ trait HasPrice
 - **Database Tables**: Use module prefix (e.g., `foobar_products`)
 - **Routes**: Use module prefix (e.g., `foobar.products.index`)
 
-### 2. Namespace Organization
+### 2. Module Changelog Documentation
+
+**IMPORTANT:** When making significant changes to a module that require documentation, create a changelog file in the module's root directory.
+
+#### Module Changelog Directory Structure
+
+```
+modules/YourModule/
+├── CHANGELOG/
+│   ├── YYYY-MM-DD-descriptive-heading-in-kebab-case.md
+│   ├── YYYY-MM-DD-another-change.md
+│   └── README.md
+```
+
+#### Changelog File Naming Convention
+
+Module changelog files must follow this naming format:
+
+```
+YYYY-MM-DD-descriptive-heading-in-kebab-case.md
+```
+
+**Examples:**
+- `2025-11-27-add-new-feature.md`
+- `2025-11-27-update-api-endpoints.md`
+- `2025-11-27-fix-critical-bug.md`
+- `2025-12-01-improve-performance.md`
+
+#### Module Changelog Content Structure
+
+```markdown
+# Change Title
+
+**Date:** YYYY-MM-DD
+**Type:** Feature | Bug Fix | Enhancement | Breaking Change
+**Module:** ModuleName
+**Version:** X.Y.Z
+
+## Summary
+
+Brief description of what changed and why.
+
+## Changes Made
+
+- List of specific changes
+- Files modified or added
+- New features or functionality
+
+## Migration Required
+
+If applicable, document any migration steps needed.
+
+## Breaking Changes
+
+If applicable, list any breaking changes and how to address them.
+
+## Dependencies
+
+List any new dependencies or version requirements.
+
+## Related Issues
+
+Link to any related GitHub issues or tickets.
+```
+
+#### When to Create a Module Changelog
+
+Create a changelog for:
+- New module features
+- Breaking changes to module APIs
+- Significant bug fixes
+- Database schema changes in module
+- Configuration changes
+- Deprecated features
+- Security updates
+- Version updates
+
+#### Example Module Changelog
+
+```markdown
+# Add Product Import Feature
+
+**Date:** 2025-11-27
+**Type:** Feature
+**Module:** FooBar
+**Version:** 1.2.0
+
+## Summary
+
+Added bulk product import functionality allowing users to import products from CSV files with validation and error reporting.
+
+## Changes Made
+
+- Created ImportController for handling CSV uploads
+- Added validation service for product data
+- Implemented batch processing for large imports
+- Added import history tracking
+- Created new API endpoints for import operations
+
+## Migration Required
+
+Run the following migration:
+```bash
+php artisan module:migrate FooBar
+```
+
+## Breaking Changes
+
+None.
+
+## Dependencies
+
+- Added league/csv: ^9.8
+- Requires PHP 8.1+
+
+## Related Issues
+
+- Closes #123
+- Related to #456
+```
+
+**Note:** Module changelogs are separate from core NexoPOS changelogs (which go in `/changelogs/` at the project root). Only document changes specific to your module in the module's CHANGELOG directory.
+
+### 3. Namespace Organization
 
 All module classes should follow the namespace pattern:
 ```
@@ -874,14 +1245,111 @@ php artisan module:publish FooBar
 2. **Routes not working**: Verify route file loading in service provider
 3. **Views not found**: Ensure view paths are registered correctly
 4. **Permissions not working**: Check permission creation and assignment
-5. **Assets not loading**: Verify public folder symlink creation
+5. **Assets not loading**: Verify Vite build and `@moduleViteAssets` usage
+
+### Asset Loading Issues
+
+**Problem: Module assets (JS/CSS) not loading**
+
+**Solutions:**
+
+1. **Verify build output exists:**
+   ```bash
+   ls -la modules/YourModule/Public/build/
+   ```
+   Should contain `.vite/manifest.json` and `assets/` directory
+
+2. **Check manifest file:**
+   ```bash
+   cat modules/YourModule/Public/build/.vite/manifest.json
+   ```
+   Should contain entries for your compiled assets
+
+3. **Ensure using correct directive in Blade:**
+   ```blade
+   @moduleViteAssets('Resources/ts/main.ts', 'YourModule')
+   ```
+   NOT `@vite()` or incorrect paths
+
+4. **Verify module namespace matches config.xml:**
+   ```xml
+   <namespace>YourModule</namespace>
+   ```
+
+5. **Clear all caches:**
+   ```bash
+   php artisan cache:clear
+   php artisan view:clear
+   php artisan config:clear
+   ```
+
+6. **Rebuild assets:**
+   ```bash
+   cd modules/YourModule
+   npm install
+   npm run build
+   ```
+
+7. **Check browser console** for 404 errors or JavaScript errors
+
+8. **Verify vite.config.js** has correct paths:
+   ```javascript
+   laravel({
+       hotFile: 'Public/hot',
+       input: ['Resources/ts/main.ts', 'Resources/css/style.css'],
+       refresh: ['Resources/**']
+   })
+   ```
+
+**Problem: Hot reload not working in development**
+
+**Solutions:**
+
+1. **Run dev server:**
+   ```bash
+   cd modules/YourModule
+   npm run dev
+   ```
+
+2. **Check `Public/hot` file exists** while dev server is running
+
+3. **Verify Vite is accessible** at `http://localhost:5173`
+
+**Problem: TypeScript compilation errors**
+
+**Solutions:**
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Check tsconfig.json** has correct paths configuration
+
+3. **Create types.d.ts** for NexoPOS API declarations
+
+4. **Restart IDE/editor** to reload TypeScript language server
 
 ### Debugging Tips
 
-1. Check Laravel logs for module loading errors
+1. Check Laravel logs for module loading errors: `storage/logs/laravel.log`
 2. Verify namespace consistency across all files
 3. Ensure proper service provider registration
-4. Test with minimal module first, then add complexity
-5. Use Laravel's debugging tools (dd(), dump(), etc.)
+4. Use browser DevTools Network tab to check asset requests
+5. Check Vite build output for compilation warnings
+6. Test with minimal module first, then add complexity
+7. Use Laravel's debugging tools (`dd()`, `dump()`, `Log::info()`)
+8. Verify module directory permissions (755 for directories, 644 for files)
+
+### Development Workflow Best Practices
+
+1. **Start with structure:** Create module skeleton first
+2. **Build incrementally:** Add features one at a time
+3. **Test early:** Run `npm run build` after adding new assets
+4. **Clear caches often:** After any configuration changes
+5. **Use version control:** Commit working states frequently
+6. **Document changes:** Keep README.md updated with features
+7. **Follow conventions:** Match NexoPOS coding standards
+8. **Check examples:** Reference existing modules like `NsPageBuilder`, `CloudDeployer`
 
 This comprehensive guide provides the foundation for creating robust, well-structured modules that integrate seamlessly with the NexoPOS ecosystem.

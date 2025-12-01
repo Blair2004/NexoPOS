@@ -88,7 +88,99 @@ That folder has 3 subfolders:
 
 At the root of the directory, we might also have some laravel (or laravel packages) migration that are necessary to be executed.
 
+## Changelog Documentation
+
+When making significant changes to the codebase that require documentation, create a changelog file in the `changelogs/` directory at the root of the project.
+
+### Changelog File Naming Convention
+
+Changelog files must follow this naming format:
+
+```
+YYYY-MM-DD-descriptive-heading-in-kebab-case.md
+```
+
+**Examples:**
+- `2025-11-27-add-quick-config-wizard.md`
+- `2025-11-27-update-module-asset-loading.md`
+- `2025-11-27-fix-printer-configuration-bug.md`
+- `2025-12-01-add-new-payment-gateway.md`
+
+### Changelog Content Structure
+
+Each changelog file should include:
+
+```markdown
+# Change Title
+
+**Date:** YYYY-MM-DD
+**Type:** Feature | Bug Fix | Enhancement | Breaking Change
+**Affects:** Core | Module Name | API | Frontend | Backend
+
+## Summary
+
+Brief description of what changed and why.
+
+## Changes Made
+
+- List of specific changes
+- Files modified or added
+- New features or functionality
+
+## Migration Required
+
+If applicable, document any migration steps needed.
+
+## Breaking Changes
+
+If applicable, list any breaking changes and how to address them.
+
+## Related Issues
+
+Link to any related GitHub issues or tickets.
+```
+
+### When to Create a Changelog
+
+Create a changelog for:
+- New features or modules
+- Breaking changes to APIs or functionality
+- Significant bug fixes
+- Database schema changes
+- Configuration changes that affect users
+- Deprecated features
+- Security updates
+
+### Example Changelog
+
+```markdown
+# Add Quick Store Configuration Wizard
+
+**Date:** 2025-11-27
+**Type:** Feature
+**Affects:** Core, Modules
+
+## Summary
+
+Added a multi-step configuration wizard that appears on first login to help users quickly set up their NexoPOS store with essential settings.
+
+## Changes Made
+
+- Created NsQuickConfig module
+- Added RenderFooterEvent listener
+- Implemented 4-step wizard (Welcome, Store Identity, Printer Config, App Suggestions)
+- Added API endpoints for saving configuration
+- Updated module asset loading documentation
+
+## Migration Required
+
+None. Module is optional and auto-activates on first dashboard visit.
+
+## Breaking Changes
+None.
+
 ## Additional Instructions
+.github/instructions/nexopos-modules.instructions.md
 .github/instructions/nexopos-asidemenu.instructions.md
 .github/instructions/nexopos-blade-layouts.instructions.md
 .github/instructions/nexopos-crud.instructions.md
@@ -99,6 +191,7 @@ At the root of the directory, we might also have some laravel (or laravel packag
 .github/instructions/nexopos-migrations.instructions.md
 .github/instructions/nexopos-modules.instructions.md
 .github/instructions/nexopos-permissions.instructions.md
+.github/instructions/nexopos-popup.instructions.md
 .github/instructions/nexopos-roles-permissions.instructions.md
 .github/instructions/nexopos-tabs.instructions.md
 .github/instructions/nexopos-widgets.instructions.md

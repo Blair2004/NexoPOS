@@ -665,33 +665,6 @@ class YourModuleServiceProvider extends ServiceProvider
     }
 }
 ```
-            );
-            
-            $menus['settings']['childrens'] = array_merge(
-                $menus['settings']['childrens'] ?? [],
-                $settingsSubmenu
-            );
-        }
-        
-        // Add to Reports menu if it exists
-        if (isset($menus['reports'])) {
-            $reportsSubmenu = AsideMenu::subMenu(
-                label: __m('Module Reports', 'YourModule'),
-                identifier: 'your-module-reports',
-                href: ns()->url('/dashboard/reports/your-module'),
-                permissions: ['your.module.reports']
-            );
-            
-            $menus['reports']['childrens'] = array_merge(
-                $menus['reports']['childrens'] ?? [],
-                $reportsSubmenu
-            );
-        }
-        
-        return $menus;
-    }
-}
-```
 
 ### 🎯 **Real-World Example: PIN Login Module**
 
