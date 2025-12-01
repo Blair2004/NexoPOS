@@ -179,7 +179,7 @@ class CustomerService
                     $customerAddress->author = Auth::id();
                     $customerAddress->customer_id = $customer->id;
 
-                    foreach ( fields as $field => $value ) {
+                    foreach ( $fields as $field => $value ) {
                         $customerAddress->$field = $value;
                     }
 
