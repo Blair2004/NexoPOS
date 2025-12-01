@@ -1,3 +1,4 @@
+@inject('menuService', 'App\Services\MenuService')
 <div id="dashboard-header" class="w-full flex justify-between p-4">
     <div class="flex items-center">
         <div>
@@ -21,10 +22,9 @@
             <div class="relative">
                 <div v-cloak class="w-32 md:w-56 shadow-lg flex z-10 absolute -mb-2 rounded-br-lg rounded-bl-lg overflow-hidden" v-if="menuToggled">
                     <ul class="w-full ns-vertical-menu">
-                        @if ( Gate::allows([ 'manage.profile' ]) )
-                        <li><a class="block px-2 py-1" href="{{ ns()->route( 'ns.dashboard.users.profile' ) }}"><i class="las text-lg mr-2 la-user-tie"></i> {{ __( 'Profile' ) }}</a></li>
-                        @endif
-                        <li><a class="block px-2 py-1" href="{{ ns()->route( 'ns.logout' ) }}"><i class="las la-sign-out-alt mr-2"></i> {{ __( 'Logout' ) }}</a></li>
+                        @foreach( $menuService->getAccountMenus() as $identifier => $menu )
+                        <li><a class="block px-2 py-1" href="{{ $menu['href'] }}"><i class="las text-lg mr-2 {{ $menu['icon'] }}"></i> {{ $menu['label'] }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
             </div>

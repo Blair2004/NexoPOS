@@ -499,7 +499,7 @@ class CoreService
      *
      * @throws NotFoundException
      */
-    public function moduleViteAssets( string $fileName, $moduleId ): string
+    public function moduleViteAssets( string $fileName, $moduleId, $options = [] ): string
     {
         $moduleService = app()->make( ModulesService::class );
         $module = $moduleService->get( $moduleId );
@@ -551,7 +551,11 @@ class CoreService
             $pathinfo = pathinfo( $fileName );
 
             if ( in_array( $pathinfo[ 'extension' ], [ 'js', 'ts', 'tsx', 'jsx' ] ) ) {
-                $assets->prepend( '<script type="module" src="' . $url . '/' . $fileName . '"></script>' );
+                if ( ! isset( $options['type'] ) || $options['type'] === 'module' ) {
+                    $assets->prepend( '<script type="module" src="' . $url . '/' . $fileName . '" defer></script>' );
+                } else {
+                    $assets->prepend( '<script src="' . $url . '/' . $fileName . '"></script>' );
+                }
             } elseif ( in_array( $pathinfo[ 'extension'], [ 'css', 'scss' ] ) ) {
                 $assets->push( '<link rel="stylesheet" href="' . $url . '/' . $fileName . '"/>' );
             } else {

@@ -7,11 +7,21 @@
                 {{ leading }}
                 </span>
             </div>
+            <div v-if="field.prefix" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="prefix sm:text-sm sm:leading-5">
+                {{ field.prefix }}
+                </span>
+            </div>
             <input 
                 :disabled="field.disabled" 
                 v-model="field.value" 
                 :id="field.name" :type="type || field.type || 'text'" 
                 :class="inputClass" class="block w-full sm:text-sm sm:leading-5 h-10" :placeholder="field.placeholder || ''" />
+            <div v-if="field.suffix" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <span class="suffix sm:text-sm sm:leading-5">
+                {{ field.suffix }}
+                </span>
+            </div>
         </div>
         <ns-field-description :field="field"></ns-field-description>
     </div>

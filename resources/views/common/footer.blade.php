@@ -26,5 +26,5 @@ ns.authentication   =   <?php echo json_encode( $authentication );?>;
 ns.base_url         =   '{{ url( "/" ) }}';
 </script>
 @vite([ 'resources/ts/bootstrap.ts' ])
-@include( 'layout._footer-injection' )
 @yield( 'layout.dashboard.footer.inject' )
+@include( 'layout._footer-injection' )

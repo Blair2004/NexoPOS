@@ -53,7 +53,7 @@ class SettingsPage
                             }
 
                             return true;
-                        } )->toArray();
+                        } )->values();
 
                         return [ $key => $tab ];
                     } ),

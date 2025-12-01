@@ -793,27 +793,27 @@ export default {
                                                         <div class="flex">
                                                             <div class="flex md:flex-row flex-col md:-mx-1">
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
+                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
+                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="selectUnitForProduct( index )">{{ __( 'Unit' ) }}: {{ getSelectedUnit( index ) }}</span>
+                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="selectUnitForProduct( index )">{{ __( 'Unit' ) }}: {{ getSelectedUnit( index ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
+                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="defineConversionOption( index )">{{ __( 'Convert' ) }}: {{ product.procurement.convert_unit_id ? product.procurement.convert_unit_label : __( 'N/A' ) }}</span>
+                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="defineConversionOption( index )">{{ __( 'Convert' ) }}: {{ product.procurement.convert_unit_id ? product.procurement.convert_unit_label : __( 'N/A' ) }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td> 
                                                     <td :key="key" v-if="column.type === 'text'" @click="triggerKeyboard( product.procurement, key, index )" class="text-primary border cursor-pointer">
                                                         <div class="flex justify-center">
-                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
-                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
+                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
+                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-primary text-sm">{{ product.procurement[ key ] }}</span>
                                                         </div>
                                                     </td>
                                                     <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">

@@ -30,13 +30,13 @@
             @apply bg-success-tertiary text-white border-table-th-edge;
         }
         tr.info > th, tr.info td {
-            @apply bg-info-tertiary text-white border-table-th-edge;
+            @apply bg-[#0dcaf0] text-white border-table-th-edge;
         }
         tr.warning > th, tr.warning td {
             @apply bg-warning-tertiary text-white border-table-th-edge;
         }
     }
-        tbody, tfoot {
+    tbody, tfoot {
         @apply text-fontcolor border-table-th-edge text-sm;
 
         tr {
@@ -44,7 +44,7 @@
             td {
                 @apply border-table-th-edge;
                 &.info {
-                    @apply border-info-secondary bg-info-primary text-white;
+                    @apply border-info-secondary bg-[#0dcaf0] text-white;
                 }
                 &.error {
                     @apply border-error-secondary bg-error-primary text-white;
@@ -63,7 +63,7 @@
         }
 
         tr.info {
-            @apply bg-info-primary text-white;
+            @apply bg-[#1e74e4af] text-white;
         }
     
         tr.error {
@@ -71,7 +71,7 @@
         }
     
         tr.success {
-            @apply bg-success-secondary text-white;
+            @apply bg-[#34cc4894] text-white;
         }
     
         tr.warning {

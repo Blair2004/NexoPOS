@@ -280,10 +280,10 @@ export default class FormValidation {
         }
         if ( form.tabs ) {
             for( let tab in form.tabs ) {
-                if ( formValue[ tab ] === undefined ) {
-                    formValue[ tab ]    =   {};
+                if ( formValue[ form.tabs[ tab ].identifier ] === undefined ) {
+                    formValue[ form.tabs[ tab ].identifier ]    =   {};
                 }
-                formValue[ tab ]   =   this.extractFieldsLabels( form.tabs[ tab ].fields );
+                formValue[ form.tabs[ tab ].identifier ]   =   this.extractFieldsLabels( form.tabs[ tab ].fields );
             }
         }
         return formValue;
@@ -435,6 +435,23 @@ export default class FormValidation {
         });
     }
 
+    private getFieldValue( field ) {
+        let fieldValue = field.value;
+
+        /**
+         * We case we have a field that include prefix and suffix, we'll
+         * introduce validation with prefix and suffix.
+         */
+        if ( field.data && field.data['validate-with-suffix'] ) {
+            fieldValue  +=  field.suffix || '';
+        }
+
+        if ( field.data && field.data[ 'validate-with-prefix' ] ) {
+            fieldValue  =   ( field.prefix || '' ) + fieldValue;
+        }
+        return fieldValue;
+    }
+
     /**
      * This methods defines a set of rules that must returns "true" to 
      * indicate the field check was not successful.
@@ -450,34 +467,41 @@ export default class FormValidation {
                     field.value === undefined || field.value === null || field.value.length === 0,
     
                 email: (field, rule) =>
-                    field.value !== undefined && field.value.length > 0 && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(field.value),
+                    field.value !== undefined && field.value.length > 0 && !/^[\w.-]+@([\w-]+\.)+[\w-]{2,}$/i.test(field.value),
     
                 same: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );
                     const ruleHasWildcard = rule.value.includes('*'); 
-                    return ( ! ruleHasWildcard && `${similar}`.length > 0 && field.value !== similar );
+                    const fieldValue = this.getFieldValue( field );
+                    return ( ! ruleHasWildcard && `${similar}`.length > 0 && fieldValue !== similar );
                 },
     
                 different: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );
                     const ruleHasWildcard = rule.value.includes('*'); 
-                    return ! ruleHasWildcard && similar && field.value === similar;
+                    const fieldValue = this.getFieldValue( field );
+                    return ! ruleHasWildcard && similar && fieldValue === similar;
                 },
     
                 min: (field, rule) => {
-                    return field.value && field.value.length < parseInt(rule.value);
+                    const fieldValue = this.getFieldValue( field );
+                    return fieldValue && fieldValue.length < parseInt(rule.value);
+                },
+
+                max: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
+                    return fieldValue && fieldValue.length > parseInt(rule.value);
                 },
     
-                max: (field, rule) =>
-                    field.value && field.value.length > parseInt(rule.value),
-    
                 regex: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
                     const pattern = new RegExp(rule.value);
-                    return !pattern.test(field.value || '');
+                    return !pattern.test(fieldValue || '');
                 },
 
                 number: ( field, rule ) => {
-                    return !/^[0-9]+$/.test( field.value )
+                    const fieldValue = this.getFieldValue( field );
+                    return !/^[0-9]+$/.test( fieldValue )
                 }
             };
     

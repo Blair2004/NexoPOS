@@ -66,6 +66,9 @@ if ( Auth::check() ) {
             <div id="dashboard-overlay">
                 <div v-if="sidebar === 'visible'" @click="closeMenu()" class="z-40 w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
             </div>
+            @hasSection( 'layout.dashboard.canvas' )
+                @yield( 'layout.dashboard.canvas' )
+            @else
             <div id="dashboard-body" class="flex flex-auto flex-col overflow-hidden">
                 <div class="overflow-y-auto flex-auto">
                     @hasSection( 'layout.dashboard.body' )
@@ -92,12 +95,12 @@ if ( Auth::check() ) {
                     {!! Hook::filter( 'ns-footer-signature', sprintf( __( 'You\'re using <a tager="_blank" href="%s" class="hover:text-blue-400 mx-1 inline-block">NexoPOS %s</a>' ), 'https://my.nexopos.com/en', config( 'nexopos.version' ) ) ) !!}
                 </div>
             </div>
+            @endif
         </div>
     </div>
     @section( 'layout.dashboard.footer' )
         @include( 'common.popups' )
         @include( 'common.dashboard-footer' )
-        @vite([ 'resources/ts/app.ts' ])
     @show
 </body>
 </html>
