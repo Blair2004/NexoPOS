@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Classes\Config as ClassesConfig;
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
+use App\Events\ModulesLoadedEvent;
 use App\Facades\Config;
 use App\Models\Order;
 use App\Models\OrderProductRefund;
@@ -251,7 +252,7 @@ class AppServiceProvider extends ServiceProvider
          * When the module has started,
          * we can load the configuration.
          */
-        Event::listen( function ( ModulesBootedEvent $event ) {
+        Event::listen( function ( ModulesLoadedEvent $event ) {
             $this->loadConfiguration();
         } );
     }
