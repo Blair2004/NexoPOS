@@ -22,21 +22,28 @@ class ModulesServiceProvider extends ServiceProvider
     public function boot( ModulesService $modules )
     {
         /**
-         * trigger boot method only for enabled modules
-         * service providers that extends ModulesServiceProvider.
+         * We should only boot the modules if the system
+         * is already installed. This will prevent modules from
+         * being booted during the installation process.
          */
-        collect( $modules->getEnabledAndAutoloadedModules() )
-            ->each( function ( $module ) use ( $modules ) {
-                $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
-            } );
-
-        $this->commands( $this->modulesCommands );
-
-        /**
-         * trigger an event when all the module
-         * has successfully booted.
-         */
-        ModulesBootedEvent::dispatch();
+        if ( Helper::installed() ) {
+            /**
+             * trigger boot method only for enabled modules
+             * service providers that extends ModulesServiceProvider.
+             */
+            collect( $modules->getEnabledAndAutoloadedModules() )
+                ->each( function ( $module ) use ( $modules ) {
+                    $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
+                } );
+    
+            $this->commands( $this->modulesCommands );
+    
+            /**
+             * trigger an event when all the module
+             * has successfully booted.
+             */
+            ModulesBootedEvent::dispatch();
+        }
     }
 
     /**
@@ -77,10 +84,11 @@ class ModulesServiceProvider extends ServiceProvider
                     $this->modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
                 } );
 
-                event( new ModulesLoadedEvent( $this->modules->get() ) );
             }
 
+            ModulesLoadedEvent::dispatch( $this->modules->get() );
+            
             return $this->modules;
-        } );
+        });
     }
 }
