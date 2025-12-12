@@ -54,19 +54,28 @@ class EnvEditor
 
     public function set( $key, $value )
     {
-        if ( preg_match( '/^[a-zA-Z][a-zA-Z0-9_]*$/', $key ) ) {
-            if ( is_numeric( $value ) || is_string( $value ) ) {
-                if ( strpos( $value, ' ' ) !== false ) {
-                    $value = '"' . $value . '"';
-                }
-            } else {
-                $value = '';
-            }
-
-            $this->env_file_data[$key] = htmlspecialchars( $value );
-        } else {
+        // Validate key format
+        if ( !preg_match( '/^[a-zA-Z][a-zA-Z0-9_]*$/', $key ) ) {
             throw new Exception( 'Invalid key format' );
         }
+
+        // Sanitize value
+        if ( is_numeric( $value ) || is_string( $value ) ) {
+            // Remove any newline characters to prevent injection
+            $value = str_replace( ["\r", "\n"], '', (string)$value );
+            
+            // Escape backslashes and double quotes for .env context
+            $value = addslashes( $value );
+            
+            // Always quote string values to prevent injection
+            if ( is_string( $value ) && !is_numeric( $value ) ) {
+                $value = '"' . $value . '"';
+            }
+        } else {
+            $value = '""'; // Empty quoted string for safety
+        }
+
+        $this->env_file_data[$key] = $value;
         $this->write();
     }
 

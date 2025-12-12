@@ -3,6 +3,7 @@
 use App\Http\Controllers\SetupController;
 use App\Http\Middleware\ClearRequestCacheMiddleware;
 use App\Http\Middleware\InstalledStateMiddleware;
+use App\Http\Middleware\NotInstalledStateMiddleware;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,7 @@ include_once dirname( __FILE__ ) . '/api/update.php';
 Route::prefix( 'setup' )
     ->middleware( [
         ClearRequestCacheMiddleware::class,
+        NotInstalledStateMiddleware::class,
     ] )
     ->group( function () {
         Route::get( 'check-database', [ SetupController::class, 'checkExistingCredentials' ] );
