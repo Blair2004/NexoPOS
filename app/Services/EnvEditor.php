@@ -52,7 +52,7 @@ class EnvEditor
         $this->write();
     }
 
-    public function set( $key, $value )
+    public function set( $key, $value, $quoted = true )
     {
         // Validate key format
         if ( !preg_match( '/^[a-zA-Z][a-zA-Z0-9_]*$/', $key ) ) {
@@ -67,8 +67,8 @@ class EnvEditor
             // Escape backslashes and double quotes for .env context
             $value = addslashes( $value );
             
-            // Always quote string values to prevent injection
-            if ( is_string( $value ) && !is_numeric( $value ) ) {
+            // Quote string values based on $quoted parameter
+            if ( $quoted && is_string( $value ) && !is_numeric( $value ) ) {
                 $value = '"' . $value . '"';
             }
         } else {

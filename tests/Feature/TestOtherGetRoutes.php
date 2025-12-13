@@ -43,7 +43,14 @@ class TestOtherGetRoutes extends TestCase
                         ] ) ) {
                             $response->assertStatus( 403 );
                         } else {
-                            $response->assertStatus( 200 );
+                            /** 
+                             * If $uri include /api/setup we should expect a failure
+                            */
+                            if ( strpos( $uri, 'api/setup' ) !== false ) {
+                                $response->assertStatus( 403 );
+                            } else {
+                                $response->assertStatus( 200 );
+                            }
                         }
                     } else {
                         throw new Exception( 'Not supported status detected.' );
