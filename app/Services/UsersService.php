@@ -387,69 +387,78 @@ class UsersService
             ->where( 'expired_at', '>=', now() )
             ->first();
 
-        if ( ! ns()->allowedTo( $permission ) || ! $approvedTemporaryPermission instanceof PermissionAccess ) {
-            $duration = ns()->option->get( 'ns_pos_action_permission_duration', 5 );
-            $cooldown = ns()->option->get( 'ns_pos_action_permission_cooldown_features', 10 );
-
-            $nowSubDuration = now()->subMinutes( $duration );
+        if ( ! ns()->allowedTo( $permission ) && ! $approvedTemporaryPermission instanceof PermissionAccess ) {
 
             /**
-             * If the cool down is greater than 0, that means we should check if the user
-             * didn't had any approved request created in the last minutes (based on the cooldown).
+             * If we've explicitely enabled the action permission feature
+             * we should proceed otherwise we won't create any permission request.
              */
-            if ( (int) $cooldown > 0 ) {
-                $recentApproved = PermissionAccess::where( 'permission', $permission )
-                    ->where( 'requester_id', Auth::id() )
-                    ->where( 'permission', $permission )
-                    ->where( 'status', PermissionAccess::GRANTED )
-                    ->where( 'updated_at', '>=', now()->subMinutes( $cooldown ) )
-                    ->first();
-
+            $access = [];
+            
+            if ( ns()->option->get( 'ns_pos_action_permission_enabled', 'no' ) === 'yes' ) {
+                $duration = ns()->option->get( 'ns_pos_action_permission_duration', 5 );
+                $cooldown = ns()->option->get( 'ns_pos_action_permission_cooldown_features', 10 );
+    
+                $nowSubDuration = now()->subMinutes( $duration );
+    
                 /**
-                 * If the user has a recent approved permission request, we will
-                 * check if the cooldown has passed.
+                 * If the cool down is greater than 0, that means we should check if the user
+                 * didn't had any approved request created in the last minutes (based on the cooldown).
                  */
-                if ( $recentApproved instanceof PermissionAccess ) {
-                    $waitTime = (int) $cooldown - now()->diffInMinutes( $recentApproved->updated_at );
-
+                if ( (int) $cooldown > 0 ) {
+                    $recentApproved = PermissionAccess::where( 'permission', $permission )
+                        ->where( 'requester_id', Auth::id() )
+                        ->where( 'permission', $permission )
+                        ->where( 'status', PermissionAccess::GRANTED )
+                        ->where( 'updated_at', '>=', now()->subMinutes( $cooldown ) )
+                        ->first();
+    
+                    /**
+                     * If the user has a recent approved permission request, we will
+                     * check if the cooldown has passed.
+                     */
+                    if ( $recentApproved instanceof PermissionAccess ) {
+                        $waitTime = (int) $cooldown - now()->diffInMinutes( $recentApproved->updated_at );
+    
+                        return response()->json( [
+                            'message' => sprintf(
+                                __( 'You need to wait %s minutes before requesting this permission again.' ),
+                                $waitTime
+                            ),
+                            'type' => 'permission_cooldown',
+                        ], 403 );
+                    }
+                }
+    
+                /**
+                 * if there is a already pending request for the same permission
+                 * we will not allow the user to request it again.
+                 */
+                $pendingRequest = PermissionAccess::where( 'requester_id', Auth::id() )
+                    ->where( 'permission', $permission )
+                    ->where( 'status', PermissionAccess::PENDING )
+                    ->where( 'expired_at', '>=', $nowSubDuration )
+                    ->first();
+    
+                if ( $pendingRequest instanceof PermissionAccess ) {
                     return response()->json( [
-                        'message' => sprintf(
-                            __( 'You need to wait %s minutes before requesting this permission again.' ),
-                            $waitTime
-                        ),
-                        'type' => 'permission_cooldown',
+                        'message' => __( 'You already have a pending permission request for this action.' ),
+                        'type' => 'permission_pending',
+                        'data' => [
+                            'permission' => $permission,
+                            'access' => $pendingRequest,
+                        ],
                     ], 403 );
                 }
+    
+                $access = new PermissionAccess;
+                $access->requester_id = Auth::id();
+                $access->granter_id = 0; // 0 means no granter yet
+                $access->status = PermissionAccess::PENDING;
+                $access->permission = $permission;
+                $access->expired_at = now()->addMinutes( $duration );
+                $access->save();
             }
-
-            /**
-             * if there is a already pending request for the same permission
-             * we will not allow the user to request it again.
-             */
-            $pendingRequest = PermissionAccess::where( 'requester_id', Auth::id() )
-                ->where( 'permission', $permission )
-                ->where( 'status', PermissionAccess::PENDING )
-                ->where( 'expired_at', '>=', $nowSubDuration )
-                ->first();
-
-            if ( $pendingRequest instanceof PermissionAccess ) {
-                return response()->json( [
-                    'message' => __( 'You already have a pending permission request for this action.' ),
-                    'type' => 'permission_pending',
-                    'data' => [
-                        'permission' => $permission,
-                        'access' => $pendingRequest,
-                    ],
-                ], 403 );
-            }
-
-            $access = new PermissionAccess;
-            $access->requester_id = Auth::id();
-            $access->granter_id = 0; // 0 means no granter yet
-            $access->status = PermissionAccess::PENDING;
-            $access->permission = $permission;
-            $access->expired_at = now()->addMinutes( $duration );
-            $access->save();
 
             return response()->json( [
                 'message' => __( 'You do not have permission to perform this action.' ),
