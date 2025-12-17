@@ -101,10 +101,11 @@ class YourModuleServiceProvider extends ServiceProvider
 </div>
 @endsection
 
-@push('footer-scripts')
+@section('layout.dashboard.footer.inject')
     @moduleViteAssets('Resources/ts/main.ts', 'YourModule')
     @moduleViteAssets('Resources/css/style.css', 'YourModule')
-@endpush
+    @parent
+@endsection
 ```
 
 ## TypeScript main.ts Template

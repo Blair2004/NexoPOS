@@ -8,13 +8,11 @@ This document provides comprehensive guidelines for creating database migrations
 
 ## Migration File Naming Convention
 
-Migration files **SHOULD** follow Laravel 11+ timestamped naming convention:
+Migration files **MUST** follow Laravel 11+ timestamped naming convention:
 
 ```
 YYYY_MM_DD_HHMMSS_descriptive_migration_name.php
 ```
-
-**Note:** NexoPOS supports both old-style named migrations (`CreatePagesTable.php`) and new timestamped migrations (`2024_10_31_120000_create_pages_table.php`). However, **timestamped migrations are strongly recommended** for better organization and to avoid naming conflicts.
 
 ### Examples:
 ```
@@ -309,7 +307,7 @@ return new class extends Migration
                 $table->json('metadata')->nullable();
                 $table->enum('status', ['draft', 'published', 'archived'])
                     ->default('draft');
-                $table->unsignedBigInteger('author_id');
+                $table->unsignedInteger('author_id');
                 $table->timestamp('published_at')->nullable();
                 $table->timestamps();
 
