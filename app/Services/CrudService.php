@@ -62,9 +62,11 @@ class CrudService
      * @return array
      */
     protected $links = [
-        'list' => [],
-        'edit' => [],
-        'create' => [],
+        'create' => '',
+        'list' => '',
+        'edit' => '',
+        'put' => '',
+        'post' => '',
     ];
 
     /**
