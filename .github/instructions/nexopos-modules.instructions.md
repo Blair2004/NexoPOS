@@ -337,7 +337,7 @@ class ProductRequest extends FormRequest
 
 ### Jobs/
 
-Queue job classes:
+Queue job classes. Note that using anonymous jobs via `dispatch(function() { ... })` is strictly forbidden. Always create a dedicated Job class.
 
 ```php
 <?php
@@ -982,6 +982,44 @@ trait HasPrice
     }
 }
 ```
+
+### Console/
+
+**⚠️ IMPORTANT: Modules should NOT register commands or define schedules in their ServiceProvider.**
+
+Command classes for the module:
+
+```php
+<?php
+
+namespace Modules\FooBar\Console;
+
+use Illuminate\Console\Command;
+
+class ProcessDataCommand extends Command
+{
+    protected $signature = 'foobar:process-data';
+    
+    protected $description = 'Process FooBar data';
+    
+    public function handle()
+    {
+        // Command logic
+        $this->info('Processing data...');
+    }
+}
+```
+
+**Command Discovery:**
+- NexoPOS automatically discovers and registers commands from enabled modules
+- Do NOT manually register commands in your module's ServiceProvider
+- Do NOT define schedules in your module's ServiceProvider
+- Commands are available once the module is enabled
+
+**Scheduling:**
+- If your module needs scheduled tasks, document them in your module's README
+- Let the system administrator add the schedule to their application's schedule configuration
+- Do NOT use `$this->app->booted()` or `Schedule` in module ServiceProviders
 
 ## Module Development Best Practices
 
