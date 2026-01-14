@@ -1,10 +1,13 @@
 <?php
 
 use App\Classes\FormInput;
+use App\Classes\SettingForm;
 
-return [
-    'label' => __('Scale Barcode'),
-    'fields' => [
+return SettingForm::tab(
+    identifier: 'scale-barcode',
+    label: __('Scale Barcode'),
+    component: 'nsScalePreview',
+    fields: [
         FormInput::switch(
             label: __('Enable Scale Barcode'),
             name: 'ns_scale_barcode_enabled',
@@ -55,12 +58,12 @@ return [
         FormInput::textarea(
             label: __('Configuration Example'),
             name: 'ns_scale_barcode_example',
-            value: $this->getExampleText(),
+            value: getExampleText(),
             disabled: true,
             description: __('Example of how scale barcodes will be interpreted with current settings.')
         ),
     ],
-];
+);
 
 /**
  * Get example text based on current configuration
