@@ -6,7 +6,9 @@ use App\Classes\SettingForm;
 return SettingForm::tab(
     identifier: 'scale-barcode',
     label: __('Scale Barcode'),
-    component: 'nsScalePreview',
+    footer: SettingForm::tabFooter(
+        extraComponents: [ 'nsScaleSettingsPreview' ]
+    ),
     fields: [
         FormInput::switch(
             label: __('Enable Scale Barcode'),
