@@ -334,7 +334,7 @@ export default {
                                 // Set quantity or price based on scale barcode type
                                 if ( scaleData.type === 'weight' ) {
                                     // For weight-based scales, set the quantity
-                                    result.product.$quantity = scaleData.value;
+                                    result.product.quantity = scaleData.value;
                                     
                                     // Show notification
                                     nsSnackBar.info( 
@@ -346,7 +346,7 @@ export default {
                                     // based on the price and unit price
                                     const unitPrice = result.product.unit_quantities[0]?.sale_price || 0;
                                     if ( unitPrice > 0 ) {
-                                        result.product.$quantity = scaleData.value / unitPrice;
+                                        result.product.quantity = scaleData.value / unitPrice;
                                     }
                                     
                                     // Show notification

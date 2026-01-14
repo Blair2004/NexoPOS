@@ -22,6 +22,7 @@ class PosSettings extends SettingsPage
             'vat' => include ( dirname( __FILE__ ) . '/pos/vat.php' ),
             'shortcuts' => include ( dirname( __FILE__ ) . '/pos/shortcuts.php' ),
             'features' => include ( dirname( __FILE__ ) . '/pos/features.php' ),
+            'scale-barcode' => include ( dirname( __FILE__ ) . '/pos/scale-barcode.php' ),
         ] );
 
         if ( ns()->option->get( 'ns_pos_action_permission_enabled' ) ) {

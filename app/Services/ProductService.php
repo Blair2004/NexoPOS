@@ -2211,4 +2211,98 @@ class ProductService
     {
         return Hook::filter( 'ns-products-increase-actions', ProductHistory::STOCK_INCREASE );
     }
+
+    /**
+     * Scale Barcode Methods
+     * These methods handle scale barcodes that encode product code and weight/price
+     */
+
+    /**
+     * Check if scale barcode feature is enabled
+     */
+    public function isScaleBarcodeEnabled(): bool
+    {
+        return ns()->option->get('ns_scale_barcode_enabled', 'no') === 'yes';
+    }
+
+    /**
+     * Check if a barcode matches the scale barcode format
+     */
+    public function isScaleBarcode(string $barcode): bool
+    {
+        if (!$this->isScaleBarcodeEnabled()) {
+            return false;
+        }
+
+        $prefix = ns()->option->get('ns_scale_barcode_prefix', '2');
+        
+        // Check if barcode starts with the configured prefix
+        if (!str_starts_with($barcode, $prefix)) {
+            return false;
+        }
+
+        // Check if barcode has the expected length
+        $prefixLength = strlen($prefix);
+        $productCodeLength = (int) ns()->option->get('ns_scale_barcode_product_length', 5);
+        $valueLength = (int) ns()->option->get('ns_scale_barcode_value_length', 5);
+        $expectedLength = $prefixLength + $productCodeLength + $valueLength + 1; // +1 for check digit
+        
+        if (strlen($barcode) !== $expectedLength) {
+            return false;
+        }
+
+        // Check if the barcode contains only digits
+        if (!ctype_digit($barcode)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Parse a scale barcode and extract product code and weight/price
+     * 
+     * @return array{
+     *   product_code: string,
+     *   value: float,
+     *   type: string,
+     *   original_barcode: string
+     * }
+     * @throws Exception
+     */
+    public function parseScaleBarcode(string $barcode): array
+    {
+        if (!$this->isScaleBarcode($barcode)) {
+            throw new Exception(__('Invalid scale barcode format'));
+        }
+
+        $prefix = ns()->option->get('ns_scale_barcode_prefix', '2');
+        $prefixLength = strlen($prefix);
+        $productCodeLength = (int) ns()->option->get('ns_scale_barcode_product_length', 5);
+        $valueLength = (int) ns()->option->get('ns_scale_barcode_value_length', 5);
+        $type = ns()->option->get('ns_scale_barcode_type', 'weight');
+
+        // Extract product code
+        $productCode = substr($barcode, $prefixLength, $productCodeLength);
+
+        // Extract value
+        $startPosition = $prefixLength + $productCodeLength;
+        $rawValue = substr($barcode, $startPosition, $valueLength);
+
+        // Convert to float based on type
+        if ($type === 'weight') {
+            // Weight is typically stored in grams, convert to kg
+            $value = (float) $rawValue / 1000;
+        } else {
+            // Price is typically stored in cents, convert to currency
+            $value = (float) $rawValue / 100;
+        }
+
+        return [
+            'product_code' => $productCode,
+            'value' => $value,
+            'type' => $type,
+            'original_barcode' => $barcode,
+        ];
+    }
 }

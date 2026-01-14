@@ -25,7 +25,6 @@ use App\Models\Unit;
 use App\Services\DateService;
 use App\Services\Helper;
 use App\Services\ProductService;
-use App\Services\ScaleBarcodeService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -35,8 +34,7 @@ class ProductsController extends DashboardController
 {
     public function __construct(
         protected ProductService $productService,
-        protected DateService $dateService,
-        protected ScaleBarcodeService $scaleBarcodeService
+        protected DateService $dateService
     ) {
         // ...
     }
@@ -532,9 +530,9 @@ class ProductsController extends DashboardController
     {
         // Check if this is a scale barcode
         $scaleData = null;
-        if ( $this->scaleBarcodeService->isScaleBarcode( $reference ) ) {
+        if ( $this->productService->isScaleBarcode( $reference ) ) {
             try {
-                $scaleData = $this->scaleBarcodeService->parseScaleBarcode( $reference );
+                $scaleData = $this->productService->parseScaleBarcode( $reference );
                 // Use the extracted product code for searching
                 $reference = $scaleData['product_code'];
             } catch ( Exception $e ) {

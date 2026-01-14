@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use App\Services\ScaleBarcodeService;
+use App\Services\ProductService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ScaleBarcodeTest extends TestCase
@@ -24,7 +24,7 @@ class ScaleBarcodeTest extends TestCase
 
     public function test_scale_barcode_detection()
     {
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         // Valid scale barcode (13 digits starting with 2)
         $validBarcode = '2123450012349';
@@ -41,7 +41,7 @@ class ScaleBarcodeTest extends TestCase
 
     public function test_scale_barcode_parsing_weight()
     {
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         // Barcode: 2-12345-00123-9
         // Product code: 12345
@@ -61,7 +61,7 @@ class ScaleBarcodeTest extends TestCase
         // Change type to price
         ns()->option->set('ns_scale_barcode_type', 'price');
         
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         // Barcode: 2-12345-01234-9
         // Product code: 12345
@@ -77,7 +77,7 @@ class ScaleBarcodeTest extends TestCase
 
     public function test_scale_barcode_generation_weight()
     {
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         // Generate barcode for product 12345 with 0.123 kg
         $barcode = $service->generateScaleBarcode('12345', 0.123);
@@ -99,7 +99,7 @@ class ScaleBarcodeTest extends TestCase
     {
         ns()->option->set('ns_scale_barcode_type', 'price');
         
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         // Generate barcode for product 12345 with $12.34
         $barcode = $service->generateScaleBarcode('12345', 12.34);
@@ -112,7 +112,7 @@ class ScaleBarcodeTest extends TestCase
     {
         ns()->option->set('ns_scale_barcode_enabled', 'no');
         
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         $barcode = '2123450012349';
         $this->assertFalse($service->isScaleBarcode($barcode));
@@ -120,7 +120,7 @@ class ScaleBarcodeTest extends TestCase
 
     public function test_scale_barcode_configuration()
     {
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         $config = $service->getConfiguration();
         
@@ -134,7 +134,7 @@ class ScaleBarcodeTest extends TestCase
 
     public function test_extract_product_code()
     {
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         $barcode = '2123450012349';
         $productCode = $service->extractProductCode($barcode);
@@ -144,7 +144,7 @@ class ScaleBarcodeTest extends TestCase
 
     public function test_extract_value_weight()
     {
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         $barcode = '2123450012349';
         $value = $service->extractValue($barcode);
@@ -157,7 +157,7 @@ class ScaleBarcodeTest extends TestCase
     {
         ns()->option->set('ns_scale_barcode_type', 'price');
         
-        $service = app(ScaleBarcodeService::class);
+        $service = app(ProductService::class);
         
         $barcode = '2123450123449';
         $value = $service->extractValue($barcode);
