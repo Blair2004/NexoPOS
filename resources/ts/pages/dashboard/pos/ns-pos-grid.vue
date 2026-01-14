@@ -326,6 +326,37 @@ export default {
                     .subscribe({
                         next: result => {
                             this.barcode     =   '';
+                            
+                            // Check if this is a scale barcode with embedded data
+                            if ( result.product.scale_barcode_data ) {
+                                const scaleData = result.product.scale_barcode_data;
+                                
+                                // Set quantity or price based on scale barcode type
+                                if ( scaleData.type === 'weight' ) {
+                                    // For weight-based scales, set the quantity
+                                    result.product.$quantity = scaleData.value;
+                                    
+                                    // Show notification
+                                    nsSnackBar.info( 
+                                        __( 'Scale barcode detected: {weight} kg' )
+                                            .replace( '{weight}', scaleData.value.toFixed(3) )
+                                    );
+                                } else if ( scaleData.type === 'price' ) {
+                                    // For price-based scales, we need to calculate quantity
+                                    // based on the price and unit price
+                                    const unitPrice = result.product.unit_quantities[0]?.sale_price || 0;
+                                    if ( unitPrice > 0 ) {
+                                        result.product.$quantity = scaleData.value / unitPrice;
+                                    }
+                                    
+                                    // Show notification
+                                    nsSnackBar.info( 
+                                        __( 'Scale barcode detected: {price}' )
+                                            .replace( '{price}', this.nsCurrency( scaleData.value ) )
+                                    );
+                                }
+                            }
+                            
                             POS.addToCart( result.product );
                         },
                         error: ( error ) => {

@@ -25,6 +25,7 @@ use App\Models\Unit;
 use App\Services\DateService;
 use App\Services\Helper;
 use App\Services\ProductService;
+use App\Services\ScaleBarcodeService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -34,7 +35,8 @@ class ProductsController extends DashboardController
 {
     public function __construct(
         protected ProductService $productService,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected ScaleBarcodeService $scaleBarcodeService
     ) {
         // ...
     }
@@ -528,6 +530,19 @@ class ProductsController extends DashboardController
 
     public function searchUsingArgument( $reference )
     {
+        // Check if this is a scale barcode
+        $scaleData = null;
+        if ( $this->scaleBarcodeService->isScaleBarcode( $reference ) ) {
+            try {
+                $scaleData = $this->scaleBarcodeService->parseScaleBarcode( $reference );
+                // Use the extracted product code for searching
+                $reference = $scaleData['product_code'];
+            } catch ( Exception $e ) {
+                // If parsing fails, continue with original barcode
+                $scaleData = null;
+            }
+        }
+
         $procurementProduct = ProcurementProduct::barcode( $reference )->first();
         $productUnitQuantity = ProductUnitQuantity::barcode( $reference )->with( 'unit' )->first();
         $product = Product::barcode( $reference )
@@ -570,12 +585,17 @@ class ProductsController extends DashboardController
             $product->load( 'unit_quantities.unit' );
             $product->load( 'tax_group.taxes' );
 
-            if ( $product->accurate_tracking ) {
+            if ( $product->accurate_tracking && ! $scaleData ) {
                 throw new NotAllowedException( __( 'Unable to add a product that has accurate tracking enabled, using an ordinary barcode.' ) );
             }
         }
 
         if ( $product instanceof Product ) {
+            // Add scale barcode data to the product response
+            if ( $scaleData ) {
+                $product->scale_barcode_data = $scaleData;
+            }
+
             return [
                 'type' => 'product',
                 'product' => $product,
