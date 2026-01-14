@@ -335,4 +335,61 @@ class ProcurementController extends DashboardController
     {
         return $this->procurementService->storePreload( Str::uuid(), $request->only( [ 'products' ] ) );
     }
+
+    /**
+     * Get products with low stock that should be suggested for procurement
+     *
+     * @return array
+     */
+    public function getLowStockSuggestions()
+    {
+        $products = ProductUnitQuantity::query()
+            ->stockAlertEnabled()
+            ->whereRaw( 'low_quantity > quantity' )
+            ->with( [
+                'product' => function ( $query ) {
+                    $query->select( 'id', 'name', 'sku', 'barcode', 'tax_group_id', 'tax_type', 'purchase_unit_ids' )
+                        ->notGrouped()
+                        ->withStockEnabled();
+                },
+                'unit',
+            ] )
+            ->whereHas( 'product', function ( $query ) {
+                $query->notGrouped()
+                    ->withStockEnabled();
+            } )
+            ->limit( 50 )
+            ->get()
+            ->groupBy( 'product_id' )
+            ->map( function ( $unitQuantities ) {
+                $product = $unitQuantities->first()->product;
+                $product->unit_quantities = $unitQuantities;
+
+                // Calculate suggested reorder quantity (difference between low_quantity and current quantity)
+                $product->suggested_quantity = $unitQuantities->sum( function ( $uq ) {
+                    return max( 0, $uq->low_quantity - $uq->quantity );
+                } );
+
+                // Add purchase units information
+                $units = json_decode( $product->purchase_unit_ids );
+                if ( $units ) {
+                    $product->purchase_units = collect();
+                    collect( $units )->each( function ( $unitID ) use ( &$product ) {
+                        $unit = Unit::find( $unitID );
+                        if ( $unit ) {
+                            $product->purchase_units->push( $unit );
+                        }
+                    } );
+                }
+
+                return $product;
+            } )
+            ->values();
+
+        return [
+            'status' => 'success',
+            'data' => $products,
+            'count' => $products->count(),
+        ];
+    }
 }

@@ -61,6 +61,11 @@ export default {
                         })
                 }
 
+                /**
+                 * Check for low stock products and display suggestion notification
+                 */
+                this.checkLowStockProducts();
+
                 this.hasPreloaded = true;
             }
         })
@@ -159,6 +164,11 @@ export default {
              * Determine if we should show the info box
              */
             showInfo: false,
+
+            /**
+             * Store low stock products for suggestions
+             */
+            lowStockProducts: [],
         }
     },
     watch: {
@@ -680,6 +690,84 @@ export default {
 
                 field.value     =   event.data.entry.id;
             }
+        },
+
+        /**
+         * Check for products with low stock and display a notification
+         */
+        checkLowStockProducts() {
+            nsHttpClient.get( '/api/procurements/low-stock-suggestions' )
+                .subscribe({
+                    next: (result: any) => {
+                        if ( result.status === 'success' && result.count > 0 ) {
+                            this.lowStockProducts = result.data;
+                            this.showLowStockNotification( result.count );
+                        }
+                    },
+                    error: error => {
+                        // Silently fail - low stock suggestions are optional
+                        console.log( 'Low stock check failed:', error );
+                    }
+                });
+        },
+
+        /**
+         * Display floating notification about low stock products
+         */
+        showLowStockNotification( count ) {
+            const message = count === 1 
+                ? __( '1 product is running low on stock.' )
+                : __( '{count} products are running low on stock.' ).replace( '{count}', count );
+
+            nsNotice.info( 
+                __( 'Low Stock Alert' ),
+                message,
+                {
+                    duration: false, // Keep visible until user interacts
+                    actions: {
+                        loadProducts: {
+                            label: __( 'Load Products' ),
+                            onClick: ( instance ) => {
+                                this.loadLowStockProducts();
+                                instance.close();
+                            }
+                        },
+                        dismiss: {
+                            label: __( 'Dismiss' ),
+                            onClick: ( instance ) => {
+                                instance.close();
+                            }
+                        }
+                    }
+                }
+            );
+        },
+
+        /**
+         * Load all low stock products into the procurement form
+         */
+        loadLowStockProducts() {
+            let loadedCount = 0;
+
+            this.lowStockProducts.forEach( product => {
+                // Check if product is already in the procurement
+                const exists = this.form.products.find( p => p.product_id === product.id || p.id === product.id );
+                
+                if ( ! exists ) {
+                    this.addProductList( product );
+                    loadedCount++;
+                }
+            });
+
+            // Switch to products tab to show loaded products
+            this.setTabActive( this.validTabs.find( tab => tab.identifier === 'products' ) );
+
+            // Show success message
+            const message = loadedCount === 1
+                ? __( '1 product has been added to the procurement.' )
+                : __( '{count} products have been added to the procurement.' ).replace( '{count}', loadedCount );
+
+            nsSnackBar.success( message );
         }
     }
 }
