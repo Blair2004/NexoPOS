@@ -331,6 +331,18 @@ export default {
                             if ( result.scale ) {
                                 const scaleData = result.scale;
                                 
+                                // If a preferred unit is specified, we need to find and use it
+                                if ( scaleData.preferred_unit_id && result.product.unit_quantities ) {
+                                    const preferredUnit = result.product.unit_quantities.find( 
+                                        uq => uq.unit_id === scaleData.preferred_unit_id 
+                                    );
+                                    
+                                    if ( preferredUnit ) {
+                                        // Set the preferred unit as the selected unit
+                                        result.product.selectedUnitQuantity = preferredUnit;
+                                    }
+                                }
+                                
                                 // Set quantity or price based on scale barcode type
                                 if ( scaleData.type === 'weight' ) {
                                     // For weight-based scales, set the quantity
