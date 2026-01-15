@@ -95,6 +95,16 @@ return [
             'driver' => 'local',
             'root' => storage_path( 'temporary-files' ),
         ],
+
+        'ns-themes' => [
+            'driver' => 'local',
+            'root' => base_path( 'themes' ),
+        ],
+
+        'ns-themes-temp' => [
+            'driver' => 'local',
+            'root' => storage_path( 'temporary-files/themes' ),
+        ],
     ],
 
     /*
