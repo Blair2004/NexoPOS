@@ -6,9 +6,6 @@ use App\Classes\SettingForm;
 return SettingForm::tab(
     identifier: 'scale-barcode',
     label: __('Scale Barcode'),
-    footer: SettingForm::tabFooter(
-        extraComponents: [ 'nsScaleSettingsPreview' ]
-    ),
     fields: [
         FormInput::switch(
             label: __('Enable Scale Barcode'),
@@ -56,5 +53,10 @@ return SettingForm::tab(
             validation: 'required|integer|min:1|max:10',
             description: __('The number of digits used for weight (in grams) or price (in cents) in the scale barcode (typically 5).')
         ),
+
+        FormInput::custom(
+            label: __( 'Settings Preview' ),
+            component: 'nsScaleSettingsPreview',
+        )
     ],
 );

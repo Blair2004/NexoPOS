@@ -1,8 +1,8 @@
 <template>
     <div class="ns-scale-settings-preview">
-        <div class="border rounded p-4 bg-box-background">
-            <h3 class="font-semibold mb-2 text-primary">{{ __('Configuration Example') }}</h3>
-            <div class="text-sm text-secondary whitespace-pre-wrap font-mono">{{ exampleText }}</div>
+        <div class="border border-box-edge rounded p-4 bg-box-background">
+            <h3 class="font-semibold mb-2 text-fontcolor">{{ __('Configuration Example') }}</h3>
+            <div class="text-sm text-fontcolor-light whitespace-pre-wrap font-mono">{{ exampleText }}</div>
         </div>
     </div>
 </template>
@@ -68,12 +68,12 @@ export default {
         __,
         loadSettings() {
             // Fetch current settings from the API
-            nsHttpClient.get('/api/settings/ns.pos')
+            nsHttpClient.get('/api/settings/pos')
                 .subscribe({
                     next: (response) => {
                         // Extract settings from response
-                        if (response.form && response.form.tabs && response.form.tabs['scale-barcode']) {
-                            const fields = response.form.tabs['scale-barcode'].fields;
+                        if (response.tabs && response.tabs['scale-barcode']) {
+                            const fields = response.tabs['scale-barcode'].fields;
                             
                             fields.forEach(field => {
                                 if (field.name === 'ns_scale_barcode_prefix') {

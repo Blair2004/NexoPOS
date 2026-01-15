@@ -328,8 +328,8 @@ export default {
                             this.barcode     =   '';
                             
                             // Check if this is a scale barcode with embedded data
-                            if ( result.product.scale_barcode_data ) {
-                                const scaleData = result.product.scale_barcode_data;
+                            if ( result.scale ) {
+                                const scaleData = result.scale;
                                 
                                 // Set quantity or price based on scale barcode type
                                 if ( scaleData.type === 'weight' ) {

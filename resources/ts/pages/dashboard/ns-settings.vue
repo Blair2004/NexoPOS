@@ -24,7 +24,7 @@
                     <template v-if="activeTab.fields && ! activeTab.component">
                         <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
                             <div class="flex flex-col my-2">
-                                <ns-field @saved="handleSaved( $event, field )" :field="field"></ns-field>
+                                <ns-field @saved="handleSaved( $event, field )" :siblings="activeTab.fields.filter( _field => _field.name !== field.name )" :field="field"></ns-field>
                             </div>
                         </div>
                     </template>

@@ -541,6 +541,30 @@ class ProductsController extends DashboardController
             }
         }
 
+        /**
+         * if we have a valid $scaleData,
+         * then we proceed to search using
+         * the extracted product code.
+         */
+        if ( ! empty( $scaleData ) ) {
+            $product = Product::sku( $scaleData['product_code'] )
+                ->onSale()
+                ->first();
+
+            /**
+             * check if the product has accurate tracking
+             * enabled. If so, we can't sell it using
+             * a scale barcode.
+             */
+            if ( $product instanceof Product ) {
+                return [
+                    'type' => 'product',
+                    'product' => $product,
+                    'scale' => $scaleData
+                ];
+            }
+        }
+
         $procurementProduct = ProcurementProduct::barcode( $reference )->first();
         $productUnitQuantity = ProductUnitQuantity::barcode( $reference )->with( 'unit' )->first();
         $product = Product::barcode( $reference )
