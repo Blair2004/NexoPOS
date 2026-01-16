@@ -2305,4 +2305,116 @@ class ProductService
             'original_barcode' => $barcode,
         ];
     }
+
+    /**
+     * Generate a PLU code for a product unit quantity
+     *
+     * @param int $productId
+     * @param int $unitQuantityId
+     * @return string The generated PLU code
+     * @throws \Exception
+     */
+    public function generateScalePLU( int $productId, int $unitQuantityId ): string
+    {
+        $product = Product::with( 'category.scaleRange' )->find( $productId );
+
+        if ( ! $product ) {
+            throw new \Exception( __( 'Product not found.' ) );
+        }
+
+        if ( ! $product->category ) {
+            throw new \Exception( __( 'Product must have a category to generate PLU code.' ) );
+        }
+
+        if ( ! $product->category->scaleRange ) {
+            throw new \Exception(
+                sprintf(
+                    __( 'Category "%s" does not have a PLU range assigned.' ),
+                    $product->category->name
+                )
+            );
+        }
+
+        $scaleRange = $product->category->scaleRange;
+
+        // Get the next PLU from the range
+        $plu = $scaleRange->getNextPLU();
+
+        // Validate PLU is unique
+        $existingPlu = ProductUnitQuantity::where( 'scale_plu', $plu )
+            ->where( 'id', '!=', $unitQuantityId )
+            ->first();
+
+        if ( $existingPlu ) {
+            // Try next PLU
+            $scaleRange->incrementNextPLU();
+            return $this->generateScalePLU( $productId, $unitQuantityId );
+        }
+
+        // Update the scale range
+        $scaleRange->incrementNextPLU();
+
+        return $plu;
+    }
+
+    /**
+     * Validate and format a PLU code
+     *
+     * @param string $plu
+     * @param int|null $productLength Override product code length
+     * @return string Formatted PLU code
+     * @throws \Exception
+     */
+    public function validateAndFormatPLU( string $plu, ?int $productLength = null ): string
+    {
+        // Get the configured product code length
+        if ( $productLength === null ) {
+            $productLength = (int) ns()->option->get( 'ns_scale_barcode_product_length', 5 );
+        }
+
+        // Remove any non-numeric characters
+        $plu = preg_replace( '/[^0-9]/', '', $plu );
+
+        if ( empty( $plu ) ) {
+            throw new \Exception( __( 'PLU code cannot be empty.' ) );
+        }
+
+        // Check if PLU is numeric
+        if ( ! ctype_digit( $plu ) ) {
+            throw new \Exception( __( 'PLU code must contain only digits.' ) );
+        }
+
+        // Pad with zeros to match the configured length
+        $plu = str_pad( $plu, $productLength, '0', STR_PAD_LEFT );
+
+        // Check if PLU length matches configured length
+        if ( strlen( $plu ) > $productLength ) {
+            throw new \Exception(
+                sprintf(
+                    __( 'PLU code is too long. Maximum length is %d digits.' ),
+                    $productLength
+                )
+            );
+        }
+
+        return $plu;
+    }
+
+    /**
+     * Check if a PLU code is unique
+     *
+     * @param string $plu
+     * @param int|null $excludeUnitQuantityId
+     * @return bool
+     */
+    public function isPLUUnique( string $plu, ?int $excludeUnitQuantityId = null ): bool
+    {
+        $query = ProductUnitQuantity::where( 'scale_plu', $plu );
+
+        if ( $excludeUnitQuantityId ) {
+            $query->where( 'id', '!=', $excludeUnitQuantityId );
+        }
+
+        return ! $query->exists();
+    }
 }

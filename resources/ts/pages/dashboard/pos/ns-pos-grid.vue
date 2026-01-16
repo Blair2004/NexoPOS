@@ -331,32 +331,26 @@ export default {
                             if ( result.scale ) {
                                 const scaleData = result.scale;
                                 
-                                // If a preferred unit is specified, we need to find and use it
-                                if ( scaleData.preferred_unit_id && result.product.unit_quantities ) {
-                                    const preferredUnit = result.product.unit_quantities.find( 
-                                        uq => uq.unit_id === scaleData.preferred_unit_id 
-                                    );
-                                    
-                                    if ( preferredUnit ) {
-                                        // Set the preferred unit as the selected unit
-                                        result.product.selectedUnitQuantity = preferredUnit;
-                                    }
-                                }
+                                // The backend already sets the selectedUnitQuantity based on PLU
+                                // We just need to set the quantity or price based on scale type
                                 
                                 // Set quantity or price based on scale barcode type
                                 if ( scaleData.type === 'weight' ) {
                                     // For weight-based scales, set the quantity
                                     result.product.quantity = scaleData.value;
                                     
-                                    // Show notification
+                                    // Show notification with unit name
+                                    const unitName = scaleData.unit?.name || 'kg';
                                     nsSnackBar.info( 
-                                        __( 'Scale barcode detected: {weight} kg' )
+                                        __( 'Scale barcode detected: {weight} {unit}' )
                                             .replace( '{weight}', scaleData.value.toFixed(3) )
+                                            .replace( '{unit}', unitName )
                                     );
                                 } else if ( scaleData.type === 'price' ) {
                                     // For price-based scales, we need to calculate quantity
                                     // based on the price and unit price
-                                    const unitPrice = result.product.unit_quantities[0]?.sale_price || 0;
+                                    const unitPrice = result.product.selectedUnitQuantity?.sale_price || 
+                                                     result.product.unit_quantities[0]?.sale_price || 0;
                                     if ( unitPrice > 0 ) {
                                         result.product.quantity = scaleData.value / unitPrice;
                                     }

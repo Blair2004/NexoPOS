@@ -533,48 +533,42 @@ class ProductsController extends DashboardController
         if ( $this->productService->isScaleBarcode( $reference ) ) {
             try {
                 $scaleData = $this->productService->parseScaleBarcode( $reference );
-                // Use the extracted product code for searching
-                $reference = $scaleData['product_code'];
-            } catch ( Exception $e ) {
-                // If parsing fails, continue with original barcode
-                $scaleData = null;
-            }
-        }
-
-        /**
-         * if we have a valid $scaleData,
-         * then we proceed to search using
-         * the extracted product code.
-         */
-        if ( ! empty( $scaleData ) ) {
-            $product = Product::sku( $scaleData['product_code'] )
-                ->onSale()
-                ->first();
-
-            /**
-             * check if the product has accurate tracking
-             * enabled. If so, we can't sell it using
-             * a scale barcode.
-             */
-            if ( $product instanceof Product ) {
-                // Add preferred unit information if set
-                if ( $product->scale_unit_id ) {
-                    $unit = Unit::find( $product->scale_unit_id );
-
-                    /**
-                     * The prefered scale unit is required. If missing,
-                     * we'll skip adding scale data to the response.
-                     */
-                    if ( $unit instanceof Unit ) {
-                        $scaleData['unit'] = $unit;
-
-                        return [
-                            'type' => 'product',
-                            'product' => $product,
-                            'scale' => $scaleData
-                        ];
-                    }
+                // The product_code from scale barcode is actually the PLU
+                $plu = $scaleData['product_code'];
+                
+                // Find the product unit quantity by PLU
+                $unitQuantity = ProductUnitQuantity::where( 'scale_plu', $plu )
+                    ->with( 'product', 'unit' )
+                    ->first();
+                
+                if ( $unitQuantity && $unitQuantity->product ) {
+                    $product = $unitQuantity->product;
+                    $product->load( 'unit_quantities.unit', 'tax_group.taxes' );
+                    
+                    // Set the selected unit quantity
+                    $product->selectedUnitQuantity = $unitQuantity;
+                    
+                    // Add scale data with the unit information
+                    $scaleData['unit'] = $unitQuantity->unit;
+                    $scaleData['unit_quantity_id'] = $unitQuantity->id;
+                    
+                    return [
+                        'type' => 'product',
+                        'product' => $product,
+                        'scale' => $scaleData
+                    ];
                 }
+                
+                // If PLU not found, throw an error
+                throw new NotFoundException(
+                    sprintf(
+                        __( 'No product found with PLU code: %s' ),
+                        $plu
+                    )
+                );
+            } catch ( Exception $e ) {
+                // If parsing fails or product not found, throw the exception
+                throw $e;
             }
         }
 
@@ -626,15 +620,6 @@ class ProductsController extends DashboardController
         }
 
         if ( $product instanceof Product ) {
-            // Add scale barcode data to the product response
-            if ( $scaleData ) {
-                // Add preferred unit information if set
-                if ( $product->scale_unit_id ) {
-                    $scaleData['preferred_unit_id'] = $product->scale_unit_id;
-                }
-                $product->scale_barcode_data = $scaleData;
-            }
-
             return [
                 'type' => 'product',
                 'product' => $product,

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table( 'nexopos_products', function ( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_products', 'scale_barcode_preferred_unit_id' ) ) {
-                $table->integer( 'scale_barcode_preferred_unit_id' )->nullable()->after( 'unit_group' );
+            if ( Schema::hasColumn( 'nexopos_products', 'scale_barcode_preferred_unit_id' ) ) {
+                $table->dropColumn( 'scale_barcode_preferred_unit_id' );
             }
         } );
     }
@@ -24,8 +24,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table( 'nexopos_products', function ( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_products', 'scale_barcode_preferred_unit_id' ) ) {
-                $table->dropColumn( 'scale_barcode_preferred_unit_id' );
+            if ( ! Schema::hasColumn( 'nexopos_products', 'scale_barcode_preferred_unit_id' ) ) {
+                $table->integer( 'scale_barcode_preferred_unit_id' )->nullable()->after( 'unit_group' );
             }
         } );
     }

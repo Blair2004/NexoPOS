@@ -141,6 +141,23 @@ class ProductCategoryCrud extends CrudService
             'name' => __( 'No Parent' ),
         ] );
 
+        // Get scale ranges for PLU assignment
+        $scaleRanges = \App\Models\ScaleRange::all();
+        $scaleRangeOptions = $scaleRanges->map( function( $range ) {
+            return [
+                'label' => sprintf( 
+                    '%s (%s-%s)', 
+                    $range->name, 
+                    $range->range_start, 
+                    $range->range_end 
+                ),
+                'value' => $range->id,
+            ];
+        } )->prepend( [
+            'label' => __( 'No PLU Range' ),
+            'value' => '',
+        ] )->toArray();
+
         return [
             'main' => [
                 'label' => __( 'Name' ),
@@ -174,6 +191,13 @@ class ProductCategoryCrud extends CrudService
                             'label' => __( 'Parent' ),
                             'description' => __( 'If this category should be a child category of an existing category' ),
                             'value' => $entry->parent_id ?? '',
+                        ], [
+                            'type' => 'select',
+                            'options' => $scaleRangeOptions,
+                            'name' => 'scale_range_id',
+                            'label' => __( 'PLU Range' ),
+                            'description' => __( 'Select a PLU range to automatically assign PLU codes to weighable products in this category.' ),
+                            'value' => $entry->scale_range_id ?? '',
                         ], [
                             'type' => 'ckeditor',
                             'name' => 'description',
