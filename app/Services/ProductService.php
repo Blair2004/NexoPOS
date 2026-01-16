@@ -765,10 +765,30 @@ class ProductService
                 }
 
                 /**
+                 * Handle scale PLU and is_weighable fields
+                 */
+                $unitQuantity->is_weighable = $group[ 'is_weighable' ] ?? false;
+                $unitQuantity->scale_plu = $group[ 'scale_plu' ] ?? null;
+
+                /**
                  * save custom barcode for the created unit quantity
                  */
                 $unitQuantity->barcode = $product->barcode . '-' . $unitQuantity->id;
                 $unitQuantity->save();
+
+                /**
+                 * Auto-generate PLU for weighable products without a PLU
+                 */
+                if ( $unitQuantity->is_weighable && empty( $unitQuantity->scale_plu ) ) {
+                    try {
+                        $plu = $this->generateScalePLU( $product->id, $unitQuantity->id );
+                        $unitQuantity->scale_plu = $plu;
+                        $unitQuantity->save();
+                    } catch ( \Exception $e ) {
+                        // PLU generation failed - product category may not have a range assigned
+                        // This is not a critical error, so we'll just skip it
+                    }
+                }
             }
         }
     }
