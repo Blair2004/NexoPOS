@@ -87,7 +87,7 @@ class ProductCategoryCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable = [];
+    public $fillable = [ 'scale_range_id' ];
 
     /**
      * Define Constructor
