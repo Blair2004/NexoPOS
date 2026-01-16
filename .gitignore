@@ -34,7 +34,7 @@ public/css/*.css
 !public/css/animations.*.css
 !public/css/line-awesome.css
 public/js/*.map
-public/js/*.txtcd /
+public/js/*.txt
 public/css/*.map
 public/lang
 public/modules-lang/*
