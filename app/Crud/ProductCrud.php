@@ -411,11 +411,11 @@ class ProductCrud extends CrudService
                                     'type' => 'select',
                                     'options' => $entry instanceof Product && $entry->unit_group ? 
                                         Helper::toJsOptions( UnitGroup::find( $entry->unit_group )->units, [ 'id', 'name' ] ) : [],
-                                    'name' => 'scale_barcode_preferred_unit_id',
+                                    'name' => 'scale_unit_id',
                                     'description' => __( 'Define which unit should be used when using scale barcodes. This will be used to determine the unit for the quantity.' ),
                                     'label' => __( 'Scale Barcode Preferred Unit' ),
                                     'validation' => '',
-                                    'value' => $entry->scale_barcode_preferred_unit_id ?? '',
+                                    'value' => $entry->scale_unit_id ?? '',
                                 ], [
                                     'type' => 'switch',
                                     'description' => __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),

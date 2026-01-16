@@ -558,15 +558,23 @@ class ProductsController extends DashboardController
              */
             if ( $product instanceof Product ) {
                 // Add preferred unit information if set
-                if ( $product->scale_barcode_preferred_unit_id ) {
-                    $scaleData['preferred_unit_id'] = $product->scale_barcode_preferred_unit_id;
+                if ( $product->scale_unit_id ) {
+                    $unit = Unit::find( $product->scale_unit_id );
+
+                    /**
+                     * The prefered scale unit is required. If missing,
+                     * we'll skip adding scale data to the response.
+                     */
+                    if ( $unit instanceof Unit ) {
+                        $scaleData['unit'] = $unit;
+
+                        return [
+                            'type' => 'product',
+                            'product' => $product,
+                            'scale' => $scaleData
+                        ];
+                    }
                 }
-                
-                return [
-                    'type' => 'product',
-                    'product' => $product,
-                    'scale' => $scaleData
-                ];
             }
         }
 
@@ -621,8 +629,8 @@ class ProductsController extends DashboardController
             // Add scale barcode data to the product response
             if ( $scaleData ) {
                 // Add preferred unit information if set
-                if ( $product->scale_barcode_preferred_unit_id ) {
-                    $scaleData['preferred_unit_id'] = $product->scale_barcode_preferred_unit_id;
+                if ( $product->scale_unit_id ) {
+                    $scaleData['preferred_unit_id'] = $product->scale_unit_id;
                 }
                 $product->scale_barcode_data = $scaleData;
             }
