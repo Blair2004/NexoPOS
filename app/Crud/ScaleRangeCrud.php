@@ -212,6 +212,93 @@ class ScaleRangeCrud extends CrudService
     }
 
     /**
+     * Before creating a new range - validate no overlaps
+     */
+    public function beforePost( $request )
+    {
+        $this->allowedTo( 'create' );
+        $this->validateRangeOverlap( $request );
+
+        return $request;
+    }
+
+    /**
+     * Before updating a range - validate no overlaps
+     */
+    public function beforePut( $namespace, $id, $request )
+    {
+        $this->allowedTo( 'update' );
+        $this->validateRangeOverlap( $request, $id );
+
+        return $request;
+    }
+
+    /**
+     * Validate that the range doesn't overlap with existing ranges
+     */
+    protected function validateRangeOverlap( $request, $excludeId = null )
+    {
+        $rangeStart = (int) $request->input( 'range_start' );
+        $rangeEnd = (int) $request->input( 'range_end' );
+
+        // Validate that range_start is less than range_end
+        if ( $rangeStart >= $rangeEnd ) {
+            throw new \Exception( __( 'The range start must be less than the range end.' ) );
+        }
+
+        // Check for overlapping ranges
+        $query = ScaleRange::where( function ( $query ) use ( $rangeStart, $rangeEnd ) {
+            // Check if new range overlaps with any existing range
+            $query->where( function ( $q ) use ( $rangeStart, $rangeEnd ) {
+                // New range starts within an existing range
+                $q->where( 'range_start', '<=', $rangeStart )
+                  ->where( 'range_end', '>=', $rangeStart );
+            } )->orWhere( function ( $q ) use ( $rangeStart, $rangeEnd ) {
+                // New range ends within an existing range
+                $q->where( 'range_start', '<=', $rangeEnd )
+                  ->where( 'range_end', '>=', $rangeEnd );
+            } )->orWhere( function ( $q ) use ( $rangeStart, $rangeEnd ) {
+                // New range completely contains an existing range
+                $q->where( 'range_start', '>=', $rangeStart )
+                  ->where( 'range_end', '<=', $rangeEnd );
+            } );
+        } );
+
+        // Exclude current range if updating
+        if ( $excludeId ) {
+            $query->where( 'id', '!=', $excludeId );
+        }
+
+        $overlappingRange = $query->first();
+
+        if ( $overlappingRange ) {
+            throw new \Exception( 
+                sprintf(
+                    __( 'The PLU range %d-%d overlaps with an existing range "%s" (%d-%d).' ),
+                    $rangeStart,
+                    $rangeEnd,
+                    $overlappingRange->name,
+                    $overlappingRange->range_start,
+                    $overlappingRange->range_end
+                )
+            );
+        }
+
+        // Validate that next_scale_plu is within the range
+        $nextPLU = (int) $request->input( 'next_scale_plu' );
+        if ( $nextPLU < $rangeStart || $nextPLU > $rangeEnd ) {
+            throw new \Exception( 
+                sprintf(
+                    __( 'The next PLU (%d) must be within the range %d-%d.' ),
+                    $nextPLU,
+                    $rangeStart,
+                    $rangeEnd
+                )
+            );
+        }
+    }
+
+    /**
      * Before delete hook
      */
     public function beforeDelete( $namespace, $id, $model )
