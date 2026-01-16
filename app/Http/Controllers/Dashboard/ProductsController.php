@@ -12,6 +12,7 @@ use App\Classes\Hook;
 use App\Crud\ProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
+use App\Crud\ScaleRangeCrud;
 use App\Crud\UnitCrud;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
@@ -644,5 +645,10 @@ class ProductsController extends DashboardController
 
             return $procurementProduct;
         } );
+    }
+
+    public function getScaleRange()
+    {
+        return ScaleRangeCrud::table();
     }
 }

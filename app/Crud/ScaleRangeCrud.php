@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Classes\CrudForm;
+use App\Classes\CrudTable;
 use App\Classes\FormInput;
 use App\Models\ScaleRange;
 use App\Services\CrudEntry;
@@ -62,80 +63,53 @@ class ScaleRangeCrud extends CrudService
     public $fillable = [ 'name', 'range_start', 'range_end', 'next_scale_plu', 'description' ];
 
     /**
-     * Get Table Configuration
+     * Define columns and how it is structured.
      */
-    public function getTable(): array
+    public function getColumns(): array
     {
-        return [
-            'id' => [
-                'label' => __( 'ID' ),
-                '$direction' => '',
-                '$sort' => false,
-                'width' => '80px',
-            ],
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'range_start' => [
-                'label' => __( 'Range Start' ),
-                '$direction' => '',
-                '$sort' => true,
-                'width' => '120px',
-            ],
-            'range_end' => [
-                'label' => __( 'Range End' ),
-                '$direction' => '',
-                '$sort' => true,
-                'width' => '120px',
-            ],
-            'next_scale_plu' => [
-                'label' => __( 'Next PLU' ),
-                '$direction' => '',
-                '$sort' => false,
-                'width' => '120px',
-            ],
-            'capacity' => [
-                'label' => __( 'Capacity' ),
-                '$direction' => '',
-                '$sort' => false,
-                'width' => '100px',
-            ],
-            'used' => [
-                'label' => __( 'Used' ),
-                '$direction' => '',
-                '$sort' => false,
-                'width' => '100px',
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-                '$direction' => '',
-                '$sort' => true,
-                'width' => '150px',
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column(
+                identifier: 'name',
+                label: __( 'Name' ),
+            ),
+            CrudTable::column(
+                identifier: 'range_start',
+                label: __( 'Range Start' ),
+            ),
+            CrudTable::column(
+                identifier: 'range_end',
+                label: __( 'Range End' ),
+            ),
+            CrudTable::column(
+                identifier: 'next_scale_plu',
+                label: __( 'Next PLU' ),
+            ),
+            CrudTable::column(
+                label: __( 'Created At' ),
+                identifier: 'created_at'
+            )
+        );
     }
 
     /**
      * Get actions configuration
      */
-    public function getActions( CrudEntry $entry ): CrudEntry
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->action(
             label: __( 'Edit' ),
-            namespace: 'edit',
+            identifier: 'edit',
             type: 'GOTO',
             url: ns()->url( '/dashboard/products/scale-ranges/edit/' . $entry->id ),
-            permissions: 'nexopos.update.products'
+            permissions: [ 'nexopos.update.products' ]
         );
 
         $entry->action(
             label: __( 'Delete' ),
-            namespace: 'delete',
+            identifier: 'delete',
             type: 'DELETE',
             url: ns()->url( '/api/crud/ns.scale-ranges/' . $entry->id ),
-            permissions: 'nexopos.delete.products',
+            permissions: [ 'nexopos.delete.products' ],
             confirm: [
                 'message' => __( 'Would you like to delete this scale range?' ),
             ]
@@ -143,6 +117,29 @@ class ScaleRangeCrud extends CrudService
 
         return $entry;
     }
+
+    /**
+     * Return the label used for the crud
+     * instance
+     *
+     * @return array
+     **/
+    public function getLabels()
+    {
+        return [
+            'list_title' => __( 'Scale Ranges List' ),
+            'list_description' => __( 'Display all scale ranges.' ),
+            'no_entry' => __( 'No scale ranges have been registered' ),
+            'create_new' => __( 'Add a new scale range' ),
+            'create_title' => __( 'Create a new scale range' ),
+            'create_description' => __( 'Register a new scale range and save it.' ),
+            'edit_title' => __( 'Edit scale range' ),
+            'edit_description' => __( 'Modify  Scale Range.' ),
+            'back_to_list' => __( 'Return to Scale Ranges' ),
+        ];
+    }
+
+
 
     /**
      * Get bulk actions configuration
@@ -332,19 +329,19 @@ class ScaleRangeCrud extends CrudService
     /**
      * Customize entry data for display
      */
-    public function getEntries( $config = [] ): array
-    {
-        $entries = parent::getEntries( $config );
+    // public function getEntries( $config = [] ): array
+    // {
+    //     $entries = parent::getEntries( $config );
 
-        // Add capacity and used count to each entry
-        foreach ( $entries[ 'data' ] as $entry ) {
-            $scaleRange = ScaleRange::find( $entry->id );
-            if ( $scaleRange ) {
-                $entry->capacity = $scaleRange->getCapacity();
-                $entry->used = $scaleRange->getUsedCount();
-            }
-        }
+    //     // Add capacity and used count to each entry
+    //     foreach ( $entries[ 'data' ] as $entry ) {
+    //         $scaleRange = ScaleRange::find( $entry->id );
+    //         if ( $scaleRange ) {
+    //             $entry->capacity = $scaleRange->getCapacity();
+    //             $entry->used = $scaleRange->getUsedCount();
+    //         }
+    //     }
 
-        return $entries;
-    }
+    //     return $entries;
+    // }
 }

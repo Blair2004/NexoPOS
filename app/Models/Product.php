@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int      $category_id
  * @property int      $parent_id
  * @property int      $unit_group
- * @property int      $scale_unit_id
  * @property string   $on_expiration
  * @property bool     $expires           whether or not the product has expired
  * @property bool     $searchable

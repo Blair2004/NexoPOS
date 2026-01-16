@@ -425,15 +425,6 @@ class ProductCrud extends CrudService
                                     'component' => 'nsCrudForm',
                                     'value' => $entry->unit_group ?? ( ! $groups->isEmpty() ? $groups->first()->id : '' ),
                                 ], [
-                                    'type' => 'select',
-                                    'options' => $entry instanceof Product && $entry->unit_group ? 
-                                        Helper::toJsOptions( UnitGroup::find( $entry->unit_group )->units, [ 'id', 'name' ] ) : [],
-                                    'name' => 'scale_unit_id',
-                                    'description' => __( 'Define which unit should be used when using scale barcodes. This will be used to determine the unit for the quantity.' ),
-                                    'label' => __( 'Scale Barcode Preferred Unit' ),
-                                    'validation' => '',
-                                    'value' => $entry->scale_unit_id ?? '',
-                                ], [
                                     'type' => 'switch',
                                     'description' => __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),
                                     'options' => Helper::boolToOptions(

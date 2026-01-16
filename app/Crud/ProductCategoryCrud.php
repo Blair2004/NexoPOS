@@ -7,6 +7,7 @@ use App\Events\ProductCategoryAfterUpdatedEvent;
 use App\Events\ProductCategoryBeforeDeletedEvent;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ScaleRange;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
@@ -87,7 +88,14 @@ class ProductCategoryCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable = [ 'scale_range_id' ];
+    public $fillable = [
+        'name',
+        'preview_url',
+        'description',
+        'parent_id',
+        'displays_on_pos',
+        'scale_range_id',
+    ];
 
     /**
      * Define Constructor
@@ -142,7 +150,7 @@ class ProductCategoryCrud extends CrudService
         ] );
 
         // Get scale ranges for PLU assignment
-        $scaleRanges = \App\Models\ScaleRange::all();
+        $scaleRanges = ScaleRange::all();
         $scaleRangeOptions = $scaleRanges->map( function( $range ) {
             return [
                 'label' => sprintf( 
@@ -214,7 +222,6 @@ class ProductCategoryCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -225,7 +232,6 @@ class ProductCategoryCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return array of fields
      */
     public function filterPutInputs( $inputs, ProductCategory $entry )
     {
