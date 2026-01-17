@@ -31,7 +31,7 @@
         "spatie/laravel-db-snapshots": "^2.2",
         "symfony/http-client": "^7.0",
         "symfony/mailgun-mailer": "^7.0",
-        "tormjens/eventy": "^0.8",
+        "tormjens/eventy": "^0.9",
         "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
