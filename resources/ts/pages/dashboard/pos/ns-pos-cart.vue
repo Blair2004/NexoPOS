@@ -67,7 +67,7 @@
                                         <a v-if="allowQuantityModification( product )" @click="openDiscountPopup( product, 'product', index )" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ nsCurrency( product.discount ) }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <a v-if="allowQuantityModification( product )" @click="changeQuantity( product, index )" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Quantity' ) }}: {{ product.quantity }}</a>
+                                        <a v-if="allowQuantityModification( product )" @click="changeQuantity( product, index )" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Quantity' ) }}: {{ displayProductQuantity( product ) }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
                                         <span class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Total :' ) }} {{ nsCurrency( product.total_price ) }}</span>
@@ -76,7 +76,7 @@
                             </div>
                         </div>
                         <div @click="changeQuantity( product, index )" :class="allowQuantityModification( product ) ? 'cursor-pointer ns-numpad-key' : ''" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center">
-                            <span v-if="allowQuantityModification( product )" class="border-b border-dashed border-secondary p-2">{{ product.quantity }}</span>
+                            <span v-if="allowQuantityModification( product )" class="border-b border-dashed border-secondary p-2">{{ displayProductQuantity( product ) }}</span>
                         </div>
                         <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 items-center justify-center">{{ nsCurrency( product.total_price ) }}</div>
                     </div>
@@ -426,6 +426,77 @@ export default {
 
         takeRandomClass() {
             return 'border-gray-500 bg-gray-400 text-white hover:bg-gray-500';
+        },
+
+        displayProductQuantity( product ) {
+            const unitQuantity = product.$quantities();
+            
+            if ( unitQuantity && unitQuantity.is_weighable && unitQuantity.unit ) {
+                const unitIdentifier = unitQuantity.unit.identifier;
+                const supportedWeightUnits = ['kilogram', 'gram', 'miligram', 'tones'];
+                
+                // Check if the unit is a supported weight unit
+                if ( supportedWeightUnits.includes( unitIdentifier ) ) {
+                    try {
+                        // Convert simple locale (e.g., 'en', 'fr') to full locale string (e.g., 'en-US', 'fr-FR')
+                        const locale = ns.language || 'en';
+                        const fullLocale = this.getFullLocale( locale );
+                        
+                        // Map unit identifiers to Intl unit names
+                        const unitMap = {
+                            'kilogram': 'kilogram',
+                            'gram': 'gram',
+                            'miligram': 'milligram',
+                            'tones': 'metric-ton'
+                        };
+                        
+                        const intlUnit = unitMap[ unitIdentifier ] || unitIdentifier;
+                        
+                        // Format the weight using Intl.NumberFormat
+                        const formatter = new Intl.NumberFormat( fullLocale, {
+                            style: 'unit',
+                            unit: intlUnit,
+                            unitDisplay: 'short',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 3
+                        });
+                        
+                        return formatter.format( product.quantity );
+                    } catch ( error ) {
+                        // Fallback to default behavior if formatting fails
+                        console.warn( 'Failed to format weight quantity:', error );
+                        return product.quantity;
+                    }
+                }
+            }
+
+            return product.quantity;
+        },
+
+        /**
+         * Convert simple locale code to full locale string for Intl API
+         * Based on languages defined in config/nexopos.php
+         * e.g., 'en' -> 'en-US', 'fr' -> 'fr-FR'
+         */
+        getFullLocale( locale ) {
+            // Map language codes from config/nexopos.php to full locale strings
+            // Supported: en, de, fr, es, it, id, ar, pt, tr, km, vi, sq
+            const localeMap = {
+                'en': 'en-US',    // English
+                'de': 'de-DE',    // Deutsch
+                'fr': 'fr-FR',    // Français
+                'es': 'es-ES',    // Espanol
+                'it': 'it-IT',    // Italian
+                'id': 'id-ID',    // Indonesian
+                'ar': 'ar-SA',    // Arabic
+                'pt': 'pt-PT',    // Portuguese
+                'tr': 'tr-TR',    // Türkçe
+                'km': 'km-KH',    // ភាសាខ្មែរ (Khmer)
+                'vi': 'vi-VN',    // Vietnamese
+                'sq': 'sq-AL'     // Shqiptare (Albanian)
+            };
+            
+            return localeMap[ locale ] || `${locale}-${locale.toUpperCase()}`;
         },
 
         async openAddQuickProduct() {

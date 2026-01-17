@@ -326,6 +326,19 @@ export default {
                     .subscribe({
                         next: result => {
                             this.barcode     =   '';
+                            const product    =   {};
+
+                            product.name                    =   result.product.name;
+                            product.id                      =   result.product.id;
+                            product.product_type            =   result.product.product_type;
+                            product.rate                    =   result.product.rate;
+                            product.tax_group_id            =   result.product.tax_group_id;
+                            product.tax_type                =   result.product.tax_type;
+                            product.unit_id                 =   result.unit.id;
+                            product.unit_price              =   result.unitQuantity.sale_price;
+                            product.price_with_tax          =   result.unitQuantity.sale_price_with_tax;
+                            product.price_without_tax       =   result.unitQuantity.sale_price_without_tax;
+                            product.unit_name               =   result.unit.name;
                             
                             // Check if this is a scale barcode with embedded data
                             if ( result.scale ) {
@@ -337,7 +350,7 @@ export default {
                                 // Set quantity or price based on scale barcode type
                                 if ( scaleData.type === 'weight' ) {
                                     // For weight-based scales, set the quantity
-                                    result.product.quantity = scaleData.value;
+                                    product.quantity = scaleData.value;
                                     
                                     // Show notification with unit name
                                     const unitName = scaleData.unit?.name || 'kg';
@@ -352,7 +365,7 @@ export default {
                                     const unitPrice = result.product.selectedUnitQuantity?.sale_price || 
                                                      result.product.unit_quantities[0]?.sale_price || 0;
                                     if ( unitPrice > 0 ) {
-                                        result.product.quantity = scaleData.value / unitPrice;
+                                        product.quantity = scaleData.value / unitPrice;
                                     }
                                     
                                     // Show notification
@@ -363,7 +376,8 @@ export default {
                                 }
                             }
                             
-                            POS.addToCart( result.product );
+                            console.log( JSON.parse( JSON.stringify( product ) ) );
+                            POS.addToCart( product );
                         },
                         error: ( error ) => {
                             this.barcode     =   '';

@@ -127,5 +127,10 @@ return new class extends Migration
                 'author' => 0, // System created
             ] ) );
         }
+
+        /**
+         * Update the product code length setting to 4 to accommodate the 4-digit PLU codes
+         */
+        ns()->option->set( 'ns_scale_barcode_product_length', 4 );
     }
 };

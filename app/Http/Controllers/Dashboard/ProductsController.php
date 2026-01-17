@@ -543,19 +543,14 @@ class ProductsController extends DashboardController
                     ->first();
                 
                 if ( $unitQuantity && $unitQuantity->product ) {
-                    $product = $unitQuantity->product;
+                    $product = Product::find( $unitQuantity->product_id );
                     $product->load( 'unit_quantities.unit', 'tax_group.taxes' );
-                    
-                    // Set the selected unit quantity
-                    $product->selectedUnitQuantity = $unitQuantity;
-                    
-                    // Add scale data with the unit information
-                    $scaleData['unit'] = $unitQuantity->unit;
-                    $scaleData['unit_quantity_id'] = $unitQuantity->id;
-                    
+                                        
                     return [
                         'type' => 'product',
-                        'product' => $product,
+                        'unit' => $unitQuantity->unit,
+                        'unitQuantity' => $unitQuantity,
+                        'product' => $product->toArray(),
                         'scale' => $scaleData
                     ];
                 }

@@ -1459,6 +1459,8 @@ export class POS {
             $quantities: product.$quantities || undefined
         };
 
+        console.log( product.quantity );
+
         /**
          * will determin if the 
          * script is processing the add queue
@@ -1506,6 +1508,7 @@ export class POS {
          * Let's combien the built product
          * with the data resolved by the promises
          */
+        console.log({ cartProduct, productData });
         cartProduct = { ...cartProduct, ...productData };
 
         /**
@@ -1548,6 +1551,7 @@ export class POS {
              * push the new product
              * at the front of the cart
              */
+            console.log( JSON.parse( JSON.stringify( cartProduct ) ) );
             products.unshift(cartProduct);
         }
 
