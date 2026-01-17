@@ -25,6 +25,7 @@ return new class extends Migration
                 $table->integer( 'media_id' )->default( 0 );
                 $table->string( 'preview_url' )->nullable();
                 $table->boolean( 'displays_on_pos' )->default( true );
+                $table->unsignedBigInteger( 'scale_range_id' )->nullable();
                 $table->integer( 'total_items' )->default( 0 );
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
