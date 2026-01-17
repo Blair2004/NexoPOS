@@ -4,7 +4,7 @@
   <img src="https://user-images.githubusercontent.com/5265663/162700085-40ed00ca-9154-42cb-850a-ccf1c2db2d5d.png" alt="NexoPOS"/>
 </p>
 
-NexoPOS 4 is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to better manage their store. NexoPOS includes a responsive and beautiful dashboard that ease the interaction either on a smartphone, tablet, or desktop.
+NexoPOS is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer most businesses all the tools they need to manage their store more effectively. NexoPOS includes a responsive and beautiful dashboard that ease the interaction either on a smartphone, tablet, or desktop.
 
 Read Review On:
 [![Laravel News](https://user-images.githubusercontent.com/5265663/186377311-c42ddd2c-bc84-465c-a3b6-94e6df8d68bc.jpg)](https://laravel-news.com/nexopos-point-of-sale-for-laravel?utm_source=github.com&utm_medium=readme&utm_campagin=nexopos)
