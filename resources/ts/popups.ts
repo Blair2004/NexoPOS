@@ -11,6 +11,7 @@ import nsPOSLoadingPopup from '~/popups/ns-pos-loading-popup.vue';
 import nsProcurementQuantity from '~/popups/ns-procurement-quantity.vue';
 import nsProductPreview from '~/popups/ns-products-preview.vue';
 import nsPromptPopup from '~/popups/ns-prompt-popup.vue';
+import nsReorderPopup from '~/popups/ns-reorder-popup.vue';
 import nsSelectPopup from '~/popups/ns-select-popup.vue';
 
 
@@ -23,6 +24,7 @@ const popups    =   {
     nsMediaPopup,
     nsProcurementQuantity,
     nsOrdersRefund,
+    nsReorderPopup,
     nsSelectPopup,
     nsPOSLoadingPopup,
 };
