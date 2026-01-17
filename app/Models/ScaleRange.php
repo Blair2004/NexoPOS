@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @property int    $id
  * @property string $name
- * @property string $range_start
- * @property string $range_end
- * @property string $next_scale_plu
+ * @property int    $range_start
+ * @property int    $range_end
+ * @property int    $next_scale_plu
  * @property string $description
  * @property int    $author
  */
@@ -26,6 +26,12 @@ class ScaleRange extends NsModel
         'next_scale_plu',
         'description',
         'author',
+    ];
+
+    protected $casts = [
+        'range_start' => 'integer',
+        'range_end' => 'integer',
+        'next_scale_plu' => 'integer',
     ];
 
     /**
@@ -45,7 +51,7 @@ class ScaleRange extends NsModel
     public function getNextPLU(): string
     {
         // Check if we've exhausted the range
-        if ( (int) $this->next_scale_plu > (int) $this->range_end ) {
+        if ( $this->next_scale_plu > $this->range_end ) {
             throw new \Exception(
                 sprintf(
                     __( 'PLU range "%s" is exhausted. Current: %s, End: %s' ),
@@ -57,10 +63,10 @@ class ScaleRange extends NsModel
         }
 
         // Get the length from the range_start to maintain consistent padding
-        $length = strlen( $this->range_start );
+        $length = strlen( (string) $this->range_start );
 
         // Return zero-padded PLU
-        return str_pad( $this->next_scale_plu, $length, '0', STR_PAD_LEFT );
+        return str_pad( (string) $this->next_scale_plu, $length, '0', STR_PAD_LEFT );
     }
 
     /**
@@ -70,8 +76,7 @@ class ScaleRange extends NsModel
      */
     public function incrementNextPLU(): void
     {
-        $nextPlu = (int) $this->next_scale_plu + 1;
-        $this->next_scale_plu = (string) $nextPlu;
+        $this->next_scale_plu = $this->next_scale_plu + 1;
         $this->save();
     }
 
@@ -85,11 +90,9 @@ class ScaleRange extends NsModel
     {
         // Remove any leading zeros for comparison
         $pluInt = (int) $plu;
-        $rangeStart = (int) $this->range_start;
-        $rangeEnd = (int) $this->range_end;
 
         // Check if PLU is within range
-        if ( $pluInt < $rangeStart || $pluInt > $rangeEnd ) {
+        if ( $pluInt < $this->range_start || $pluInt > $this->range_end ) {
             return false;
         }
 
@@ -108,10 +111,8 @@ class ScaleRange extends NsModel
     public function containsPLU( string $plu ): bool
     {
         $pluInt = (int) $plu;
-        $rangeStart = (int) $this->range_start;
-        $rangeEnd = (int) $this->range_end;
 
-        return $pluInt >= $rangeStart && $pluInt <= $rangeEnd;
+        return $pluInt >= $this->range_start && $pluInt <= $this->range_end;
     }
 
     /**
@@ -121,7 +122,7 @@ class ScaleRange extends NsModel
      */
     public function getCapacity(): int
     {
-        return (int) $this->range_end - (int) $this->range_start + 1;
+        return $this->range_end - $this->range_start + 1;
     }
 
     /**
@@ -131,8 +132,12 @@ class ScaleRange extends NsModel
      */
     public function getUsedCount(): int
     {
-        $rangeStart = str_pad( $this->range_start, strlen( $this->range_start ), '0', STR_PAD_LEFT );
-        $rangeEnd = str_pad( $this->range_end, strlen( $this->range_end ), '0', STR_PAD_LEFT );
+        // Get the length for zero-padding from range_start
+        $length = strlen( (string) $this->range_start );
+        
+        // Generate zero-padded range boundaries for string comparison
+        $rangeStart = str_pad( (string) $this->range_start, $length, '0', STR_PAD_LEFT );
+        $rangeEnd = str_pad( (string) $this->range_end, $length, '0', STR_PAD_LEFT );
 
         return ProductUnitQuantity::whereBetween( 'scale_plu', [ $rangeStart, $rangeEnd ] )
             ->whereNotNull( 'scale_plu' )

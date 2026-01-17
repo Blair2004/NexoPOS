@@ -167,25 +167,25 @@ class ScaleRangeCrud extends CrudService
                     identifier: 'general',
                     label: __( 'General' ),
                     fields: [
-                        FormInput::text(
+                        FormInput::number(
                             label: __( 'Range Start' ),
                             name: 'range_start',
                             value: $entry->range_start ?? '',
-                            validation: 'required|numeric|min:0',
-                            description: __( 'The starting PLU code for this range (e.g., 0100).' )
+                            validation: 'required|integer|min:0',
+                            description: __( 'The starting PLU code for this range (e.g., 100 for 0100).' )
                         ),
-                        FormInput::text(
+                        FormInput::number(
                             label: __( 'Range End' ),
                             name: 'range_end',
                             value: $entry->range_end ?? '',
-                            validation: 'required|numeric|min:0',
-                            description: __( 'The ending PLU code for this range (e.g., 0999).' )
+                            validation: 'required|integer|min:0',
+                            description: __( 'The ending PLU code for this range (e.g., 999 for 0999).' )
                         ),
-                        FormInput::text(
+                        FormInput::number(
                             label: __( 'Next PLU' ),
                             name: 'next_scale_plu',
                             value: $entry->next_scale_plu ?? '',
-                            validation: 'required|numeric|min:0',
+                            validation: 'required|integer|min:0',
                             description: __( 'The next PLU code to be assigned in this range.' )
                         ),
                         FormInput::textarea(
@@ -237,13 +237,19 @@ class ScaleRangeCrud extends CrudService
     {
         $rangeStart = (int) $request->input( 'range_start' );
         $rangeEnd = (int) $request->input( 'range_end' );
+        $nextPlu = (int) $request->input( 'next_scale_plu' );
 
         // Validate that range_start is less than range_end
         if ( $rangeStart >= $rangeEnd ) {
             throw new \Exception( __( 'The range start must be less than the range end.' ) );
         }
 
-        // Check for overlapping ranges
+        // Validate that next_scale_plu is within the range
+        if ( $nextPlu < $rangeStart || $nextPlu > $rangeEnd ) {
+            throw new \Exception( __( 'The next PLU must be within the range boundaries.' ) );
+        }
+
+        // Check for overlapping ranges - using integer comparison
         $query = ScaleRange::where( function ( $query ) use ( $rangeStart, $rangeEnd ) {
             // Check if new range overlaps with any existing range
             $query->where( function ( $q ) use ( $rangeStart, $rangeEnd ) {
@@ -278,6 +284,9 @@ class ScaleRangeCrud extends CrudService
                     $overlappingRange->range_start,
                     $overlappingRange->range_end
                 )
+            );
+        }
+    }
             );
         }
 
