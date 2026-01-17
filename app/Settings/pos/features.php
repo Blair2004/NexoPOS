@@ -155,5 +155,16 @@ return [
             ],
             value: ns()->option->get( 'ns_pos_action_permission_enabled' ),
         ),
+
+        FormInput::switch(
+            label: __('Enable Scale Barcode'),
+            name: 'ns_scale_barcode_enabled',
+            options: [
+                ['label' => __('Yes'), 'value' => 'yes'],
+                ['label' => __('No'), 'value' => 'no'],
+            ],
+            value: ns()->option->get('ns_scale_barcode_enabled', 'no'),
+            description: __('Enable support for scale barcodes that encode product code and weight/price information.')
+        ),
     ],
 ];

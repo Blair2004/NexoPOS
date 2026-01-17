@@ -101,28 +101,7 @@ export default class FormValidation {
             field.type      =   field.type      || 'text',
             field.errors    =   field.errors    || [];
             field.disabled  =   field.disabled  || false;
-            field.touched   =   false;
-
-            /**
-             * extra component should use the "component" attribute provided
-             * as a string in order to render a new vue component.
-             */
-            if ( field.type === 'custom' && typeof field.component === 'string' ) {
-                const componentName     =   field.component;
-                field.component         =   shallowRef( nsExtraComponents[ field.component ] );
-
-                if ( field.component ) {
-                    /**
-                     * we make sure to make the current field(s)
-                     * available for the custom component.
-                     */
-                    field.component.value.$field      =   field;
-                    field.component.value.$fields     =   fields;
-                } else {
-                    throw `Failed to load a custom component. "${componentName}" is not provided as an extra component. More details here: "https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-a-custom-vue-component"`;
-                }
-            }
-            
+            field.touched   =   false;            
             return field;
         });
     }

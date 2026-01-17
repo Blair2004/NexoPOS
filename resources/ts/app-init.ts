@@ -41,6 +41,7 @@ const nsStockAdjustment             =   defineAsyncComponent( () => import( './p
 const nsOrderInvoice                =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
 const nsPrintLabel                  =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-print-label.vue' ) );
 const nsTransactionsRules           =   defineAsyncComponent( () => import( './pages/dashboard/transactions/ns-transactions-rules.vue' ) );
+const nsScaleSettingsPreview        =   defineAsyncComponent( () => import( './components/ns-scale-settings-preview.vue' ) );
 
 declare const window;
 declare let nsExtraComponents;   
@@ -84,6 +85,7 @@ const allComponents    =   Object.assign({
 
     nsStockAdjustment,
     nsOrderInvoice,
+    nsScaleSettingsPreview,
     ...baseComponents
 }, nsExtraComponents );
 

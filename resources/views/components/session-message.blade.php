@@ -40,7 +40,7 @@
         </div>
     </div>
     @else
-    <div class="flex border border-error-secondary bg-error-primary rounded-lg mb-3">
+    <div class="flex border border-error-secondary bg-error-primary/50 rounded-lg mb-3">
         <div class="p-3">
             <i class="las la-exclamation-circle text-2xl text-error-tertiary"></i>
         </div>

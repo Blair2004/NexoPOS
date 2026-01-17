@@ -326,7 +326,58 @@ export default {
                     .subscribe({
                         next: result => {
                             this.barcode     =   '';
-                            POS.addToCart( result.product );
+                            const product    =   {};
+
+                            product.name                    =   result.product.name;
+                            product.id                      =   result.product.id;
+                            product.product_type            =   result.product.product_type;
+                            product.rate                    =   result.product.rate;
+                            product.tax_group_id            =   result.product.tax_group_id;
+                            product.tax_type                =   result.product.tax_type;
+                            product.unit_id                 =   result.unit.id;
+                            product.unit_price              =   result.unitQuantity.sale_price;
+                            product.price_with_tax          =   result.unitQuantity.sale_price_with_tax;
+                            product.price_without_tax       =   result.unitQuantity.sale_price_without_tax;
+                            product.unit_name               =   result.unit.name;
+                            
+                            // Check if this is a scale barcode with embedded data
+                            if ( result.scale ) {
+                                const scaleData = result.scale;
+                                
+                                // The backend already sets the selectedUnitQuantity based on PLU
+                                // We just need to set the quantity or price based on scale type
+                                
+                                // Set quantity or price based on scale barcode type
+                                if ( scaleData.type === 'weight' ) {
+                                    // For weight-based scales, set the quantity
+                                    product.quantity = scaleData.value;
+                                    
+                                    // Show notification with unit name
+                                    const unitName = scaleData.unit?.name || 'kg';
+                                    nsSnackBar.info( 
+                                        __( 'Scale barcode detected: {weight} {unit}' )
+                                            .replace( '{weight}', scaleData.value.toFixed(3) )
+                                            .replace( '{unit}', unitName )
+                                    );
+                                } else if ( scaleData.type === 'price' ) {
+                                    // For price-based scales, we need to calculate quantity
+                                    // based on the price and unit price
+                                    const unitPrice = result.product.selectedUnitQuantity?.sale_price || 
+                                                     result.product.unit_quantities[0]?.sale_price || 0;
+                                    if ( unitPrice > 0 ) {
+                                        product.quantity = scaleData.value / unitPrice;
+                                    }
+                                    
+                                    // Show notification
+                                    nsSnackBar.info( 
+                                        __( 'Scale barcode detected: {price}' )
+                                            .replace( '{price}', this.nsCurrency( scaleData.value ) )
+                                    );
+                                }
+                            }
+                            
+                            console.log( JSON.parse( JSON.stringify( product ) ) );
+                            POS.addToCart( product );
                         },
                         error: ( error ) => {
                             this.barcode     =   '';

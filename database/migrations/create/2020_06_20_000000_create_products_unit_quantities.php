@@ -26,6 +26,8 @@ return new class extends Migration
                 $table->datetime( 'expiration_date' )->nullable();
                 $table->integer( 'unit_id' );
                 $table->string( 'barcode' )->nullable();
+                $table->string( 'scale_plu', 10 )->nullable()->unique();
+                $table->boolean( 'is_weighable' )->default( false );
                 $table->float( 'quantity', 18, 5 );
                 $table->float( 'low_quantity', 18, 5 )->default( 0 );
                 $table->boolean( 'stock_alert_enabled' )->default( false );

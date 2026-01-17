@@ -703,45 +703,47 @@ NexoPOS already creates a Vue app instance for the dashboard. Instead of creatin
 
 The trade-off is that custom components must be defined as TypeScript files (not `.vue` files) for proper injection.
 
+**IMPORTANT: Use Options API, Not Composition API**
+
+NexoPOS components should use the **Options API** (data, methods, mounted) rather than the Composition API (setup, ref, onMounted). This aligns with NexoPOS's architecture where `defineComponent` is globally available and Vue's reactivity is handled by the framework.
+
 **Step 1: Create Component as TypeScript File**
 
-Instead of `.vue` files, create your component as a TypeScript file that exports a Vue component definition:
+Instead of `.vue` files, create your component as a TypeScript file that exports a Vue component definition using **Options API**:
 
 ```typescript
 // Resources/ts/components/NsMyComponent.ts
-import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'NsMyComponent',
     
-    setup() {
-        const loading = ref(false);
-        const data = ref([]);
-        
-        const loadData = async () => {
-            loading.value = true;
-            try {
-                nsHttpClient.get('/api/my-module/data')
-                    .subscribe({
-                        next: (response: any) => {
-                            data.value = response;
-                            loading.value = false;
-                        },
-                        error: (error: any) => {
-                            nsSnackBar.error(error.message || 'Failed to load data');
-                            loading.value = false;
-                        }
-                    });
-            } catch (error) {
-                loading.value = false;
-            }
+    data() {
+        return {
+            loading: false,
+            data: []
         };
-        
-        return { loading, data, loadData };
     },
     
     mounted() {
         this.loadData();
+    },
+    
+    methods: {
+        loadData() {
+            this.loading = true;
+            
+            nsHttpClient.get('/api/my-module/data')
+                .subscribe({
+                    next: (response: any) => {
+                        this.data = response;
+                        this.loading = false;
+                    },
+                    error: (error: any) => {
+                        nsSnackBar.error(error.message || 'Failed to load data');
+                        this.loading = false;
+                    }
+                });
+        }
     },
     
     template: `
@@ -758,6 +760,13 @@ export default defineComponent({
     `
 });
 ```
+
+**Key Points:**
+- ❌ **Don't import** `defineComponent` from Vue - it's globally available
+- ❌ **Don't use** Composition API (`setup`, `ref`, `onMounted`)
+- ✅ **Use** Options API (`data`, `methods`, `mounted`)
+- ✅ **Use** `this.property` instead of `property.value`
+- ✅ **Return plain objects** from `data()`, not refs
 
 **Step 2: Register Component in Entry File**
 
@@ -778,13 +787,17 @@ if (typeof nsExtraComponents !== 'undefined') {
 
 **CRITICAL:** Module assets must be loaded **before** the `@parent` directive in the footer section. This ensures your components are registered before NexoPOS initializes its Vue app.
 
+**IMPORTANT:** Vue components in modules **MUST** be placed inside a container with `id="dashboard-content"` to work properly. This is the mounting point where NexoPOS initializes the Vue app for dashboard pages.
+
 ```blade
 @extends('layout.dashboard')
 
 @section('layout.dashboard.body')
 <div class="h-full flex-auto flex flex-col">
     @include('common.dashboard-header')
-    <div class="px-4 flex-auto flex flex-col">
+    
+    <!-- CRITICAL: Use id="dashboard-content" for Vue components to work -->
+    <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
         <h2 class="text-2xl font-bold mb-4">{{ __m('My Page', 'MyModule') }}</h2>
         
         <!-- Your component will be rendered here -->
@@ -798,7 +811,10 @@ if (typeof nsExtraComponents !== 'undefined') {
 @endsection
 ```
 
-**Important:** Use `@section('layout.dashboard.footer.inject')` instead of `@push('footer-scripts')`. This section is specifically designed for injecting module components before NexoPOS initializes.
+**Important Notes:**
+- Use `@section('layout.dashboard.footer.inject')` instead of `@push('footer-scripts')`. This section is specifically designed for injecting module components before NexoPOS initializes.
+- **Always** wrap Vue components in a container with `id="dashboard-content"` - this is where NexoPOS mounts its Vue app instance for dashboard pages.
+- Without the `dashboard-content` ID, your components will not be rendered or will throw errors.
 
 **Step 4: TypeScript Declarations for NexoPOS Globals**
 
@@ -809,6 +825,9 @@ Create type declarations for NexoPOS global variables:
 
 // NexoPOS component registry
 declare const nsExtraComponents: Record<string, any>;
+
+// Vue defineComponent (globally available)
+declare const defineComponent: any;
 
 // HTTP Client (RxJS-based)
 declare const nsHttpClient: {
@@ -847,7 +866,6 @@ declare function __m(key: string, module: string): string;
 
 ```typescript
 // Resources/ts/components/NsProviderManager.ts
-import { defineComponent, ref, onMounted } from 'vue';
 
 interface Provider {
     id: string;
@@ -860,26 +878,35 @@ interface Provider {
 export default defineComponent({
     name: 'NsProviderManager',
     
-    setup() {
-        const providers = ref<Provider[]>([]);
-        const loading = ref(true);
-        
-        const loadProviders = () => {
-            loading.value = true;
+    data() {
+        return {
+            providers: [] as Provider[],
+            loading: true
+        };
+    },
+    
+    mounted() {
+        this.loadProviders();
+    },
+    
+    methods: {
+        loadProviders() {
+            this.loading = true;
+            
             nsHttpClient.get('/api/my-module/providers')
                 .subscribe({
                     next: (response: Provider[]) => {
-                        providers.value = response;
-                        loading.value = false;
+                        this.providers = response;
+                        this.loading = false;
                     },
                     error: (error: any) => {
                         nsSnackBar.error(error.message || 'Failed to load providers');
-                        loading.value = false;
+                        this.loading = false;
                     }
                 });
-        };
+        },
         
-        const connectProvider = (providerId: string) => {
+        connectProvider(providerId: string) {
             nsHttpClient.post(`/api/my-module/providers/${providerId}/connect`)
                 .subscribe({
                     next: (response: any) => {
@@ -887,16 +914,16 @@ export default defineComponent({
                             window.location.href = response.redirect_url;
                         } else {
                             nsSnackBar.success('Provider connected successfully');
-                            loadProviders();
+                            this.loadProviders();
                         }
                     },
                     error: (error: any) => {
                         nsSnackBar.error(error.message || 'Failed to connect provider');
                     }
                 });
-        };
+        },
         
-        const disconnectProvider = (providerId: string) => {
+        disconnectProvider(providerId: string) {
             Popup.show(nsConfirmPopup, {
                 title: 'Disconnect Provider',
                 message: 'Are you sure you want to disconnect this provider?',
@@ -906,7 +933,7 @@ export default defineComponent({
                             .subscribe({
                                 next: () => {
                                     nsSnackBar.success('Provider disconnected');
-                                    loadProviders();
+                                    this.loadProviders();
                                 },
                                 error: (error: any) => {
                                     nsSnackBar.error(error.message || 'Failed to disconnect');
@@ -915,19 +942,7 @@ export default defineComponent({
                     }
                 }
             });
-        };
-        
-        onMounted(() => {
-            loadProviders();
-        });
-        
-        return {
-            providers,
-            loading,
-            loadProviders,
-            connectProvider,
-            disconnectProvider
-        };
+        }
     },
     
     template: `
@@ -1432,7 +1447,7 @@ Create module-specific permissions:
 use App\Models\Permission;
 
 $permission = Permission::firstOrNew(['namespace' => 'create.foobar.products']);
-$permission->name = 'Create FooBar Products';
+$permission->name = __m( 'Create products', 'FooBar' );
 $permission->namespace = 'create.foobar.products';
 $permission->description = 'Allow creating FooBar products';
 $permission->save();
@@ -1443,13 +1458,40 @@ $permission->save();
 Utilize NexoPOS hooks for integration:
 
 ```php
+use App\Classes\AsideMenu;
+// ...
 // In module service provider
-Hook::addFilter('ns.dashboard.menus', function($menus) {
-    $menus[] = [
-        'label' => __('FooBar'),
-        'href' => route('foobar.dashboard'),
-        'icon' => 'la-box'
-    ];
+Hook::addFilter('ns-dashboard-menus', function($menus) {
+    $newMenus = AsideMenu::menu(
+        label: __m( 'Foobar', 'FooBar' ),
+        icon: 'la-box',
+        href: route( 'foobar.products.index' ),
+        permissions: [
+            'view.foobar.products'
+        ]
+    );
+
+    $menus = array_insert_after($menus, 'inventory', $newMenus);
+
+    return $menus;
+});
+```
+
+Or we add define submenus
+
+```php
+use App\Classes\AsideMenu;
+// ...
+Hook::addFilter('ns-dashboard-menus', function($menus) {
+    $menus = array_insert_after($menu, 'inventory', AsideMenu::menu(
+        label: __m( 'Products', 'FooBar' ),
+        icon: 'la-box',
+        href: route( 'foobar.products.index' ),
+        permissions: [
+            'view.foobar.products'
+        ]
+    ));
+
     return $menus;
 });
 ```

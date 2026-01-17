@@ -156,6 +156,14 @@ trait NsForms
              */
             if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
                 foreach ( $tab[ 'fields' ] as $field ) {
+
+                    /**
+                     * skip fields without a name
+                     */
+                    if ( ! isset( $field[ 'name' ] ) ) {
+                        continue;
+                    }
+
                     /**
                      * some fields might be hidden. We should implement a logic 
                      * for ensuring we only extract visible fields

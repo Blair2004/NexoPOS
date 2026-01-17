@@ -228,6 +228,23 @@ class ProductCrud extends CrudService
             ),
             FormInput::switch(
                 errors: [],
+                label: __( 'Weighable Product' ),
+                name: 'is_weighable',
+                options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
+                description: __( 'Define whether this unit is sold by weight using scale barcodes.' ),
+                disabled: ! ns()->option->get( 'ns_scale_barcode_product_length' ),
+                value: 0,
+            ),
+            FormInput::text(
+                errors: [],
+                label: __( 'PLU Code' ),
+                name: 'scale_plu',
+                value: '',
+                description: __( 'Price Lookup code for scale barcodes. Leave empty to auto-generate based on category PLU range.' ),
+                disabled: ! ns()->option->get( 'ns_scale_barcode_product_length' ),
+            ),
+            FormInput::switch(
+                errors: [],
                 label: __( 'Stock Alert' ),
                 name: 'stock_alert_enabled',
                 options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),

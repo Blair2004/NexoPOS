@@ -1,6 +1,11 @@
 <script lang="ts">
+import { shallowRef } from 'vue';
 import { default as nsDateTimePicker } from './ns-date-time-picker.vue';
 import { default as nsSwitch } from './ns-switch.vue';
+
+declare const nsComponents: any;
+declare const nsExtraComponents: any;
+
 export default {
     emits: ['blur', 'change', 'saved', 'keypress', 'keyup' ],
     data: () => {
@@ -65,7 +70,7 @@ export default {
             return ['custom'].includes(this.field.type);
         },
     },
-    props: [ 'field' ],
+    props: [ 'field', 'siblings' ],
     methods: {
         handleSaved(field, event) {
             this.$emit('saved', event);
@@ -103,6 +108,15 @@ export default {
             option.selected = false;
             this.refreshMultiselect();
             this.$emit('change', { action: 'removeOption', option });
+        },
+        loadComponent( componentName ) {
+            if ( nsExtraComponents[ componentName ] ) {
+                return shallowRef( nsExtraComponents[ componentName ] ).value;
+            } else if ( nsComponents[ componentName ] ) {
+                return shallowRef( nsComponents[ componentName ] ).value;
+            } else {
+                throw `Component ${ componentName } not found.`;
+            }
         },
     },
 }
@@ -181,8 +195,8 @@ export default {
         </ns-switch>
         <template v-if="isCustom">
             <keep-alive>
-                <component :field="field" @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)"
-                    v-bind:is="field.component"></component>
+                <component :is="loadComponent(field.component)" :field="field" @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)"
+                    ></component>
             </keep-alive>
         </template>
     </div>

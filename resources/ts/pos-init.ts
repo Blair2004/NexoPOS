@@ -1548,6 +1548,7 @@ export class POS {
              * push the new product
              * at the front of the cart
              */
+            console.log( JSON.parse( JSON.stringify( cartProduct ) ) );
             products.unshift(cartProduct);
         }
 
