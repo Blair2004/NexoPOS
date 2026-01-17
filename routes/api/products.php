@@ -38,6 +38,7 @@ Route::post( 'products/search', [ ProductsController::class, 'searchProduct' ] )
 Route::post( 'products/adjustments', [ ProductsController::class, 'createAdjustment' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
 Route::post( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'createSingleVariation' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.create.products' ) );
 Route::post( 'products/{product}/units/conversion', [ ProductsController::class, 'convertUnits' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
+Route::post( 'products/reorder', [ ProductsController::class, 'reorderProducts' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
 
 Route::put( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'editSingleVariation' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
 Route::put( 'products/{product}', [ ProductsController::class, 'updateProduct' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );

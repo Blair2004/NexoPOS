@@ -155,5 +155,16 @@ return [
             ],
             value: ns()->option->get( 'ns_pos_action_permission_enabled' ),
         ),
+
+        FormInput::switch(
+            label: __( 'Enable Category & Products Reordering' ),
+            description: __( 'When enabled, categories and products will be retrieved in their custom order instead of by creation date.' ),
+            name: 'ns_pos_enable_reordering',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_pos_enable_reordering' ),
+        ),
     ],
 ];
