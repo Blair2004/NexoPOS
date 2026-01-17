@@ -566,6 +566,138 @@ export default {
 }
 ```
 
+## Popup Width Utilities
+
+**IMPORTANT:** Popup container divs must use **arbitrary values** for width utilities, NOT fraction utilities.
+
+### Width Utility Rules
+
+When styling the main popup container (the outermost div in your popup component), follow these rules:
+
+**✅ Correct - Use Arbitrary Values:**
+```vue
+<template>
+    <!-- Use viewport width with brackets -->
+    <div class="shadow-lg w-[85.71vw] md:w-[71.43vw] lg:w-[57.14vw] ns-box flex flex-col">
+        <!-- Popup content -->
+    </div>
+</template>
+```
+
+**❌ Wrong - Don't Use Fractions:**
+```vue
+<template>
+    <!-- NEVER use fraction utilities like w-1/2, w-3/4, etc. on popup container -->
+    <div class="shadow-lg w-1/2 md:w-3/4 lg:w-4/5 ns-box flex flex-col">
+        <!-- Popup content -->
+    </div>
+</template>
+```
+
+### Standard Popup Sizes
+
+Use these standard viewport-based widths for consistency across NexoPOS:
+
+| Size    | Width Class       | Viewport % | Use Case |
+|---------|-------------------|------------|----------|
+| Small   | `w-[28.57vw]`     | ~29%       | Alerts, simple prompts |
+| Medium  | `w-[42.86vw]`     | ~43%       | Forms, confirmations |
+| Large   | `w-[57.14vw]`     | ~57%       | Complex forms, tables |
+| XLarge  | `w-[71.43vw]`     | ~71%       | Data lists, detailed views |
+| Full    | `w-[85.71vw]`     | ~86%       | Media selection, large tables |
+
+### Responsive Width Pattern
+
+Always use responsive breakpoints to adjust width for different screen sizes:
+
+```vue
+<template>
+    <!-- Full width on mobile, narrower on larger screens -->
+    <div class="shadow-lg w-[85.71vw] md:w-[71.43vw] lg:w-[57.14vw] ns-box flex flex-col">
+        <!-- Content automatically adjusts -->
+    </div>
+</template>
+```
+
+**Breakpoint Pattern:**
+- **No breakpoint** (mobile): Widest width for touch-friendly interface
+- **md:** (tablet): Medium width for better readability
+- **lg:** (desktop): Narrower width to focus content
+
+### Module-Specific Prefixes
+
+When using custom Tailwind prefixes in modules, apply the prefix to width utilities:
+
+```vue
+<template>
+    <!-- For module with prefix "ob:" -->
+    <div class="shadow-lg ob:w-[85.71vw] ob:md:w-[71.43vw] ob:lg:w-[57.14vw] ns-box">
+        <!-- Module popup content -->
+    </div>
+</template>
+```
+
+**Remember:** Prefix comes FIRST, then breakpoint: `ob:md:w-[...]` not `md:ob:w-[...]`
+
+### Why Arbitrary Values?
+
+Viewport-based widths (`vw` units) provide:
+1. **Consistency** - Exact percentages across all screen sizes
+2. **Predictability** - Same width calculations for all popups
+3. **Flexibility** - Easy to adjust for specific needs
+4. **Responsive** - Naturally adapts to viewport changes
+
+Fraction utilities like `w-1/2` or `w-3/4` should only be used for **internal popup content**, never the main popup container.
+
+### Examples
+
+**Simple Alert Popup:**
+```vue
+<template>
+    <div class="shadow-lg w-[28.57vw] ns-box flex flex-col">
+        <div class="p-2 border-b ns-box-header">
+            <h3>{{ title }}</h3>
+        </div>
+        <div class="p-4 ns-box-body">
+            <p>{{ message }}</p>
+        </div>
+    </div>
+</template>
+```
+
+**Complex Form Popup:**
+```vue
+<template>
+    <div class="shadow-lg w-[85.71vw] md:w-[71.43vw] lg:w-[57.14vw] ns-box flex flex-col">
+        <div class="p-2 border-b ns-box-header flex justify-between items-center">
+            <h3>{{ title }}</h3>
+            <ns-close-button @click="close()"></ns-close-button>
+        </div>
+        <div class="p-4 ns-box-body flex-auto overflow-y-auto">
+            <!-- Complex form fields -->
+        </div>
+        <div class="p-2 border-t ns-box-footer flex justify-end">
+            <ns-button @click="submit()">Submit</ns-button>
+        </div>
+    </div>
+</template>
+```
+
+**Module Popup with Custom Prefix:**
+```vue
+<template>
+    <div class="shadow-lg ob:w-[85.71vw] ob:md:w-4/5 ob:lg:w-3/4 ns-box flex flex-col">
+        <!-- Note: Using fraction utilities here after arbitrary base width is acceptable -->
+        <div class="p-2 border-b ns-box-header">
+            <h3>{{ title }}</h3>
+        </div>
+        <div class="p-4 ns-box-body">
+            <!-- Module content -->
+        </div>
+    </div>
+</template>
+```
+
 ## Best Practices
 
 ### 1. Always Use Promises for User Input
