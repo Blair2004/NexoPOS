@@ -37,9 +37,10 @@
     "numeral": "^2.0.6",
     "qrcode": "^1.5.4",
     "rxjs": "^7.8.1",
+    "sortablejs": "^1.15.3",
     "vue": "^3.5.13",
     "vue-chartjs": "^5.3.1",
     "vue-router": "^4.4.3",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^4.1.0"
   }
 }
