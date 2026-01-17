@@ -357,6 +357,16 @@ class ProductCrud extends CrudService
                                     'validation' => 'required',
                                     'value' => $entry->stock_management ?? 'enabled',
                                 ], [
+                                    'type' => 'switch',
+                                    'options' => Helper::kvToJsOptions( [
+                                        __( 'No' ),
+                                        __( 'Yes' ),
+                                    ] ),
+                                    'description' => __( 'Pin this product to display at the top of the POS grid.' ),
+                                    'name' => 'pinned',
+                                    'label' => __( 'Pin Product' ),
+                                    'value' => $entry->pinned ?? false,
+                                ], [
                                     'type' => 'textarea',
                                     'name' => 'description',
                                     'label' => __( 'Description' ),
