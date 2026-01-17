@@ -22,6 +22,7 @@ use App\Models\ProcurementProduct;
 use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
+use App\Models\ScaleRange;
 use App\Models\Unit;
 use App\Services\DateService;
 use App\Services\Helper;
@@ -645,5 +646,15 @@ class ProductsController extends DashboardController
     public function getScaleRange()
     {
         return ScaleRangeCrud::table();
+    }
+
+    public function createScaleRange()
+    {
+        return ScaleRangeCrud::form();
+    }
+
+    public function editScaleRange( ScaleRange $scaleRange )
+    {
+        return ScaleRangeCrud::form( $scaleRange );
     }
 }

@@ -20,7 +20,7 @@ class ScaleRangeCrud extends CrudService
     /**
      * Define the identifier
      */
-    const IDENTIFIER = 'ns.scale-ranges';
+    const IDENTIFIER = 'ns.scale-range';
 
     /**
      * Define the base table
@@ -30,7 +30,7 @@ class ScaleRangeCrud extends CrudService
     /**
      * Define namespace
      */
-    protected $namespace = 'ns.scale-ranges';
+    protected $namespace = 'ns.scale-range';
 
     /**
      * Model Used
@@ -60,7 +60,7 @@ class ScaleRangeCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable = [ 'name', 'range_start', 'range_end', 'next_scale_plu', 'description' ];
+    public $fillable = [ 'name', 'range_start', 'range_end', 'next_scale_plu', 'description', 'author' ];
 
     /**
      * Define columns and how it is structured.
@@ -100,7 +100,7 @@ class ScaleRangeCrud extends CrudService
             label: __( 'Edit' ),
             identifier: 'edit',
             type: 'GOTO',
-            url: ns()->url( '/dashboard/products/scale-ranges/edit/' . $entry->id ),
+            url: ns()->url( '/dashboard/products/scale-range/edit/' . $entry->id ),
             permissions: [ 'nexopos.update.products' ]
         );
 
@@ -108,7 +108,7 @@ class ScaleRangeCrud extends CrudService
             label: __( 'Delete' ),
             identifier: 'delete',
             type: 'DELETE',
-            url: ns()->url( '/api/crud/ns.scale-ranges/' . $entry->id ),
+            url: ns()->url( '/api/crud/ns.scale-range/' . $entry->id ),
             permissions: [ 'nexopos.delete.products' ],
             confirm: [
                 'message' => __( 'Would you like to delete this scale range?' ),
@@ -211,42 +211,35 @@ class ScaleRangeCrud extends CrudService
     /**
      * Before creating a new range - validate no overlaps
      */
-    public function beforePost( $request )
+    public function beforePost( $inputs )
     {
         $this->allowedTo( 'create' );
-        $this->validateRangeOverlap( $request );
+        $this->validateRangeOverlap( $inputs );
 
-        return $request;
+        return $inputs;
     }
-
+    
     /**
      * Before updating a range - validate no overlaps
      */
-    public function beforePut( $namespace, $id, $request )
+    public function beforePut( $inputs, ScaleRange | null $entry = null)
     {
         $this->allowedTo( 'update' );
-        $this->validateRangeOverlap( $request, $id );
-
-        return $request;
+        $this->validateRangeOverlap( $inputs, $entry );
+        return $inputs;
     }
 
     /**
      * Validate that the range doesn't overlap with existing ranges
      */
-    protected function validateRangeOverlap( $request, $excludeId = null )
+    protected function validateRangeOverlap( $inputs, ScaleRange | null $scaleRange = null )
     {
-        $rangeStart = (int) $request->input( 'range_start' );
-        $rangeEnd = (int) $request->input( 'range_end' );
-        $nextPlu = (int) $request->input( 'next_scale_plu' );
+        $rangeStart = $inputs[ 'range_start' ];
+        $rangeEnd = $inputs[ 'range_end' ];
 
         // Validate that range_start is less than range_end
         if ( $rangeStart >= $rangeEnd ) {
             throw new \Exception( __( 'The range start must be less than the range end.' ) );
-        }
-
-        // Validate that next_scale_plu is within the range
-        if ( $nextPlu < $rangeStart || $nextPlu > $rangeEnd ) {
-            throw new \Exception( __( 'The next PLU must be within the range boundaries.' ) );
         }
 
         // Check for overlapping ranges - using integer comparison
@@ -268,8 +261,8 @@ class ScaleRangeCrud extends CrudService
         } );
 
         // Exclude current range if updating
-        if ( $excludeId ) {
-            $query->where( 'id', '!=', $excludeId );
+        if ( $scaleRange ) {
+            $query->where( 'id', '!=', $scaleRange->id );
         }
 
         $overlappingRange = $query->first();
@@ -286,12 +279,10 @@ class ScaleRangeCrud extends CrudService
                 )
             );
         }
-    }
-            );
-        }
-
+        
         // Validate that next_scale_plu is within the range
-        $nextPLU = (int) $request->input( 'next_scale_plu' );
+        $nextPLU = $inputs[ 'next_scale_plu' ];
+
         if ( $nextPLU < $rangeStart || $nextPLU > $rangeEnd ) {
             throw new \Exception( 
                 sprintf(
@@ -334,23 +325,20 @@ class ScaleRangeCrud extends CrudService
      * Define columns for export
      */
     protected $exportColumns = [ 'id', 'name', 'range_start', 'range_end', 'next_scale_plu', 'description', 'created_at' ];
-
+    
     /**
-     * Customize entry data for display
+     * get Links
+     *
+     * @return array of links
      */
-    // public function getEntries( $config = [] ): array
-    // {
-    //     $entries = parent::getEntries( $config );
-
-    //     // Add capacity and used count to each entry
-    //     foreach ( $entries[ 'data' ] as $entry ) {
-    //         $scaleRange = ScaleRange::find( $entry->id );
-    //         if ( $scaleRange ) {
-    //             $entry->capacity = $scaleRange->getCapacity();
-    //             $entry->used = $scaleRange->getUsedCount();
-    //         }
-    //     }
-
-    //     return $entries;
-    // }
+    public function getLinks(): array
+    {
+        return [
+            'list' => ns()->url( 'dashboard/' . 'products/scale-range' ),
+            'create' => ns()->url( 'dashboard/' . 'products/scale-range/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'products/scale-range/edit/{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.scale-range' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.scale-range/{id}' . '' ),
+        ];
+    }
 }
