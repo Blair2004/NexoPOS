@@ -22,11 +22,14 @@ class PosSettings extends SettingsPage
             'vat' => include ( dirname( __FILE__ ) . '/pos/vat.php' ),
             'shortcuts' => include ( dirname( __FILE__ ) . '/pos/shortcuts.php' ),
             'features' => include ( dirname( __FILE__ ) . '/pos/features.php' ),
-            'scale-barcode' => include ( dirname( __FILE__ ) . '/pos/scale-barcode.php' ),
         ] );
 
         if ( ns()->option->get( 'ns_pos_action_permission_enabled' ) ) {
             $posSettingsTabs['actions'] = include dirname( __FILE__ ) . '/pos/actions.php';
+        }
+
+        if ( ns()->option->get( 'ns_scale_barcode_enabled' ) === 'yes' ) {
+            $posSettingsTabs['scale-barcode'] = include dirname( __FILE__ ) . '/pos/scale-barcode.php';
         }
 
         $this->form = [

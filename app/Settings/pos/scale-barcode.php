@@ -7,17 +7,6 @@ return SettingForm::tab(
     identifier: 'scale-barcode',
     label: __('Scale Barcode'),
     fields: [
-        FormInput::switch(
-            label: __('Enable Scale Barcode'),
-            name: 'ns_scale_barcode_enabled',
-            options: [
-                ['label' => __('Yes'), 'value' => 'yes'],
-                ['label' => __('No'), 'value' => 'no'],
-            ],
-            value: ns()->option->get('ns_scale_barcode_enabled', 'no'),
-            description: __('Enable support for scale barcodes that encode product code and weight/price information.')
-        ),
-
         FormInput::text(
             label: __('Barcode Prefix'),
             name: 'ns_scale_barcode_prefix',

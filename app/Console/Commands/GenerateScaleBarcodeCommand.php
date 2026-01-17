@@ -13,7 +13,7 @@ class GenerateScaleBarcodeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:generate-scale-barcode
+    protected $signature = 'ns:scale-barcode
                             {--product= : Product ID to generate barcode for}
                             {--unit-quantity= : Product Unit Quantity ID}
                             {--plu= : PLU code to use}
