@@ -166,5 +166,16 @@ return [
             ],
             value: ns()->option->get( 'ns_pos_enable_reordering' ),
         ),
+        
+        FormInput::switch(
+            label: __( 'Show Preview For Pinned Products' ),
+            description: __( 'When enabled, pictures will be shown on pinned products in the POS.' ),
+            name: 'ns_pos_show_preview_pinned_products',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_pos_show_preview_pinned_products' ),
+        ),
     ],
 ];

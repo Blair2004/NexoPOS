@@ -27,15 +27,16 @@ return new class extends Migration
                 } );
 
                 // Set initial position values based on created_at
-                DB::statement( '
-                    UPDATE nexopos_products_categories 
+                $prefix = DB::getTablePrefix();
+                DB::statement( "
+                    UPDATE {$prefix}nexopos_products_categories 
                     SET position = (
                         SELECT COUNT(*) 
-                        FROM (SELECT * FROM nexopos_products_categories) AS t 
-                        WHERE t.created_at < nexopos_products_categories.created_at 
-                        AND (t.parent_id = nexopos_products_categories.parent_id OR (t.parent_id IS NULL AND nexopos_products_categories.parent_id IS NULL))
+                        FROM (SELECT * FROM {$prefix}nexopos_products_categories) AS t 
+                        WHERE t.created_at < {$prefix}nexopos_products_categories.created_at 
+                        AND (t.parent_id = {$prefix}nexopos_products_categories.parent_id OR (t.parent_id IS NULL AND {$prefix}nexopos_products_categories.parent_id IS NULL))
                     )
-                ' );
+                " );
             }
         }
 
@@ -47,15 +48,16 @@ return new class extends Migration
                 } );
 
                 // Set initial position values based on created_at
-                DB::statement( '
-                    UPDATE nexopos_products 
+                $prefix = DB::getTablePrefix();
+                DB::statement( "
+                    UPDATE {$prefix}nexopos_products 
                     SET position = (
                         SELECT COUNT(*) 
-                        FROM (SELECT * FROM nexopos_products) AS t 
-                        WHERE t.created_at < nexopos_products.created_at 
-                        AND t.category_id = nexopos_products.category_id
+                        FROM (SELECT * FROM {$prefix}nexopos_products) AS t 
+                        WHERE t.created_at < {$prefix}nexopos_products.created_at 
+                        AND t.category_id = {$prefix}nexopos_products.category_id
                     )
-                ' );
+                " );
             }
         }
     }

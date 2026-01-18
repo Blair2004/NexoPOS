@@ -1,5 +1,5 @@
 <template>
-    <div id="pos-grid" class="flex-auto flex flex-col">
+    <div id="pos-grid" class="flex-auto flex flex-col overflow-hidden">
         <div id="tools" class="flex pl-2" v-if="visibleSection === 'grid'">
             <div @click="switchTo( 'cart' )" class="switch-cart flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 border-t border-r border-l">
                 <span>{{ __( 'Cart' ) }}</span>
@@ -35,16 +35,14 @@
                     <li><a @click="loadCategories( bread )" v-for="bread of breadcrumbs" :key="bread.id" href="javascript:void(0)" class="px-3">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
                 </ul>
             </div>
-            <div v-if="pinnedProducts.length > 0" id="pinned-products" class="border-b ">
-                <div class="px-2 py-1 text-xs font-semibold ">
-                    <i class="las la-thumbtack"></i> {{ __( 'Pinned Products' ) }}
-                </div>
-                <div class="overflow-x-auto">
-                    <div class="flex px-2 pb-2" style="min-width: min-content;">
+            
+            <div v-if="pinnedProducts.length > 0" id="pinned-products">
+                <div class="overflow-x-hidden pinned-wrapper">
+                    <div class="shadow-sm grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 divide-x-1 divide-y-1 divide-solid divide-pos-button-edge flex-nowrap flex items-center">
                         <div @click="addToTheCart( product )" v-for="product of pinnedProducts" :key="product.id" 
-                            class="cell-item cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative flex-shrink-0"
-                            style="width: 144px; height: 144px; margin-right: 8px;">
-                            <div class="h-full w-full flex items-center justify-center overflow-hidden">
+                            :class="options.ns_pos_show_preview_pinned_products === 'yes' ? 'h-36' : 'h-20 small-pinned-product'"
+                            class="cursor-pointer flex flex-col items-center relativ justify-center overflow-hidden relative flex-shrink-0">
+                            <div v-if="options.ns_pos_show_preview_pinned_products === 'yes'" class="h-full w-full flex items-center justify-center overflow-hidden">
                                 <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full" :alt="product.name"/>
                                 <img v-else-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full" :alt="product.name"/>
                                 <i v-else="! product.galleries || product.galleries.filter( i => i.featured ).length === 0" class="las la-image text-6xl"></i>
