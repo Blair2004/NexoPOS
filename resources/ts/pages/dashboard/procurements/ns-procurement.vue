@@ -313,7 +313,7 @@ export default {
                 product.procurement.unit_id === unitQuantity.unit_id
             );
 
-            if ( unit ) {
+            if ( unit && product.procurement.purchase_price_edit === 0 ) {
                 product.procurement.purchase_price_edit      =   ( unit.last_purchase_price || 0 );
             }
 
@@ -459,6 +459,8 @@ export default {
                 procurement_id: null,
                 $invalid: false,
             }
+
+            console.log({ product})
             
             product.procurement     =   Object.assign( defaultValues, product.procurement );
 
@@ -716,11 +718,11 @@ export default {
          */
         showLowStockNotification( count ) {
             const message = count === 1 
-                ? __( '1 product is running low on stock.' )
-                : __( '{count} products are running low on stock.' ).replace( '{count}', count );
+                ? __( 'We\'ve detected 1 product that is running low on stock. You can load it into the procurement.' )
+                : __( 'We\'ve detected {count} products that are running low on stock. You can load them into the procurement.' ).replace( '{count}', count );
 
             nsNotice.info( 
-                __( 'Low Stock Alert' ),
+                __( 'Products Suggestion' ),
                 message,
                 {
                     duration: false, // Keep visible until user interacts
@@ -754,7 +756,16 @@ export default {
                 const exists = this.form.products.find( p => p.product_id === product.id || p.id === product.id );
                 
                 if ( ! exists ) {
-                    this.addProductList( product );
+                    this.addProductList({
+                        ...product,
+                        procurement: {
+                            unit_id: product.recent_procured_unit_id,
+                            quantity: product.recent_procured_quantity,
+                            convert_unit_id: product.recent_procured_convert_unit_id,
+                            convert_unit_label: product.recent_procured_convert_unit_label,
+                            purchase_price_edit: product.recent_procured_purchase_price,
+                        }
+                    });
                     loadedCount++;
                 }
             });
@@ -800,7 +811,7 @@ export default {
                     <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                     <button @click="reloadEntities()" class="outline-none px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
-                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs text-fontcolor-soft py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
