@@ -14,7 +14,7 @@
     "@tailwindcss/postcss": "^4.1.13",
     "@tailwindcss/vite": "^4.1.16",
     "@vitejs/plugin-vue": "^6.0.1",
-    "laravel-echo": "^2.2.0",
+    "laravel-echo": "^2.3.0",
     "laravel-vite-plugin": "^2.0.1",
     "pusher-js": "^8.4.0",
     "sass": "^1.94.2",
