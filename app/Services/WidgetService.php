@@ -256,7 +256,13 @@ class WidgetService
                         ->filter( function ( $widget ) {
                             $class = $widget->class_name;
 
-                            return class_exists( $class ) && Gate::allows( ( new $class )->getPermission() );
+                            if ( ! class_exists( $class ) ) {
+                                return false;
+                            }
+
+                            $widgetInstance = new $class;
+
+                            return $widgetInstance->canAccess();
                         } )
                         ->values(),
                 ];
