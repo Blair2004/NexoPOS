@@ -36,13 +36,13 @@
                 </ul>
             </div>
             
-            <div v-if="pinnedProducts.length > 0" id="pinned-products">
+            <div v-if="options.ns_pos_enable_pinned_products && pinnedProducts.length > 0" id="pinned-products">
                 <div class="overflow-x-hidden pinned-wrapper">
                     <div class="shadow-sm grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 divide-x-1 divide-y-1 divide-solid divide-pos-button-edge flex-nowrap flex items-center">
                         <div @click="addToTheCart( product )" v-for="product of pinnedProducts" :key="product.id" 
-                            :class="options.ns_pos_show_preview_pinned_products === 'yes' ? 'h-36' : 'h-20 small-pinned-product'"
+                            :class="options.ns_pos_show_preview_pinned_products ? 'h-36' : 'h-20 small-pinned-product'"
                             class="cursor-pointer flex flex-col items-center relativ justify-center overflow-hidden relative flex-shrink-0">
-                            <div v-if="options.ns_pos_show_preview_pinned_products === 'yes'" class="h-full w-full flex items-center justify-center overflow-hidden">
+                            <div v-if="options.ns_pos_show_preview_pinned_products" class="h-full w-full flex items-center justify-center overflow-hidden">
                                 <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full" :alt="product.name"/>
                                 <img v-else-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full" :alt="product.name"/>
                                 <i v-else="! product.galleries || product.galleries.filter( i => i.featured ).length === 0" class="las la-image text-6xl"></i>
@@ -55,7 +55,7 @@
                                             {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
                                         </span>
                                     </template>
-                                    <template v-else-if="options.ns_pos_gross_price_used === 'yes'">
+                                    <template v-else-if="options.ns_pos_gross_price_used">
                                         <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
                                             {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
                                         </span>
@@ -112,7 +112,7 @@
                                         {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
                                     </span>
                                 </template>
-                                <template v-else-if="options.ns_pos_gross_price_used === 'yes'">
+                                <template v-else-if="options.ns_pos_gross_price_used">
                                     <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
                                         {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
                                     </span>

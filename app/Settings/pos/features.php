@@ -168,6 +168,17 @@ return [
         ),
         
         FormInput::switch(
+            label: __( 'Enable Pinned Products' ),
+            description: __( 'When enabled, pinned products will be displayed at the top of the POS grid for quick access.' ),
+            name: 'ns_pos_enable_pinned_products',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_pos_enable_pinned_products', 'yes' ),
+        ),
+        
+        FormInput::switch(
             label: __( 'Show Preview For Pinned Products' ),
             description: __( 'When enabled, pictures will be shown on pinned products in the POS.' ),
             name: 'ns_pos_show_preview_pinned_products',

@@ -444,14 +444,7 @@ class ProductCategoryCrud extends CrudService
      */
     public function getHeaderButtons(): array
     {
-        return [
-            [
-                'label' => __( 'Reorder' ),
-                'identifier' => 'reorder',
-                'type' => 'POPUP',
-                'component' => 'nsReorderPopup',
-            ],
-        ];
+        return [ 'nsReorderButton' ];
     }
 
     /**
