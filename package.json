@@ -31,7 +31,7 @@
     "@wordpress/hooks": "^4.36.0",
     "chart.js": "^4.5.1",
     "currency.js": "^2.0.4",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "mathjs": "^15.1.0",
     "moment": "^2.30.1",
     "numeral": "^2.0.6",
