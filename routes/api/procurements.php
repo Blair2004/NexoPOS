@@ -8,6 +8,7 @@ Route::get( 'procurements/{id}/products', [ ProcurementController::class, 'procu
 Route::get( 'procurements/{id}/refresh', [ ProcurementController::class, 'refreshProcurement' ] );
 Route::get( 'procurements/{procurement}/set-as-paid', [ ProcurementController::class, 'setAsPaid' ] );
 Route::get( 'procurements/preload/{uuid}', [ ProcurementController::class, 'preload' ] );
+Route::get( 'procurements/low-stock-suggestions', [ ProcurementController::class, 'getLowStockSuggestions' ] );
 
 Route::post( 'procurements/preload', [ ProcurementController::class, 'storePreload' ] );
 Route::post( 'procurements/{id}/products', [ ProcurementController::class, 'procure' ] );

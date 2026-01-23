@@ -18,6 +18,7 @@ use App\Jobs\ProcurementRefreshJob;
 use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
+use App\Models\ProductUnitQuantity;
 use App\Models\Unit;
 use App\Services\DateService;
 use App\Services\Options;
@@ -334,5 +335,21 @@ class ProcurementController extends DashboardController
     public function storePreload( Request $request )
     {
         return $this->procurementService->storePreload( Str::uuid(), $request->only( [ 'products' ] ) );
+    }
+
+    /**
+     * Get products with low stock that should be suggested for procurement
+     *
+     * @return array
+     */
+    public function getLowStockSuggestions()
+    {
+        $products = $this->procurementService->getLowStockSuggestions();
+
+        return [
+            'status' => 'success',
+            'data' => $products,
+            'count' => $products->count(),
+        ];
     }
 }

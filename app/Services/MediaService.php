@@ -58,11 +58,8 @@ class MediaService
 
     /**
      * Upload a file
-     *
-     * @param object File
-     * @return bool / media
      */
-    public function upload( $file, $customName = null )
+    public function upload( $file, string | null $customName = null ): Media | false
     {
         /**
          * getting file extension

@@ -195,3 +195,4 @@ None.
 .github/instructions/nexopos-roles-permissions.instructions.md
 .github/instructions/nexopos-tabs.instructions.md
 .github/instructions/nexopos-widgets.instructions.md
+.github/instructions/nexopos-view-injection.instructions.md
