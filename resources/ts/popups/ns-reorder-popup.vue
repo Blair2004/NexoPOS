@@ -81,7 +81,7 @@
             </div>
             <div>
                 <ns-button @click="saveOrder()" type="info" :disabled="!hasChanges || saving">
-                    <ns-spinner v-if="saving" size="4" border="2"></ns-spinner>
+                    <ns-spinner class="my-[4px]" v-if="saving" size="4" border="2"></ns-spinner>
                     <span v-else>{{ __( 'Save Order' ) }}</span>
                 </ns-button>
             </div>
