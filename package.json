@@ -19,7 +19,7 @@
     "pusher-js": "^8.4.0",
     "sass": "^1.94.2",
     "tailwindcss": "^4.1.13",
-    "vite": "^7.1.12",
+    "vite": "^7.3.1",
     "vite-plugin-mkcert": "^1.17.9"
   },
   "name": "nexopos",
