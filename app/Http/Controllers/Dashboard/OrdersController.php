@@ -201,6 +201,8 @@ class OrdersController extends DashboardController
                 'ns_pos_action_permission_duration' => ns()->option->get( 'ns_pos_action_permission_duration', '5minutes' ),
                 'ns_pos_action_permission_restricted_features' => ns()->option->get( 'ns_pos_action_permission_restricted_features', [] ),
                 'ns_pos_action_permission_enabled' => ns()->option->get( 'ns_pos_action_permission_enabled', 'no' ),
+                'ns_pos_show_preview_pinned_products' => ns()->option->get( 'ns_pos_show_preview_pinned_products', 'no' ) === 'yes' ? true : false,
+                'ns_pos_enable_pinned_products' => ns()->option->get( 'ns_pos_enable_pinned_products', 'no' ) === 'yes' ? true : false,
             ] ),
             'urls' => [
                 'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),

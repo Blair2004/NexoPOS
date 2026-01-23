@@ -657,4 +657,28 @@ class ProductsController extends DashboardController
     {
         return ScaleRangeCrud::form( $scaleRange );
     }
+    
+    /**
+     * Reorder products
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function reorderProducts( Request $request )
+    {
+        $items = $request->input( 'items', [] );
+
+        foreach ( $items as $index => $item ) {
+            $product = Product::find( $item['id'] );
+            if ( $product instanceof Product ) {
+                $product->position = $index;
+                $product->save();
+            }
+        }
+
+        return [
+            'status' => 'success',
+            'message' => __( 'Products have been successfully reordered.' ),
+        ];
+    }
 }

@@ -59,7 +59,7 @@ class ModulesService
          * if that doesn't exists
          */
         if ( ! is_dir( base_path( 'modules' ) ) ) {
-            Storage::disk( 'ns' )->makeDirectory( 'modules' );
+            mkdir( base_path( 'modules' ), 0755, true );
         }
 
         /**
@@ -67,7 +67,7 @@ class ModulesService
          * if that doesn't exists
          */
         if ( ! is_dir( public_path( 'modules' ) ) ) {
-            Storage::disk( 'ns-public' )->makeDirectory( 'modules' );
+            mkdir( public_path( 'modules' ), 0755, true );
         }
 
         /**
@@ -982,7 +982,7 @@ class ModulesService
         $this->checkManagementStatus();
 
         if ( ! is_dir( base_path( 'public/modules' ) ) ) {
-            Storage::disk( 'ns-public' )->makeDirectory( 'modules', 0755, true );
+            mkdir( base_path( 'public/modules' ), 0755, true );
         }
 
         /**
@@ -1010,7 +1010,7 @@ class ModulesService
             }
             
             /**
-             * This creates symbolic links for the assets.
+             * This creates symbolic links for the module assets.
              */
             if ( ! is_link( $linkPath ) && ! file_exists( $linkPath ) ) {
                 if ( $this->isWindowsOS() ) {
@@ -1053,7 +1053,7 @@ class ModulesService
              * otherwise we create it.
              */
             if ( ! is_dir( base_path( 'public/modules-lang' ) ) ) {
-                Storage::disk( 'ns-public' )->makeDirectory( 'modules-lang', 0755, true );
+                mkdir( base_path( 'public/modules-lang' ), 0755, true );
             }
             
             if ( Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' ) ) {

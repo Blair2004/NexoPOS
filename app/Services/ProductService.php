@@ -160,6 +160,12 @@ class ProductService
         }
 
         /**
+         * We'll check if the product is flagged as pinned. If it's the case we'll make sure
+         * we don't exceed the maximum allowed pinned products.
+         */
+        $this->checkPinnedProducts( $data );
+
+        /**
          * We need to check the product
          * before proceed and avoiding adding grouped
          * product within grouped product.
@@ -337,6 +343,26 @@ class ProductService
         ];
     }
 
+    public function checkPinnedProducts( $data, Product | null $product = null )
+    {
+        if ( $product instanceof Product ) {
+            $countPinned = Product::where( 'pinned', 1 )
+                ->where( 'id', '!=', $product->id )
+                ->count();
+
+        } else {
+            $countPinned = Product::where( 'pinned', 1 )->count();
+        }
+
+        if ( isset( $data['pinned'] ) && $data['pinned'] == 1 ) {
+            $maxPinned = ns()->option->get( 'ns_pos_max_pinned_products', 5 );
+
+            if ( $countPinned >= $maxPinned ) {
+                throw new NotAllowedException( sprintf( __( 'You cannot pin more than %s products.' ), $maxPinned ) );
+            }
+        }
+    }
+
     /**
      * Update a product either is a "product" or a "variable"
      *
@@ -353,6 +379,12 @@ class ProductService
         if ( ! $this->categoryService->get( $data[ 'category_id' ] ) ) {
             throw new Exception( __( 'The category to which the product is attached doesn\'t exists or has been deleted' ) );
         }
+
+        /**
+         * We'll check if the product is flagged as pinned. If it's the case we'll make sure
+         * we don't exceed the maximum allowed pinned products.
+         */
+        $this->checkPinnedProducts( $data, $product );
 
         /**
          * We need to check the product
