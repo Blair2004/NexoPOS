@@ -152,13 +152,13 @@ class ProductCategoryCrud extends CrudService
 
         // Get scale ranges for PLU assignment
         $scaleRanges = ScaleRange::all();
-        $scaleRangeOptions = $scaleRanges->map( function( $range ) {
+        $scaleRangeOptions = $scaleRanges->map( function ( $range ) {
             return [
-                'label' => sprintf( 
-                    '%s (%s-%s)', 
-                    $range->name, 
-                    $range->range_start, 
-                    $range->range_end 
+                'label' => sprintf(
+                    '%s (%s-%s)',
+                    $range->name,
+                    $range->range_start,
+                    $range->range_end
                 ),
                 'value' => $range->id,
             ];

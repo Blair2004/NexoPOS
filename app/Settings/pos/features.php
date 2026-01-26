@@ -157,14 +157,14 @@ return [
         ),
 
         FormInput::switch(
-            label: __('Enable Scale Barcode'),
+            label: __( 'Enable Scale Barcode' ),
             name: 'ns_scale_barcode_enabled',
             options: [
-                ['label' => __('Yes'), 'value' => 'yes'],
-                ['label' => __('No'), 'value' => 'no'],
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
             ],
-            value: ns()->option->get('ns_scale_barcode_enabled', 'no'),
-            description: __('Enable support for scale barcodes that encode product code and weight/price information.')
+            value: ns()->option->get( 'ns_scale_barcode_enabled', 'no' ),
+            description: __( 'Enable support for scale barcodes that encode product code and weight/price information.' )
         ),
         FormInput::switch(
             label: __( 'Enable Category & Products Reordering' ),
@@ -176,7 +176,7 @@ return [
             ],
             value: ns()->option->get( 'ns_pos_enable_reordering' ),
         ),
-        
+
         FormInput::switch(
             label: __( 'Enable Pinned Products' ),
             description: __( 'When enabled, pinned products will be displayed at the top of the POS grid for quick access.' ),
@@ -187,7 +187,7 @@ return [
             ],
             value: ns()->option->get( 'ns_pos_enable_pinned_products', 'yes' ),
         ),
-        
+
         FormInput::switch(
             label: __( 'Show Preview For Pinned Products' ),
             description: __( 'When enabled, pictures will be shown on pinned products in the POS.' ),

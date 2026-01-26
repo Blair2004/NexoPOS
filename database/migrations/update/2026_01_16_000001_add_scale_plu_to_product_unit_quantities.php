@@ -15,7 +15,7 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'scale_plu' ) ) {
                 $table->string( 'scale_plu', 10 )->nullable()->unique()->after( 'barcode' );
             }
-            
+
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'is_weighable' ) ) {
                 $table->boolean( 'is_weighable' )->default( false )->after( 'scale_plu' );
             }
@@ -31,7 +31,7 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'is_weighable' ) ) {
                 $table->dropColumn( 'is_weighable' );
             }
-            
+
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'scale_plu' ) ) {
                 $table->dropColumn( 'scale_plu' );
             }

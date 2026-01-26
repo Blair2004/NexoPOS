@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Classes\Config as ClassesConfig;
 use App\Classes\Hook;
-use App\Events\ModulesBootedEvent;
 use App\Events\ModulesLoadedEvent;
 use App\Facades\Config;
 use App\Models\Order;
@@ -293,7 +292,7 @@ class AppServiceProvider extends ServiceProvider
                 $options = [];
             }
 
-            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\", " . var_export( $options, true ) . " ); ?>";
+            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\", " . var_export( $options, true ) . ' ); ?>';
         } );
 
         /**

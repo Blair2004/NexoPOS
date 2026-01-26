@@ -55,20 +55,20 @@ class EnvEditor
     public function set( $key, $value, $quoted = true )
     {
         // Validate key format
-        if ( !preg_match( '/^[a-zA-Z][a-zA-Z0-9_]*$/', $key ) ) {
+        if ( ! preg_match( '/^[a-zA-Z][a-zA-Z0-9_]*$/', $key ) ) {
             throw new Exception( 'Invalid key format' );
         }
 
         // Sanitize value
         if ( is_numeric( $value ) || is_string( $value ) ) {
             // Remove any newline characters to prevent injection
-            $value = str_replace( ["\r", "\n"], '', (string)$value );
-            
+            $value = str_replace( ["\r", "\n"], '', (string) $value );
+
             // Escape backslashes and double quotes for .env context
             $value = addslashes( $value );
-            
+
             // Quote string values based on $quoted parameter
-            if ( $quoted && is_string( $value ) && !is_numeric( $value ) ) {
+            if ( $quoted && is_string( $value ) && ! is_numeric( $value ) ) {
                 $value = '"' . $value . '"';
             }
         } else {

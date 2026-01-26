@@ -1160,7 +1160,7 @@ class ProcurementService
                 $product = Product::find( $unitQuantity->product_id )->load( 'unit_quantities.unit' );
 
                 /**
-                 * If we've made a procurement of this product recently, 
+                 * If we've made a procurement of this product recently,
                  * we'll pull the recent quantity procured for that product
                  */
                 $procurementProduct = ProcurementProduct::where( 'product_id', $unitQuantity->product_id )

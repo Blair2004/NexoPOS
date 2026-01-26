@@ -345,7 +345,7 @@ class CoreService
 
         $modules = $moduleService->get();
 
-        foreach( $modules as $module ) {
+        foreach ( $modules as $module ) {
             $tolowercase = strtolower( $module[ 'namespace' ] );
 
             // we'll check if a symbolic exist for each module
@@ -367,7 +367,7 @@ class CoreService
                                 'label' => __( 'Create Symbolic Link' ),
                                 'url' => ns()->route( 'ns.dashboard.modules-symlink', [ 'namespace' => $tolowercase ] ),
                                 'data' => compact( 'module' ),
-                            ]
+                            ],
                         ]
                     )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
                 }
@@ -394,7 +394,7 @@ class CoreService
                                 'label' => __( 'Fix Symbolic Link' ),
                                 'url' => ns()->route( 'ns.dashboard.modules-symlink', [ 'namespace' => $tolowercase ] ),
                                 'data' => compact( 'module' ),
-                            ]
+                            ],
                         ]
                     )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
                 }
@@ -424,7 +424,7 @@ class CoreService
                             'label' => __( 'Fix it' ),
                             'url' => route( 'ns.dashboard.system.fix-symbolic-links' ),
                             'type' => 'primary',
-                        ]
+                        ],
                     ]
                 )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
             }
@@ -652,5 +652,51 @@ class CoreService
 
         // We'll create a symbolic link using the command line
         Artisan::call( 'storage:link' );
+    }
+
+    public function checkPublicModulesDirectoryPermissions()
+    {
+        $publicModulesPath = public_path( 'modules' );
+
+        // Check if the directory exists
+        if ( ! is_dir( $publicModulesPath ) ) {
+            return;
+        }
+
+        // Get current permissions
+        $permissions = fileperms( $publicModulesPath );
+        $octalPermissions = substr( sprintf( '%o', $permissions ), -4 );
+
+        // Check if permissions are not 0755
+        if ( $octalPermissions !== '0755' ) {
+            /**
+             * @var NotificationService $notificationService
+             */
+            $notificationService = app()->make( NotificationService::class );
+            $notification = Notification::where( 'identifier', 'public-modules-permissions' )->first();
+
+            if ( ! $notification instanceof Notification ) {
+                $notificationService->create(
+                    title: __( 'Public Modules Directory: Incorrect Permissions' ),
+                    identifier: 'public-modules-permissions',
+                    source: 'system',
+                    url: 'https://my.nexopos.com/en/documentation/troubleshooting/module-permissions?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+                    description: sprintf(
+                        __( 'The public/modules directory has incorrect permissions (%s instead of 0755). This may cause issues with module assets loading.' ),
+                        $octalPermissions
+                    ),
+                    actions: [
+                        [
+                            'label' => __( 'Fix Permissions' ),
+                            'url' => ns()->route( 'ns.dashboard.modules-fix-permissions' ),
+                            'data' => [],
+                        ],
+                    ]
+                )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+            }
+        } else {
+            // If permissions are correct, delete any existing notification
+            Notification::where( 'identifier', 'public-modules-permissions' )->delete();
+        }
     }
 }

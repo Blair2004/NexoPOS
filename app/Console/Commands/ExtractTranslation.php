@@ -68,7 +68,7 @@ class ExtractTranslation extends Command
                     return $this->info( 'Language Symbolic Link already exists ! Use --force to recreate it.' );
                 }
             }
-            
+
             $link = @\symlink( base_path( 'lang' ), public_path( 'lang' ) );
         } else {
             if ( is_link( $link ) || file_exists( $link ) ) {
@@ -78,7 +78,7 @@ class ExtractTranslation extends Command
                     return $this->info( 'Language Symbolic Link already exists ! Use --force to recreate it.' );
                 }
             }
-            
+
             $mode = 'J';
             $link = public_path( 'lang' );
             $target = base_path( 'lang' );

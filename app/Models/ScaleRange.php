@@ -45,7 +45,6 @@ class ScaleRange extends NsModel
     /**
      * Get the next available PLU code with zero-padding
      *
-     * @return string
      * @throws \Exception
      */
     public function getNextPLU(): string
@@ -71,8 +70,6 @@ class ScaleRange extends NsModel
 
     /**
      * Increment the next_scale_plu counter
-     *
-     * @return void
      */
     public function incrementNextPLU(): void
     {
@@ -82,9 +79,6 @@ class ScaleRange extends NsModel
 
     /**
      * Check if a PLU code is available within this range
-     *
-     * @param string $plu
-     * @return bool
      */
     public function isPLUAvailable( string $plu ): bool
     {
@@ -104,9 +98,6 @@ class ScaleRange extends NsModel
 
     /**
      * Check if a PLU code belongs to this range (regardless of availability)
-     *
-     * @param string $plu
-     * @return bool
      */
     public function containsPLU( string $plu ): bool
     {
@@ -117,8 +108,6 @@ class ScaleRange extends NsModel
 
     /**
      * Get the total capacity of this range
-     *
-     * @return int
      */
     public function getCapacity(): int
     {
@@ -127,14 +116,12 @@ class ScaleRange extends NsModel
 
     /**
      * Get the number of used PLUs in this range
-     *
-     * @return int
      */
     public function getUsedCount(): int
     {
         // Get the length for zero-padding from range_start
         $length = strlen( (string) $this->range_start );
-        
+
         // Generate zero-padded range boundaries for string comparison
         $rangeStart = str_pad( (string) $this->range_start, $length, '0', STR_PAD_LEFT );
         $rangeEnd = str_pad( (string) $this->range_end, $length, '0', STR_PAD_LEFT );
@@ -146,8 +133,6 @@ class ScaleRange extends NsModel
 
     /**
      * Get the number of available PLUs in this range
-     *
-     * @return int
      */
     public function getAvailableCount(): int
     {

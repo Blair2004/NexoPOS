@@ -59,7 +59,7 @@ class MediaService
     /**
      * Upload a file
      */
-    public function upload( $file, string | null $customName = null ): Media | false
+    public function upload( $file, ?string $customName = null ): Media|false
     {
         /**
          * getting file extension

@@ -778,7 +778,6 @@ class TransactionService
 
         $operation = $accounts[ $account->category_identifier ][ $rule->action ];
 
-
         $transactionHistory->value = $procurement->cost;
         $transactionHistory->author = $procurement->author;
         $transactionHistory->transaction_account_id = $account->id;

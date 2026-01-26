@@ -537,25 +537,25 @@ class ProductsController extends DashboardController
                 $scaleData = $this->productService->parseScaleBarcode( $reference );
                 // The product_code from scale barcode is actually the PLU
                 $plu = $scaleData['product_code'];
-                
+
                 // Find the product unit quantity by PLU
                 $unitQuantity = ProductUnitQuantity::where( 'scale_plu', $plu )
                     ->with( 'product', 'unit' )
                     ->first();
-                
+
                 if ( $unitQuantity && $unitQuantity->product ) {
                     $product = Product::find( $unitQuantity->product_id );
                     $product->load( 'unit_quantities.unit', 'tax_group.taxes' );
-                                        
+
                     return [
                         'type' => 'product',
                         'unit' => $unitQuantity->unit,
                         'unitQuantity' => $unitQuantity,
                         'product' => $product->toArray(),
-                        'scale' => $scaleData
+                        'scale' => $scaleData,
                     ];
                 }
-                
+
                 // If PLU not found, throw an error
                 throw new NotFoundException(
                     sprintf(
@@ -657,11 +657,10 @@ class ProductsController extends DashboardController
     {
         return ScaleRangeCrud::form( $scaleRange );
     }
-    
+
     /**
      * Reorder products
      *
-     * @param Request $request
      * @return array
      */
     public function reorderProducts( Request $request )

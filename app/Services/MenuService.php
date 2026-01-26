@@ -10,7 +10,8 @@ use TorMorten\Eventy\Facades\Eventy as Hook;
 class MenuService
 {
     protected $menus;
-    protected $accountMenus     =    [];
+
+    protected $accountMenus = [];
 
     public function buildMenus()
     {
@@ -626,7 +627,6 @@ class MenuService
 
     /**
      * Returns the account menus
-     * @return array
      */
     public function getAccountMenus(): array
     {
@@ -653,6 +653,7 @@ class MenuService
 
     /**
      * Remove an account menu by its identifier
+     *
      * @param string $identifier
      */
     public function removeAccountMenu( $identifier )

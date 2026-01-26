@@ -31,7 +31,7 @@ return [
     ],
 
     'translator' => [
-        'endpoint' => env('TRANSLATOR_ENDPOINT'),
+        'endpoint' => env( 'TRANSLATOR_ENDPOINT' ),
     ],
 
 ];

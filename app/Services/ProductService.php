@@ -343,7 +343,7 @@ class ProductService
         ];
     }
 
-    public function checkPinnedProducts( $data, Product | null $product = null )
+    public function checkPinnedProducts( $data, ?Product $product = null )
     {
         if ( $product instanceof Product ) {
             $countPinned = Product::where( 'pinned', 1 )
@@ -2274,37 +2274,37 @@ class ProductService
      */
     public function isScaleBarcodeEnabled(): bool
     {
-        return ns()->option->get('ns_scale_barcode_enabled', 'no') === 'yes';
+        return ns()->option->get( 'ns_scale_barcode_enabled', 'no' ) === 'yes';
     }
 
     /**
      * Check if a barcode matches the scale barcode format
      */
-    public function isScaleBarcode(string $barcode): bool
+    public function isScaleBarcode( string $barcode ): bool
     {
-        if (!$this->isScaleBarcodeEnabled()) {
+        if ( ! $this->isScaleBarcodeEnabled() ) {
             return false;
         }
 
-        $prefix = ns()->option->get('ns_scale_barcode_prefix', '2');
-        
+        $prefix = ns()->option->get( 'ns_scale_barcode_prefix', '2' );
+
         // Check if barcode starts with the configured prefix
-        if (!str_starts_with($barcode, $prefix)) {
+        if ( ! str_starts_with( $barcode, $prefix ) ) {
             return false;
         }
 
         // Check if barcode has the expected length
-        $prefixLength = strlen($prefix);
-        $productCodeLength = (int) ns()->option->get('ns_scale_barcode_product_length', 5);
-        $valueLength = (int) ns()->option->get('ns_scale_barcode_value_length', 5);
+        $prefixLength = strlen( $prefix );
+        $productCodeLength = (int) ns()->option->get( 'ns_scale_barcode_product_length', 5 );
+        $valueLength = (int) ns()->option->get( 'ns_scale_barcode_value_length', 5 );
         $expectedLength = $prefixLength + $productCodeLength + $valueLength + 1; // +1 for check digit
-        
-        if (strlen($barcode) !== $expectedLength) {
+
+        if ( strlen( $barcode ) !== $expectedLength ) {
             return false;
         }
 
         // Check if the barcode contains only digits
-        if (!ctype_digit($barcode)) {
+        if ( ! ctype_digit( $barcode ) ) {
             return false;
         }
 
@@ -2313,36 +2313,37 @@ class ProductService
 
     /**
      * Parse a scale barcode and extract product code and weight/price
-     * 
+     *
      * @return array{
      *   product_code: string,
      *   value: float,
      *   type: string,
      *   original_barcode: string
      * }
+     *
      * @throws Exception
      */
-    public function parseScaleBarcode(string $barcode): array
+    public function parseScaleBarcode( string $barcode ): array
     {
-        if (!$this->isScaleBarcode($barcode)) {
-            throw new Exception(__('Invalid scale barcode format'));
+        if ( ! $this->isScaleBarcode( $barcode ) ) {
+            throw new Exception( __( 'Invalid scale barcode format' ) );
         }
 
-        $prefix = ns()->option->get('ns_scale_barcode_prefix', '2');
-        $prefixLength = strlen($prefix);
-        $productCodeLength = (int) ns()->option->get('ns_scale_barcode_product_length', 5);
-        $valueLength = (int) ns()->option->get('ns_scale_barcode_value_length', 5);
-        $type = ns()->option->get('ns_scale_barcode_type', 'weight');
+        $prefix = ns()->option->get( 'ns_scale_barcode_prefix', '2' );
+        $prefixLength = strlen( $prefix );
+        $productCodeLength = (int) ns()->option->get( 'ns_scale_barcode_product_length', 5 );
+        $valueLength = (int) ns()->option->get( 'ns_scale_barcode_value_length', 5 );
+        $type = ns()->option->get( 'ns_scale_barcode_type', 'weight' );
 
         // Extract product code
-        $productCode = substr($barcode, $prefixLength, $productCodeLength);
+        $productCode = substr( $barcode, $prefixLength, $productCodeLength );
 
         // Extract value
         $startPosition = $prefixLength + $productCodeLength;
-        $rawValue = substr($barcode, $startPosition, $valueLength);
+        $rawValue = substr( $barcode, $startPosition, $valueLength );
 
         // Convert to float based on type
-        if ($type === 'weight') {
+        if ( $type === 'weight' ) {
             // Weight is typically stored in grams, convert to kg
             $value = (float) $rawValue / 1000;
         } else {
@@ -2361,9 +2362,8 @@ class ProductService
     /**
      * Generate a PLU code for a product unit quantity
      *
-     * @param int $productId
-     * @param int $unitQuantityId
      * @return string The generated PLU code
+     *
      * @throws \Exception
      */
     public function generateScalePLU( int $productId, int $unitQuantityId ): string
@@ -2400,6 +2400,7 @@ class ProductService
         if ( $existingPlu ) {
             // Try next PLU
             $scaleRange->incrementNextPLU();
+
             return $this->generateScalePLU( $productId, $unitQuantityId );
         }
 
@@ -2412,9 +2413,9 @@ class ProductService
     /**
      * Validate and format a PLU code
      *
-     * @param string $plu
-     * @param int|null $productLength Override product code length
-     * @return string Formatted PLU code
+     * @param  int|null $productLength Override product code length
+     * @return string   Formatted PLU code
+     *
      * @throws \Exception
      */
     public function validateAndFormatPLU( string $plu, ?int $productLength = null ): string
@@ -2454,10 +2455,6 @@ class ProductService
 
     /**
      * Check if a PLU code is unique
-     *
-     * @param string $plu
-     * @param int|null $excludeUnitQuantityId
-     * @return bool
      */
     public function isPLUUnique( string $plu, ?int $excludeUnitQuantityId = null ): bool
     {

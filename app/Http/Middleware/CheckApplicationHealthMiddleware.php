@@ -46,6 +46,12 @@ class CheckApplicationHealthMiddleware
         ns()->checkModulesSymbolicLinks();
 
         /**
+         * Check public "modules" directory permissions.
+         * Those permission must be 755
+         */
+        ns()->checkPublicModulesDirectoryPermissions();
+
+        /**
          * we'll check here is a module has a missing
          * dependency to disable it
          *

@@ -158,7 +158,6 @@ class CategoryController extends DashboardController
     /**
      * Reorder categories
      *
-     * @param Request $request
      * @return array
      */
     public function reorderCategories( Request $request )

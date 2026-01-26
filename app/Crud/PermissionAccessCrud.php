@@ -173,8 +173,6 @@ class PermissionAccessCrud extends CrudService
 
     /**
      * Defines the forms used to create and update entries.
-     *
-     * @param PermissionAccess $entry
      */
     public function getForm( ?PermissionAccess $entry = null ): array
     {

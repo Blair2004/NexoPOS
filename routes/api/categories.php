@@ -13,6 +13,6 @@ Route::delete( 'categories/{id}', [ CategoryController::class, 'delete' ] );
 
 Route::get( 'categories/pos/{id?}', [ CategoryController::class, 'getCategories' ] );
 
-Route::post( 'categories/reorder', [ CategoryController::class, 'reorderCategories' ] )->middleware( 
-    NsRestrictMiddleware::arguments( 'nexopos.update.categories' ) 
+Route::post( 'categories/reorder', [ CategoryController::class, 'reorderCategories' ] )->middleware(
+    NsRestrictMiddleware::arguments( 'nexopos.update.categories' )
 );

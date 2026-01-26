@@ -1296,7 +1296,7 @@ class CrudService
              * by a module that need to directly access the entry.
              */
             'entry' => $entry,
-            
+
             /**
              * We'll provide the form configuration
              */

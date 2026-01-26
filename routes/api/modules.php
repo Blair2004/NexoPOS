@@ -13,5 +13,6 @@ Route::middleware( [
     Route::put( 'modules/{argument}/enable', [ ModulesController::class, 'enableModule' ] );
     Route::delete( 'modules/{argument}/delete', [ ModulesController::class, 'deleteModule' ] );
     Route::post( 'modules/symlink', [ ModulesController::class, 'createSymlink' ] )->name( Hook::filter( 'ns.route.name', 'ns.dashboard.modules-symlink' ) );
+    Route::post( 'modules/fix-permissions', [ ModulesController::class, 'fixPublicModulesPermissions' ] )->name( Hook::filter( 'ns.route.name', 'ns.dashboard.modules-fix-permissions' ) );
     Route::post( 'modules', [ ModulesController::class, 'uploadModule' ] )->name( Hook::filter( 'ns-route-name', 'ns.dashboard.modules-upload-post' ) );
 } );

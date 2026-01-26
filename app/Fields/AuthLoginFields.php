@@ -21,7 +21,7 @@ class AuthLoginFields extends FieldsService
 
     public function get()
     {
-        $fields = Hook::filter( 'ns-login-fields', 
+        $fields = Hook::filter( 'ns-login-fields',
             Form::fields(
                 FormInput::text(
                     label: __( 'Username' ),
