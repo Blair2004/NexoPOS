@@ -16,3 +16,6 @@ Route::get( '/products/categories/create', [ CategoryController::class, 'createC
 Route::get( '/products/categories/edit/{category}', [ CategoryController::class, 'editCategory' ] )->name( ns()->routeName( 'ns.dashboard.categories.edit' ) );
 Route::get( '/products/categories/compute-products/{category}', [ CategoryController::class, 'computeCategoryProducts' ] )->name( ns()->routeName( 'ns.dashboard.products.categories.compute' ) );
 Route::get( '/products/stock-flow-records', [ CategoryController::class, 'showStockFlowCrud' ] )->name( ns()->routeName( 'ns.dashboard.products.stock-flow-records' ) );
+Route::get( '/products/scale-range', [ ProductsController::class, 'getScaleRange' ] )->name( ns()->routeName( 'ns.dashboard.products.scale-range' ) );
+Route::get( '/products/scale-range/create', [ ProductsController::class, 'createScaleRange' ] )->name( ns()->routeName( 'ns.dashboard.products.scale-range.create' ) );
+Route::get( '/products/scale-range/edit/{scaleRange}', [ ProductsController::class, 'editScaleRange' ] )->name( ns()->routeName( 'ns.dashboard.products.scale-range.edit' ) );

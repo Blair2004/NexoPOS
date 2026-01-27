@@ -49,5 +49,12 @@ class SettingsListener
                 [ Role::namespace( 'admin' ) ]
             );
         }
+
+        /**
+         * While the scale feature is enabled, we'll enable the decimal quantities.
+         */
+        if ( $options->get( 'ns_scale_barcode_enabled' ) === 'yes' ) {
+            $options->set( 'ns_pos_allow_decimal_quantities', 'yes' );
+        }
     }
 }

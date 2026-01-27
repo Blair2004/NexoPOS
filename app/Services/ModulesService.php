@@ -59,7 +59,7 @@ class ModulesService
          * if that doesn't exists
          */
         if ( ! is_dir( base_path( 'modules' ) ) ) {
-            Storage::disk( 'ns' )->makeDirectory( 'modules' );
+            mkdir( base_path( 'modules' ), 0755, true );
         }
 
         /**
@@ -67,7 +67,7 @@ class ModulesService
          * if that doesn't exists
          */
         if ( ! is_dir( public_path( 'modules' ) ) ) {
-            Storage::disk( 'ns-public' )->makeDirectory( 'modules' );
+            mkdir( public_path( 'modules' ), 0755, true );
         }
 
         /**
@@ -977,12 +977,31 @@ class ModulesService
      * Creates a symbolic link to the asset directory
      * for specific module.
      */
+    /**
+     * Fix the permissions of the public/modules directory
+     */
+    public function fixPublicModulesDirectoryPermissions(): void
+    {
+        $this->checkManagementStatus();
+
+        $publicModulesPath = public_path( 'modules' );
+
+        if ( ! is_dir( $publicModulesPath ) ) {
+            mkdir( $publicModulesPath, 0755, true );
+
+            return;
+        }
+
+        // Set the correct permissions
+        chmod( $publicModulesPath, 0755 );
+    }
+
     public function createSymLink( string $moduleNamespace ): void
     {
         $this->checkManagementStatus();
 
         if ( ! is_dir( base_path( 'public/modules' ) ) ) {
-            Storage::disk( 'ns-public' )->makeDirectory( 'modules', 0755, true );
+            mkdir( base_path( 'public/modules' ), 0755, true );
         }
 
         /**
@@ -992,7 +1011,7 @@ class ModulesService
         if ( Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' ) ) {
             $linkPath = base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace );
             $targetPath = base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' );
-            
+
             // Check if link exists and is broken, then remove it
             if ( is_link( $linkPath ) ) {
                 // On Windows, check if the junction/symlink target exists
@@ -1008,9 +1027,9 @@ class ModulesService
                     }
                 }
             }
-            
+
             /**
-             * This creates symbolic links for the assets.
+             * This creates symbolic links for the module assets.
              */
             if ( ! is_link( $linkPath ) && ! file_exists( $linkPath ) ) {
                 if ( $this->isWindowsOS() ) {
@@ -1018,17 +1037,17 @@ class ModulesService
                     // /D for directory, /H for hard link (file), /J for junction (directory - more compatible)
                     $isDirectory = is_dir( $targetPath );
                     $mode = $isDirectory ? 'D' : 'H';
-                    
+
                     // For directories, prefer junction (/J) over symbolic directory link (/D)
                     // as junctions don't require admin privileges
                     if ( $isDirectory ) {
                         $mode = 'J';
                     }
-                    
+
                     // Execute mklink command
                     $command = "mklink /{$mode} \"{$linkPath}\" \"{$targetPath}\"";
                     exec( $command, $output, $resultCode );
-                    
+
                     // Throw error if command failed
                     if ( $resultCode !== 0 ) {
                         $errorMessage = sprintf( __( 'Failed to create symbolic link for module "%s": %s' ), $moduleNamespace, implode( "\n", $output ) );
@@ -1038,7 +1057,7 @@ class ModulesService
                 } else {
                     // Linux/Unix: Use symlink function
                     $result = @symlink( $targetPath, $linkPath );
-                    
+
                     if ( ! $result ) {
                         $errorMessage = sprintf( __( 'Failed to create symbolic link for module "%s"' ), $moduleNamespace );
                         Log::error( $errorMessage );
@@ -1053,13 +1072,13 @@ class ModulesService
              * otherwise we create it.
              */
             if ( ! is_dir( base_path( 'public/modules-lang' ) ) ) {
-                Storage::disk( 'ns-public' )->makeDirectory( 'modules-lang', 0755, true );
+                mkdir( base_path( 'public/modules-lang' ), 0755, true );
             }
-            
+
             if ( Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' ) ) {
                 $linkPath = base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace );
                 $targetPath = base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' );
-                
+
                 // Check if link exists and is broken, then remove it
                 if ( is_link( $linkPath ) ) {
                     // On Windows, check if the junction/symlink target exists
@@ -1070,16 +1089,16 @@ class ModulesService
                             if ( is_dir( $linkPath ) ) {
                                 $command = "rmdir \"$linkPath\"";
                                 exec( $command, $output, $resultCode );
-                                
+
                                 if ( $resultCode !== 0 ) {
-                                    Log::warning( "Failed to remove broken language directory link: " . implode( "\n", $output ) );
+                                    Log::warning( 'Failed to remove broken language directory link: ' . implode( "\n", $output ) );
                                 }
                             } else {
                                 $command = "del \"$linkPath\"";
                                 exec( $command, $output, $resultCode );
-                                
+
                                 if ( $resultCode !== 0 ) {
-                                    Log::warning( "Failed to remove broken language file link: " . implode( "\n", $output ) );
+                                    Log::warning( 'Failed to remove broken language file link: ' . implode( "\n", $output ) );
                                 }
                             }
                         }
@@ -1090,7 +1109,7 @@ class ModulesService
                         }
                     }
                 }
-                
+
                 // Create symlink if it doesn't exist
                 if ( ! is_link( $linkPath ) && ! file_exists( $linkPath ) ) {
                     if ( $this->isWindowsOS() ) {
@@ -1098,7 +1117,7 @@ class ModulesService
                         $mode = 'J';
                         $command = "mklink /{$mode} \"{$linkPath}\" \"{$targetPath}\"";
                         exec( $command, $output, $resultCode );
-                        
+
                         if ( $resultCode !== 0 ) {
                             $errorMessage = sprintf( __( 'Failed to create language symbolic link for module "%s": %s' ), $moduleNamespace, implode( "\n", $output ) );
                             Log::error( $errorMessage );
@@ -1108,7 +1127,7 @@ class ModulesService
                     } else {
                         // Linux/Unix: Use symlink function
                         $result = @symlink( $targetPath, $linkPath );
-                        
+
                         if ( ! $result ) {
                             $errorMessage = sprintf( __( 'Failed to create language symbolic link for module "%s"' ), $moduleNamespace );
                             Log::error( $errorMessage );
@@ -1138,16 +1157,16 @@ class ModulesService
                     // Use rmdir for junctions and directory symlinks on Windows
                     $command = "rmdir \"$linkPath\"";
                     exec( $command, $output, $resultCode );
-                    
+
                     if ( $resultCode !== 0 ) {
                         Log::warning( "Failed to remove directory symbolic link for module {$moduleNamespace}: " . implode( "\n", $output ) );
                     }
-                } else if ( is_file( $linkPath ) || is_link( $linkPath ) ) {
+                } elseif ( is_file( $linkPath ) || is_link( $linkPath ) ) {
                     // It's a file hard link or symbolic link
                     // Use del command for files on Windows
                     $command = "del \"$linkPath\"";
                     exec( $command, $output, $resultCode );
-                    
+
                     if ( $resultCode !== 0 ) {
                         Log::warning( "Failed to remove file symbolic link for module {$moduleNamespace}: " . implode( "\n", $output ) );
                     }
@@ -1156,7 +1175,7 @@ class ModulesService
                 // Linux/Unix: Use unlink which works for both file and directory symlinks
                 if ( is_link( $linkPath ) ) {
                     $result = @unlink( $linkPath );
-                    
+
                     if ( ! $result ) {
                         Log::warning( "Failed to remove symbolic link for module {$moduleNamespace}" );
                     }
@@ -1445,6 +1464,31 @@ class ModulesService
                     'status' => 'error',
                     'code' => 'autoloaded_module',
                     'message' => sprintf( __( 'The module "%s" is autoloaded and cannot be enabled.' ), $module[ 'name' ] ),
+                ], 403 );
+            }
+
+            /**
+             * Check if the current NexoPOS version meets
+             * the minimum version required by the module
+             */
+            if (
+                isset( $module[ 'core' ] ) &&
+                ! empty( $module[ 'core' ][ 'min-version' ] ) &&
+                version_compare(
+                    config( 'nexopos.version' ),
+                    $module[ 'core' ][ 'min-version' ],
+                    '<'
+                )
+            ) {
+                return response()->json( [
+                    'status' => 'error',
+                    'code' => 'version_mismatch',
+                    'message' => sprintf(
+                        __( 'The module "%s" cannot be enabled as it requires NexoPOS version %s or higher, but you are running version %s.' ),
+                        $module[ 'name' ],
+                        $module[ 'core' ][ 'min-version' ],
+                        config( 'nexopos.version' )
+                    ),
                 ], 403 );
             }
 

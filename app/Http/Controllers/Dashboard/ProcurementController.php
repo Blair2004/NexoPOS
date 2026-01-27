@@ -335,4 +335,20 @@ class ProcurementController extends DashboardController
     {
         return $this->procurementService->storePreload( Str::uuid(), $request->only( [ 'products' ] ) );
     }
+
+    /**
+     * Get products with low stock that should be suggested for procurement
+     *
+     * @return array
+     */
+    public function getLowStockSuggestions()
+    {
+        $products = $this->procurementService->getLowStockSuggestions();
+
+        return [
+            'status' => 'success',
+            'data' => $products,
+            'count' => $products->count(),
+        ];
+    }
 }

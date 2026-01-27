@@ -35,9 +35,9 @@ class ModulesServiceProvider extends ServiceProvider
                 ->each( function ( $module ) use ( $modules ) {
                     $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
                 } );
-    
+
             $this->commands( $this->modulesCommands );
-    
+
             /**
              * trigger an event when all the module
              * has successfully booted.
@@ -87,8 +87,8 @@ class ModulesServiceProvider extends ServiceProvider
             }
 
             ModulesLoadedEvent::dispatch( $this->modules->get() );
-            
+
             return $this->modules;
-        });
+        } );
     }
 }

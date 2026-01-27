@@ -119,6 +119,7 @@ NexoPOS is built on top of Vite, Vue and Tailwind. If module can use their own f
 - laravel-vite-plugin
 - @vitejs/plugin-vue
 - @tailwindcss/vite
+- vite-plugin-mkcert (for HTTPS in development)
 
 As Vue is already included on NexoPOS, it's not required to use it on our module. In fact, we want our component to work seamlessly with NexoPOS, we'll then use it's API. Typically here is how a vite.config.js looks like:
 
@@ -127,6 +128,7 @@ import { defineConfig, loadEnv } from 'vite';
 
 import { fileURLToPath } from 'node:url';
 import laravel from 'laravel-vite-plugin';
+import mkcert from 'vite-plugin-mkcert';
 import path from 'node:path';
 import vuePlugin from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
@@ -142,6 +144,7 @@ export default ({ mode }) => {
     return defineConfig({
         base: '/',
         plugins: [
+            mkcert(),
             vuePlugin(),
             laravel({
                 hotFile: 'Public/hot',
@@ -160,6 +163,18 @@ export default ({ mode }) => {
                 '@': path.resolve(__dirname, 'Resources/ts'),
             }
         },
+        // Server configuration for HMR (Hot Module Replacement)
+        // See modules/OpusBackup/vite.config.js for reference
+        server: {
+            port: 3344,              // Custom port (optional, adjust per module)
+            host: '127.0.0.1',       // Bind to localhost
+            cors: true,              // Enable CORS
+            hmr: {
+                protocol: 'wss',     // WebSocket Secure for HMR
+                host: 'localhost',   // HMR host
+            },
+            https: true,             // Enable HTTPS with mkcert
+        },
         build: {
             outDir: 'Public/build',
             manifest: true,
@@ -171,6 +186,25 @@ export default ({ mode }) => {
             }
         }        
     });
+}
+```
+
+**Package.json Dependencies:**
+
+Ensure your `package.json` includes `vite-plugin-mkcert`:
+
+```json
+{
+  "devDependencies": {
+    "laravel-vite-plugin": "^1.2.0",
+    "vite": "^6.3.5",
+    "vite-plugin-mkcert": "^1.17.6",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@tailwindcss/vite": "^4.1.8",
+    "tailwindcss": "^4.1.8",
+    "typescript": "^5.8.3",
+    "vue": "^3.5.16"
+  }
 }
 ```
 
@@ -564,7 +598,8 @@ Resources/Views/
 
 **Example:**
 ```blade
-@push('footer-scripts')
+@section( 'layout.dashboard.footer' )
+    @parent
     @moduleViteAssets('Resources/ts/main.ts', 'FooBar')
     @moduleViteAssets('Resources/css/style.css', 'FooBar')
     
@@ -576,7 +611,7 @@ Resources/Views/
             }
         });
     </script>
-@endpush
+@endsection
 ```
 
 **Common Patterns:**
@@ -657,73 +692,346 @@ export class ProductManager {
 }
 ```
 
-**Exporting Components for Blade Templates:**
+**Vue Component Injection (Recommended Approach):**
 
-When creating Vue components that need to be triggered from Blade templates, export them globally in your main entry file:
+NexoPOS already creates a Vue app instance for the dashboard. Instead of creating a separate Vue app, modules should **inject components** into the existing NexoPOS Vue instance. This approach offers several benefits:
+
+- ✅ Access to all NexoPOS built-in components (ns-button, ns-input, ns-crud, etc.)
+- ✅ Access to global state and services (nsHttpClient, nsSnackBar, etc.)
+- ✅ Consistent styling with NexoPOS dashboard
+- ✅ Smaller bundle size (Vue is not duplicated)
+
+The trade-off is that custom components must be defined as TypeScript files (not `.vue` files) for proper injection.
+
+**IMPORTANT: Use Options API, Not Composition API**
+
+NexoPOS components should use the **Options API** (data, methods, mounted) rather than the Composition API (setup, ref, onMounted). This aligns with NexoPOS's architecture where `defineComponent` is globally available and Vue's reactivity is handled by the framework.
+
+**Step 1: Create Component as TypeScript File**
+
+Instead of `.vue` files, create your component as a TypeScript file that exports a Vue component definition using **Options API**:
+
+```typescript
+// Resources/ts/components/NsMyComponent.ts
+
+export default defineComponent({
+    name: 'NsMyComponent',
+    
+    data() {
+        return {
+            loading: false,
+            data: []
+        };
+    },
+    
+    mounted() {
+        this.loadData();
+    },
+    
+    methods: {
+        loadData() {
+            this.loading = true;
+            
+            nsHttpClient.get('/api/my-module/data')
+                .subscribe({
+                    next: (response: any) => {
+                        this.data = response;
+                        this.loading = false;
+                    },
+                    error: (error: any) => {
+                        nsSnackBar.error(error.message || 'Failed to load data');
+                        this.loading = false;
+                    }
+                });
+        }
+    },
+    
+    template: `
+        <div class="p-4">
+            <div v-if="loading" class="flex justify-center">
+                <ns-spinner></ns-spinner>
+            </div>
+            <div v-else>
+                <div v-for="item in data" :key="item.id" class="mb-2 p-2 border rounded">
+                    {{ item.name }}
+                </div>
+            </div>
+        </div>
+    `
+});
+```
+
+**Key Points:**
+- ❌ **Don't import** `defineComponent` from Vue - it's globally available
+- ❌ **Don't use** Composition API (`setup`, `ref`, `onMounted`)
+- ✅ **Use** Options API (`data`, `methods`, `mounted`)
+- ✅ **Use** `this.property` instead of `property.value`
+- ✅ **Return plain objects** from `data()`, not refs
+
+**Step 2: Register Component in Entry File**
+
+In your main TypeScript entry file, register the component with the NexoPOS Vue instance:
 
 ```typescript
 // Resources/ts/main.ts
-import { Popup } from '@/libraries/popup';
-import MyComponent from './components/MyComponent.vue';
+import NsMyComponent from './components/NsMyComponent';
 
-// Export the component globally for access from Blade templates
-const showMyComponent = () => {
-    Popup.show(MyComponent, {
-        // Component props
-    });
-};
-
-// Make it available on window object
-(window as any).myModuleName = {
-    showMyComponent
-};
-
-export { showMyComponent };
+// Register component with NexoPOS Vue instance
+// The component will be available as <ns-my-component> in templates
+if (typeof nsExtraComponents !== 'undefined') {
+    nsExtraComponents['ns-my-component'] = NsMyComponent;
+}
 ```
 
-Then in your Blade template:
+**Step 3: Load Assets BEFORE NexoPOS in Blade Template**
+
+**CRITICAL:** Module assets must be loaded **before** the `@parent` directive in the footer section. This ensures your components are registered before NexoPOS initializes its Vue app.
+
+**IMPORTANT:** Vue components in modules **MUST** be placed inside a container with `id="dashboard-content"` to work properly. This is the mounting point where NexoPOS initializes the Vue app for dashboard pages.
 
 ```blade
-@moduleViteAssets('Resources/ts/main.ts', 'MyModule')
+@extends('layout.dashboard')
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof myModuleName !== 'undefined' && myModuleName.showMyComponent) {
-            myModuleName.showMyComponent();
-        }
-    });
-</script>
+@section('layout.dashboard.body')
+<div class="h-full flex-auto flex flex-col">
+    @include('common.dashboard-header')
+    
+    <!-- CRITICAL: Use id="dashboard-content" for Vue components to work -->
+    <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
+        <h2 class="text-2xl font-bold mb-4">{{ __m('My Page', 'MyModule') }}</h2>
+        
+        <!-- Your component will be rendered here -->
+        <ns-my-component></ns-my-component>
+    </div>
+</div>
+@endsection
+
+@section('layout.dashboard.footer.inject')
+    @moduleViteAssets('Resources/ts/main.ts', 'MyModule')
+@endsection
 ```
 
-**TypeScript Type Declarations:**
+**Important Notes:**
+- Use `@section('layout.dashboard.footer.inject')` instead of `@push('footer-scripts')`. This section is specifically designed for injecting module components before NexoPOS initializes.
+- **Always** wrap Vue components in a container with `id="dashboard-content"` - this is where NexoPOS mounts its Vue app instance for dashboard pages.
+- Without the `dashboard-content` ID, your components will not be rendered or will throw errors.
 
-Create a `types.d.ts` file for NexoPOS API type declarations:
+**Step 4: TypeScript Declarations for NexoPOS Globals**
+
+Create type declarations for NexoPOS global variables:
 
 ```typescript
 // Resources/ts/types.d.ts
-declare module '@/libraries/lang' {
-    export function __(key: string): string;
-    export function __m(key: string, namespace: string): string;
-}
 
-declare module '@/bootstrap' {
-    export const nsHttpClient: any;
-    export const nsSnackBar: any;
-}
+// NexoPOS component registry
+declare const nsExtraComponents: Record<string, any>;
 
-declare module '@/libraries/popup' {
-    export class Popup {
-        static show(component: any, params?: any, config?: any): any;
-    }
-}
+// Vue defineComponent (globally available)
+declare const defineComponent: any;
 
-// Global popup components available in NexoPOS
+// HTTP Client (RxJS-based)
+declare const nsHttpClient: {
+    get(url: string, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+    post(url: string, data?: any, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+    put(url: string, data?: any, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+    delete(url: string, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+};
+
+// Snackbar notifications
+declare const nsSnackBar: {
+    success(message: string, title?: string, options?: any): void;
+    error(message: string, title?: string, options?: any): void;
+    info(message: string, title?: string, options?: any): void;
+};
+
+// Popup system
+declare const Popup: {
+    show(component: any, params?: any, config?: any): any;
+};
+
+// Built-in popup components
 declare const nsAlertPopup: any;
 declare const nsConfirmPopup: any;
 declare const nsPromptPopup: any;
 declare const nsSelectPopup: any;
 declare const nsMedia: any;
 declare const nsPosLoadingPopup: any;
+
+// Localization
+declare function __(key: string): string;
+declare function __m(key: string, module: string): string;
+```
+
+**Complete Example: Provider Management Component**
+
+```typescript
+// Resources/ts/components/NsProviderManager.ts
+
+interface Provider {
+    id: string;
+    name: string;
+    icon: string;
+    connected: boolean;
+    description: string;
+}
+
+export default defineComponent({
+    name: 'NsProviderManager',
+    
+    data() {
+        return {
+            providers: [] as Provider[],
+            loading: true
+        };
+    },
+    
+    mounted() {
+        this.loadProviders();
+    },
+    
+    methods: {
+        loadProviders() {
+            this.loading = true;
+            
+            nsHttpClient.get('/api/my-module/providers')
+                .subscribe({
+                    next: (response: Provider[]) => {
+                        this.providers = response;
+                        this.loading = false;
+                    },
+                    error: (error: any) => {
+                        nsSnackBar.error(error.message || 'Failed to load providers');
+                        this.loading = false;
+                    }
+                });
+        },
+        
+        connectProvider(providerId: string) {
+            nsHttpClient.post(`/api/my-module/providers/${providerId}/connect`)
+                .subscribe({
+                    next: (response: any) => {
+                        if (response.redirect_url) {
+                            window.location.href = response.redirect_url;
+                        } else {
+                            nsSnackBar.success('Provider connected successfully');
+                            this.loadProviders();
+                        }
+                    },
+                    error: (error: any) => {
+                        nsSnackBar.error(error.message || 'Failed to connect provider');
+                    }
+                });
+        },
+        
+        disconnectProvider(providerId: string) {
+            Popup.show(nsConfirmPopup, {
+                title: 'Disconnect Provider',
+                message: 'Are you sure you want to disconnect this provider?',
+                onAction: (confirmed: boolean) => {
+                    if (confirmed) {
+                        nsHttpClient.delete(`/api/my-module/providers/${providerId}`)
+                            .subscribe({
+                                next: () => {
+                                    nsSnackBar.success('Provider disconnected');
+                                    this.loadProviders();
+                                },
+                                error: (error: any) => {
+                                    nsSnackBar.error(error.message || 'Failed to disconnect');
+                                }
+                            });
+                    }
+                }
+            });
+        }
+    },
+    
+    template: `
+        <div class="ns-box rounded-lg">
+            <div class="ns-box-header p-4 border-b border-box-edge">
+                <h3 class="text-lg font-semibold">Cloud Providers</h3>
+            </div>
+            <div class="ns-box-body p-4">
+                <div v-if="loading" class="flex justify-center py-8">
+                    <ns-spinner></ns-spinner>
+                </div>
+                <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div v-for="provider in providers" :key="provider.id" 
+                         class="ns-box p-4 rounded-lg border border-box-edge">
+                        <div class="flex items-center mb-3">
+                            <i :class="'las ' + provider.icon + ' text-3xl mr-3'"></i>
+                            <div>
+                                <h4 class="font-semibold">{{ provider.name }}</h4>
+                                <span v-if="provider.connected" 
+                                      class="text-xs text-success-tertiary">Connected</span>
+                                <span v-else class="text-xs text-warning-tertiary">Not Connected</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-secondary mb-4">{{ provider.description }}</p>
+                        <div class="flex justify-end">
+                            <ns-button v-if="provider.connected" 
+                                       type="error" 
+                                       @click="disconnectProvider(provider.id)">
+                                Disconnect
+                            </ns-button>
+                            <ns-button v-else 
+                                       type="info" 
+                                       @click="connectProvider(provider.id)">
+                                Connect
+                            </ns-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+});
+```
+
+**Entry file registration:**
+
+```typescript
+// Resources/ts/main.ts
+import NsProviderManager from './components/NsProviderManager';
+
+if (typeof nsExtraComponents !== 'undefined') {
+    nsExtraComponents['ns-provider-manager'] = NsProviderManager;
+}
+```
+
+**Alternative: Using .vue Files with Popup**
+
+If you prefer using `.vue` files, you can still use them with the Popup system (which creates its own Vue instance):
+
+```typescript
+// Resources/ts/main.ts
+import { Popup } from '@/libraries/popup';
+import MyPopupComponent from './components/MyPopupComponent.vue';
+
+// Export function to show popup from Blade templates
+const showMyPopup = (data?: any) => {
+    return new Promise((resolve, reject) => {
+        Popup.show(MyPopupComponent, {
+            resolve,
+            reject,
+            data
+        });
+    });
+};
+
+// Make available globally
+(window as any).myModuleName = {
+    showMyPopup
+};
+
+export { showMyPopup };
+```
+
+Then call from Blade:
+
+```blade
+<button onclick="myModuleName.showMyPopup({ id: 123 }).then(result => console.log(result))">
+    Open Popup
+</button>
 ```
 
 #### CSS with Tailwind CSS v4
@@ -772,8 +1080,9 @@ Where `modulecode` is a short, unique identifier for your module (2-4 characters
 **Key Points:**
 
 - **Every Tailwind class must have the prefix** - `fb:text-xl` not `text-xl`
-- **Responsive prefixes come after module prefix** - `fb:md:text-2xl`
-- **Pseudo-classes use module prefix** - `hover:fb:bg-blue-600`, `focus:fb:ring-2`
+- **Responsive breakpoints MUST come after the module prefix** - `fb:md:text-2xl` ✅ correct, `md:fb:text-2xl` ❌ wrong
+- **Pseudo-classes also come after module prefix** - `hover:fb:bg-blue-600` ❌ wrong, `fb:hover:bg-blue-600` ✅ correct
+- **Combined responsive + pseudo-class** - `fb:md:hover:bg-blue-600` (prefix → breakpoint → pseudo → utility)
 - **No tailwind.config.js needed** - Tailwind v4 doesn't use it
 - **Prevents collisions** - Your `fb:text-xl` won't conflict with core's `text-xl`
 
@@ -1176,7 +1485,7 @@ Create module-specific permissions:
 use App\Models\Permission;
 
 $permission = Permission::firstOrNew(['namespace' => 'create.foobar.products']);
-$permission->name = 'Create FooBar Products';
+$permission->name = __m( 'Create products', 'FooBar' );
 $permission->namespace = 'create.foobar.products';
 $permission->description = 'Allow creating FooBar products';
 $permission->save();
@@ -1187,13 +1496,40 @@ $permission->save();
 Utilize NexoPOS hooks for integration:
 
 ```php
+use App\Classes\AsideMenu;
+// ...
 // In module service provider
-Hook::addFilter('ns.dashboard.menus', function($menus) {
-    $menus[] = [
-        'label' => __('FooBar'),
-        'href' => route('foobar.dashboard'),
-        'icon' => 'la-box'
-    ];
+Hook::addFilter('ns-dashboard-menus', function($menus) {
+    $newMenus = AsideMenu::menu(
+        label: __m( 'Foobar', 'FooBar' ),
+        icon: 'la-box',
+        href: route( 'foobar.products.index' ),
+        permissions: [
+            'view.foobar.products'
+        ]
+    );
+
+    $menus = array_insert_after($menus, 'inventory', $newMenus);
+
+    return $menus;
+});
+```
+
+Or we add define submenus
+
+```php
+use App\Classes\AsideMenu;
+// ...
+Hook::addFilter('ns-dashboard-menus', function($menus) {
+    $menus = array_insert_after($menu, 'inventory', AsideMenu::menu(
+        label: __m( 'Products', 'FooBar' ),
+        icon: 'la-box',
+        href: route( 'foobar.products.index' ),
+        permissions: [
+            'view.foobar.products'
+        ]
+    ));
+
     return $menus;
 });
 ```

@@ -100,6 +100,7 @@ class CrudTest extends TestCase
                             ] );
 
                         if ( $response->status() !== 200 ) {
+                            $response->dump();
                             $response->assertOk();
                         }
                     }

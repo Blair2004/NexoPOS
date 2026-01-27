@@ -155,5 +155,48 @@ return [
             ],
             value: ns()->option->get( 'ns_pos_action_permission_enabled' ),
         ),
+
+        FormInput::switch(
+            label: __( 'Enable Scale Barcode' ),
+            name: 'ns_scale_barcode_enabled',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_scale_barcode_enabled', 'no' ),
+            description: __( 'Enable support for scale barcodes that encode product code and weight/price information.' )
+        ),
+        FormInput::switch(
+            label: __( 'Enable Category & Products Reordering' ),
+            description: __( 'When enabled, categories and products will be retrieved in their custom order instead of by creation date.' ),
+            name: 'ns_pos_enable_reordering',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_pos_enable_reordering' ),
+        ),
+
+        FormInput::switch(
+            label: __( 'Enable Pinned Products' ),
+            description: __( 'When enabled, pinned products will be displayed at the top of the POS grid for quick access.' ),
+            name: 'ns_pos_enable_pinned_products',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_pos_enable_pinned_products', 'yes' ),
+        ),
+
+        FormInput::switch(
+            label: __( 'Show Preview For Pinned Products' ),
+            description: __( 'When enabled, pictures will be shown on pinned products in the POS.' ),
+            name: 'ns_pos_show_preview_pinned_products',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_pos_show_preview_pinned_products' ),
+        ),
     ],
 ];

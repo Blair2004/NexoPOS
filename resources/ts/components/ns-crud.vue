@@ -130,7 +130,7 @@ import nsOrdersFilterPopupVue from '~/popups/ns-orders-filter-popup.vue';
 import { defineAsyncComponent } from 'vue';
 
 declare const nsCrudHandler;
-declare const nsExtraComponents;
+declare const nsComponents;
 
 export default {
     data: () => {
@@ -245,7 +245,7 @@ export default {
             return this.headerButtons.map( buttonComponent => {
                 return defineAsyncComponent( () => {
                     return new Promise( ( resolve ) => {
-                        resolve( nsExtraComponents[ buttonComponent ] );
+                        resolve( nsComponents[ buttonComponent ] );
                     })
                 })
             });

@@ -156,6 +156,29 @@ class CategoryController extends DashboardController
     }
 
     /**
+     * Reorder categories
+     *
+     * @return array
+     */
+    public function reorderCategories( Request $request )
+    {
+        $items = $request->input( 'items', [] );
+
+        foreach ( $items as $index => $item ) {
+            $category = ProductCategory::find( $item['id'] );
+            if ( $category instanceof ProductCategory ) {
+                $category->position = $index;
+                $category->save();
+            }
+        }
+
+        return [
+            'status' => 'success',
+            'message' => __( 'Categories have been successfully reordered.' ),
+        ];
+    }
+
+    /**
      * get a specific category product
      *
      * @param number category id
@@ -238,6 +261,8 @@ class CategoryController extends DashboardController
 
     public function getCategories( $id = '0' )
     {
+        $enableReordering = ns()->option->get( 'ns_pos_enable_reordering' ) === 'yes';
+
         if ( $id !== '0' ) {
             $category = ProductCategory::where( 'id', $id )
                 ->displayOnPOS()
@@ -247,14 +272,34 @@ class CategoryController extends DashboardController
                 ->with( 'subCategories' )
                 ->first();
 
+            $productsQuery = $category->products()
+                ->with( 'galleries', 'tax_group.taxes' )
+                ->onSale()
+                ->where( function ( $query ) {
+                    $this->applyHideProducts( $query );
+                } )
+                ->trackingDisabled();
+
+            // Apply ordering based on feature toggle
+            if ( $enableReordering ) {
+                $productsQuery->orderBy( 'position', 'asc' );
+            } else {
+                $productsQuery->orderBy( 'created_at', 'asc' );
+            }
+
+            $categoriesQuery = $category
+                ->subCategories()
+                ->displayOnPOS();
+
+            // Apply ordering based on feature toggle
+            if ( $enableReordering ) {
+                $categoriesQuery->orderBy( 'position', 'asc' );
+            } else {
+                $categoriesQuery->orderBy( 'created_at', 'asc' );
+            }
+
             return [
-                'products' => $category->products()
-                    ->with( 'galleries', 'tax_group.taxes' )
-                    ->onSale()
-                    ->where( function ( $query ) {
-                        $this->applyHideProducts( $query );
-                    } )
-                    ->trackingDisabled()
+                'products' => $productsQuery
                     ->get()
                     ->map( function ( $product ) {
                         if ( $product->unit_quantities()->count() === 1 ) {
@@ -263,29 +308,60 @@ class CategoryController extends DashboardController
 
                         return $product;
                     } ),
-                'categories' => $category
-                    ->subCategories()
-                    ->displayOnPOS()
-                    ->get(),
-                'previousCategory' => ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
-                'currentCategory' => $category, // means should return to the root
+                'categories' => $categoriesQuery->get(),
+                'previousCategory' => ProductCategory::find( $category->parent_id ) ?? null,
+                'currentCategory' => $category,
+                'pinnedProducts' => $this->getPinnedProducts(),
             ];
+        }
+
+        $categoriesQuery = ProductCategory::where( function ( $query ) {
+            $query->where( 'parent_id', null )
+                ->orWhere( 'parent_id', 0 );
+        } )
+            ->where( function ( $query ) {
+                $this->applyHideCategories( $query );
+            } )
+            ->displayOnPOS();
+
+        // Apply ordering based on feature toggle
+        if ( $enableReordering ) {
+            $categoriesQuery->orderBy( 'position', 'asc' );
+        } else {
+            $categoriesQuery->orderBy( 'created_at', 'asc' );
         }
 
         return [
             'products' => [],
             'previousCategory' => false,
             'currentCategory' => false,
-            'categories' => ProductCategory::where( function ( $query ) {
-                $query->where( 'parent_id', null )
-                    ->orWhere( 'parent_id', 0 );
-            } )
-                ->where( function ( $query ) {
-                    $this->applyHideCategories( $query );
-                } )
-                ->displayOnPOS()
-                ->get(),
+            'categories' => $categoriesQuery->get(),
+            'pinnedProducts' => $this->getPinnedProducts(),
         ];
+    }
+
+    /**
+     * Get pinned products for POS display
+     *
+     * @return Collection
+     */
+    private function getPinnedProducts()
+    {
+        return Product::where( 'pinned', true )
+            ->with( 'galleries', 'tax_group.taxes' )
+            ->onSale()
+            ->where( function ( $query ) {
+                $this->applyHideProducts( $query );
+            } )
+            ->trackingDisabled()
+            ->get()
+            ->map( function ( $product ) {
+                if ( $product->unit_quantities()->count() === 1 ) {
+                    $product->load( 'unit_quantities.unit' );
+                }
+
+                return $product;
+            } );
     }
 
     private function applyHideProducts( $query )

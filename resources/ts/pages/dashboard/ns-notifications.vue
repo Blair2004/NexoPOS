@@ -9,7 +9,7 @@
             <i class="las la-bell"></i>
         </div>
         <div class="h-0 w-0" v-if="visible" id="notification-center">
-            <div class="absolute left-0 top-0 sm:relative w-screen zoom-out-entrance anim-duration-300 h-[80vh] sm:w-64 sm:h-108 flex flex-row-reverse">
+            <div class="absolute left-0 top-0 sm:relative w-screen zoom-out-entrance anim-duration-300 h-[80vh] sm:w-[320px] sm:h-108 flex flex-row-reverse">
                 <div class="z-50 sm:rounded-lg shadow-lg h-full w-full md:mt-2 overflow-y-hidden flex flex-col">
                     <div @click="visible = false" class="sm:hidden p-2 cursor-pointer flex items-center justify-center border-b border-gray-200">
                         <h3 class="font-semibold hover:text-info-primary">Close</h3>
@@ -128,7 +128,7 @@ export default {
                          * so that after the Async operation, the notification
                          * are pulled from the server.
                          */
-                        action.url.search( '/\?/' ) === -1 ? action.url += `?notification_id=${notification.id}` : action.url += `&notification_id=${notification.id}`;
+                        action.url += action.url.includes( '?' ) ? `&notification_id=${notification.id}` : `?notification_id=${notification.id}`;
 
                         nsHttpClient[ verb ]( action.url, action.data )
                             .subscribe({

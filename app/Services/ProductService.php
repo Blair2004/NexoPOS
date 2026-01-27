@@ -160,6 +160,12 @@ class ProductService
         }
 
         /**
+         * We'll check if the product is flagged as pinned. If it's the case we'll make sure
+         * we don't exceed the maximum allowed pinned products.
+         */
+        $this->checkPinnedProducts( $data );
+
+        /**
          * We need to check the product
          * before proceed and avoiding adding grouped
          * product within grouped product.
@@ -337,6 +343,26 @@ class ProductService
         ];
     }
 
+    public function checkPinnedProducts( $data, ?Product $product = null )
+    {
+        if ( $product instanceof Product ) {
+            $countPinned = Product::where( 'pinned', 1 )
+                ->where( 'id', '!=', $product->id )
+                ->count();
+
+        } else {
+            $countPinned = Product::where( 'pinned', 1 )->count();
+        }
+
+        if ( isset( $data['pinned'] ) && $data['pinned'] == 1 ) {
+            $maxPinned = ns()->option->get( 'ns_pos_max_pinned_products', 5 );
+
+            if ( $countPinned >= $maxPinned ) {
+                throw new NotAllowedException( sprintf( __( 'You cannot pin more than %s products.' ), $maxPinned ) );
+            }
+        }
+    }
+
     /**
      * Update a product either is a "product" or a "variable"
      *
@@ -353,6 +379,12 @@ class ProductService
         if ( ! $this->categoryService->get( $data[ 'category_id' ] ) ) {
             throw new Exception( __( 'The category to which the product is attached doesn\'t exists or has been deleted' ) );
         }
+
+        /**
+         * We'll check if the product is flagged as pinned. If it's the case we'll make sure
+         * we don't exceed the maximum allowed pinned products.
+         */
+        $this->checkPinnedProducts( $data, $product );
 
         /**
          * We need to check the product
@@ -765,10 +797,30 @@ class ProductService
                 }
 
                 /**
+                 * Handle scale PLU and is_weighable fields
+                 */
+                $unitQuantity->is_weighable = $group[ 'is_weighable' ] ?? false;
+                $unitQuantity->scale_plu = $group[ 'scale_plu' ] ?? null;
+
+                /**
                  * save custom barcode for the created unit quantity
                  */
                 $unitQuantity->barcode = $product->barcode . '-' . $unitQuantity->id;
                 $unitQuantity->save();
+
+                /**
+                 * Auto-generate PLU for weighable products without a PLU
+                 */
+                if ( $unitQuantity->is_weighable && empty( $unitQuantity->scale_plu ) ) {
+                    try {
+                        $plu = $this->generateScalePLU( $product->id, $unitQuantity->id );
+                        $unitQuantity->scale_plu = $plu;
+                        $unitQuantity->save();
+                    } catch ( \Exception $e ) {
+                        // PLU generation failed - product category may not have a range assigned
+                        // This is not a critical error, so we'll just skip it
+                    }
+                }
             }
         }
     }
@@ -2210,5 +2262,208 @@ class ProductService
     public function getIncreaseActions()
     {
         return Hook::filter( 'ns-products-increase-actions', ProductHistory::STOCK_INCREASE );
+    }
+
+    /**
+     * Scale Barcode Methods
+     * These methods handle scale barcodes that encode product code and weight/price
+     */
+
+    /**
+     * Check if scale barcode feature is enabled
+     */
+    public function isScaleBarcodeEnabled(): bool
+    {
+        return ns()->option->get( 'ns_scale_barcode_enabled', 'no' ) === 'yes';
+    }
+
+    /**
+     * Check if a barcode matches the scale barcode format
+     */
+    public function isScaleBarcode( string $barcode ): bool
+    {
+        if ( ! $this->isScaleBarcodeEnabled() ) {
+            return false;
+        }
+
+        $prefix = ns()->option->get( 'ns_scale_barcode_prefix', '2' );
+
+        // Check if barcode starts with the configured prefix
+        if ( ! str_starts_with( $barcode, $prefix ) ) {
+            return false;
+        }
+
+        // Check if barcode has the expected length
+        $prefixLength = strlen( $prefix );
+        $productCodeLength = (int) ns()->option->get( 'ns_scale_barcode_product_length', 5 );
+        $valueLength = (int) ns()->option->get( 'ns_scale_barcode_value_length', 5 );
+        $expectedLength = $prefixLength + $productCodeLength + $valueLength + 1; // +1 for check digit
+
+        if ( strlen( $barcode ) !== $expectedLength ) {
+            return false;
+        }
+
+        // Check if the barcode contains only digits
+        if ( ! ctype_digit( $barcode ) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Parse a scale barcode and extract product code and weight/price
+     *
+     * @return array{
+     *   product_code: string,
+     *   value: float,
+     *   type: string,
+     *   original_barcode: string
+     * }
+     *
+     * @throws Exception
+     */
+    public function parseScaleBarcode( string $barcode ): array
+    {
+        if ( ! $this->isScaleBarcode( $barcode ) ) {
+            throw new Exception( __( 'Invalid scale barcode format' ) );
+        }
+
+        $prefix = ns()->option->get( 'ns_scale_barcode_prefix', '2' );
+        $prefixLength = strlen( $prefix );
+        $productCodeLength = (int) ns()->option->get( 'ns_scale_barcode_product_length', 5 );
+        $valueLength = (int) ns()->option->get( 'ns_scale_barcode_value_length', 5 );
+        $type = ns()->option->get( 'ns_scale_barcode_type', 'weight' );
+
+        // Extract product code
+        $productCode = substr( $barcode, $prefixLength, $productCodeLength );
+
+        // Extract value
+        $startPosition = $prefixLength + $productCodeLength;
+        $rawValue = substr( $barcode, $startPosition, $valueLength );
+
+        // Convert to float based on type
+        if ( $type === 'weight' ) {
+            // Weight is typically stored in grams, convert to kg
+            $value = (float) $rawValue / 1000;
+        } else {
+            // Price is typically stored in cents, convert to currency
+            $value = (float) $rawValue / 100;
+        }
+
+        return [
+            'product_code' => $productCode,
+            'value' => $value,
+            'type' => $type,
+            'original_barcode' => $barcode,
+        ];
+    }
+
+    /**
+     * Generate a PLU code for a product unit quantity
+     *
+     * @return string The generated PLU code
+     *
+     * @throws \Exception
+     */
+    public function generateScalePLU( int $productId, int $unitQuantityId ): string
+    {
+        $product = Product::with( 'category.scaleRange' )->find( $productId );
+
+        if ( ! $product ) {
+            throw new \Exception( __( 'Product not found.' ) );
+        }
+
+        if ( ! $product->category ) {
+            throw new \Exception( __( 'Product must have a category to generate PLU code.' ) );
+        }
+
+        if ( ! $product->category->scaleRange ) {
+            throw new \Exception(
+                sprintf(
+                    __( 'Category "%s" does not have a PLU range assigned.' ),
+                    $product->category->name
+                )
+            );
+        }
+
+        $scaleRange = $product->category->scaleRange;
+
+        // Get the next PLU from the range
+        $plu = $scaleRange->getNextPLU();
+
+        // Validate PLU is unique
+        $existingPlu = ProductUnitQuantity::where( 'scale_plu', $plu )
+            ->where( 'id', '!=', $unitQuantityId )
+            ->first();
+
+        if ( $existingPlu ) {
+            // Try next PLU
+            $scaleRange->incrementNextPLU();
+
+            return $this->generateScalePLU( $productId, $unitQuantityId );
+        }
+
+        // Update the scale range
+        $scaleRange->incrementNextPLU();
+
+        return $plu;
+    }
+
+    /**
+     * Validate and format a PLU code
+     *
+     * @param  int|null $productLength Override product code length
+     * @return string   Formatted PLU code
+     *
+     * @throws \Exception
+     */
+    public function validateAndFormatPLU( string $plu, ?int $productLength = null ): string
+    {
+        // Get the configured product code length
+        if ( $productLength === null ) {
+            $productLength = (int) ns()->option->get( 'ns_scale_barcode_product_length', 5 );
+        }
+
+        // Remove any non-numeric characters
+        $plu = preg_replace( '/[^0-9]/', '', $plu );
+
+        if ( empty( $plu ) ) {
+            throw new \Exception( __( 'PLU code cannot be empty.' ) );
+        }
+
+        // Check if PLU is numeric
+        if ( ! ctype_digit( $plu ) ) {
+            throw new \Exception( __( 'PLU code must contain only digits.' ) );
+        }
+
+        // Pad with zeros to match the configured length
+        $plu = str_pad( $plu, $productLength, '0', STR_PAD_LEFT );
+
+        // Check if PLU length matches configured length
+        if ( strlen( $plu ) > $productLength ) {
+            throw new \Exception(
+                sprintf(
+                    __( 'PLU code is too long. Maximum length is %d digits.' ),
+                    $productLength
+                )
+            );
+        }
+
+        return $plu;
+    }
+
+    /**
+     * Check if a PLU code is unique
+     */
+    public function isPLUUnique( string $plu, ?int $excludeUnitQuantityId = null ): bool
+    {
+        $query = ProductUnitQuantity::where( 'scale_plu', $plu );
+
+        if ( $excludeUnitQuantityId ) {
+            $query->where( 'id', '!=', $excludeUnitQuantityId );
+        }
+
+        return ! $query->exists();
     }
 }

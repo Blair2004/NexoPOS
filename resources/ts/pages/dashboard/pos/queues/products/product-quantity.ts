@@ -22,7 +22,7 @@ export class ProductQuantityPromise {
             if ( options.ns_pos_show_quantity !== false || ! POS.processingAddQueue ) {
                 Popup.show( nsPosQuantityPopup, { resolve, reject, product, data });
             } else {
-                const quantity      =       1;
+                const quantity = this.product.quantity || 1;
 
                 /**
                  * The stock should be handled differently

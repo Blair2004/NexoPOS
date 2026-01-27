@@ -62,9 +62,11 @@ class CrudService
      * @return array
      */
     protected $links = [
-        'list' => [],
-        'edit' => [],
-        'create' => [],
+        'create' => '',
+        'list' => '',
+        'edit' => '',
+        'put' => '',
+        'post' => '',
     ];
 
     /**
@@ -1294,7 +1296,7 @@ class CrudService
              * by a module that need to directly access the entry.
              */
             'entry' => $entry,
-            
+
             /**
              * We'll provide the form configuration
              */

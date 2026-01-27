@@ -130,7 +130,11 @@ class SetupService
             ns()->envEditor->set( 'DB_PREFIX', $data[   'database_prefix' ] );
         } elseif ( $data[ 'database_driver' ] === 'mysql' ) {
             ns()->envEditor->set( 'DB_HOST', $data[ 'hostname' ] );
-            ns()->envEditor->set( 'DB_DATABASE', $data[ 'database_name' ] ?: database_path( 'database.sqlite' ) );
+            ns()->envEditor->set(
+                key: 'DB_DATABASE',
+                value: $data[ 'database_name' ] ?: database_path( 'database.sqlite' ),
+                quoted: true
+            );
             ns()->envEditor->set( 'DB_USERNAME', $data[ 'username' ] );
             ns()->envEditor->set( 'DB_PASSWORD', $data[ 'password' ] );
             ns()->envEditor->set( 'DB_PREFIX', $data[   'database_prefix' ] );

@@ -130,9 +130,9 @@ trait App
 
     /**
      * Swap arguments in a string
-     * 
-     * @param string $string
-     * @param array $arguments
+     *
+     * @param  string $string
+     * @param  array  $arguments
      * @return string
      */
     public function swapArguments( $string, $arguments = [] )

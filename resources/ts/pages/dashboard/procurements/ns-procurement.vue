@@ -61,6 +61,11 @@ export default {
                         })
                 }
 
+                /**
+                 * Check for low stock products and display suggestion notification
+                 */
+                this.checkLowStockProducts();
+
                 this.hasPreloaded = true;
             }
         })
@@ -159,6 +164,11 @@ export default {
              * Determine if we should show the info box
              */
             showInfo: false,
+
+            /**
+             * Store low stock products for suggestions
+             */
+            lowStockProducts: [],
         }
     },
     watch: {
@@ -303,7 +313,7 @@ export default {
                 product.procurement.unit_id === unitQuantity.unit_id
             );
 
-            if ( unit ) {
+            if ( unit && product.procurement.purchase_price_edit === 0 ) {
                 product.procurement.purchase_price_edit      =   ( unit.last_purchase_price || 0 );
             }
 
@@ -449,6 +459,8 @@ export default {
                 procurement_id: null,
                 $invalid: false,
             }
+
+            console.log({ product})
             
             product.procurement     =   Object.assign( defaultValues, product.procurement );
 
@@ -680,6 +692,93 @@ export default {
 
                 field.value     =   event.data.entry.id;
             }
+        },
+
+        /**
+         * Check for products with low stock and display a notification
+         */
+        checkLowStockProducts() {
+            nsHttpClient.get( '/api/procurements/low-stock-suggestions' )
+                .subscribe({
+                    next: (result: any) => {
+                        if ( result.status === 'success' && result.count > 0 ) {
+                            this.lowStockProducts = result.data;
+                            this.showLowStockNotification( result.count );
+                        }
+                    },
+                    error: error => {
+                        // Silently fail - low stock suggestions are optional
+                        console.log( 'Low stock check failed:', error );
+                    }
+                });
+        },
+
+        /**
+         * Display floating notification about low stock products
+         */
+        showLowStockNotification( count ) {
+            const message = count === 1 
+                ? __( 'We\'ve detected 1 product that is running low on stock. You can load it into the procurement.' )
+                : __( 'We\'ve detected {count} products that are running low on stock. You can load them into the procurement.' ).replace( '{count}', count );
+
+            nsNotice.info( 
+                __( 'Products Suggestion' ),
+                message,
+                {
+                    duration: false, // Keep visible until user interacts
+                    actions: {
+                        loadProducts: {
+                            label: __( 'Load Products' ),
+                            onClick: ( instance ) => {
+                                this.loadLowStockProducts();
+                                instance.close();
+                            }
+                        },
+                        dismiss: {
+                            label: __( 'Dismiss' ),
+                            onClick: ( instance ) => {
+                                instance.close();
+                            }
+                        }
+                    }
+                }
+            );
+        },
+
+        /**
+         * Load all low stock products into the procurement form
+         */
+        loadLowStockProducts() {
+            let loadedCount = 0;
+
+            this.lowStockProducts.forEach( product => {
+                // Check if product is already in the procurement
+                const exists = this.form.products.find( p => p.product_id === product.id || p.id === product.id );
+                
+                if ( ! exists ) {
+                    this.addProductList({
+                        ...product,
+                        procurement: {
+                            unit_id: product.recent_procured_unit_id,
+                            quantity: product.recent_procured_quantity,
+                            convert_unit_id: product.recent_procured_convert_unit_id,
+                            convert_unit_label: product.recent_procured_convert_unit_label,
+                            purchase_price_edit: product.recent_procured_purchase_price,
+                        }
+                    });
+                    loadedCount++;
+                }
+            });
+
+            // Switch to products tab to show loaded products
+            this.setTabActive( this.validTabs.find( tab => tab.identifier === 'products' ) );
+
+            // Show success message
+            const message = loadedCount === 1
+                ? __( '1 product has been added to the procurement.' )
+                : __( '{count} products have been added to the procurement.' ).replace( '{count}', loadedCount );
+
+            nsSnackBar.success( message );
         }
     }
 }
@@ -712,7 +811,7 @@ export default {
                     <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                     <button @click="reloadEntities()" class="outline-none px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
-                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs text-fontcolor-soft py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>

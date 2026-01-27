@@ -181,6 +181,7 @@ None.
 
 ## Additional Instructions
 .github/instructions/nexopos-modules.instructions.md
+.github/instructions/nexopos-module-quick-reference.instructions.md
 .github/instructions/nexopos-asidemenu.instructions.md
 .github/instructions/nexopos-blade-layouts.instructions.md
 .github/instructions/nexopos-crud.instructions.md
@@ -189,11 +190,10 @@ None.
 .github/instructions/nexopos-localization.instructions.md
 .github/instructions/nexopos-middleware.instructions.md
 .github/instructions/nexopos-migrations.instructions.md
-.github/instructions/nexopos-modules.instructions.md
 .github/instructions/nexopos-permissions.instructions.md
 .github/instructions/nexopos-popup.instructions.md
 .github/instructions/nexopos-roles-permissions.instructions.md
 .github/instructions/nexopos-tabs.instructions.md
 .github/instructions/nexopos-widgets.instructions.md
 .gituhb/instructions/nexopos-models.instructions.md
-```
+.github/instructions/nexopos-view-injection.instructions.md

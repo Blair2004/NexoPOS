@@ -10,7 +10,8 @@ use TorMorten\Eventy\Facades\Eventy as Hook;
 class MenuService
 {
     protected $menus;
-    protected $accountMenus     =    [];
+
+    protected $accountMenus = [];
 
     public function buildMenus()
     {
@@ -282,6 +283,12 @@ class MenuService
                         identifier: 'stock-adjustment',
                         permissions: [ 'nexopos.make.products-adjustments' ],
                         href: ns()->url( '/dashboard/products/stock-adjustment' )
+                    ),
+                    AsideMenu::subMenu(
+                        label: __( 'Scale Range' ),
+                        identifier: 'scale-range',
+                        permissions: [ 'nexopos.make.products-adjustments' ],
+                        href: ns()->url( '/dashboard/products/scale-range' )
                     ),
                     AsideMenu::subMenu(
                         label: __( 'Stock Flow Records' ),
@@ -620,7 +627,6 @@ class MenuService
 
     /**
      * Returns the account menus
-     * @return array
      */
     public function getAccountMenus(): array
     {
@@ -647,6 +653,7 @@ class MenuService
 
     /**
      * Remove an account menu by its identifier
+     *
      * @param string $identifier
      */
     public function removeAccountMenu( $identifier )

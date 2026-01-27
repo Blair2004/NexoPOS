@@ -77,13 +77,13 @@ trait NsForms
         foreach ( $form[ 'tabs' ] as $tabIdentifier => $tab ) {
             if ( ! empty( $tab[ 'fields' ] ) ) {
                 foreach ( $tab[ 'fields' ] as $field ) {
-                    if ( isset( $field[ 'validation' ] ) && ( 
-                        ! isset( $field[ 'show' ] ) || 
-                        ( 
-                            isset( $field[ 'show' ] ) && 
-                            is_callable( $field[ 'show' ] ) && 
-                            $field[ 'show' ]( $model ) 
-                        ) 
+                    if ( isset( $field[ 'validation' ] ) && (
+                        ! isset( $field[ 'show' ] ) ||
+                        (
+                            isset( $field[ 'show' ] ) &&
+                            is_callable( $field[ 'show' ] ) &&
+                            $field[ 'show' ]( $model )
+                        )
                     ) ) {
                         $rules[ $tabIdentifier ][ $field[ 'name' ] ] = $field[ 'validation' ];
                     }
@@ -156,8 +156,16 @@ trait NsForms
              */
             if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
                 foreach ( $tab[ 'fields' ] as $field ) {
+
                     /**
-                     * some fields might be hidden. We should implement a logic 
+                     * skip fields without a name
+                     */
+                    if ( ! isset( $field[ 'name' ] ) ) {
+                        continue;
+                    }
+
+                    /**
+                     * some fields might be hidden. We should implement a logic
                      * for ensuring we only extract visible fields
                      */
                     if ( isset( $field[ 'show' ] ) && is_callable( $field[ 'show' ] ) && ! $field[ 'show' ]( $model ) ) {
@@ -235,7 +243,7 @@ trait NsForms
             if ( isset( $field[ 'show' ] ) && is_callable( $field[ 'show' ] ) && ! $field[ 'show' ]() ) {
                 continue;
             }
-            
+
             $formValue[$field['name']] = $field['value'] ?? '';
         }
 
