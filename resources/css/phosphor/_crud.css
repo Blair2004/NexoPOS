@@ -6,6 +6,9 @@
 
     #crud-table-header {
         @apply border-box-edge;
+        #custom-buttons {
+            @apply flex gap-2;
+        }
     }
 
     .ns-crud-input {
