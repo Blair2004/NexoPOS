@@ -464,12 +464,12 @@ export default class FormValidation {
     
                 min: (field, rule) => {
                     const fieldValue = this.getFieldValue( field );
-                    return fieldValue && fieldValue.length < parseInt(rule.value);
+                    return ! [ null, undefined ].includes( fieldValue ) && fieldValue.length < parseInt(rule.value);
                 },
 
                 max: (field, rule) => {
                     const fieldValue = this.getFieldValue( field );
-                    return fieldValue && fieldValue.length > parseInt(rule.value);
+                    return ! [ null, undefined ].includes( fieldValue ) && fieldValue.length > parseInt(rule.value);
                 },
     
                 regex: (field, rule) => {
