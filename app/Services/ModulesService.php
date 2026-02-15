@@ -1331,6 +1331,13 @@ class ModulesService
         }
 
         /**
+         * Sort migrations in reverse order for rollback
+         * This ensures that dependent migrations (foreign keys, constraints)
+         * are rolled back before their dependencies, preventing constraint violations.
+         */
+        rsort( $migrationFiles );
+
+        /**
          * Checks if migration files exists
          * so that we can "down" all migrations
          */
@@ -1851,6 +1858,13 @@ class ModulesService
     public function dropAllMigrations( string $namespace ): void
     {
         $migrations = $this->getAllMigrations( $this->get( $namespace ) );
+
+        /**
+         * Sort migrations in reverse order for rollback
+         * This ensures that dependent migrations (foreign keys, constraints)
+         * are rolled back before their dependencies, preventing constraint violations.
+         */
+        rsort( $migrations );
 
         if ( ! empty( $migrations ) ) {
             foreach ( $migrations as $file ) {
