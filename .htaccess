@@ -1,0 +1,18 @@
+RewriteEngine on
+RewriteRule ^$ public/ [L]
+RewriteRule (.*) public/$1
+
+Options +FollowSymLinks
+
+# Asegurar que no se liste el directorio, pero sí se lean los archivos
+Options -Indexes
+
+<FilesMatch "\.json$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</FilesMatch>
