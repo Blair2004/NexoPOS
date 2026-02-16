@@ -7,6 +7,30 @@ declare const window;
 
 const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision ) ) ).fill('').map( _ => 0 ).join('');
 
+const registerDynamicLocale = () => {
+    const localeName = 'nexopos-dynamic';
+    if (NumeralJS.locales[localeName]) return localeName;
+
+    NumeralJS.register('locale', localeName, {
+        delimiters: {
+            thousands: ns.currency.ns_currency_thousand_separator,
+            decimal: ns.currency.ns_currency_decimal_separator
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        currency: {
+            symbol: ns.currency.ns_currency_symbol
+        }
+    });
+
+    NumeralJS.locale(localeName);
+    return localeName;
+};
+
 /**
  * Convert a number into a currency format.
  * @param value the value to convert
@@ -15,6 +39,8 @@ const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision
  * @returns string
  */
 const nsCurrency    =   ( value, format = 'full', locale = 'en' ) => {
+    registerDynamicLocale();
+
     let numeralFormat, currencySymbol;
 
     switch( ns.currency.ns_currency_prefered ) {
@@ -24,6 +50,8 @@ const nsCurrency    =   ( value, format = 'full', locale = 'en' ) => {
         case 'symbol' :
             currencySymbol  =   ns.currency.ns_currency_symbol;
         break;
+        default:
+            currencySymbol = ns.currency.ns_currency_symbol || '$';
     }
 
     let newValue;
@@ -38,11 +66,14 @@ const nsCurrency    =   ( value, format = 'full', locale = 'en' ) => {
     
         newValue    =   currency( value, config ).format();
     } else {
-        newValue    =   NumeralJS( value ).format( '0.0a' );
+        newValue = NumeralJS( value ).format( '0.0a' ).toUpperCase();
     }
 
-    return `${ns.currency.ns_currency_position === 'before' ? currencySymbol : '' }${ newValue }${ns.currency.ns_currency_position === 'after' ? currencySymbol : '' }`;
+    const isBefore = ns.currency.ns_currency_position === 'before';
 
+    return isBefore
+        ? `${currencySymbol} ${newValue}`.trim()
+        : `${newValue} ${currencySymbol}`.trim();
 }
 
 const nsRawCurrency     =   ( value ) => {
