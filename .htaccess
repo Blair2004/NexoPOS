@@ -2,8 +2,6 @@ RewriteEngine on
 RewriteRule ^$ public/ [L]
 RewriteRule (.*) public/$1
 
-Options +FollowSymLinks
-
 <FilesMatch "\.json$">
     <IfModule mod_authz_core.c>
         Require all granted
