@@ -4,9 +4,6 @@ RewriteRule (.*) public/$1
 
 Options +FollowSymLinks
 
-# Asegurar que no se liste el directorio, pero sí se lean los archivos
-Options -Indexes
-
 <FilesMatch "\.json$">
     <IfModule mod_authz_core.c>
         Require all granted
