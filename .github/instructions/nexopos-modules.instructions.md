@@ -119,6 +119,7 @@ NexoPOS is built on top of Vite, Vue and Tailwind. If module can use their own f
 - laravel-vite-plugin
 - @vitejs/plugin-vue
 - @tailwindcss/vite
+- vite-plugin-mkcert (for HTTPS in development)
 
 As Vue is already included on NexoPOS, it's not required to use it on our module. In fact, we want our component to work seamlessly with NexoPOS, we'll then use it's API. Typically here is how a vite.config.js looks like:
 
@@ -127,6 +128,7 @@ import { defineConfig, loadEnv } from 'vite';
 
 import { fileURLToPath } from 'node:url';
 import laravel from 'laravel-vite-plugin';
+import mkcert from 'vite-plugin-mkcert';
 import path from 'node:path';
 import vuePlugin from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
@@ -142,6 +144,7 @@ export default ({ mode }) => {
     return defineConfig({
         base: '/',
         plugins: [
+            mkcert(),
             vuePlugin(),
             laravel({
                 hotFile: 'Public/hot',
@@ -160,6 +163,18 @@ export default ({ mode }) => {
                 '@': path.resolve(__dirname, 'Resources/ts'),
             }
         },
+        // Server configuration for HMR (Hot Module Replacement)
+        // See modules/OpusBackup/vite.config.js for reference
+        server: {
+            port: 3344,              // Custom port (optional, adjust per module)
+            host: '127.0.0.1',       // Bind to localhost
+            cors: true,              // Enable CORS
+            hmr: {
+                protocol: 'wss',     // WebSocket Secure for HMR
+                host: 'localhost',   // HMR host
+            },
+            https: true,             // Enable HTTPS with mkcert
+        },
         build: {
             outDir: 'Public/build',
             manifest: true,
@@ -171,6 +186,25 @@ export default ({ mode }) => {
             }
         }        
     });
+}
+```
+
+**Package.json Dependencies:**
+
+Ensure your `package.json` includes `vite-plugin-mkcert`:
+
+```json
+{
+  "devDependencies": {
+    "laravel-vite-plugin": "^1.2.0",
+    "vite": "^6.3.5",
+    "vite-plugin-mkcert": "^1.17.6",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@tailwindcss/vite": "^4.1.8",
+    "tailwindcss": "^4.1.8",
+    "typescript": "^5.8.3",
+    "vue": "^3.5.16"
+  }
 }
 ```
 
@@ -191,13 +225,13 @@ Each module must have a main entry class named `{Namespace}Module.php`. For a mo
 
 namespace Modules\FooBar;
 
-use App\Classes\ModuleService;
+use App\Services\Module;
 
-class FooBarModule extends ModuleService
+class FooBarModule extends Module
 {
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct( __FILE__ );
     }
 }
 ```
@@ -337,7 +371,7 @@ class ProductRequest extends FormRequest
 
 ### Jobs/
 
-Queue job classes:
+Queue job classes. Note that using anonymous jobs via `dispatch(function() { ... })` is strictly forbidden. Always create a dedicated Job class.
 
 ```php
 <?php
@@ -483,9 +517,7 @@ class FooBarServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        // Boot services
-        $this->loadViewsFrom(__DIR__ . '/../Resources/Views', 'FooBar');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        // ...
     }
 }
 ```
@@ -551,6 +583,98 @@ Resources/Views/
 @endsection
 ```
 
+#### Loading Vite Assets in Views
+
+**IMPORTANT:** When including Vite-compiled assets in module Blade views, you **must** use the `@moduleViteAssets` directive instead of the standard Laravel `@vite` directive.
+
+**Syntax:**
+```blade
+@moduleViteAssets('path/to/asset', 'ModuleNamespace')
+```
+
+**Parameters:**
+1. **Asset Path** (string): Relative path from module root directory (no leading slash)
+2. **Module Namespace** (string): The module identifier from `config.xml`
+
+**Example:**
+```blade
+@section( 'layout.dashboard.footer' )
+    @parent
+    @moduleViteAssets('Resources/ts/main.ts', 'FooBar')
+    @moduleViteAssets('Resources/css/style.css', 'FooBar')
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Your module initialization code
+            if (typeof myModuleFunction !== 'undefined') {
+                myModuleFunction();
+            }
+        });
+    </script>
+@endsection
+```
+
+**Common Patterns:**
+
+Loading multiple assets:
+```blade
+@moduleViteAssets('Resources/ts/main.ts', 'FooBar')
+@moduleViteAssets('Resources/css/style.css', 'FooBar')
+@moduleViteAssets('Resources/ts/admin-panel.ts', 'FooBar')
+```
+
+With conditional loading:
+```blade
+@if(auth()->user()->allowedTo('manage.foobar'))
+    @moduleViteAssets('Resources/ts/admin-features.ts', 'FooBar')
+@endif
+```
+
+**Common Mistakes to Avoid:**
+
+❌ **Wrong - Using standard @vite:**
+```blade
+@vite(['modules/FooBar/Resources/ts/main.ts'])
+```
+
+❌ **Wrong - Including leading slash:**
+```blade
+@moduleViteAssets('/Resources/ts/main.ts', 'FooBar')
+```
+
+❌ **Wrong - Using full path:**
+```blade
+@moduleViteAssets('modules/FooBar/Resources/ts/main.ts', 'FooBar')
+```
+
+✅ **Correct:**
+```blade
+@moduleViteAssets('Resources/ts/main.ts', 'FooBar')
+```
+
+**How It Works:**
+
+The `@moduleViteAssets` directive:
+- Resolves the correct module path automatically
+- Reads the module's Vite manifest file (`Public/build/.vite/manifest.json`)
+- Includes the properly hashed and versioned assets
+- Works with hot-reload during development (`npm run dev`)
+- Ensures proper cache busting in production
+
+**Build Output Structure:**
+
+After running `npm run build`, your assets will be in:
+```
+modules/FooBar/Public/build/
+├── .vite/
+│   └── manifest.json
+└── assets/
+    ├── main-[hash].js
+    └── style-[hash].css
+```
+
+The directive automatically resolves these hashed filenames from the manifest.
+
 #### TypeScript (ts/)
 
 TypeScript files for frontend functionality:
@@ -568,22 +692,455 @@ export class ProductManager {
 }
 ```
 
-#### SCSS (scss/)
+**Vue Component Injection (Recommended Approach):**
 
-Stylesheet files:
+NexoPOS already creates a Vue app instance for the dashboard. Instead of creating a separate Vue app, modules should **inject components** into the existing NexoPOS Vue instance. This approach offers several benefits:
 
-```scss
-// Resources/scss/module.scss
-.foobar-product {
-    &__card {
-        @apply bg-white rounded-lg shadow-md p-4;
-    }
+- ✅ Access to all NexoPOS built-in components (ns-button, ns-input, ns-crud, etc.)
+- ✅ Access to global state and services (nsHttpClient, nsSnackBar, etc.)
+- ✅ Consistent styling with NexoPOS dashboard
+- ✅ Smaller bundle size (Vue is not duplicated)
+
+The trade-off is that custom components must be defined as TypeScript files (not `.vue` files) for proper injection.
+
+**IMPORTANT: Use Options API, Not Composition API**
+
+NexoPOS components should use the **Options API** (data, methods, mounted) rather than the Composition API (setup, ref, onMounted). This aligns with NexoPOS's architecture where `defineComponent` is globally available and Vue's reactivity is handled by the framework.
+
+**Step 1: Create Component as TypeScript File**
+
+Instead of `.vue` files, create your component as a TypeScript file that exports a Vue component definition using **Options API**:
+
+```typescript
+// Resources/ts/components/NsMyComponent.ts
+
+export default defineComponent({
+    name: 'NsMyComponent',
     
-    &__title {
-        @apply text-lg font-semibold text-gray-800;
-    }
+    data() {
+        return {
+            loading: false,
+            data: []
+        };
+    },
+    
+    mounted() {
+        this.loadData();
+    },
+    
+    methods: {
+        loadData() {
+            this.loading = true;
+            
+            nsHttpClient.get('/api/my-module/data')
+                .subscribe({
+                    next: (response: any) => {
+                        this.data = response;
+                        this.loading = false;
+                    },
+                    error: (error: any) => {
+                        nsSnackBar.error(error.message || 'Failed to load data');
+                        this.loading = false;
+                    }
+                });
+        }
+    },
+    
+    template: `
+        <div class="p-4">
+            <div v-if="loading" class="flex justify-center">
+                <ns-spinner></ns-spinner>
+            </div>
+            <div v-else>
+                <div v-for="item in data" :key="item.id" class="mb-2 p-2 border rounded">
+                    {{ item.name }}
+                </div>
+            </div>
+        </div>
+    `
+});
+```
+
+**Key Points:**
+- ❌ **Don't import** `defineComponent` from Vue - it's globally available
+- ❌ **Don't use** Composition API (`setup`, `ref`, `onMounted`)
+- ✅ **Use** Options API (`data`, `methods`, `mounted`)
+- ✅ **Use** `this.property` instead of `property.value`
+- ✅ **Return plain objects** from `data()`, not refs
+
+**Step 2: Register Component in Entry File**
+
+In your main TypeScript entry file, register the component with the NexoPOS Vue instance:
+
+```typescript
+// Resources/ts/main.ts
+import NsMyComponent from './components/NsMyComponent';
+
+// Register component with NexoPOS Vue instance
+// The component will be available as <ns-my-component> in templates
+if (typeof nsExtraComponents !== 'undefined') {
+    nsExtraComponents['ns-my-component'] = NsMyComponent;
 }
 ```
+
+**Step 3: Load Assets BEFORE NexoPOS in Blade Template**
+
+**CRITICAL:** Module assets must be loaded **before** the `@parent` directive in the footer section. This ensures your components are registered before NexoPOS initializes its Vue app.
+
+**IMPORTANT:** Vue components in modules **MUST** be placed inside a container with `id="dashboard-content"` to work properly. This is the mounting point where NexoPOS initializes the Vue app for dashboard pages.
+
+```blade
+@extends('layout.dashboard')
+
+@section('layout.dashboard.body')
+<div class="h-full flex-auto flex flex-col">
+    @include('common.dashboard-header')
+    
+    <!-- CRITICAL: Use id="dashboard-content" for Vue components to work -->
+    <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
+        <h2 class="text-2xl font-bold mb-4">{{ __m('My Page', 'MyModule') }}</h2>
+        
+        <!-- Your component will be rendered here -->
+        <ns-my-component></ns-my-component>
+    </div>
+</div>
+@endsection
+
+@section('layout.dashboard.footer.inject')
+    @moduleViteAssets('Resources/ts/main.ts', 'MyModule')
+@endsection
+```
+
+**Important Notes:**
+- Use `@section('layout.dashboard.footer.inject')` instead of `@push('footer-scripts')`. This section is specifically designed for injecting module components before NexoPOS initializes.
+- **Always** wrap Vue components in a container with `id="dashboard-content"` - this is where NexoPOS mounts its Vue app instance for dashboard pages.
+- Without the `dashboard-content` ID, your components will not be rendered or will throw errors.
+
+**Step 4: TypeScript Declarations for NexoPOS Globals**
+
+Create type declarations for NexoPOS global variables:
+
+```typescript
+// Resources/ts/types.d.ts
+
+// NexoPOS component registry
+declare const nsExtraComponents: Record<string, any>;
+
+// Vue defineComponent (globally available)
+declare const defineComponent: any;
+
+// HTTP Client (RxJS-based)
+declare const nsHttpClient: {
+    get(url: string, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+    post(url: string, data?: any, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+    put(url: string, data?: any, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+    delete(url: string, config?: any): { subscribe: (handlers: { next: Function; error: Function }) => void };
+};
+
+// Snackbar notifications
+declare const nsSnackBar: {
+    success(message: string, title?: string, options?: any): void;
+    error(message: string, title?: string, options?: any): void;
+    info(message: string, title?: string, options?: any): void;
+};
+
+// Popup system
+declare const Popup: {
+    show(component: any, params?: any, config?: any): any;
+};
+
+// Built-in popup components
+declare const nsAlertPopup: any;
+declare const nsConfirmPopup: any;
+declare const nsPromptPopup: any;
+declare const nsSelectPopup: any;
+declare const nsMedia: any;
+declare const nsPosLoadingPopup: any;
+
+// Localization
+declare function __(key: string): string;
+declare function __m(key: string, module: string): string;
+```
+
+**Complete Example: Provider Management Component**
+
+```typescript
+// Resources/ts/components/NsProviderManager.ts
+
+interface Provider {
+    id: string;
+    name: string;
+    icon: string;
+    connected: boolean;
+    description: string;
+}
+
+export default defineComponent({
+    name: 'NsProviderManager',
+    
+    data() {
+        return {
+            providers: [] as Provider[],
+            loading: true
+        };
+    },
+    
+    mounted() {
+        this.loadProviders();
+    },
+    
+    methods: {
+        loadProviders() {
+            this.loading = true;
+            
+            nsHttpClient.get('/api/my-module/providers')
+                .subscribe({
+                    next: (response: Provider[]) => {
+                        this.providers = response;
+                        this.loading = false;
+                    },
+                    error: (error: any) => {
+                        nsSnackBar.error(error.message || 'Failed to load providers');
+                        this.loading = false;
+                    }
+                });
+        },
+        
+        connectProvider(providerId: string) {
+            nsHttpClient.post(`/api/my-module/providers/${providerId}/connect`)
+                .subscribe({
+                    next: (response: any) => {
+                        if (response.redirect_url) {
+                            window.location.href = response.redirect_url;
+                        } else {
+                            nsSnackBar.success('Provider connected successfully');
+                            this.loadProviders();
+                        }
+                    },
+                    error: (error: any) => {
+                        nsSnackBar.error(error.message || 'Failed to connect provider');
+                    }
+                });
+        },
+        
+        disconnectProvider(providerId: string) {
+            Popup.show(nsConfirmPopup, {
+                title: 'Disconnect Provider',
+                message: 'Are you sure you want to disconnect this provider?',
+                onAction: (confirmed: boolean) => {
+                    if (confirmed) {
+                        nsHttpClient.delete(`/api/my-module/providers/${providerId}`)
+                            .subscribe({
+                                next: () => {
+                                    nsSnackBar.success('Provider disconnected');
+                                    this.loadProviders();
+                                },
+                                error: (error: any) => {
+                                    nsSnackBar.error(error.message || 'Failed to disconnect');
+                                }
+                            });
+                    }
+                }
+            });
+        }
+    },
+    
+    template: `
+        <div class="ns-box rounded-lg">
+            <div class="ns-box-header p-4 border-b border-box-edge">
+                <h3 class="text-lg font-semibold">Cloud Providers</h3>
+            </div>
+            <div class="ns-box-body p-4">
+                <div v-if="loading" class="flex justify-center py-8">
+                    <ns-spinner></ns-spinner>
+                </div>
+                <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div v-for="provider in providers" :key="provider.id" 
+                         class="ns-box p-4 rounded-lg border border-box-edge">
+                        <div class="flex items-center mb-3">
+                            <i :class="'las ' + provider.icon + ' text-3xl mr-3'"></i>
+                            <div>
+                                <h4 class="font-semibold">{{ provider.name }}</h4>
+                                <span v-if="provider.connected" 
+                                      class="text-xs text-success-tertiary">Connected</span>
+                                <span v-else class="text-xs text-warning-tertiary">Not Connected</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-secondary mb-4">{{ provider.description }}</p>
+                        <div class="flex justify-end">
+                            <ns-button v-if="provider.connected" 
+                                       type="error" 
+                                       @click="disconnectProvider(provider.id)">
+                                Disconnect
+                            </ns-button>
+                            <ns-button v-else 
+                                       type="info" 
+                                       @click="connectProvider(provider.id)">
+                                Connect
+                            </ns-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+});
+```
+
+**Entry file registration:**
+
+```typescript
+// Resources/ts/main.ts
+import NsProviderManager from './components/NsProviderManager';
+
+if (typeof nsExtraComponents !== 'undefined') {
+    nsExtraComponents['ns-provider-manager'] = NsProviderManager;
+}
+```
+
+**Alternative: Using .vue Files with Popup**
+
+If you prefer using `.vue` files, you can still use them with the Popup system (which creates its own Vue instance):
+
+```typescript
+// Resources/ts/main.ts
+import { Popup } from '@/libraries/popup';
+import MyPopupComponent from './components/MyPopupComponent.vue';
+
+// Export function to show popup from Blade templates
+const showMyPopup = (data?: any) => {
+    return new Promise((resolve, reject) => {
+        Popup.show(MyPopupComponent, {
+            resolve,
+            reject,
+            data
+        });
+    });
+};
+
+// Make available globally
+(window as any).myModuleName = {
+    showMyPopup
+};
+
+export { showMyPopup };
+```
+
+Then call from Blade:
+
+```blade
+<button onclick="myModuleName.showMyPopup({ id: 123 }).then(result => console.log(result))">
+    Open Popup
+</button>
+```
+
+#### CSS with Tailwind CSS v4
+
+**IMPORTANT:** NexoPOS modules use Tailwind CSS v4 which has significant changes from v3:
+
+1. **No `tailwind.config.js` file** - Configuration is done directly in CSS
+2. **Prefix required for modules** - Use a unique prefix to avoid class name collisions with core NexoPOS
+3. **New `@import` syntax** - Import Tailwind with the `prefix()` function
+
+**Module CSS Structure:**
+
+```css
+/* Resources/css/style.css */
+@import "tailwindcss" prefix(modulecode);
+```
+
+Where `modulecode` is a short, unique identifier for your module (2-4 characters recommended).
+
+**Examples:**
+- `FooBar` module → `prefix(fb)`
+- `NsQuickConfig` module → `prefix(qc)`
+- `CloudDeployer` module → `prefix(cd)`
+- `InventoryManager` module → `prefix(im)`
+
+**Using Prefixed Classes in Vue Components:**
+
+```vue
+<template>
+    <div class="fb:max-w-3xl fb:mx-auto">
+        <h2 class="fb:text-2xl fb:font-bold fb:mb-6">Title</h2>
+        <p class="fb:text-gray-600 fb:mb-4">Description</p>
+        
+        <input 
+            type="text"
+            class="fb:w-full fb:border fb:border-gray-300 fb:rounded-lg fb:px-4 fb:py-2 focus:fb:ring-2 focus:fb:ring-blue-500"
+        />
+        
+        <button class="fb:bg-blue-500 fb:text-white fb:px-4 fb:py-2 fb:rounded hover:fb:bg-blue-600">
+            Submit
+        </button>
+    </div>
+</template>
+```
+
+**Key Points:**
+
+- **Every Tailwind class must have the prefix** - `fb:text-xl` not `text-xl`
+- **Responsive breakpoints MUST come after the module prefix** - `fb:md:text-2xl` ✅ correct, `md:fb:text-2xl` ❌ wrong
+- **Pseudo-classes also come after module prefix** - `hover:fb:bg-blue-600` ❌ wrong, `fb:hover:bg-blue-600` ✅ correct
+- **Combined responsive + pseudo-class** - `fb:md:hover:bg-blue-600` (prefix → breakpoint → pseudo → utility)
+- **No tailwind.config.js needed** - Tailwind v4 doesn't use it
+- **Prevents collisions** - Your `fb:text-xl` won't conflict with core's `text-xl`
+
+**Complete Example:**
+
+```css
+/* Resources/css/style.css */
+@import "tailwindcss" prefix(fb);
+
+/* Optional: Add custom CSS for your module */
+.fb-custom-component {
+    /* Custom styles that aren't Tailwind utilities */
+    background-image: linear-gradient(to right, #4f46e5, #7c3aed);
+}
+```
+
+```vue
+<!-- Resources/ts/components/ProductCard.vue -->
+<template>
+    <div class="fb:bg-white fb:rounded-lg fb:shadow-md fb:p-4 fb:hover:shadow-lg fb:transition-shadow">
+        <h3 class="fb:text-lg fb:font-semibold fb:text-gray-800 fb:mb-2">
+            {{ product.name }}
+        </h3>
+        <p class="fb:text-gray-600 fb:text-sm fb:mb-4">
+            {{ product.description }}
+        </p>
+        <div class="fb:flex fb:justify-between fb:items-center">
+            <span class="fb:text-xl fb:font-bold fb:text-green-600">
+                {{ formatPrice(product.price) }}
+            </span>
+            <button class="fb:bg-blue-500 fb:text-white fb:px-4 fb:py-2 fb:rounded fb:text-sm hover:fb:bg-blue-600 fb:transition-colors">
+                Add to Cart
+            </button>
+        </div>
+    </div>
+</template>
+```
+
+**Migration from Tailwind v3:**
+
+If you have existing code with Tailwind v3 (using `tailwind.config.js`):
+
+1. **Delete `tailwind.config.js`** - No longer needed
+2. **Create/update `Resources/css/style.css`** with `@import "tailwindcss" prefix(yourprefix);`
+3. **Add prefix to all Tailwind classes** in your Vue components
+4. **Update vite.config.js** to ensure it includes the CSS file in the input array
+
+**Troubleshooting:**
+
+If you see errors like "Cannot apply unknown utility class `border-gray-300`":
+- Check that your CSS file has the `@import "tailwindcss" prefix(...)` directive
+- Verify all Tailwind classes in your Vue files use your prefix
+- Ensure the CSS file is included in vite.config.js inputs
+- Run `npm run build` to regenerate assets
+
+#### SCSS (scss/) - Legacy
+
+**Note:** SCSS with `@apply` directives is legacy and not recommended with Tailwind v4. Use the CSS + prefix approach above instead.
 
 ### Routes/
 
@@ -735,6 +1292,44 @@ trait HasPrice
 }
 ```
 
+### Console/
+
+**⚠️ IMPORTANT: Modules should NOT register commands or define schedules in their ServiceProvider.**
+
+Command classes for the module:
+
+```php
+<?php
+
+namespace Modules\FooBar\Console;
+
+use Illuminate\Console\Command;
+
+class ProcessDataCommand extends Command
+{
+    protected $signature = 'foobar:process-data';
+    
+    protected $description = 'Process FooBar data';
+    
+    public function handle()
+    {
+        // Command logic
+        $this->info('Processing data...');
+    }
+}
+```
+
+**Command Discovery:**
+- NexoPOS automatically discovers and registers commands from enabled modules
+- Do NOT manually register commands in your module's ServiceProvider
+- Do NOT define schedules in your module's ServiceProvider
+- Commands are available once the module is enabled
+
+**Scheduling:**
+- If your module needs scheduled tasks, document them in your module's README
+- Let the system administrator add the schedule to their application's schedule configuration
+- Do NOT use `$this->app->booted()` or `Schedule` in module ServiceProviders
+
 ## Module Development Best Practices
 
 ### 1. Naming Conventions
@@ -744,7 +1339,130 @@ trait HasPrice
 - **Database Tables**: Use module prefix (e.g., `foobar_products`)
 - **Routes**: Use module prefix (e.g., `foobar.products.index`)
 
-### 2. Namespace Organization
+### 2. Module Changelog Documentation
+
+**IMPORTANT:** When making significant changes to a module that require documentation, create a changelog file in the module's root directory.
+
+#### Module Changelog Directory Structure
+
+```
+modules/YourModule/
+├── CHANGELOG/
+│   ├── YYYY-MM-DD-descriptive-heading-in-kebab-case.md
+│   ├── YYYY-MM-DD-another-change.md
+│   └── README.md
+```
+
+#### Changelog File Naming Convention
+
+Module changelog files must follow this naming format:
+
+```
+YYYY-MM-DD-descriptive-heading-in-kebab-case.md
+```
+
+**Examples:**
+- `2025-11-27-add-new-feature.md`
+- `2025-11-27-update-api-endpoints.md`
+- `2025-11-27-fix-critical-bug.md`
+- `2025-12-01-improve-performance.md`
+
+#### Module Changelog Content Structure
+
+```markdown
+# Change Title
+
+**Date:** YYYY-MM-DD
+**Type:** Feature | Bug Fix | Enhancement | Breaking Change
+**Module:** ModuleName
+**Version:** X.Y.Z
+
+## Summary
+
+Brief description of what changed and why.
+
+## Changes Made
+
+- List of specific changes
+- Files modified or added
+- New features or functionality
+
+## Migration Required
+
+If applicable, document any migration steps needed.
+
+## Breaking Changes
+
+If applicable, list any breaking changes and how to address them.
+
+## Dependencies
+
+List any new dependencies or version requirements.
+
+## Related Issues
+
+Link to any related GitHub issues or tickets.
+```
+
+#### When to Create a Module Changelog
+
+Create a changelog for:
+- New module features
+- Breaking changes to module APIs
+- Significant bug fixes
+- Database schema changes in module
+- Configuration changes
+- Deprecated features
+- Security updates
+- Version updates
+
+#### Example Module Changelog
+
+```markdown
+# Add Product Import Feature
+
+**Date:** 2025-11-27
+**Type:** Feature
+**Module:** FooBar
+**Version:** 1.2.0
+
+## Summary
+
+Added bulk product import functionality allowing users to import products from CSV files with validation and error reporting.
+
+## Changes Made
+
+- Created ImportController for handling CSV uploads
+- Added validation service for product data
+- Implemented batch processing for large imports
+- Added import history tracking
+- Created new API endpoints for import operations
+
+## Migration Required
+
+Run the following migration:
+```bash
+php artisan module:migrate FooBar
+```
+
+## Breaking Changes
+
+None.
+
+## Dependencies
+
+- Added league/csv: ^9.8
+- Requires PHP 8.1+
+
+## Related Issues
+
+- Closes #123
+- Related to #456
+```
+
+**Note:** Module changelogs are separate from core NexoPOS changelogs (which go in `/changelogs/` at the project root). Only document changes specific to your module in the module's CHANGELOG directory.
+
+### 3. Namespace Organization
 
 All module classes should follow the namespace pattern:
 ```
@@ -767,7 +1485,7 @@ Create module-specific permissions:
 use App\Models\Permission;
 
 $permission = Permission::firstOrNew(['namespace' => 'create.foobar.products']);
-$permission->name = 'Create FooBar Products';
+$permission->name = __m( 'Create products', 'FooBar' );
 $permission->namespace = 'create.foobar.products';
 $permission->description = 'Allow creating FooBar products';
 $permission->save();
@@ -778,13 +1496,40 @@ $permission->save();
 Utilize NexoPOS hooks for integration:
 
 ```php
+use App\Classes\AsideMenu;
+// ...
 // In module service provider
-Hook::addFilter('ns.dashboard.menus', function($menus) {
-    $menus[] = [
-        'label' => __('FooBar'),
-        'href' => route('foobar.dashboard'),
-        'icon' => 'la-box'
-    ];
+Hook::addFilter('ns-dashboard-menus', function($menus) {
+    $newMenus = AsideMenu::menu(
+        label: __m( 'Foobar', 'FooBar' ),
+        icon: 'la-box',
+        href: route( 'foobar.products.index' ),
+        permissions: [
+            'view.foobar.products'
+        ]
+    );
+
+    $menus = array_insert_after($menus, 'inventory', $newMenus);
+
+    return $menus;
+});
+```
+
+Or we add define submenus
+
+```php
+use App\Classes\AsideMenu;
+// ...
+Hook::addFilter('ns-dashboard-menus', function($menus) {
+    $menus = array_insert_after($menu, 'inventory', AsideMenu::menu(
+        label: __m( 'Products', 'FooBar' ),
+        icon: 'la-box',
+        href: route( 'foobar.products.index' ),
+        permissions: [
+            'view.foobar.products'
+        ]
+    ));
+
     return $menus;
 });
 ```
@@ -874,14 +1619,111 @@ php artisan module:publish FooBar
 2. **Routes not working**: Verify route file loading in service provider
 3. **Views not found**: Ensure view paths are registered correctly
 4. **Permissions not working**: Check permission creation and assignment
-5. **Assets not loading**: Verify public folder symlink creation
+5. **Assets not loading**: Verify Vite build and `@moduleViteAssets` usage
+
+### Asset Loading Issues
+
+**Problem: Module assets (JS/CSS) not loading**
+
+**Solutions:**
+
+1. **Verify build output exists:**
+   ```bash
+   ls -la modules/YourModule/Public/build/
+   ```
+   Should contain `.vite/manifest.json` and `assets/` directory
+
+2. **Check manifest file:**
+   ```bash
+   cat modules/YourModule/Public/build/.vite/manifest.json
+   ```
+   Should contain entries for your compiled assets
+
+3. **Ensure using correct directive in Blade:**
+   ```blade
+   @moduleViteAssets('Resources/ts/main.ts', 'YourModule')
+   ```
+   NOT `@vite()` or incorrect paths
+
+4. **Verify module namespace matches config.xml:**
+   ```xml
+   <namespace>YourModule</namespace>
+   ```
+
+5. **Clear all caches:**
+   ```bash
+   php artisan cache:clear
+   php artisan view:clear
+   php artisan config:clear
+   ```
+
+6. **Rebuild assets:**
+   ```bash
+   cd modules/YourModule
+   npm install
+   npm run build
+   ```
+
+7. **Check browser console** for 404 errors or JavaScript errors
+
+8. **Verify vite.config.js** has correct paths:
+   ```javascript
+   laravel({
+       hotFile: 'Public/hot',
+       input: ['Resources/ts/main.ts', 'Resources/css/style.css'],
+       refresh: ['Resources/**']
+   })
+   ```
+
+**Problem: Hot reload not working in development**
+
+**Solutions:**
+
+1. **Run dev server:**
+   ```bash
+   cd modules/YourModule
+   npm run dev
+   ```
+
+2. **Check `Public/hot` file exists** while dev server is running
+
+3. **Verify Vite is accessible** at `http://localhost:5173`
+
+**Problem: TypeScript compilation errors**
+
+**Solutions:**
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Check tsconfig.json** has correct paths configuration
+
+3. **Create types.d.ts** for NexoPOS API declarations
+
+4. **Restart IDE/editor** to reload TypeScript language server
 
 ### Debugging Tips
 
-1. Check Laravel logs for module loading errors
+1. Check Laravel logs for module loading errors: `storage/logs/laravel.log`
 2. Verify namespace consistency across all files
 3. Ensure proper service provider registration
-4. Test with minimal module first, then add complexity
-5. Use Laravel's debugging tools (dd(), dump(), etc.)
+4. Use browser DevTools Network tab to check asset requests
+5. Check Vite build output for compilation warnings
+6. Test with minimal module first, then add complexity
+7. Use Laravel's debugging tools (`dd()`, `dump()`, `Log::info()`)
+8. Verify module directory permissions (755 for directories, 644 for files)
+
+### Development Workflow Best Practices
+
+1. **Start with structure:** Create module skeleton first
+2. **Build incrementally:** Add features one at a time
+3. **Test early:** Run `npm run build` after adding new assets
+4. **Clear caches often:** After any configuration changes
+5. **Use version control:** Commit working states frequently
+6. **Document changes:** Keep README.md updated with features
+7. **Follow conventions:** Match NexoPOS coding standards
+8. **Check examples:** Reference existing modules like `NsPageBuilder`, `CloudDeployer`
 
 This comprehensive guide provides the foundation for creating robust, well-structured modules that integrate seamlessly with the NexoPOS ecosystem.

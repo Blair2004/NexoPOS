@@ -8,3 +8,5 @@ window[ 'nsProfileWidget' ]                 =   defineAsyncComponent( () => impo
 window[ 'nsSaleCardWidget' ]                =   defineAsyncComponent( () => import( './widgets/ns-sale-card-widget.vue' ) );
 window[ 'nsIncompleteSaleCardWidget' ]      =   defineAsyncComponent( () => import( './widgets/ns-incomplete-sale-card-widget.vue' ) );
 window[ 'nsExpenseCardWidget' ]             =   defineAsyncComponent( () => import( './widgets/ns-transaction-card-widget.vue' ) );
+
+console.log( 'fired original' );

@@ -20,4 +20,11 @@ class UserAttribute extends NsRootModel
     protected $table = 'nexopos_users_attributes';
 
     protected $fillable = [ 'language' ];
+
+    public $casts = [
+        'user_id' => 'integer',
+        'avatar_link' => 'string',
+        'theme' => 'string',
+        'language' => 'string',
+    ];
 }

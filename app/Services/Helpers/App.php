@@ -127,4 +127,23 @@ trait App
 
         return url()->previous();
     }
+
+    /**
+     * Swap arguments in a string
+     *
+     * @param  string $string
+     * @param  array  $arguments
+     * @return string
+     */
+    public function swapArguments( $string, $arguments = [] )
+    {
+        // we'll replace any template argument by it's value
+        // the template looks like {argument}
+
+        foreach ( $arguments as $key => $value ) {
+            $string = str_replace( '{' . $key . '}', $value, $string );
+        }
+
+        return $string;
+    }
 }

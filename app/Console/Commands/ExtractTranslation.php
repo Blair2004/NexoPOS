@@ -17,7 +17,7 @@ class ExtractTranslation extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:translate {module?} {--extract} {--lang=en} {--symlink}';
+    protected $signature = 'ns:translate {module?} {--extract} {--lang=en} {--symlink} {--force}';
 
     /**
      * The console command description.
@@ -58,9 +58,27 @@ class ExtractTranslation extends Command
      */
     private function createSymLink()
     {
+        $link = public_path( 'lang' );
+
         if ( ! \windows_os() ) {
-            $link = @\symlink( base_path( 'lang' ), public_path( '/lang' ) );
+            if ( is_link( $link ) || file_exists( $link ) ) {
+                if ( $this->option( 'force' ) ) {
+                    unlink( $link );
+                } else {
+                    return $this->info( 'Language Symbolic Link already exists ! Use --force to recreate it.' );
+                }
+            }
+
+            $link = @\symlink( base_path( 'lang' ), public_path( 'lang' ) );
         } else {
+            if ( is_link( $link ) || file_exists( $link ) ) {
+                if ( $this->option( 'force' ) ) {
+                    rmdir( $link );
+                } else {
+                    return $this->info( 'Language Symbolic Link already exists ! Use --force to recreate it.' );
+                }
+            }
+
             $mode = 'J';
             $link = public_path( 'lang' );
             $target = base_path( 'lang' );

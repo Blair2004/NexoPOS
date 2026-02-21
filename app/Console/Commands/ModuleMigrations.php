@@ -242,7 +242,11 @@ class ModuleMigrations extends Command
         $this->schema = $this->__getSchema( $this->migration );
         $this->migration = $this->__getMigrationName( $this->migration );
 
-        $fileName = $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . Str::studly( $this->migration ) . '.php';
+        // Generate timestamped migration filename with random code
+        $timestamp = date( 'Y_m_d_His' ); // Current date and time
+        $migrationName = Str::snake( trim( $this->migration ) ); // Convert to snake_case
+
+        $fileName = $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $timestamp . '_' . $migrationName . '.php';
 
         /**
          * Make sure the migration don't exist yet

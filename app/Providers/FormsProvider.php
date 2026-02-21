@@ -95,7 +95,7 @@ class FormsProvider extends ServiceProvider
             if ( class_exists( $field ) ) {
                 /**
                  * We'll initialize a reflection class
-                 * to perform a verification on the constructor.                                                
+                 * to perform a verification on the constructor.
                  */
                 $reflection = new ReflectionClass( $field );
 
@@ -107,8 +107,8 @@ class FormsProvider extends ServiceProvider
 
                     if ( $constructor ) {
                         $parameters = $constructor ? $constructor->getParameters() : [];
-                    
-                        $params = collect( $parameters )->map( function( ReflectionParameter $param ) {
+
+                        $params = collect( $parameters )->map( function ( ReflectionParameter $param ) {
                             return [
                                 'name' => $param->getName(),
                                 'type' => $param->getType() ? $param->getType()->getName() : null,
@@ -116,7 +116,7 @@ class FormsProvider extends ServiceProvider
                                 'isBuiltin' => $param->getType()->isBuiltin(),
                                 'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null,
                             ];
-                        });
+                        } );
                     }
 
                     /**
@@ -125,9 +125,9 @@ class FormsProvider extends ServiceProvider
                      */
                     Hook::addFilter( 'ns.fields', function ( $identifier, $resource = null ) use ( $field, $params ) {
                         if ( $identifier === $field::IDENTIFIER ) {
-                            $resolved = collect( $params )->map( function( $param ) use ( $resource, $field ) {
+                            $resolved = collect( $params )->map( function ( $param ) use ( $resource, $field ) {
                                 $isBuiltin = $param[ 'isBuiltin' ];
-        
+
                                 /**
                                  * We strickly want to integrate a D.I of models
                                  * other non-builtin will be resolved using app()->make().
@@ -136,7 +136,7 @@ class FormsProvider extends ServiceProvider
                                     if ( is_subclass_of( $param[ 'type' ], Model::class ) ) {
                                         $model = $param[ 'type' ];
                                         $instance = $model::find( $resource );
-        
+
                                         /**
                                          * if the param is not optional, we must have a valid instance.
                                          */
@@ -148,7 +148,7 @@ class FormsProvider extends ServiceProvider
                                                 $field
                                             ) );
                                         }
-        
+
                                         return $instance;
                                     } else {
                                         return app()->make( $param[ 'type' ] );
@@ -156,7 +156,7 @@ class FormsProvider extends ServiceProvider
                                 }
 
                                 return false;
-                            })->filter();
+                            } )->filter();
 
                             /**
                              * If no dependencies were resolved, we can create a new instance
@@ -170,7 +170,7 @@ class FormsProvider extends ServiceProvider
                         }
 
                         return $identifier;
-                    });
+                    } );
                 }
             }
         }

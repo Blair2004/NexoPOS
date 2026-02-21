@@ -589,6 +589,7 @@ export default {
                 ...this.formValidation.extractForm( this.form ),
                 variations: this.form.variations.map( (v,i) => {
                     const data  =   this.formValidation.extractForm( v );
+                    
                     if ( i === 0 ) {
                         data[ '$primary' ]  =   true;
                     }

@@ -1,5 +1,5 @@
 # Guideline For Reporting Vulnerability
-First of all, thank you for taking time to read this. We believe, you're considering sharing what could be a security issue that might affect every installation running NexoPOS 4.x. 
+First of all, thank you for taking time to read this. We believe, you're considering sharing what could be a security issue that might affect every installation running NexoPOS. 
 We believe in the power of open-source and contributions of it's adherants, that's why regardless of whether your report is proven or not, it's welcome.
 
 # What Can Be Reported ?

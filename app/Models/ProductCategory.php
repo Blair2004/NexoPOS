@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int            $id
  * @property string         $uuid
  * @property int            $author
+ * @property int            $scale_range_id
  * @property bool           $displays_on_pos
  * @property string         $description
  * @property \Carbon\Carbon $updated_at
@@ -47,6 +48,14 @@ class ProductCategory extends NsModel
     public function products()
     {
         return $this->hasMany( Product::class, 'category_id' );
+    }
+
+    /**
+     * Get the scale range associated with this category
+     */
+    public function scaleRange()
+    {
+        return $this->belongsTo( ScaleRange::class, 'scale_range_id' );
     }
 
     /**

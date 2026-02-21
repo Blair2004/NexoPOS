@@ -140,5 +140,10 @@ class DashboardController extends Controller
         }
 
         ns()->createSymbolicLinks();
+
+        return response()->json( [
+            'status' => 'success',
+            'message' => __( 'Symbolic links created successfully.' ),
+        ] );
     }
 }

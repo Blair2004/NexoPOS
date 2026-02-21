@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Classes\Config as ClassesConfig;
 use App\Classes\Hook;
-use App\Events\ModulesBootedEvent;
+use App\Events\ModulesLoadedEvent;
 use App\Facades\Config;
 use App\Models\Order;
 use App\Models\OrderProductRefund;
@@ -251,7 +251,7 @@ class AppServiceProvider extends ServiceProvider
          * When the module has started,
          * we can load the configuration.
          */
-        Event::listen( function ( ModulesBootedEvent $event ) {
+        Event::listen( function ( ModulesLoadedEvent $event ) {
             $this->loadConfiguration();
         } );
     }
@@ -281,11 +281,18 @@ class AppServiceProvider extends ServiceProvider
          * their Vite assets
          */
         Blade::directive( 'moduleViteAssets', function ( $expression ) {
-            $params = explode( ',', $expression );
-            $fileName = trim( $params[0], "'" );
-            $module = trim( $params[1], " '" );
+            $args = str_getcsv( $expression, ',', '"' );
+            $fileName = trim( $args[0], "'" );
+            $module = trim( $args[1], " '" );
+            $options = [];
 
-            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\" ); ?>";
+            try {
+                $options = isset( $args[2] ) ? eval( 'return ' . $args[2] . ';' ) : [];
+            } catch ( \Throwable $th ) {
+                $options = [];
+            }
+
+            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\", " . var_export( $options, true ) . ' ); ?>';
         } );
 
         /**

@@ -1,5 +1,3 @@
-import { nsHttpClient } from "~/bootstrap";
-
 declare const nsLanguage;
 
 export const __   =   function( text, namespace = 'NexoPOS' ) {

@@ -18,6 +18,24 @@ The nsHttpClient is available globally as:
 
 ## Basic Usage
 
+**Important:** The `subscribe({ next: (response) => {} })` callback receives the **response body directly**, not an Axios response object. There is no need to access `response.data` - the `response` parameter already contains the parsed JSON body.
+
+```typescript
+// ✅ Correct - response IS the body data
+nsHttpClient.get('/api/products').subscribe({
+    next: (response) => {
+        console.log('Products:', response); // response is the array/object directly
+    }
+});
+
+// ❌ Wrong - response.data is undefined
+nsHttpClient.get('/api/products').subscribe({
+    next: (response) => {
+        console.log('Products:', response.data); // undefined!
+    }
+});
+```
+
 ### GET Requests
 
 ```typescript

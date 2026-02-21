@@ -191,7 +191,7 @@ class AuthController extends Controller
             throw new NotAllowedException( __( 'Unable to login, the provided account is not active.' ) );
         }
 
-        $intended = redirect()->intended()->getTargetUrl();
+        $intended = $request->session()->get( 'redirect', url( '/' ) );
 
         event( new AfterSuccessfulLoginEvent( Auth::user() ) );
 
@@ -199,8 +199,7 @@ class AuthController extends Controller
             message: __( 'You have been successfully connected.' ),
             data: [
                 'redirectTo' => Hook::filter( 'ns-login-redirect',
-                    ( $intended ) === url( '/' ) ? ns()->route( 'ns.dashboard.home' ) : $intended,
-                    redirect()->intended()->getTargetUrl() ? true : false
+                    ( $intended ) === url( '/' ) ? ns()->route( 'ns.dashboard.home' ) : $intended
                 ),
             ]
         );

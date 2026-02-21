@@ -233,11 +233,43 @@
                 }
             }
 
-            #grid-breadscrumb {
+            #grid-breadcrumb {
                 @apply border-pos-button-edge;
 
                 ul > li {
                     @apply text-fontcolor;
+                }
+            }
+
+            #pinned-products {
+                @apply border-pos-button-edge text-white bg-primary/50;
+
+                .pinned-wrapper {
+                    @apply p-2;
+                }
+
+                .small-pinned-product {
+                    @apply bg-input-button hover:bg-primary hover:text-white;
+                }
+
+                .cell-item {
+                    @apply border-pos-button-edge;
+
+                    .cell-item-label {
+                        background:rgb(250 250 250 / 73%);
+                    }
+
+                    &:hover {
+                        @apply bg-box-background;
+                    }
+
+                    h3 {
+                        @apply text-fontcolor;
+                    }
+
+                    i, span {
+                        @apply text-fontcolor-soft;
+                    }
                 }
             }
 

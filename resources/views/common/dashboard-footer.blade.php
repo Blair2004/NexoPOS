@@ -49,3 +49,5 @@ document.addEventListener( 'DOMContentLoaded', () => {
 @vite([ 'resources/ts/bootstrap.ts' ])
 @include( 'layout._footer-injection' )
 @yield( 'layout.dashboard.footer.inject' )
+@vite([ 'resources/ts/app-init.ts' ])
+@vite([ 'resources/ts/app.ts' ])

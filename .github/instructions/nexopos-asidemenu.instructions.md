@@ -196,220 +196,472 @@ $menus = AsideMenu::wrapper(
 
 ## Using in Module Development
 
-When developing modules, there are two approaches to extend the dashboard menu. The **recommended approach** is to use the AsideMenu class properly for better structure and maintainability.
+When developing modules, you need to extend the dashboard menu using the **Hook system**. The correct hook name is `ns-dashboard-menus` (not `ns.dashboard.menus`).
 
-### ❌ **Manual Array Approach (Not Recommended)**
+### Basic Hook Usage
 
 ```php
 <?php
 
-namespace Modules\YourModule\Filters;
+namespace Modules\YourModule\Providers;
 
-class DashboardFilters
+use App\Classes\AsideMenu;
+use App\Classes\Hook;
+use Illuminate\Support\ServiceProvider;
+
+class YourModuleServiceProvider extends ServiceProvider
 {
-    public static function registerDashboardMenus($menus)
+    public function register()
     {
-        // Manual array creation - harder to maintain
-        if (isset($menus['users'])) {
-            $menus['users']['childrens']['your-feature'] = [
-                'label' => __m('Your Feature', 'YourModule'),
-                'identifier' => 'your-feature',
-                'href' => ns()->url('/dashboard/your-feature'),
-                'permissions' => ['your.permission']
-            ];
-        }
-        
-        return $menus;
+        Hook::addFilter('ns-dashboard-menus', function ($menus) {
+            // Add your menu modifications here
+            return $menus;
+        });
     }
 }
 ```
 
-### ✅ **AsideMenu Class Approach (Recommended)**
+### Method 1: Adding Menu After Existing Menu
 
-The better approach is to use the AsideMenu class methods for consistency and better structure:
+Use `array_insert_after()` helper function to add a menu after a specific menu identifier:
 
 ```php
-<?php
-
-namespace Modules\YourModule\Filters;
-
-use App\Classes\AsideMenu;
-
-class DashboardFilters
-{
-    public static function registerDashboardMenus($menus)
-    {
-        // Method 1: Add submenu to existing menu using AsideMenu
-        if (isset($menus['users'])) {
-            $newSubmenu = AsideMenu::subMenu(
-                label: __m('PIN Login Settings', 'YourModule'),
-                identifier: 'pin-login-settings',
-                href: ns()->route('ns.dashboard.settings', ['settings' => 'pin-login-settings']),
-                permissions: ['manage.options']
-            );
-            
-            // Merge the new submenu properly
-            $menus['users']['childrens'] = array_merge(
-                $menus['users']['childrens'] ?? [],
-                $newSubmenu
-            );
-        }
-        
-        // Method 2: Add completely new top-level menu
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    if (isset($menus['inventory'])) {
         $newMenu = AsideMenu::menu(
-            label: __m('Your Module', 'YourModule'),
-            identifier: 'your-module',
-            icon: 'la-puzzle-piece',
-            permissions: ['your.module.access'],
+            label: __m('Restaurant', 'NsGastro'),
+            identifier: 'ns-gastro',
+            icon: 'la-utensils',
+            permissions: ['gastro.read.table'],
             childrens: AsideMenu::childrens(
                 AsideMenu::subMenu(
-                    label: __m('Dashboard', 'YourModule'),
-                    identifier: 'module-dashboard',
-                    href: ns()->url('/dashboard/your-module'),
-                    permissions: ['your.module.read']
-                ),
-                AsideMenu::subMenu(
-                    label: __m('Settings', 'YourModule'),
-                    identifier: 'module-settings',
-                    href: ns()->route('ns.dashboard.settings', ['settings' => 'your-module-settings']),
-                    permissions: ['manage.options']
-                ),
-                AsideMenu::subMenu(
-                    label: __m('Reports', 'YourModule'),
-                    identifier: 'module-reports',
-                    href: ns()->url('/dashboard/your-module/reports'),
-                    permissions: ['your.module.reports']
+                    label: __m('Tables', 'NsGastro'),
+                    identifier: 'tables',
+                    href: ns()->route('ns-gastro-tables'),
+                    permissions: ['gastro.read.table']
                 )
             )
         );
-        
-        // Merge the new menu with existing menus
-        $menus = array_merge($menus, $newMenu);
-        
+
+        // Insert after 'inventory' menu
+        $menus = array_insert_after($menus, 'inventory', $newMenu);
+    }
+
+    return $menus;
+});
+```
+
+### Method 2: Adding Menu Before Existing Menu
+
+Use `array_insert_before()` helper function to add a menu before a specific menu identifier:
+
+```php
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    $newMenu = AsideMenu::menu(
+        label: __('My Custom Menu'),
+        identifier: 'custom-menu',
+        icon: 'la-star',
+        href: ns()->url('/dashboard/custom'),
+        permissions: ['custom.read']
+    );
+
+    // Insert before 'settings' menu
+    $menus = array_insert_before($menus, 'settings', $newMenu);
+
+    return $menus;
+});
+```
+
+### Method 3: Adding Submenu to Existing Menu
+
+Add submenu items to existing parent menus:
+
+```php
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    if (isset($menus['settings'])) {
+        $newSubmenu = AsideMenu::subMenu(
+            label: __m('My Settings', 'YourModule'),
+            identifier: 'my-settings',
+            href: ns()->route('ns.dashboard.settings', ['settings' => 'my-settings']),
+            permissions: ['manage.options']
+        );
+
+        // Add after 'pos' submenu in settings
+        $menus['settings']['childrens'] = array_insert_after(
+            $menus['settings']['childrens'], 
+            'pos', 
+            $newSubmenu
+        );
+    }
+
+    return $menus;
+});
+```
+
+### Method 4: Appending to End of Submenu
+
+Simply append to the childrens array:
+
+```php
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    if (isset($menus['settings'])) {
+        $menus['settings']['childrens'] = [
+            ...$menus['settings']['childrens'],
+            ...AsideMenu::subMenu(
+                label: __m('Export/Import Options', 'NsOptionsExporter'),
+                identifier: 'export-import-options',
+                href: ns()->route('ns.dashboard.settings', ['settings' => 'export-import']),
+                permissions: ['manage.options']
+            ),
+        ];
+    }
+
+    return $menus;
+});
+```
+
+### Hook Priority
+
+You can specify hook priority as the third parameter (default is 10, higher runs later):
+
+```php
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    // Your modifications
+    return $menus;
+}, 30); // Runs after hooks with priority 10-29
+```
+
+## Available Menu Identifiers
+
+Below is a complete list of menu and submenu identifiers available in NexoPOS core (defined in `app/Services/MenuService.php`). Use these identifiers with `array_insert_after()` or `array_insert_before()` functions.
+
+### Main Menu Identifiers
+
+| Identifier | Label | Icon | Description |
+|------------|-------|------|-------------|
+| `dashboard` | Dashboard | `la-home` | Main dashboard menu |
+| `pos` | POS | `la-cash-register` | Point of Sale |
+| `orders` | Orders | `la-list-ol` | Orders management |
+| `medias` | Medias | `la-photo-video` | Media library |
+| `customers` | Customers | `la-user-friends` | Customer management |
+| `providers` | Providers | `la-user-tie` | Provider/Supplier management |
+| `accounting` | Accounting | `la-stream` | Accounting & expenses |
+| `inventory` | Inventory | `la-boxes` | Inventory management |
+| `taxes` | Taxes | `la-balance-scale-left` | Tax management |
+| `modules` | Modules | `la-plug` | Module management |
+| `users` | Users | `la-users` | User management |
+| `roles` | Roles | `la-shield-alt` | Role & permissions |
+| `procurements` | Procurements | `la-truck-loading` | Procurement management |
+| `reports` | Reports | `la-chart-pie` | Reports & analytics |
+| `settings` | Settings | `la-cogs` | System settings |
+
+### Submenu Identifiers by Parent
+
+#### Dashboard (`dashboard`)
+| Identifier | Label |
+|------------|-------|
+| `index` | Home |
+
+#### Orders (`orders`)
+| Identifier | Label |
+|------------|-------|
+| `order-list` | Orders List |
+| `payment-type` | Payment Types |
+| `assignated-orders` | Assignated Orders |
+
+#### Customers (`customers`)
+| Identifier | Label |
+|------------|-------|
+| `customers` | List |
+| `create-customer` | Create Customer |
+| `customers-groups` | Customers Groups |
+| `create-customers-group` | Create Group |
+| `list-reward-system` | Reward Systems |
+| `create-reward-system` | Create Reward |
+| `list-coupons` | List Coupons |
+| `create-coupons` | Create Coupon |
+
+#### Providers (`providers`)
+| Identifier | Label |
+|------------|-------|
+| `providers` | List |
+| `create-provider` | Create A Provider |
+
+#### Accounting (`accounting`)
+| Identifier | Label |
+|------------|-------|
+| `transactions` | Expenses |
+| `create-transaction` | Create Expense |
+| `transactions-history` | Transaction History |
+| `transacations-rules` | Rules |
+| `transactions-account` | Accounts |
+| `create-transactions-account` | Create Account |
+
+#### Inventory (`inventory`)
+| Identifier | Label |
+|------------|-------|
+| `products` | Products |
+| `create-products` | Create Product |
+| `labels-printing` | Print Labels |
+| `categories` | Categories |
+| `create-categories` | Create Category |
+| `units` | Units |
+| `create-units` | Create Unit |
+| `unit-groups` | Unit Groups |
+| `create-unit-groups` | Create Unit Groups |
+| `stock-adjustment` | Stock Adjustment |
+| `product-history` | Stock Flow Records |
+
+#### Taxes (`taxes`)
+| Identifier | Label |
+|------------|-------|
+| `taxes-groups` | Taxes Groups |
+| `create-taxes-group` | Create Tax Groups |
+| `taxes` | Taxes |
+| `create-tax` | Create Tax |
+
+#### Modules (`modules`)
+| Identifier | Label |
+|------------|-------|
+| `modules` | List |
+| `upload-module` | Upload Module |
+
+#### Users (`users`)
+| Identifier | Label |
+|------------|-------|
+| `profile` | My Profile |
+| `users` | Users List |
+| `create-user` | Create User |
+
+#### Roles (`roles`)
+| Identifier | Label |
+|------------|-------|
+| `all-roles` | Roles |
+| `create-role` | Create Roles |
+| `permissions` | Permissions Manager |
+
+#### Procurements (`procurements`)
+| Identifier | Label |
+|------------|-------|
+| `procurements` | Procurements List |
+| `procurements-create` | New Procurement |
+| `procurements-products` | Products |
+
+#### Reports (`reports`)
+| Identifier | Label |
+|------------|-------|
+| `sales` | Sale Report |
+| `products-report` | Sales Progress |
+| `customers-statement` | Customers Statement |
+| `low-stock` | Stock Report |
+| `stock-history` | Stock History |
+| `sold-stock` | Sold Stock |
+| `profit` | Incomes & Loosses |
+| `transactions` | Transactions |
+| `annulal-sales` | Annual Report |
+| `payment-types` | Sales By Payments |
+
+#### Settings (`settings`)
+| Identifier | Label |
+|------------|-------|
+| `general` | General |
+| `pos` | POS |
+| `customers` | Customers |
+| `orders` | Orders |
+| `accounting` | Accounting |
+| `reports` | Reports |
+| `invoices` | Invoices |
+| `reset` | Reset |
+| `about` | About |
+
+## Complete Examples
+
+### Example 1: Adding New Top-Level Menu After Inventory
+
+```php
+<?php
+
+namespace Modules\NsGastro\Providers;
+
+use App\Classes\AsideMenu;
+use App\Classes\Hook;
+use Illuminate\Support\ServiceProvider;
+
+class ModuleServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        Hook::addFilter('ns-dashboard-menus', function ($menus) {
+            if (isset($menus['inventory'])) {
+                $gastroMenu = AsideMenu::menu(
+                    label: __m('Restaurant', 'NsGastro'),
+                    identifier: 'ns-gastro',
+                    icon: 'la-utensils',
+                    permissions: ['gastro.read.table'],
+                    childrens: AsideMenu::childrens(
+                        AsideMenu::subMenu(
+                            label: __m('Kitchen Screen', 'NsGastro'),
+                            identifier: 'kitchen-screen',
+                            href: ns()->route('ns-gastro-kitchen-screen'),
+                            permissions: ['gastro.use.kitchens']
+                        ),
+                        AsideMenu::subMenu(
+                            label: __m('Tables', 'NsGastro'),
+                            identifier: 'tables',
+                            href: ns()->route('ns-gastro-tables'),
+                            permissions: ['gastro.read.table']
+                        )
+                    )
+                );
+
+                // Insert after 'inventory' menu
+                $menus = array_insert_after($menus, 'inventory', $gastroMenu);
+            }
+
+            return $menus;
+        }, 30);
+    }
+}
+```
+
+### Example 2: Adding Submenu to Settings
+
+```php
+<?php
+
+namespace Modules\NsPageBuilder\Providers;
+
+use App\Classes\AsideMenu;
+use App\Classes\Hook;
+use Illuminate\Support\ServiceProvider;
+
+class NsPageBuilderServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        Hook::addFilter('ns-dashboard-menus', function ($menus) {
+            if (isset($menus['settings'])) {
+                $newSubmenu = AsideMenu::subMenu(
+                    label: __m('Page Builder', 'NsPageBuilder'),
+                    identifier: 'pagebuilder-settings',
+                    href: ns()->route('ns.dashboard.settings', ['settings' => 'pagebuilder']),
+                    permissions: ['manage.options']
+                );
+
+                // Add after 'pos' submenu
+                $menus['settings']['childrens'] = array_insert_after(
+                    $menus['settings']['childrens'], 
+                    'pos', 
+                    $newSubmenu
+                );
+            }
+
+            return $menus;
+        });
+    }
+}
+```
+
+### Example 3: Appending Submenu to End
+
+```php
+<?php
+
+namespace Modules\NsOptionsExporter\Filters;
+
+use App\Classes\AsideMenu;
+
+class MenuFilter 
+{
+    public static function saveMenu($menus)
+    {
+        if (isset($menus['settings'])) {
+            // Append to end of settings submenus
+            $menus['settings']['childrens'] = [
+                ...$menus['settings']['childrens'],
+                ...AsideMenu::subMenu(
+                    label: __m('Export/Import Options', 'NsOptionsExporter'),
+                    identifier: 'export-import-options',
+                    href: ns()->route('ns.dashboard.settings', ['settings' => 'export-import'])
+                ),
+            ];
+        }
+
         return $menus;
     }
 }
 ```
 
-### 🏆 **Advanced Module Menu Pattern**
-
-For larger modules, consider creating a dedicated menu builder:
+### Example 4: Complete Module with Multiple Menus
 
 ```php
 <?php
 
-namespace Modules\YourModule\Filters;
+namespace Modules\YourModule\Providers;
 
 use App\Classes\AsideMenu;
+use App\Classes\Hook;
+use Illuminate\Support\ServiceProvider;
 
-class DashboardFilters
+class YourModuleServiceProvider extends ServiceProvider
 {
-    public static function registerDashboardMenus($menus)
+    public function register()
     {
-        // Add module-specific menus
-        $moduleMenus = self::buildModuleMenus();
-        $menus = array_merge($menus, $moduleMenus);
-        
-        // Extend existing menus
-        $menus = self::extendExistingMenus($menus);
-        
-        return $menus;
-    }
-    
-    /**
-     * Build complete module menu structure
-     */
-    private static function buildModuleMenus(): array
-    {
-        return AsideMenu::wrapper(
-            // Main module menu
-            AsideMenu::menu(
+        Hook::addFilter('ns-dashboard-menus', function ($menus) {
+            // Add main menu before settings
+            $newMenu = AsideMenu::menu(
                 label: __m('Your Module', 'YourModule'),
                 identifier: 'your-module',
                 icon: 'la-puzzle-piece',
-                permissions: ['your.module.access'],
+                permissions: ['yourmodule.read'],
                 childrens: AsideMenu::childrens(
                     AsideMenu::subMenu(
                         label: __m('Dashboard', 'YourModule'),
                         identifier: 'module-dashboard',
                         href: ns()->url('/dashboard/your-module'),
-                        permissions: ['your.module.read']
+                        permissions: ['yourmodule.read']
                     ),
                     AsideMenu::subMenu(
                         label: __m('Manage Items', 'YourModule'),
                         identifier: 'module-items',
                         href: ns()->url('/dashboard/your-module/items'),
-                        permissions: ['your.module.items.read']
+                        permissions: ['yourmodule.items.read']
                     ),
                     AsideMenu::subMenu(
                         label: __m('Create Item', 'YourModule'),
                         identifier: 'module-create-item',
                         href: ns()->url('/dashboard/your-module/items/create'),
-                        permissions: ['your.module.items.create']
-                    )
-                )
-            ),
-            
-            // Additional module menu if needed
-            AsideMenu::menu(
-                label: __m('Module Tools', 'YourModule'),
-                identifier: 'your-module-tools',
-                icon: 'la-tools',
-                permissions: ['your.module.tools'],
-                childrens: AsideMenu::childrens(
-                    AsideMenu::subMenu(
-                        label: __m('Import Data', 'YourModule'),
-                        identifier: 'module-import',
-                        href: ns()->url('/dashboard/your-module/import'),
-                        permissions: ['your.module.import']
+                        permissions: ['yourmodule.items.create']
                     ),
                     AsideMenu::subMenu(
-                        label: __m('Export Data', 'YourModule'),
-                        identifier: 'module-export',
-                        href: ns()->url('/dashboard/your-module/export'),
-                        permissions: ['your.module.export']
+                        label: __m('Reports', 'YourModule'),
+                        identifier: 'module-reports',
+                        href: ns()->url('/dashboard/your-module/reports'),
+                        permissions: ['yourmodule.reports']
                     )
                 )
-            )
-        );
-    }
-    
-    /**
-     * Extend existing NexoPOS menus
-     */
-    private static function extendExistingMenus(array $menus): array
-    {
-        // Add to Settings menu
-        if (isset($menus['settings'])) {
-            $settingsSubmenu = AsideMenu::subMenu(
-                label: __m('Your Module Settings', 'YourModule'),
-                identifier: 'your-module-settings',
-                href: ns()->route('ns.dashboard.settings', ['settings' => 'your-module-settings']),
-                permissions: ['manage.options']
             );
-            
-            $menus['settings']['childrens'] = array_merge(
-                $menus['settings']['childrens'] ?? [],
-                $settingsSubmenu
-            );
-        }
-        
-        // Add to Reports menu if it exists
-        if (isset($menus['reports'])) {
-            $reportsSubmenu = AsideMenu::subMenu(
-                label: __m('Module Reports', 'YourModule'),
-                identifier: 'your-module-reports',
-                href: ns()->url('/dashboard/reports/your-module'),
-                permissions: ['your.module.reports']
-            );
-            
-            $menus['reports']['childrens'] = array_merge(
-                $menus['reports']['childrens'] ?? [],
-                $reportsSubmenu
-            );
-        }
-        
-        return $menus;
+
+            $menus = array_insert_before($menus, 'settings', $newMenu);
+
+            // Also add settings submenu
+            if (isset($menus['settings'])) {
+                $settingsSubmenu = AsideMenu::subMenu(
+                    label: __m('Your Module', 'YourModule'),
+                    identifier: 'your-module-settings',
+                    href: ns()->route('ns.dashboard.settings', ['settings' => 'your-module']),
+                    permissions: ['manage.options']
+                );
+
+                $menus['settings']['childrens'] = array_insert_after(
+                    $menus['settings']['childrens'],
+                    'general',
+                    $settingsSubmenu
+                );
+            }
+
+            return $menus;
+        });
     }
 }
 ```
@@ -465,173 +717,265 @@ class DashboardFilters
 }
 ```
 
-## Benefits of Using AsideMenu Class
+## Best Practices
 
-### 🎯 **Why Use AsideMenu Over Manual Arrays?**
+### 1. Positioning Strategy
 
-1. **Type Safety**: AsideMenu methods provide parameter validation and structure consistency
-2. **Maintainability**: Changes to menu structure are centralized in the AsideMenu class
-3. **Documentation**: Method signatures serve as built-in documentation
-4. **Consistency**: Ensures all menus follow the same structure across modules
-5. **Future-Proof**: Core updates to menu structure automatically benefit all modules
-6. **IDE Support**: Better autocomplete and parameter hints during development
+**Choose the right insertion method:**
 
-### 🔧 **Comparison: Manual vs AsideMenu**
+- **Insert After (`array_insert_after`)**: Use when you want your menu to appear after a specific menu
+  ```php
+  // Good for feature modules that extend core functionality
+  $menus = array_insert_after($menus, 'inventory', $gastroMenu);
+  ```
 
-**Manual Array Approach (Avoid):**
+- **Insert Before (`array_insert_before`)**: Use when you want your menu to appear before a specific menu
+  ```php
+  // Good for important modules that should be prominently placed
+  $menus = array_insert_before($menus, 'settings', $myModule);
+  ```
+
+- **Append (Spread Operator)**: Use when order doesn't matter
+  ```php
+  // Good for settings submenus
+  $menus['settings']['childrens'] = [
+      ...$menus['settings']['childrens'],
+      ...AsideMenu::subMenu(...)
+  ];
+  ```
+
+### 2. Permission Strategy
+
+Always use module-specific namespaced permissions:
+
 ```php
-// Prone to typos, inconsistent structure
-$menu = [
-    'lable' => 'Wrong spelling!', // Typo not caught
-    'identifier' => 'my-menu',
-    'childrens' => [ // Manual nesting
-        'submenu1' => [
-            'label' => 'Submenu',
-            // Missing required fields?
-        ]
-    ]
-];
+// ✅ Good: Module-specific permission
+permissions: ['nspagebuilder.pages.read']
+
+// ✅ Better: Following standard CRUD pattern  
+permissions: ['read.nspagebuilder.pages']
+
+// ❌ Avoid: Generic permissions that might conflict
+permissions: ['read.pages']
 ```
 
-**AsideMenu Class Approach (Recommended):**
+### 3. Translation Strategy
+
+Use module-specific translations:
+
 ```php
-// Type-safe, consistent, documented
-$menu = AsideMenu::menu(
-    label: 'Correct Structure', // Parameter names prevent typos
-    identifier: 'my-menu',
-    permissions: ['required.permission'], // Clear parameter expectations
-    childrens: AsideMenu::childrens( // Structured nesting
-        AsideMenu::subMenu(
-            label: 'Submenu',
-            identifier: 'submenu1',
-            href: '/path' // Required parameters enforced
-        )
-    )
+// ✅ Correct: Module-specific translation
+label: __m('Page Builder', 'NsPageBuilder')
+
+// ❌ Incorrect: Core translation for module features
+label: __('Page Builder')
+```
+
+### 4. Hook Priority
+
+Use hook priority when menu order matters:
+
+```php
+// Higher priority (runs later) - can override earlier additions
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    // Your menu logic
+    return $menus;
+}, 30); // Priority 30 - runs after default (10)
+
+// Lower priority (runs earlier)
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    // Your menu logic  
+    return $menus;
+}, 5); // Priority 5 - runs before default (10)
+```
+
+### 5. Error Prevention
+
+Always check for menu existence before extending:
+
+```php
+// ✅ Safe: Check before accessing
+if (isset($menus['settings'])) {
+    $menus['settings']['childrens'] = array_insert_after(
+        $menus['settings']['childrens'],
+        'pos',
+        $newSubmenu
+    );
+}
+
+// ❌ Unsafe: Will throw error if menu doesn't exist
+$menus['settings']['childrens'] = array_insert_after(
+    $menus['settings']['childrens'],
+    'pos',
+    $newSubmenu
 );
 ```
 
-## Advanced Best Practices
+### 6. Consistent Identifiers
 
-### 1. **Module Organization Pattern**
+Use descriptive, unique identifiers:
 
 ```php
-class DashboardFilters
-{
-    public static function registerDashboardMenus($menus)
-    {
-        // Separate concerns: building vs extending
-        $menus = self::addModuleMenus($menus);
-        $menus = self::extendCoreMenus($menus);
-        return $menus;
-    }
-    
-    private static function addModuleMenus($menus)
-    {
-        // Build module-specific menus using AsideMenu
-        return array_merge($menus, self::buildModuleMenus());
-    }
-    
-    private static function extendCoreMenus($menus)
-    {
-        // Extend existing NexoPOS menus
-        return self::addToSettingsMenu($menus);
-    }
-}
+// ✅ Good: Clear, namespaced identifiers
+identifier: 'nspagebuilder-all-pages'
+identifier: 'nspagebuilder-create-page'
+identifier: 'nspagebuilder-settings'
+
+// ❌ Bad: Generic identifiers that might conflict
+identifier: 'pages'
+identifier: 'create'
+identifier: 'settings'
 ```
 
-### 2. **Permission Strategy**
+### 7. Icon Selection
+
+Use appropriate Line Awesome icons:
 
 ```php
-// Good: Basic permissions
-AsideMenu::subMenu(
-    label: __m('User Management', 'YourModule'),
-    identifier: 'user-management',
-    href: ns()->url('/dashboard/users'),
-    permissions: ['read.users']
-)
+// Feature modules
+icon: 'la-utensils'      // Restaurant/Food
+icon: 'la-file-alt'      // Pages/Documents
+icon: 'la-box'           // Products/Inventory
+icon: 'la-users'         // Users/Customers
 
-// Better: Module-specific namespaced permissions
-AsideMenu::subMenu(
-    label: __m('Module Settings', 'YourModule'),
-    identifier: 'module-settings',
-    href: route('module.settings'),
-    permissions: ['yourmodule.settings.manage'] // Namespaced permission
-)
+// Tools/Utilities
+icon: 'la-cogs'          // Settings
+icon: 'la-chart-bar'     // Reports/Analytics
+icon: 'la-plug'          // Integrations
+icon: 'la-download'      // Import/Export
 ```
 
-### 3. **Error Prevention Patterns**
+## Common Patterns
+
+### Pattern 1: Add Feature Module Menu
+
+For modules that add major functionality:
 
 ```php
-// Always check menu exists before extending
-if (isset($menus['settings'])) {
-    $settingsSubmenu = AsideMenu::subMenu(
-        label: __m('Module Settings', 'YourModule'),
-        identifier: 'module-settings',
-        href: ns()->route('ns.dashboard.settings', ['settings' => 'module-settings']),
-        permissions: ['manage.options']
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    $moduleMenu = AsideMenu::menu(
+        label: __m('Module Name', 'ModuleName'),
+        identifier: 'module-identifier',
+        icon: 'la-puzzle-piece',
+        permissions: ['module.access'],
+        childrens: AsideMenu::childrens(
+            AsideMenu::subMenu(
+                label: __m('Dashboard', 'ModuleName'),
+                identifier: 'module-dashboard',
+                href: ns()->url('/dashboard/module'),
+                permissions: ['module.read']
+            )
+        )
     );
-    
-    $menus['settings']['childrens'] = array_merge(
-        $menus['settings']['childrens'] ?? [], // Null coalescing prevents errors
-        $settingsSubmenu
-    );
-}
+
+    // Insert after related core menu
+    return array_insert_after($menus, 'inventory', $moduleMenu);
+});
 ```
 
-## Key Recommendations Summary
+### Pattern 2: Add Settings Submenu
 
-1. **Always use AsideMenu class methods** instead of manual array construction
-2. **Separate menu building logic** into dedicated methods for maintainability  
-3. **Use module-specific permissions** following namespaced patterns
-4. **Include proper error checking** when extending existing menus
-5. **Implement consistent translation** using `__m()` with module namespace
-6. **Follow the wrapper → menu → childrens → subMenu hierarchy**
-
-## Basic Best Practices
-
-1. **Use Localization**: Always wrap menu labels with `__()` function for translation support
-2. **Proper Permissions**: Define appropriate permissions for each menu item
-3. **Meaningful Identifiers**: Use descriptive, unique identifiers for menu items
-4. **Icon Consistency**: Use Line Awesome (LA) icons consistently across your menus
-5. **URL Generation**: Use `ns()->url()` or `route()` helpers for generating URLs
-6. **Module Localization**: Use `__m()` function for module-specific translations
-
-## Icon Guidelines
-
-NexoPOS uses Line Awesome icons. Common icon classes include:
-- `la-home` - Dashboard/Home
-- `la-users` - Users
-- `la-cog` or `la-cogs` - Settings
-- `la-shopping-cart` - Orders/Cart
-- `la-box` - Products/Inventory
-- `la-chart-bar` - Reports
-- `la-plug` - Modules
-- `la-shield-alt` - Roles/Security
-
-## Generated Structure
-
-The AsideMenu class generates arrays with this structure:
+For module configuration:
 
 ```php
-[
-    'menu-identifier' => [
-        'label' => 'Menu Label',
-        'href' => '/dashboard/path',
-        'icon' => 'la-icon-class',
-        'counter' => 0,
-        'permissions' => ['permission1', 'permission2'],
-        'show' => true,
-        'childrens' => [
-            'submenu-identifier' => [
-                'label' => 'Submenu Label',
-                'href' => '/dashboard/submenu/path',
-                'icon' => 'la-icon-class',
-                'permissions' => ['permission'],
-                'show' => true
-            ]
-        ]
-    ]
-]
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    if (isset($menus['settings'])) {
+        $settingsSubmenu = AsideMenu::subMenu(
+            label: __m('Module Settings', 'ModuleName'),
+            identifier: 'module-settings',
+            href: ns()->route('ns.dashboard.settings', ['settings' => 'module-settings']),
+            permissions: ['manage.options']
+        );
+
+        $menus['settings']['childrens'] = array_insert_after(
+            $menus['settings']['childrens'],
+            'general',
+            $settingsSubmenu
+        );
+    }
+
+    return $menus;
+});
 ```
 
-This structure is then used by the frontend Vue.js components to render the dashboard navigation menu.
+### Pattern 3: Extend Existing Menu
+
+For adding functionality to existing sections:
+
+```php
+Hook::addFilter('ns-dashboard-menus', function ($menus) {
+    if (isset($menus['customers'])) {
+        $newSubmenu = AsideMenu::subMenu(
+            label: __m('Customer Groups', 'ModuleName'),
+            identifier: 'customer-groups',
+            href: ns()->url('/dashboard/customers/groups'),
+            permissions: ['read.customers']
+        );
+
+        $menus['customers']['childrens'] = [
+            ...$menus['customers']['childrens'],
+            ...$newSubmenu
+        ];
+    }
+
+    return $menus;
+});
+```
+
+## Troubleshooting
+
+### Menu Not Showing
+
+1. **Check Permission**: Verify user has the required permission
+   ```php
+   // Test if permission exists
+   $permission = \App\Models\Permission::namespace('your.permission');
+   
+   // Check if user has permission
+   ns()->allowedTo('your.permission');
+   ```
+
+2. **Verify Hook Name**: Must be exactly `'ns-dashboard-menus'`
+   ```php
+   // ✅ Correct
+   Hook::addFilter('ns-dashboard-menus', ...)
+   
+   // ❌ Wrong
+   Hook::addFilter('ns.dashboard.menus', ...)
+   ```
+
+3. **Check Service Provider**: Ensure provider is registered and `register()` method is called
+
+### Menu Position Wrong
+
+1. **Verify Target Identifier**: Check the identifier you're inserting after/before exists
+   ```php
+   // Debug: Print all menu identifiers
+   array_keys($menus);
+   ```
+
+2. **Check Hook Priority**: Lower priority runs first
+   ```php
+   // If menu not appearing in right place, try different priority
+   Hook::addFilter('ns-dashboard-menus', function($menus) {
+       // ...
+   }, 20); // Try different priorities: 5, 10, 20, 30
+   ```
+
+### Submenu Not Showing
+
+1. **Verify Parent Menu Exists**: Always check with `isset()`
+2. **Check Array Structure**: Ensure using `childrens` key correctly
+3. **Verify Merge Method**: Use `array_insert_after`/`before` or spread operator correctly
+
+## Summary
+
+- **Always use the AsideMenu class** for consistency and maintainability
+- **Use the correct hook**: `'ns-dashboard-menus'` (note the dash, not dot)
+- **Position with helpers**: `array_insert_after()` and `array_insert_before()` for precise control
+- **Check existence**: Always verify menus exist before extending them
+- **Module translations**: Use `__m()` with module namespace
+- **Namespaced identifiers**: Prevent conflicts with unique, descriptive identifiers
+- **Proper permissions**: Use module-specific permissions following CRUD patterns
+
+This approach ensures your module menus integrate seamlessly with NexoPOS while maintaining code quality and preventing conflicts.

@@ -39,6 +39,7 @@ export default ({ mode }) => {
             laravel({
                 input: [
                     'resources/ts/bootstrap.ts',
+                    'resources/ts/app-init.ts',
                     'resources/ts/app.ts',
                     'resources/ts/auth.ts',
                     'resources/ts/pos.ts',

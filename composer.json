@@ -12,7 +12,7 @@
     "require": {
         "php": "^8.2.0",
         "brianium/paratest": "^7.1",
-        "brick/math": "^0.12.0",
+        "brick/math": "^0.14.1",
         "dekor/php-array-table": "^2.0",
         "doctrine/dbal": "^3.0",
         "fakerphp/faker": "^1.12",
@@ -26,7 +26,7 @@
         "nikic/php-parser": "^5.0",
         "phpoffice/phpspreadsheet": "^3.3",
         "picqer/php-barcode-generator": "^3.2",
-        "predis/predis": "^2.3",
+        "predis/predis": "^3.2",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-db-snapshots": "^2.2",
         "symfony/http-client": "^7.0",
@@ -60,7 +60,11 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "Modules\\": "modules/"
-        }
+        },
+        "exclude-from-classmap": [
+            "/modules/*/vendor/",
+            "modules/*/Tests/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -78,7 +82,8 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('public/storage');\" || artisan storage:link --ansi",
-            "@php artisan ns:translate --symlink"
+            "@php artisan ns:translate --symlink --force",
+            "@php artisan modules:symlink"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -90,7 +95,8 @@
             "@php artisan key:generate --ansi",
             "@php artisan storage:link --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-            "@php artisan ns:translate --symlink"
+            "@php artisan ns:translate --symlink --force",
+            "@php artisan modules:symlink"
         ]
     }
 }

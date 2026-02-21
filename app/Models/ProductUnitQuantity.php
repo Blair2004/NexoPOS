@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string  $expiration_date
  * @property int     $unit_id
  * @property string  $barcode
+ * @property string  $scale_plu
+ * @property bool    $is_weighable
  * @property float   $quantity
  * @property float   $low_quantity
  * @property bool    $stock_alert_enabled

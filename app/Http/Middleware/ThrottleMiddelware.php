@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Traits\NsMiddlewareArgument;
 use Closure;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,13 +31,12 @@ class ThrottleMiddelware extends ThrottleRequests
                 $request,
                 $next,
                 [
-                    (object) [
-                        'key' => $prefix . $this->resolveRequestSignature( $request ),
-                        'maxAttempts' => $this->resolveMaxAttempts( $request, $maxAttempts ),
-                        'decaySeconds' => 60 * $decayMinutes,
-                        'decayMinutes' => $decayMinutes,
-                        'responseCallback' => null,
-                    ],
+                    Limit::perMinutes(
+                        $decayMinutes,
+                        $this->resolveMaxAttempts( $request, $maxAttempts )
+                    )->by(
+                        $prefix . $this->resolveRequestSignature( $request )
+                    )
                 ]
             );
         }

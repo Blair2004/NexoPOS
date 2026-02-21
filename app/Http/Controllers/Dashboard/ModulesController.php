@@ -70,7 +70,7 @@ class ModulesController extends DashboardController
                 $list = $this->modules->getInvalid();
                 break;
             case '':
-            default : 
+            default:
                 $list = $this->modules->get();
                 break;
         }
@@ -163,5 +163,32 @@ class ModulesController extends DashboardController
             'status' => 'success',
             'message' => __( 'Symbolic link created successfully.' ),
         ] );
+    }
+
+    /**
+     * Fix the permissions of the public/modules directory
+     *
+     * @return JsonResponse
+     */
+    public function fixPublicModulesPermissions( Request $request )
+    {
+        try {
+            $this->modules->fixPublicModulesDirectoryPermissions();
+
+            // Delete the notification if it exists
+            if ( $request->query( 'notification_id' ) ) {
+                Notification::find( $request->query( 'notification_id' ) )->delete();
+            }
+
+            return response()->json( [
+                'status' => 'success',
+                'message' => __( 'Directory permissions fixed successfully.' ),
+            ] );
+        } catch ( \Exception $e ) {
+            return response()->json( [
+                'status' => 'error',
+                'message' => sprintf( __( 'Failed to fix permissions: %s' ), $e->getMessage() ),
+            ], 500 );
+        }
     }
 }

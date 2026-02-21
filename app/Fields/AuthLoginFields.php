@@ -21,7 +21,7 @@ class AuthLoginFields extends FieldsService
 
     public function get()
     {
-        $fields = Hook::filter( 'ns-login-fields', 
+        $fields = Hook::filter( 'ns-login-fields',
             Form::fields(
                 FormInput::text(
                     label: __( 'Username' ),
@@ -32,7 +32,7 @@ class AuthLoginFields extends FieldsService
                 FormInput::password(
                     label: __( 'Password' ),
                     description: __( 'Provide your password.' ),
-                    validation: 'required|min:8',
+                    validation: 'required|min:6',
                     name: 'password',
                 )
             )
