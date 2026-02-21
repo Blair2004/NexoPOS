@@ -1,0 +1,56 @@
+name: 🚀 Deploy to FTP (Subdomain)
+
+on:
+  push:
+    branches:
+      - main   # change this if your default branch is different (e.g., master)
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Optional: Set up PHP if you need to run composer or artisan commands
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'   # adjust to the PHP version your server uses
+          tools: composer
+
+      # Optional: Install PHP dependencies (if your vendor folder is not committed)
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+        # Remove this step if you commit the vendor folder
+
+      # Optional: Build front-end assets if your project uses npm
+      # - name: Install Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '18'
+      # - name: Install npm dependencies
+      #   run: npm ci && npm run production
+
+      # Deploy via FTP
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          # Optional: specify the local directory to upload (default is '.')
+          local-dir: ./
+          # Optional: specify the remote directory (e.g., public_html/subdomain)
+          server-dir: /public_html/your-subdomain-folder/
+          # Optional: exclude certain files/folders
+          exclude: |
+            .git*
+            .git*/
+            node_modules/
+            .env
+            storage/
+            tests/
+            .github/
