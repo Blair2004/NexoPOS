@@ -34,7 +34,7 @@ jobs:
           # Optional: specify the local directory to upload (default is '.')
           local-dir: ./
           # Optional: specify the remote directory (e.g., public_html/subdomain)
-          server-dir: /public_html/your-subdomain-folder/
+          server-dir: /public_html/pos.shiftmatrix.co.za/
           # Optional: exclude certain files/folders
           exclude: |
             .git*
