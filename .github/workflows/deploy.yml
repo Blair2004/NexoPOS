@@ -13,17 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Optional: Set up PHP if you need to run composer or artisan commands
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'   # adjust to the PHP version your server uses
-          tools: composer
-
-      # Optional: Install PHP dependencies (if your vendor folder is not committed)
-      - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader
-        # Remove this step if you commit the vendor folder
+     
 
       # Optional: Build front-end assets if your project uses npm
       # - name: Install Node.js
