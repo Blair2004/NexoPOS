@@ -14,7 +14,7 @@
                 <slot v-if="error.identifier === 'min'" :name="error.identifier">{{ __( 'This field must have at least "{length}" characters' ).replace( '{length}', error.rule.value ) }}</slot>
                 <slot v-if="error.identifier === 'max'" :name="error.identifier">{{ __( 'This field must have at most "{length}" characters' ).replace( '{length}', error.rule.value ) }}</slot>
                 <slot v-if="error.identifier === 'different'" :name="error.identifier">{{ __( 'This field must be different from "{other}"' ).replace( '{other}', this.validation.getValueByDotNotation( error.labels, error.rule.value ) ) }}</slot>
-                <slot v-if="error.identifier === 'regex'" :name="error.identifier">{{ __( 'This field must match the pattern "{pattern}"' ).replace( '{pattern}', error.rule.value ) }}</slot>çà
+                <slot v-if="error.identifier === 'regex'" :name="error.identifier">{{ __( 'This field must match the pattern "{pattern}"' ).replace( '{pattern}', error.rule.value ) }}</slot>
             </template>
         </p>
     </template>
@@ -24,7 +24,7 @@ import { __ } from '~/libraries/lang';
 import FormValidation from '~/libraries/form-validation';
 
 export default {
-    name: 'ns-field-detail',
+    name: 'ns-field-description',
     props: [ 'field' ],
     data() {
         return { 

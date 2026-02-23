@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\CheckForUpdatesJob;
 use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ClearModuleTempJob;
 use App\Jobs\DetectLowStockProductsJob;
@@ -143,3 +144,9 @@ Schedule::job( new EnsureCombinedProductHistoryExistsJob )->hourly();
  * hasn't been deleted after a module installation.
  */
 Schedule::job( new ClearModuleTempJob )->weekly();
+
+/**
+ * Will check daily if a new NexoPOS version is available
+ * on GitHub and store the result as an option.
+ */
+Schedule::job( new CheckForUpdatesJob )->dailyAt( '08:00' );
