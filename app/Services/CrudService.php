@@ -7,6 +7,8 @@ use App\Classes\Cache;
 use App\Classes\CrudScope;
 use App\Classes\Output;
 use App\Events\CrudActionEvent;
+use App\Events\CrudAfterPostEvent;
+use App\Events\CrudAfterPutEvent;
 use App\Events\CrudHookEvent;
 use App\Events\CrudReflectionInitialized;
 use App\Exceptions\NotAllowedException;
@@ -418,15 +420,23 @@ class CrudService
         /**
          * Create an event after crud POST
          */
-        if ( ! $isEditing && method_exists( $resource, 'afterPost' ) ) {
-            $resource->afterPost( $unfiltredInputs, $entry, $inputs );
+        if ( ! $isEditing ) {
+            if ( method_exists( $resource, 'afterPost' ) ) {
+                $resource->afterPost( $unfiltredInputs, $entry, $inputs );
+            }
+
+            CrudAfterPostEvent::dispatch( $resource, $unfiltredInputs, $entry );
         }
 
         /**
          * Create an event after crud POST
          */
-        if ( $isEditing && method_exists( $resource, 'afterPut' ) ) {
-            $resource->afterPut( $unfiltredInputs, $entry, $inputs );
+        if ( $isEditing ) {
+            if ( method_exists( $resource, 'afterPut' ) ) {
+                $resource->afterPut( $unfiltredInputs, $entry, $inputs );
+            }
+
+            CrudAfterPutEvent::dispatch( $resource, $unfiltredInputs, $entry );
         }
 
         return [
@@ -1300,7 +1310,9 @@ class CrudService
             /**
              * We'll provide the form configuration
              */
-            'form' => Hook::filter( get_class( $instance ) . '@getForm', $instance->getForm( $entry ) ),
+            'form' => Hook::filter( get_class( $instance ) . '@getForm', $instance->getForm( $entry ), [
+                'model' => $entry
+            ] ),
 
             /**
              * We'll now provide the labels
