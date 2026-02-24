@@ -1489,7 +1489,7 @@ class CrudService
              * We'll provide the form configuration
              */
             'form' => Hook::filter( get_class( $instance ) . '@getForm', $instance->getForm( $entry ), [
-                'model' => $entry
+                'model' => $entry,
             ] ),
 
             /**

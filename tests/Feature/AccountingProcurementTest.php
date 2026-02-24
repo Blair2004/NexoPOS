@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Procurement;
 use Modules\NsGastro\Tests\TestCase;
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\Traits\WithAccountingTest;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithProcurementTest;
@@ -31,9 +32,7 @@ class AccountingProcurementTest extends TestCase
         $this->attemptTestAccountingForProcurement( Procurement::findOrFail( $response[ 'data' ][ 'procurement' ][ 'id' ] ) );
     }
 
-    /**
-     * @depends test_create_procurement
-     */
+    #[Depends( 'test_create_procurement' )]
     public function test_create_procurement_and_pay( $procurement )
     {
         $this->attemptAuthenticate();

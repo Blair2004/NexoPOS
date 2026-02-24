@@ -36,7 +36,7 @@ class ThrottleMiddelware extends ThrottleRequests
                         $this->resolveMaxAttempts( $request, $maxAttempts )
                     )->by(
                         $prefix . $this->resolveRequestSignature( $request )
-                    )
+                    ),
                 ]
             );
         }
