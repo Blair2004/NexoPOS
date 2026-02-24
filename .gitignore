@@ -48,6 +48,7 @@ tests/Post/*
 storage/snapshots/*.sql
 storage/temporary-files/*
 storage/opus-backups
+storage/ns-backups
 .idea
 public/hot
 .phpunit.cache/test-results
