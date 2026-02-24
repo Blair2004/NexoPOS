@@ -1611,6 +1611,87 @@ php artisan module:migrate FooBar
 php artisan module:publish FooBar
 ```
 
+#### Generating a Module with `make:module`
+
+The `make:module` Artisan command scaffolds a new module with all the required directories and files. It supports both **interactive** and **non-interactive** modes.
+
+##### Interactive Mode (Default)
+
+When run without `-n`, the command prompts for each value:
+
+```bash
+php artisan make:module
+```
+
+You will be asked for:
+- Module namespace (PascalCase)
+- Module display name
+- Author name
+- Short description
+
+##### Non-Interactive Mode (for AI Agents & CI/CD)
+
+Pass `-n` (or `--no-interaction`) along with the required options to skip all prompts. This is the recommended approach when generating modules from scripts, AI agents, or automated pipelines.
+
+**Required options:**
+- `--namespace` — Module namespace in PascalCase (e.g. `FooBar`)
+- `--name` — Human-readable module name (e.g. `"Foo Bar Module"`)
+- `--author` — Author name
+- `--description` — Short module description
+
+**Optional options:**
+- `--vers` — Module version (default: `1.0`)
+- `--force` — Overwrite an existing module with the same namespace
+
+**Example:**
+
+```bash
+php artisan make:module -n \
+  --namespace=FooBar \
+  --name="Foo Bar Module" \
+  --author="John Doe" \
+  --description="A sample module" \
+  --vers=1.0 \
+  --force
+```
+
+**Exit codes:**
+- `0` — Module generated successfully
+- `1` — Error (missing options, module already exists without `--force`, or NexoPOS not installed)
+
+**Important:** In non-interactive mode, all four required options must be provided or the command will exit with an error and display usage instructions.
+
+##### What Gets Generated
+
+The command creates the following structure under `modules/{Namespace}/`:
+
+```
+modules/FooBar/
+├── config.xml
+├── FooBarModule.php
+├── Config/
+├── Crud/
+├── Events/
+│   └── FooBarEvent.php
+├── Facades/
+├── Fields/
+├── Http/
+│   └── Controllers/
+├── Mail/
+├── Migrations/
+│   └── DatabaseMigration.php
+├── Models/
+├── Providers/
+├── Public/
+│   └── index.html
+├── Resources/
+│   └── Views/
+├── Routes/
+└── Services/
+```
+
+After generation, you should add additional directories as needed (e.g., `Listeners/`, `Jobs/`, `Lang/`, `Tests/`, `Routes/api.php`, `Routes/web.php`) following the module structure conventions described earlier in this guide.
+
 ## Troubleshooting
 
 ### Common Issues

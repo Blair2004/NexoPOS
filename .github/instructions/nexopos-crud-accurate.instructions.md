@@ -793,4 +793,238 @@ Route::get('/dashboard/examples', [ExampleController::class, 'list'])
     ->middleware('ns.permission:read.examples');
 ```
 
+## Extending CRUD Forms with Custom Tabs (Module Pattern)
+
+Modules can inject custom tabs into existing CRUD forms using the filter pattern. This is useful for adding module-specific functionality to core CRUD operations (e.g., UserCrud, ProductCrud).
+
+### Pattern Overview
+
+```php
+// In your module's service provider or event class
+use App\Crud\UserCrud;
+
+UserCrud::filterMethod('getForm', [YourFilterClass::class, 'injectCustomTab']);
+```
+
+### Filter Method Structure
+
+The filter receives the complete form array from the CRUD's `getForm()` method and can modify it before rendering:
+
+```php
+namespace Modules\YourModule\Filters;
+
+class UserCrudFilter
+{
+    public static function injectCustomTab($form, $entry = null)
+    {
+        // Add your custom tab to the form
+        $form['tabs']['custom_tab_key'] = [
+            'label' => __m('Custom Tab', 'YourModule'),
+            'component' => 'ns-custom-tab-component',  // Vue component
+            'fields' => []  // Will be populated by component
+        ];
+        
+        return $form;
+    }
+}
+```
+
+### Vue Component Implementation
+
+The component receives the `tab` prop and manages its own state through the `fields` array:
+
+```typescript
+// Resources/ts/components/NsCustomTabComponent.ts
+export default defineComponent({
+    name: 'NsCustomTabComponent',
+    props: ['tab'],
+    
+    data() {
+        return {
+            loading: false,
+            fields: [{
+                name: 'custom_data',
+                value: {
+                    // Your custom data structure
+                    assigned_items: [],
+                    default_item_id: null
+                }
+            }]
+        };
+    },
+    
+    mounted() {
+        this.loadData();
+        this.restoreState();
+    },
+    
+    watch: {
+        fields: {
+            deep: true,
+            handler() {
+                // Emit changes to parent - saves state on tab switch
+                this.$emit('changed', this.fields);
+            }
+        }
+    },
+    
+    methods: {
+        restoreState() {
+            // Restore state from previous tab visit or edit mode
+            if (this.tab.fields && this.tab.fields.length > 0) {
+                this.fields = this.tab.fields;
+            }
+        },
+        
+        loadData() {
+            // Load your initial data (stores, items, etc.)
+            nsHttpClient.get('/api/your-endpoint').subscribe({
+                next: (response) => {
+                    // Process response
+                },
+                error: (error) => {
+                    nsSnackBar.error(error.message);
+                }
+            });
+        }
+    },
+    
+    template: `
+        <div class="p-4">
+            <!-- Your custom UI -->
+        </div>
+    `
+});
+```
+
+### Component Registration
+
+Register the component globally in your module's main TypeScript file:
+
+```typescript
+// Resources/ts/main.ts
+import NsCustomTabComponent from './components/NsCustomTabComponent';
+
+if (typeof nsExtraComponents !== 'undefined') {
+    nsExtraComponents['ns-custom-tab-component'] = NsCustomTabComponent;
+}
+```
+
+### State Management with Fields Array
+
+The `fields` array is **critical** for state persistence:
+
+1. **Tab Switch Preservation**: When user switches tabs, your `fields` are auto-saved
+2. **Edit Mode**: When editing an entry, `tab.fields` contains previous data
+3. **Form Submission**: `fields` are submitted as part of the form data
+
+**Example fields structure:**
+
+```typescript
+// Single field with complex data
+fields: [{
+    name: 'store_access_data',
+    value: {
+        assigned_stores: [1, 3, 5],
+        default_store_id: 1,
+        all_stores: false
+    }
+}]
+
+// Or multiple fields
+fields: [
+    { name: 'store_1_access', value: true },
+    { name: 'store_3_access', value: false },
+    { name: 'default_store', value: 1 }
+]
+```
+
+### Backend Processing
+
+Handle the custom tab data in CRUD hooks:
+
+```php
+class YourCrud extends CrudService
+{
+    public function afterPost($inputs, $entry, $filteredInputs)
+    {
+        // Process custom tab data
+        if (isset($inputs['custom_tab_key']['custom_data'])) {
+            $data = $inputs['custom_tab_key']['custom_data'];
+            $this->processCustomData($entry->id, $data);
+        }
+    }
+    
+    public function afterPut($inputs, $entry, $filteredInputs)
+    {
+        // Same for updates
+        if (isset($inputs['custom_tab_key']['custom_data'])) {
+            $data = $inputs['custom_tab_key']['custom_data'];
+            $this->processCustomData($entry->id, $data);
+        }
+    }
+}
+```
+
+### Complete Example: Store Access Tab
+
+```php
+// In ModuleServiceProvider::boot()
+UserCrud::filterMethod('getForm', [UserCrudFilter::class, 'injectStoreAccessTab']);
+```
+
+```php
+// Filters/UserCrudFilter.php
+class UserCrudFilter
+{
+    public static function injectStoreAccessTab($form, $entry = null)
+    {
+        $form['tabs']['store_access'] = [
+            'label' => __m('Store Access', 'NsMultiStore'),
+            'component' => 'ns-store-access-tab',
+            'fields' => []
+        ];
+        return $form;
+    }
+}
+```
+
+```typescript
+// Component handles store assignments, checkboxes, default store
+// Emits 'changed' event with fields array
+// Parent CRUD form handles save/restore automatically
+```
+
+### Best Practices
+
+1. ✅ **Always watch `fields`** with `deep: true` and emit `changed`
+2. ✅ **Restore state in `mounted()`** from `this.tab.fields`
+3. ✅ **Use single field with JSON** for complex data structures
+4. ✅ **Handle loading states** while fetching data
+5. ✅ **Validate before emitting** to prevent invalid state saves
+6. ✅ **Register component globally** using `nsExtraComponents`
+7. ✅ **Process in `afterPost/afterPut` hooks** on backend
+
+### Validation in Custom Tabs
+
+```typescript
+mounted() {
+    this.validation = new FormValidation();
+    this.validation.createFields({
+        custom_data: { validation: 'required' }
+    });
+}
+
+watch: {
+    fields: {
+        deep: true,
+        handler() {
+            if (this.validation.validateFields(this.fields)) {
+                this.$emit('changed', this.fields);
+            }
+        }
+    }
+}
+```
+
 This guide is based on actual CRUD implementations in NexoPOS and reflects the true patterns used in production code.
