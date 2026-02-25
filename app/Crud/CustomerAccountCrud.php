@@ -82,7 +82,7 @@ class CustomerAccountCrud extends CrudService
 
     /**
      * Adding relation
-     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author_id' ]
      *
      * @param  array
      */
@@ -204,7 +204,7 @@ class CustomerAccountCrud extends CrudService
             ], [
                 'type' => 'select',
                 'label' => __( 'Author' ),
-                'name' => 'nexopos_customers_account_history.author',
+                'name' => 'nexopos_customers_account_history.author_id',
                 'description' => __( 'Restrict the records by the author.' ),
                 'options' => Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ] ),
             ],

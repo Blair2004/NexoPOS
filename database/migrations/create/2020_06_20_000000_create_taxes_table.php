@@ -24,7 +24,7 @@ return new class extends Migration
                 $table->text( 'description' )->nullable();
                 $table->float( 'rate', 18, 5 );
                 $table->integer( 'tax_group_id' );
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );
@@ -35,7 +35,7 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

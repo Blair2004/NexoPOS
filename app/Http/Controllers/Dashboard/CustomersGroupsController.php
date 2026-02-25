@@ -97,7 +97,7 @@ class CustomersGroupsController extends DashboardController
         foreach ( $fields as $name => $value ) {
             $group->$name = $value;
         }
-        $group->author = Auth::id();
+        $group->author_id = Auth::id();
         $group->save();
 
         return [
@@ -129,7 +129,7 @@ class CustomersGroupsController extends DashboardController
             }
         }
 
-        $group->author = Auth::id();
+        $group->author_id = Auth::id();
         $group->save();
 
         return [

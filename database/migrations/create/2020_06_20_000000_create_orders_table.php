@@ -51,7 +51,7 @@ return new class extends Migration
                 $table->integer( 'customer_id' );
                 $table->string( 'note' )->nullable();
                 $table->string( 'note_visibility' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->integer( 'register_id' )->nullable();
                 $table->text( 'voidance_reason' )->nullable();

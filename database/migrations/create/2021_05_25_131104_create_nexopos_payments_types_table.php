@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string( 'identifier' );
             $table->integer( 'priority' )->default( 0 );
             $table->text( 'description' )->nullable();
-            $table->integer( 'author' );
+            $table->integer( 'author_id' );
             $table->boolean( 'active' )->default( true );
             $table->boolean( 'readonly' )->default( false );
             $table->timestamps();

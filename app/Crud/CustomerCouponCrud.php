@@ -64,13 +64,13 @@ class CustomerCouponCrud extends CrudService
 
     /**
      * Adding relation
-     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author_id' ]
      *
      * @param  array
      */
     public $relations = [
         'leftJoin' => [
-            [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_coupons.author' ],
+            [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_coupons.author_id' ],
         ],
         [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
         [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_customers_coupons.coupon_id' ],

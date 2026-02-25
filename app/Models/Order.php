@@ -47,7 +47,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int customer_id
  * @property string note
  * @property string note_visibility
- * @property int author
+ * @property int author_id
  * @property string uuid
  * @property int register_id
  * @property string voidance_reason
@@ -154,7 +154,7 @@ class Order extends NsModel
 
     public function user()
     {
-        return $this->hasOne( User::class, 'id', 'author' );
+        return $this->hasOne( User::class, 'id', 'author_id' );
     }
 
     public function refunds()

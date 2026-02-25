@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float          $procured_quantity
  * @property float          $defective_quantity
  * @property float          $final_quantity
- * @property int            $author
+ * @property int            $author_id
  * @property string         $uuid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at

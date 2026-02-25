@@ -33,7 +33,7 @@ return new class extends Migration
                 $table->float( 'unit_price', 18, 5 ); // could be the cost of the procurement, the lost (defective)
                 $table->float( 'total_price', 18, 5 ); // could be the cost of the procurement, the lost (defective)
                 $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

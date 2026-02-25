@@ -35,7 +35,7 @@ return new class extends Migration
             $table->float( 'value', 18, 5 )->default( 0 );
             $table->datetime( 'trigger_date' )->nullable();
             $table->integer( 'rule_id' )->nullable();
-            $table->integer( 'author' );
+            $table->integer( 'author_id' );
             $table->timestamps();
         } );
     }

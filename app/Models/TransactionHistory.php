@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string         $type
  * @property \Carbo\Carbon  $trigger_date
  * @property float          $value
- * @property int            $author
+ * @property int            $author_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

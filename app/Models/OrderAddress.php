@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int            $id
- * @property int            $author
+ * @property int            $author_id
  * @property string         $uuid
  * @property \Carbon\Carbon $updated_at
  */

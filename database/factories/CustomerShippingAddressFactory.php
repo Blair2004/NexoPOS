@@ -34,7 +34,7 @@ class CustomerShippingAddressFactory extends Factory
             'country' => $this->faker->country(),
             'city' => $this->faker->city(),
             'pobox' => $this->faker->postcode(),
-            'author' => User::get()->random()->id,
+            'author_id' => User::get()->random()->id,
         ] );
     }
 }

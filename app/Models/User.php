@@ -19,7 +19,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int    $id
  * @property string $username
  * @property bool   $active
- * @property int    $author
+ * @property int    $author_id
  * @property string $email
  * @property string $password
  * @property string $activation_token
@@ -63,13 +63,13 @@ class User extends Authenticatable
                 local_name: 'username',
                 local_index: 'id',
                 foreign_name: 'name',
-                foreign_index: 'author',
+                foreign_index: 'author_id',
             ),
             Order::class => Model::dependant(
                 local_name: 'username',
                 local_index: 'id',
                 foreign_name: 'code',
-                foreign_index: 'author',
+                foreign_index: 'author_id',
             ),
         ];
     }
@@ -80,7 +80,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'role_id', 'active', 'username', 'author',
+        'email', 'password', 'role_id', 'active', 'username', 'author_id',
     ];
 
     /**

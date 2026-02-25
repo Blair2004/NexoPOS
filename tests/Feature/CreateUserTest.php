@@ -181,11 +181,11 @@ class CreateUserTest extends TestCase
 
         $user = Role::namespace( Role::ADMIN )->users()->first();
 
-        $order = Order::where( 'author', '<>', $user->id )->first();
+        $order = Order::where( 'author_id', '<>', $user->id )->first();
 
         if ( $order instanceof Order ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'delete', '/api/crud/ns.users/' . $order->author );
+                ->json( 'delete', '/api/crud/ns.users/' . $order->author_id );
 
             $response->assertStatus( 403 );
         }

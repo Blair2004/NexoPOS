@@ -28,7 +28,7 @@ return new class extends Migration
                 $table->string( 'phone' )->nullable();
                 $table->string( 'address_1' )->nullable();
                 $table->string( 'address_2' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->text( 'description' )->nullable();
                 $table->float( 'amount_due', 18, 5 )->default( 0 );
                 $table->float( 'amount_paid', 18, 5 )->default( 0 );

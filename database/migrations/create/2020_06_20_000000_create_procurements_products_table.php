@@ -36,7 +36,7 @@ return new class extends Migration
                 $table->float( 'total_purchase_price', 18, 5 )->default( 0 );
                 $table->integer( 'unit_id' );
                 $table->integer( 'convert_unit_id' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

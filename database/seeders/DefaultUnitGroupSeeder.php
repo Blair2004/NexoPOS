@@ -18,7 +18,7 @@ class DefaultUnitGroupSeeder extends Seeder
     {
         $unitGroup = UnitGroup::create( [
             'name' => __( 'Countable' ),
-            'author' => Role::namespace( 'admin' )->users->first()->id,
+            'author_id' => Role::namespace( 'admin' )->users->first()->id,
         ] );
 
         $piece = Unit::create( [
@@ -27,7 +27,7 @@ class DefaultUnitGroupSeeder extends Seeder
             'identifier' => 'piece',
             'base_unit' => true,
             'group_id' => $unitGroup->id,
-            'author' => Role::namespace( 'admin' )->users->first()->id,
+            'author_id' => Role::namespace( 'admin' )->users->first()->id,
         ] );
     }
 }

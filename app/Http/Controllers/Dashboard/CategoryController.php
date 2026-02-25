@@ -107,7 +107,7 @@ class CategoryController extends DashboardController
             $category->$name = $field;
         }
 
-        $category->author = Auth::id();
+        $category->author_id = Auth::id();
         $category->save();
 
         return [
@@ -145,7 +145,7 @@ class CategoryController extends DashboardController
             $category->$name = $field;
         }
 
-        $category->author = Auth::id();
+        $category->author_id = Auth::id();
         $category->save();
 
         return [

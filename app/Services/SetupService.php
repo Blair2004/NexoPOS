@@ -223,7 +223,7 @@ class SetupService
         $user->username = $fields[ 'admin_username' ];
         $user->password = Hash::make( $fields[ 'password' ] );
         $user->email = $fields[ 'admin_email' ];
-        $user->author = $userID;
+        $user->author_id = $userID;
         $user->active = true; // first user active by default;
         $user->save();
         $user->assignRole( 'admin' );
@@ -269,21 +269,21 @@ class SetupService
         $cashPaymentType->label = __( 'Cash' );
         $cashPaymentType->identifier = 'cash-payment';
         $cashPaymentType->readonly = true;
-        $cashPaymentType->author = $user->id;
+        $cashPaymentType->author_id = $user->id;
         $cashPaymentType->save();
 
         $bankPaymentType = new PaymentType;
         $bankPaymentType->label = __( 'Bank Payment' );
         $bankPaymentType->identifier = 'bank-payment';
         $bankPaymentType->readonly = true;
-        $bankPaymentType->author = $user->id;
+        $bankPaymentType->author_id = $user->id;
         $bankPaymentType->save();
 
         $customerAccountType = new PaymentType;
         $customerAccountType->label = __( 'Customer Account' );
         $customerAccountType->identifier = 'account-payment';
         $customerAccountType->readonly = true;
-        $customerAccountType->author = $user->id;
+        $customerAccountType->author_id = $user->id;
         $customerAccountType->save();
     }
 

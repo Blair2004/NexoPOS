@@ -33,7 +33,7 @@ return new class extends Migration
                 $table->string( 'delivery_status' )->default( 'pending' ); // pending, delivered, stocked
                 $table->integer( 'total_items' )->default( 0 );
                 $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

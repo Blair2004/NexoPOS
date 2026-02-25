@@ -24,7 +24,7 @@ return new class extends Migration
                 $table->string( 'status' )->default( 'closed' ); // open, closed, disabled
                 $table->text( 'description' )->nullable();
                 $table->integer( 'used_by' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->float( 'balance', 18, 5 )->default( 0 );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

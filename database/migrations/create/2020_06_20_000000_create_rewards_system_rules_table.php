@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->float( 'reward', 18, 5 );
                 $table->integer( 'reward_id' );
                 $table->string( 'uuid' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->timestamps();
             } );
         }

@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int            $unit_id
  * @property int            $convert_unit_id
  * @property float          $cogs
- * @property int            $author
+ * @property int            $author_id
  * @property mixed          $uuid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -45,7 +45,7 @@ class ProcurementProduct extends NsModel
 
     const STOCK_REDUCE = 'reduce';
 
-    protected $fillable = [ 'is_conversion', 'author' ];
+    protected $fillable = [ 'is_conversion', 'author_id' ];
 
     protected $dispatchesEvents = [
         'creating' => ProcurementProductBeforeCreateEvent::class,

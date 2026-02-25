@@ -65,7 +65,7 @@ class TaxCrud extends CrudService
     ];
 
     public $relations = [
-        [ 'nexopos_users as user', 'nexopos_taxes.author', '=', 'user.id' ],
+        [ 'nexopos_users as user', 'nexopos_taxes.author_id', '=', 'user.id' ],
         [ 'nexopos_taxes_groups as parent', 'nexopos_taxes.tax_group_id', '=', 'parent.id' ],
     ];
 

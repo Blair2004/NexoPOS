@@ -159,7 +159,7 @@ class CustomerService
             }
         }
 
-        $customer->author = Auth::id();
+        $customer->author_id = Auth::id();
         $customer->save();
 
         /**
@@ -173,7 +173,7 @@ class CustomerService
                 if ( in_array( $type, [ 'billing', 'shipping' ] ) ) {
                     $customerAddress = new CustomerAddress;
                     $customerAddress->type = $type;
-                    $customerAddress->author = Auth::id();
+                    $customerAddress->author_id = Auth::id();
                     $customerAddress->customer_id = $customer->id;
 
                     foreach ( $fields as $field => $value ) {
@@ -215,7 +215,7 @@ class CustomerService
             }
         }
 
-        $customer->author = Auth::id();
+        $customer->author_id = Auth::id();
         $customer->update();
 
         /**
@@ -235,7 +235,7 @@ class CustomerService
                      */
                     if ( $customerAddress instanceof CustomerAddress ) {
                         $customerAddress->type = $type;
-                        $customerAddress->author = Auth::id();
+                        $customerAddress->author_id = Auth::id();
                         $customerAddress->customer_id = $customer->id;
 
                         foreach ( $addressFields as $field => $value ) {
@@ -246,7 +246,7 @@ class CustomerService
                     } else {
                         $customerAddress = new CustomerAddress;
                         $customerAddress->type = $type;
-                        $customerAddress->author = Auth::id();
+                        $customerAddress->author_id = Auth::id();
                         $customerAddress->customer_id = $customer->id;
 
                         foreach ( $addressFields as $field => $value ) {
@@ -349,7 +349,7 @@ class CustomerService
         $customerAccountHistory->amount = $amount;
         $customerAccountHistory->next_amount = $next_amount;
         $customerAccountHistory->description = $description;
-        $customerAccountHistory->author = $details[ 'author' ];
+        $customerAccountHistory->author_id = $details[ 'author_id' ];
 
         /**
          * We can now optionally provide
@@ -495,7 +495,7 @@ class CustomerService
                 $customerCoupon->code = $coupon->code . '-' . ns()->date->format( 'dmi' );
                 $customerCoupon->customer_id = $customer->id;
                 $customerCoupon->limit_usage = $coupon->limit_usage;
-                $customerCoupon->author = $customerReward->reward->author;
+                $customerCoupon->author_id = $customerReward->reward->author_id;
                 $customerCoupon->save();
 
                 $customerReward->points = abs( $customerReward->points - $customerReward->target );
@@ -581,7 +581,7 @@ class CustomerService
         $customerCoupon->coupon_id = $coupon->id;
         $customerCoupon->customer_id = $fields[ 'customer_id' ];
         $customerCoupon->order_id = $fields[ 'order_id' ];
-        $customerCoupon->author = Auth::id();
+        $customerCoupon->author_id = Auth::id();
         $customerCoupon->save();
 
         $this->setActiveStatus( $customerCoupon );
@@ -660,7 +660,7 @@ class CustomerService
             $group->$name = $value;
         }
 
-        $group->author = Auth::id();
+        $group->author_id = Auth::id();
         $group->save();
 
         return [
@@ -721,7 +721,7 @@ class CustomerService
             $customerCoupon->customer_id = $customer_id;
             $customerCoupon->coupon_id = $coupon->id;
             $customerCoupon->name = $coupon->name;
-            $customerCoupon->author = $coupon->author;
+            $customerCoupon->author_id = $coupon->author_id;
             $customerCoupon->active = true;
             $customerCoupon->code = $coupon->code;
             $customerCoupon->limit_usage = $coupon->limit_usage;

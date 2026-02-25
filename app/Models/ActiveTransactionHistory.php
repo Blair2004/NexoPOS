@@ -23,7 +23,7 @@ namespace App\Models;
  * @property float          $value
  * @property \Carbon\Carbon $trigger_date
  * @property mixed          $rule_id
- * @property mixed          $author
+ * @property mixed          $author_id
  * @property mixed          $created_at
  * @property mixed          $updated_at
  */

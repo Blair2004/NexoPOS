@@ -33,7 +33,7 @@ return new class extends Migration
                 $table->string( 'pobox' )->nullable();
                 $table->string( 'company' )->nullable();
                 $table->string( 'uuid' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->timestamps();
             } );
         }
@@ -47,7 +47,7 @@ return new class extends Migration
                 $table->float( 'amount' )->default( 0 );
                 $table->float( 'next_amount' )->default( 0 );
                 $table->string( 'operation' ); // sub / add
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->text( 'description' )->nullable();
                 $table->timestamps();
             } );

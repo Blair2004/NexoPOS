@@ -30,7 +30,7 @@ class ProviderService
             $provider->$field = $value;
         }
 
-        $provider->author = Auth::id();
+        $provider->author_id = Auth::id();
         $provider->save();
 
         return [
@@ -57,7 +57,7 @@ class ProviderService
                 $provider->$field = $value;
             }
 
-            $provider->author = Auth::id();
+            $provider->author_id = Auth::id();
             $provider->save();
 
             return [

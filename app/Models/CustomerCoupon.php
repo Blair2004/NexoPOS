@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @property int            $id
  * @property string         $code
- * @property int            $author
+ * @property int            $author_id
  * @property \Carbon\Carbon $updated_at
  * @property bool           $active
  */

@@ -22,20 +22,20 @@ class FirstExampleTaxesSeeder extends Seeder
 
         $group = new TaxGroup;
         $group->name = 'GST (7.5%)';
-        $group->author = $author;
+        $group->author_id = $author;
         $group->save();
 
         $tax = new Tax;
         $tax->name = 'SGST (5%)';
         $tax->rate = 5;
-        $tax->author = $author;
+        $tax->author_id = $author;
         $tax->tax_group_id = $group->id;
         $tax->save();
 
         $tax = new Tax;
         $tax->name = 'IGST (2.5%)';
         $tax->rate = 2.5;
-        $tax->author = $author;
+        $tax->author_id = $author;
         $tax->tax_group_id = $group->id;
         $tax->save();
     }

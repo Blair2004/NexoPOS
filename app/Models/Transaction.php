@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property mixed          $occurrence
  * @property mixed          $occurrence_value
  * @property \Carbon\Carbon $scheduled_date
- * @property int            $author
+ * @property int            $author_id
  * @property mixed          $uuid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -114,6 +114,6 @@ class Transaction extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class, 'author_id' );
     }
 }

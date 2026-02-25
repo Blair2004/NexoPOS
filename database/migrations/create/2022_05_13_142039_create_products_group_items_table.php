@@ -23,7 +23,7 @@ return new class extends Migration
                 $table->float( 'sale_price' )->default( 0 );
                 $table->float( 'quantity' )->default( 0 );
                 $table->float( 'total_price' )->default( 0 );
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->timestamps();
             } );
         }

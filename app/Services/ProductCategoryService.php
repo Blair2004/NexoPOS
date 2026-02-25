@@ -48,7 +48,7 @@ class ProductCategoryService
     public function create( $data, ?ProductCategory $productCategory = null )
     {
         $category = $productCategory === null ? new ProductCategory : $productCategory;
-        $category->author = Auth::id();
+        $category->author_id = Auth::id();
         $category->description = $data[ 'description' ] ?? '';
         $category->preview_url = $data[ 'preview_url' ] ?? '';
         $category->name = $data[ 'name' ];

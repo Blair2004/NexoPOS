@@ -18,7 +18,7 @@ class UnitGroupFactory extends Factory
         return Hook::filter( 'ns-unit-group', [
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
-            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'author_id' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ] );
     }
 }

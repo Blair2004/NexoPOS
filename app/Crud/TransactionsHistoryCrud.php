@@ -68,7 +68,7 @@ class TransactionsHistoryCrud extends CrudService
 
     /**
      * Adding relation
-     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author_id' ]
      *
      * @param array
      */
@@ -76,7 +76,7 @@ class TransactionsHistoryCrud extends CrudService
         'leftJoin' => [
             [ 'nexopos_transactions as transaction', 'transaction.id', '=', 'nexopos_transactions_histories.transaction_id' ],
         ],
-        [ 'nexopos_users as users', 'users.id', '=', 'nexopos_transactions_histories.author' ],
+        [ 'nexopos_users as users', 'users.id', '=', 'nexopos_transactions_histories.author_id' ],
         [ 'nexopos_transactions_accounts as transactions_accounts', 'transactions_accounts.id', '=', 'nexopos_transactions_histories.transaction_account_id' ],
     ];
 

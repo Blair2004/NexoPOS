@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  * @property string first_name
  * @property string last_name
  * @property string description
- * @property int author
+ * @property int author_id
  * @property string gender
  * @property string phone
  * @property string email

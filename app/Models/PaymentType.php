@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @property int            $id
  * @property string         $identifier
- * @property int            $author
+ * @property int            $author_id
  * @property string         $description
  * @property bool           $readonly
  * @property \Carbon\Carbon $updated_at
@@ -30,6 +30,6 @@ class PaymentType extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class, 'author_id' );
     }
 }

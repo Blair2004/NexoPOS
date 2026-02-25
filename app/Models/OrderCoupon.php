@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @property int            $id
  * @property string         $uuid
- * @property int            $author
+ * @property int            $author_id
  * @property float          $value
  * @property \Carbon\Carbon $updated_at
  */
@@ -37,6 +37,6 @@ class OrderCoupon extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class, 'author_id' );
     }
 }

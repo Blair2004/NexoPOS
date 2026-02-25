@@ -251,7 +251,7 @@ class RewardSystemCrud extends CrudService
             $newRule->to = $rule[ 'to' ];
             $newRule->reward = $rule[ 'reward' ];
             $newRule->reward_id = $entry->id;
-            $newRule->author = Auth::id();
+            $newRule->author_id = Auth::id();
             $newRule->save();
         }
     }
@@ -308,7 +308,7 @@ class RewardSystemCrud extends CrudService
                 $existingRule->from = $rule[ 'from' ];
                 $existingRule->to = $rule[ 'to' ];
                 $existingRule->reward = $rule[ 'reward' ];
-                $existingRule->author = Auth::id();
+                $existingRule->author_id = Auth::id();
                 $existingRule->save();
             } else {
                 $newRule = new RewardSystemRule;
@@ -316,7 +316,7 @@ class RewardSystemCrud extends CrudService
                 $newRule->to = $rule[ 'to' ];
                 $newRule->reward = $rule[ 'reward' ];
                 $newRule->reward_id = $entry->id;
-                $newRule->author = Auth::id();
+                $newRule->author_id = Auth::id();
                 $newRule->save();
             }
         }

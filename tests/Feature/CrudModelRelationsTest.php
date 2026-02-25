@@ -120,7 +120,7 @@ class CrudModelRelationsTest extends TestCase
              * Old style: numeric key, raw 4-element array with explicit alias.
              */
             public $relations = [
-                [ 'nexopos_users as author', 'nexopos_providers.author', '=', 'author.id' ],
+                [ 'nexopos_users as author', 'nexopos_providers.author_id', '=', 'author.id' ],
             ];
 
             public $pick = [
@@ -282,7 +282,7 @@ class CrudModelRelationsTest extends TestCase
              */
             public $relations = [
                 'leftJoin' => [
-                    [ 'nexopos_users as author', 'nexopos_providers.author', '=', 'author.id' ],
+                    [ 'nexopos_users as author', 'nexopos_providers.author_id', '=', 'author.id' ],
                 ],
             ];
 

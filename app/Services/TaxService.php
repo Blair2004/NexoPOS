@@ -135,7 +135,7 @@ class TaxService
         $group = new TaxGroup;
         $group->name = $fields[ 'name' ];
         $group->description = $fields[ 'description' ];
-        $group->author = Auth::id();
+        $group->author_id = Auth::id();
         $group->save();
 
         return [
@@ -155,7 +155,7 @@ class TaxService
         $tax->rate = $fields[ 'rate' ];
         $tax->tax_group_id = $fields[ 'tax_group_id' ];
         $tax->description = $fields[ 'description' ];
-        $tax->author = Auth::id();
+        $tax->author_id = Auth::id();
         $tax->save();
 
         return [
@@ -196,7 +196,7 @@ class TaxService
             $tax->$field = $value;
         }
 
-        $tax->author = Auth::id();
+        $tax->author_id = Auth::id();
         $tax->save();
 
         return $tax;
@@ -233,7 +233,7 @@ class TaxService
             $tax->$field = $value;
         }
 
-        $tax->author = Auth::id();
+        $tax->author_id = Auth::id();
         $tax->save();
 
         return $tax;

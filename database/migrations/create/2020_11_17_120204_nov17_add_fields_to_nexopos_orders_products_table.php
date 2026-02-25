@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::createIfMissing( 'nexopos_orders_refunds', function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->integer( 'order_id' );
-            $table->integer( 'author' );
+            $table->integer( 'author_id' );
             $table->float( 'total', 18, 5 );
             $table->float( 'tax_value', 18, 5 )->default( 0 );
             $table->float( 'shipping', 18, 5 );
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->float( 'total_price', 18, 5 );
             $table->string( 'condition' ); // either unspoiled, damaged
             $table->text( 'description' )->nullable();
-            $table->integer( 'author' );
+            $table->integer( 'author_id' );
             $table->timestamps();
         } );
     }

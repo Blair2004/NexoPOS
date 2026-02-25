@@ -205,9 +205,9 @@ class RegisterHistoryCrud extends CrudService
                             'value' => $entry->action ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'author',
+                            'name' => 'author_id',
                             'label' => __( 'Author' ),
-                            'value' => $entry->author ?? '',
+                            'value' => $entry->author_id ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'value',

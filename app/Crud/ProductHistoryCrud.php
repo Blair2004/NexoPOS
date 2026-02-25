@@ -174,9 +174,9 @@ class ProductHistoryCrud extends CrudService
                             'value' => $entry->after_quantity ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'author',
+                            'name' => 'author_id',
                             'label' => __( 'Author' ),
-                            'value' => $entry->author ?? '',
+                            'value' => $entry->author_id ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'before_quantity',

@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'order_id' );
                 $table->float( 'value', 18, 5 )->default( 0 );
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'identifier' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

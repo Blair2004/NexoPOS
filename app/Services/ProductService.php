@@ -305,7 +305,7 @@ class ProductService
             }
         }
 
-        $product->author = $fields[ 'author' ] ?? Auth::id();
+        $product->author_id = $fields[ 'author_id' ] ?? Auth::id();
         $product->save();
 
         /**
@@ -507,7 +507,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
-        $product->author = $fields[ 'author' ] ?? Auth::id();
+        $product->author_id = $fields[ 'author_id' ] ?? Auth::id();
         $product->save();
 
         /**
@@ -560,7 +560,7 @@ class ProductService
                 $subitem->sale_price = $item[ 'sale_price' ];
                 $subitem->quantity = $item[ 'quantity' ];
                 $subitem->total_price = $item[ 'total_price' ] ?? (float) $item[ 'sale_price' ] * (float) $item[ 'quantity' ];
-                $subitem->author = $product->author;
+                $subitem->author_id = $product->author_id;
                 $subitem->save();
             } else {
                 $subitem = ProductSubItem::find( $item[ 'id' ] );
@@ -576,7 +576,7 @@ class ProductService
                 $subitem->sale_price = $item[ 'sale_price' ];
                 $subitem->quantity = $item[ 'quantity' ];
                 $subitem->total_price = $item[ 'total_price' ] ?? (float) $item[ 'sale_price' ] * (float) $item[ 'quantity' ];
-                $subitem->author = $product->author;
+                $subitem->author_id = $product->author_id;
                 $subitem->save();
             }
 
@@ -637,7 +637,7 @@ class ProductService
             $image = new ProductGallery;
             $image->featured = $group[ 'featured' ] ?? 0;
             $image->url = $group[ 'url' ];
-            $image->author = $product->author;
+            $image->author_id = $product->author_id;
             $image->product_id = $product->id;
             $image->save();
         }
@@ -963,7 +963,7 @@ class ProductService
         $history->before_quantity = $currentQuantity;
         $history->quantity = $quantity;
         $history->after_quantity = $newQuantity;
-        $history->author = Auth::id() ?: Procurement::find( $procurement_id )->author;
+        $history->author_id = Auth::id() ?: Procurement::find( $procurement_id )->author_id;
         $history->save();
     }
 
@@ -1600,7 +1600,7 @@ class ProductService
         $history->before_quantity = $old_quantity; // if the stock management is 0, it shouldn't change
         $history->quantity = abs( $quantity );
         $history->after_quantity = $new_quantity; // if the stock management is 0, it shouldn't change
-        $history->author = $author ?: Auth::id();
+        $history->author_id = $author ?: Auth::id();
         $history->save();
 
         event( new ProductAfterStockAdjustmentEvent( $history ) );
@@ -1900,7 +1900,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
-        $product->author = $parent->author;
+        $product->author_id = $parent->author_id;
         $product->parent_id = $parent->id;
         $product->type = $parent->type;
         $product->category_id = $parent->category_id;
@@ -1940,7 +1940,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
-        $product->author = $parent->author;
+        $product->author_id = $parent->author_id;
         $product->parent_id = $parent->id;
         $product->type = $parent->type;
         $product->product_type = 'variation';

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int    $range_end
  * @property int    $next_scale_plu
  * @property string $description
- * @property int    $author
+ * @property int    $author_id
  */
 class ScaleRange extends NsModel
 {
@@ -25,7 +25,7 @@ class ScaleRange extends NsModel
         'range_end',
         'next_scale_plu',
         'description',
-        'author',
+        'author_id',
     ];
 
     protected $casts = [
