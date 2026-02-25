@@ -118,7 +118,7 @@ class CustomersController extends DashboardController
     public function post( Request $request )
     {
         $data = $request->only( [
-            'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
+            'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address', 'active',
         ] );
 
         return $this->customerService->create( $data );
@@ -136,7 +136,7 @@ class CustomersController extends DashboardController
     public function put( $customer_id, Request $request )
     {
         $data = $request->only( [
-            'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
+            'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address', 'active',
         ] );
 
         return $this->customerService->update( $customer_id, $data );
