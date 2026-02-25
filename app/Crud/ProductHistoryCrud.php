@@ -63,7 +63,7 @@ class ProductHistoryCrud extends CrudService
         [ 'nexopos_products as products', 'nexopos_products_histories.product_id', '=', 'products.id' ],
         [ 'nexopos_units as units', 'nexopos_products_histories.unit_id', '=', 'units.id' ],
         'leftJoin' => [
-            [ 'nexopos_users as users', 'nexopos_products_histories.author', '=', 'users.id' ],
+            [ User::class, 'user' ],
             [ 'nexopos_procurements as procurements', 'nexopos_products_histories.procurement_id', '=', 'procurements.id' ],
             [ 'nexopos_orders as orders', 'nexopos_products_histories.order_id', '=', 'orders.id' ],
         ],

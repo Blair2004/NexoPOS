@@ -73,6 +73,7 @@
 <script lang="ts">
 import { nsHttpClient, nsSnackBar } from "~/bootstrap";
 import { __ } from '~/libraries/lang';
+import { sanitizeHTML } from '~/libraries/sanitize';
 import NsPosConfirmPopup from "~/popups/ns-pos-confirm-popup.vue";
 
 declare const nsEvent;
@@ -92,17 +93,7 @@ export default {
     },
     methods: {
         __,
-
-        sanitizeHTML(s) {
-            var div         = document.createElement('div');
-            div.innerHTML   = s;
-            var scripts     = div.getElementsByTagName('script');
-            var i           = scripts.length;
-            while (i--) {
-              scripts[i].parentNode.removeChild(scripts[i]);
-            }
-            return div.innerHTML;
-        },
+        sanitizeHTML,
         getElementOffset(el) {
             const rect = el.getBoundingClientRect();
             

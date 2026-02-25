@@ -6,6 +6,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
+use App\Models\User;
 use App\Services\ProviderService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -43,7 +44,9 @@ class ProcurementCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users as users', 'nexopos_procurements.author', '=', 'users.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         [ 'nexopos_providers as providers', 'nexopos_procurements.provider_id', '=', 'providers.id' ],
     ];
 
@@ -366,7 +369,7 @@ class ProcurementCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'users_username' => [
+            'user_username' => [
                 'label' => __( 'Author' ),
                 '$direction' => '',
                 '$sort' => false,

@@ -70,7 +70,9 @@ class RegisterHistoryCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_registers_history.author' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
     ];
 
     /**

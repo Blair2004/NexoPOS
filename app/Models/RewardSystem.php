@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -26,5 +27,10 @@ class RewardSystem extends NsModel
     public function coupon()
     {
         return $this->hasOne( Coupon::class, 'id', 'coupon_id' );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
     }
 }

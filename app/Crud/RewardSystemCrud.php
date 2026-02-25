@@ -5,6 +5,7 @@ namespace App\Crud;
 use App\Models\Coupon;
 use App\Models\RewardSystem;
 use App\Models\RewardSystemRule;
+use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
@@ -52,12 +53,14 @@ class RewardSystemCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_rewards_system.author', '=', 'nexopos_users.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_rewards_system.coupon_id' ],
     ];
 
     public $pick = [
-        'nexopos_users' => [ 'username' ],
+        'user' => [ 'username' ],
         'coupon' => [ 'name' ],
     ];
 
@@ -372,7 +375,7 @@ class RewardSystemCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'nexopos_users_username' => [
+            'user_username' => [
                 'label' => __( 'Author' ),
                 '$direction' => '',
                 '$sort' => false,

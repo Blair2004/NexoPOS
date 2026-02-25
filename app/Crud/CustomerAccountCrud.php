@@ -87,7 +87,9 @@ class CustomerAccountCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_account_history.author' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         'leftJoin' => [
             [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_customers_account_history.order_id' ],
         ],

@@ -12,6 +12,7 @@ use App\Models\ProductCategory;
 use App\Models\ProductUnitQuantity;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
+use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
@@ -64,7 +65,9 @@ class ProductCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users as user', 'nexopos_products.author', '=', 'user.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         'leftJoin' => [
             [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
             [ 'nexopos_products as parent', 'nexopos_products.parent_id', '=', 'parent.id' ],

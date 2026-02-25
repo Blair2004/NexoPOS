@@ -111,4 +111,9 @@ class Procurement extends NsModel
     {
         return $query->where( 'automatic_approval', true );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }

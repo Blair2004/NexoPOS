@@ -8,6 +8,7 @@ use App\Casts\DiscountTypeCast;
 use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
 use App\Models\OrderCoupon;
+use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use Illuminate\Http\Request;
@@ -78,7 +79,9 @@ class CouponOrderHistoryCrud extends CrudService
      * @param array
      */
     public $relations = [
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders_coupons.author' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_coupons.order_id' ],
         [ 'nexopos_users as customer', 'customer.id', '=', 'order.customer_id' ],
     ];

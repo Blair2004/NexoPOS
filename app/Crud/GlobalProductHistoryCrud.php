@@ -78,7 +78,9 @@ class GlobalProductHistoryCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_products_histories.author' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         [ 'nexopos_products as product', 'product.id', '=', 'nexopos_products_histories.product_id' ],
         [ 'nexopos_units as unit', 'unit.id', '=', 'nexopos_products_histories.unit_id' ],
         'leftJoin' => [

@@ -7,6 +7,7 @@ use App\Models\Tax;
 use App\Models\TaxGroup;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
+use App\Models\User;
 use App\Services\Helper;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;

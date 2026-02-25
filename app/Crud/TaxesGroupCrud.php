@@ -5,6 +5,7 @@ namespace App\Crud;
 use App\Models\TaxGroup;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
+use App\Models\User;
 use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -47,7 +48,9 @@ class TaxesGroupCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users as user', 'nexopos_taxes_groups.author', '=', 'user.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
     ];
 
     /**

@@ -8,6 +8,7 @@ use App\Events\ProductCategoryBeforeDeletedEvent;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ScaleRange;
+use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
@@ -53,7 +54,9 @@ class ProductCategoryCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users as user', 'nexopos_products_categories.author', '=', 'user.id' ],
+        'join' => [
+            'user' => [ User::class, 'author' ],
+        ],
         'leftJoin' => [
             [ 'nexopos_products_categories as parent', 'nexopos_products_categories.parent_id', '=', 'parent.id' ],
         ],

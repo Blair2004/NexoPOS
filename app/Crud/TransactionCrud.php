@@ -20,6 +20,7 @@ use App\Models\TransactionAccount;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
+use App\Models\User;
 use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -62,7 +63,9 @@ class TransactionCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users as user', 'nexopos_transactions.author', '=', 'user.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         [ 'nexopos_transactions_accounts as transactions_accounts', 'transactions_accounts.id', '=', 'nexopos_transactions.account_id' ],
     ];
 

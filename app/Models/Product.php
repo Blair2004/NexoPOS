@@ -376,4 +376,9 @@ class Product extends NsModel
     {
         return $query->where( 'searchable', $attribute );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }

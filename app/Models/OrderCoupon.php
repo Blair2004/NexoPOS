@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Events\OrderCouponAfterCreatedEvent;
 use App\Events\OrderCouponAfterUpdatedEvent;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -32,5 +33,10 @@ class OrderCoupon extends NsModel
     public function customerCoupon()
     {
         return $this->belongsTo( CustomerCoupon::class, 'customer_coupon_id' );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
     }
 }

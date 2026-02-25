@@ -36,4 +36,9 @@ class UnitGroup extends NsModel
     {
         return $this->hasMany( Unit::class, 'group_id' );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }
