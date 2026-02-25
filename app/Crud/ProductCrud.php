@@ -384,7 +384,7 @@ class ProductCrud extends CrudService
                                     'label' => __( 'Pin Product' ),
                                     'value' => $entry->pinned ?? false,
                                 ], [
-                                    'type' => 'textarea',
+                                    'type' => 'ckeditor',
                                     'name' => 'description',
                                     'label' => __( 'Description' ),
                                     'value' => $entry->description ?? '',
