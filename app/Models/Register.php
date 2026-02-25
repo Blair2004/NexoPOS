@@ -59,4 +59,14 @@ class Register extends NsModel
     {
         return $this->hasMany( RegisterHistory::class, 'register_id', 'id' );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
+
+    public function cashier()
+    {
+        return $this->belongsTo( User::class, 'used_by' );
+    }
 }

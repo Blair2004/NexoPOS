@@ -39,4 +39,9 @@ class TaxGroup extends NsModel
     {
         return $this->hasMany( Tax::class );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }

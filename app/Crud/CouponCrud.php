@@ -15,6 +15,7 @@ use App\Models\Customer;
 use App\Models\CustomerGroup;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\CustomerService;
@@ -84,7 +85,9 @@ class CouponCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_coupons.author', '=', 'nexopos_users.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
     ];
 
     /**
@@ -108,7 +111,9 @@ class CouponCrud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick = [];
+    public $pick = [
+        'user' => [ 'username' ],
+    ];
 
     /**
      * Define where statement
@@ -633,7 +638,7 @@ class CouponCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'nexopos_users_username' => [
+            'user_username' => [
                 'label' => __( 'Author' ),
                 '$direction' => '',
                 '$sort' => false,

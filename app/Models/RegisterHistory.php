@@ -106,4 +106,9 @@ class RegisterHistory extends NsModel
     {
         return $query->where( 'created_at', '<=', $date );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }

@@ -69,9 +69,11 @@ class RegisterCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users as user', 'nexopos_registers.author', '=', 'user.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         'leftJoin' => [
-            [ 'nexopos_users as cashier', 'nexopos_registers.used_by', '=', 'cashier.id' ],
+            [ User::class, 'cashier' ],
         ],
     ];
 

@@ -59,4 +59,9 @@ class Unit extends NsModel
     {
         return $query->where( 'identifier', $identifier );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }

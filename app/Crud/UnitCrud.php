@@ -10,6 +10,7 @@ use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\UsersService;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -52,7 +53,9 @@ class UnitCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users as user', 'nexopos_units.author', '=', 'user.id' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
         [ 'nexopos_units_groups as group', 'nexopos_units.group_id', '=', 'group.id' ],
     ];
 

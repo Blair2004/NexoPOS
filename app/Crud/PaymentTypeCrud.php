@@ -74,7 +74,9 @@ class PaymentTypeCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_payments_types.author' ],
+        'join' => [
+            [ User::class, 'user' ],
+        ],
     ];
 
     /**

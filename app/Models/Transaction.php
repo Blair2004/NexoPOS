@@ -111,4 +111,9 @@ class Transaction extends NsModel
     {
         return $query->where( 'active', true );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }

@@ -61,8 +61,10 @@ class OrderCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users as author', 'nexopos_orders.author', '=', 'author.id' ],
-        [ 'nexopos_users as customer', 'nexopos_orders.customer_id', '=', 'customer.id' ],
+        'join' => [
+            'author' => [ User::class, 'user' ],
+            [ Customer::class, 'customer' ],
+        ],
     ];
 
     public $pick = [

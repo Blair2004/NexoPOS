@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Events\CustomerAccountHistoryAfterCreatedEvent;
 use App\Events\CustomerAccountHistoryAfterUpdatedEvent;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -37,5 +38,10 @@ class CustomerAccountHistory extends NsModel
     public function customer()
     {
         return $this->hasOne( Customer::class, 'id', 'customer_id' );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
     }
 }

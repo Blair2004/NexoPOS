@@ -38,4 +38,9 @@ class Provider extends NsModel
     {
         return $this->hasMany( Procurement::class );
     }
+
+    public function user()
+    {
+        return $this->belongsTo( User::class, 'author' );
+    }
 }

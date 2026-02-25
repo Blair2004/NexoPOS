@@ -13,6 +13,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/vite": "^4.2.1",
+    "@types/dompurify": "^3.0.5",
     "@vitejs/plugin-vue": "^6.0.1",
     "laravel-echo": "^2.3.0",
     "laravel-vite-plugin": "^2.1.0",
@@ -31,6 +32,7 @@
     "chart.js": "^4.5.1",
     "ckeditor5": "^47.5.0",
     "currency.js": "^2.0.4",
+    "dompurify": "^3.3.1",
     "lodash": "^4.17.23",
     "mathjs": "^15.1.0",
     "moment": "^2.30.1",

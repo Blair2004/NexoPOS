@@ -33,6 +33,11 @@ class Customer extends UserScope
 
     protected $table = 'nexopos_' . 'users';
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     public function setDependencies()
     {
         return [

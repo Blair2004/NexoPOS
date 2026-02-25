@@ -1780,6 +1780,50 @@ class OrdersService
             throw new NotAllowedException( __( 'Unable to proceed a refund on an unpaid order.' ) );
         }
 
+        /**
+         * Validate every product before starting the refund so we don't
+         * end up with a partial refund if one of the products is invalid.
+         */
+        foreach ( $fields[ 'products' ] as $product ) {
+            $orderProduct = OrderProduct::find( $product[ 'id' ] );
+
+            if ( ! $orderProduct instanceof OrderProduct ) {
+                throw new NotFoundException( sprintf(
+                    __( 'Unable to find the order product with the provided identifier: %s' ),
+                    $product[ 'id' ]
+                ) );
+            }
+
+            $refundQuantity = floatval( $product[ 'quantity' ] );
+
+            if ( $refundQuantity <= 0 ) {
+                throw new NotAllowedException( sprintf(
+                    __( 'The refund quantity for "%s" must be greater than zero.' ),
+                    $orderProduct->name
+                ) );
+            }
+
+            if ( $refundQuantity > $orderProduct->quantity ) {
+                throw new NotAllowedException( sprintf(
+                    __( 'The refund quantity (%s) for "%s" exceeds the remaining refundable quantity (%s).' ),
+                    $refundQuantity,
+                    $orderProduct->name,
+                    $orderProduct->quantity
+                ) );
+            }
+
+            $refundUnitPrice = floatval( $product[ 'unit_price' ] );
+
+            if ( $refundUnitPrice > $orderProduct->unit_price ) {
+                throw new NotAllowedException( sprintf(
+                    __( 'The refund unit price (%s) for "%s" cannot exceed the original unit price (%s).' ),
+                    $refundUnitPrice,
+                    $orderProduct->name,
+                    $orderProduct->unit_price
+                ) );
+            }
+        }
+
         $orderRefund = new OrderRefund;
         $orderRefund->author = Auth::id();
         $orderRefund->order_id = $order->id;
