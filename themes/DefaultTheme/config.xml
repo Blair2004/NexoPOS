@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<theme>
+    <namespace>DefaultTheme</namespace>
+    <version>1.0.0</version>
+    <name>Default NexoPOS Theme</name>
+    <author>NexoPOS Team</author>
+    <description>
+        <locale lang="en">A clean and modern default theme for NexoPOS with blog, pages, and store support.</locale>
+        <locale lang="fr">Un thème par défaut propre et moderne pour NexoPOS avec support blog, pages et boutique.</locale>
+    </description>
+    <core min-version="6.0.0" max-version="7.0.0" />
+    <features>
+        <item name="Blog" identifier="blog" />
+        <item name="Pages" identifier="pages" />
+        <item name="Store" identifier="store" />
+        <item name="Header Menu" identifier="header-menu" />
+        <item name="Footer Menu" identifier="footer-menu" />
+    </features>
+</theme>
