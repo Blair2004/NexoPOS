@@ -46,6 +46,12 @@ class CrudController extends DashboardController
          */
         $service = new CrudService;
         $resource = $service->getCrudInstance( $namespace );
+
+        /**
+         * Framework-level permission check before any deletion.
+         */
+        $resource->allowedTo( 'delete' );
+
         $modelClass = $resource->getModel();
         $model = $modelClass::find( $id );
 
@@ -86,6 +92,14 @@ class CrudController extends DashboardController
      */
     public function crudPost( string $identifier, CrudPostRequest $request )
     {
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
+        $resource = new $crudClass;
+
+        /**
+         * Framework-level permission check before any create operation.
+         */
+        $resource->allowedTo( 'create' );
+
         $service = new CrudService;
         $inputs = $request->getPlainData( $identifier );
 
@@ -102,6 +116,14 @@ class CrudController extends DashboardController
      */
     public function crudPut( $identifier, $id, CrudPutRequest $request )
     {
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
+        $resource = new $crudClass;
+
+        /**
+         * Framework-level permission check before any update operation.
+         */
+        $resource->allowedTo( 'update' );
+
         $service = new CrudService;
         $inputs = $request->getPlainData( $identifier );
 
@@ -151,6 +173,11 @@ class CrudController extends DashboardController
         }
 
         $resource = new $crudClass;
+
+        /**
+         * Framework-level permission check before any bulk action.
+         */
+        $resource->allowedTo( 'read' );
 
         /**
          * Check if an entry is selected,
