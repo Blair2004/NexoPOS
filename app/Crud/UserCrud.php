@@ -510,6 +510,19 @@ class UserCrud extends CrudService
     }
 
     /**
+     * Before saving a new record
+     *
+     * @param  Request $request
+     * @return void
+     */
+    public function beforePost( $request )
+    {
+        $this->allowedTo( 'create' );
+
+        return $request;
+    }
+
+    /**
      * After saving a record
      *
      * @param  Request $request

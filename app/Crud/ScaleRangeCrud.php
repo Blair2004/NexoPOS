@@ -298,6 +298,8 @@ class ScaleRangeCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model )
     {
+        $this->allowedTo( 'delete' );
+
         // Check if any categories are using this range
         if ( $model->categories()->count() > 0 ) {
             return response()->json( [

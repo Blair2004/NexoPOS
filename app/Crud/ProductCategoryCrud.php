@@ -291,7 +291,7 @@ class ProductCategoryCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'delete' );
+        $this->allowedTo( 'update' );
 
         return $request;
     }

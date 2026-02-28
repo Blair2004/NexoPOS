@@ -274,7 +274,7 @@ class CustomerGroupCrud extends CrudService
      */
     public function beforePut( $request, $id )
     {
-        $this->allowedTo( 'delete' );
+        $this->allowedTo( 'update' );
     }
 
     /**
