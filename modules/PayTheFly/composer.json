@@ -1,0 +1,14 @@
+{
+    "name": "paythefly/nexopos-module",
+    "description": "PayTheFly cryptocurrency payment gateway for NexoPOS",
+    "type": "library",
+    "require": {
+        "kornrunner/keccak": "^1.1",
+        "simplito/elliptic-php": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PayTheFly\\": ""
+        }
+    }
+}
