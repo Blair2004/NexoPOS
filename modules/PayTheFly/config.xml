@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+    <namespace>PayTheFly</namespace>
+    <version>1.0.0</version>
+    <name>PayTheFly Crypto Payment Gateway</name>
+    <author>PayTheFly</author>
+    <description>
+        <locale lang="en">Accept cryptocurrency payments via PayTheFly Pro. Supports BSC and TRON networks with native tokens and custom ERC-20/TRC-20 tokens.</locale>
+        <locale lang="zh">通过 PayTheFly Pro 接收加密货币支付。支持 BSC 和 TRON 网络，原生代币及自定义 ERC-20/TRC-20 代币。</locale>
+    </description>
+    <core min-version="5.0.0" max-version="5.x.x"></core>
+    <requires></requires>
+</module>
