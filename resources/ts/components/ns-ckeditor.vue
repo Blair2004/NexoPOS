@@ -58,7 +58,7 @@ class Editor extends ClassicEditor {
 				'undo', 'redo',
 				'|', 'heading',
 				'|', 'bold', 'italic',
-				'|', 'link', 'uploadImage', 'insertTable', 'blockQuote', 'mediaEmbed',
+				'|', 'link', 'insertTable', 'blockQuote', 
 				'|', 'bulletedList', 'numberedList', 'outdent', 'indent'
 			]
 		},
