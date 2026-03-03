@@ -54,3 +54,15 @@ public/hot
 storage/dotenv-editor
 .cloud
 ns
+
+# Playwright
+playwright-report/
+playwright-results/
+playwright/.auth/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
