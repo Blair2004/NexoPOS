@@ -50,20 +50,20 @@
                             <div class="w-full absolute z-10 -bottom-10">
                                 <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
                                     <h3 class="text-sm text-center w-full">{{ product.name }}</h3>
-                                    <template v-if="options.ns_pos_vat === 'disabled'">
-                                        <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                            {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
-                                        </span>
-                                    </template>
-                                    <template v-else-if="options.ns_pos_gross_price_used">
-                                        <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                            {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
-                                        </span>
-                                    </template>
-                                    <template v-else-if="options.ns_pos_gross_price_used === 'no'">
-                                        <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                            {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
-                                        </span>
+                                    <template v-if="product.unit_quantities && product.unit_quantities.length === 1">
+                                        <template v-if="options.ns_pos_vat === 'disabled'">
+                                            <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
+                                                {{ nsCurrency( product.unit_quantities[0].sale_price ) }}
+                                            </span>
+                                        </template>
+                                        <template v-else>
+                                            <span v-if="options.ns_pos_price_with_tax === 'yes'" class="text-sm">
+                                                {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
+                                            </span>
+                                            <span v-else class="text-sm">
+                                                {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
+                                            </span>
+                                        </template>
                                     </template>
                                 </div>
                             </div>
@@ -107,20 +107,20 @@
                         <div class="w-full absolute z-10 -bottom-10">
                             <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
                                 <h3 class="text-sm text-center w-full">{{ product.name }}</h3>
-                                <template v-if="options.ns_pos_vat === 'disabled'">
-                                    <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                        {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
-                                    </span>
-                                </template>
-                                <template v-else-if="options.ns_pos_gross_price_used">
-                                    <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                        {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
-                                    </span>
-                                </template>
-                                <template v-else-if="options.ns_pos_gross_price_used === 'no'">
-                                    <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                        {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
-                                    </span>
+                                <template v-if="product.unit_quantities && product.unit_quantities.length === 1">
+                                    <template v-if="options.ns_pos_vat === 'disabled'">
+                                        <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
+                                            {{ nsCurrency( product.unit_quantities[0].sale_price ) }}
+                                        </span>
+                                    </template>
+                                    <template v-else>
+                                        <span v-if="options.ns_pos_price_with_tax === 'yes'" class="text-sm">
+                                            {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
+                                        </span>
+                                        <span v-else class="text-sm">
+                                            {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
+                                        </span>
+                                    </template>
                                 </template>
                             </div>
                         </div>

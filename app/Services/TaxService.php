@@ -477,18 +477,18 @@ class TaxService
 
         $orderProduct->discount = $discount;
 
-        $orderProduct->total_price_without_tax = $orderProduct->total_price_without_tax ?: ns()->currency
+        $orderProduct->total_price_without_tax = ns()->currency
             ->fresh( $orderProduct->price_without_tax )
             ->multiplyBy( $orderProduct->quantity )
             ->get();
 
-        $orderProduct->total_price = $orderProduct->total_price ?: ns()->currency
+        $orderProduct->total_price = ns()->currency
             ->fresh( $orderProduct->filterAttribute( 'unit_price', $productArray ) )
             ->subtractBy( $discount )
             ->multiplyBy( $orderProduct->quantity )
             ->toFloat();
 
-        $orderProduct->total_price_with_tax = $orderProduct->total_price_with_tax ?: ns()->currency
+        $orderProduct->total_price_with_tax = ns()->currency
             ->fresh( $orderProduct->price_with_tax )
             ->multiplyBy( $orderProduct->quantity )
             ->get();

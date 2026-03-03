@@ -302,8 +302,10 @@ class CategoryController extends DashboardController
                 'products' => $productsQuery
                     ->get()
                     ->map( function ( $product ) {
-                        if ( $product->unit_quantities()->count() === 1 ) {
-                            $product->load( 'unit_quantities.unit' );
+                        if ( $product->unit_quantities()->where( 'visible', true )->count() === 1 ) {
+                            $product->load( [ 'unit_quantities' => function ( $query ) {
+                                $query->where( 'visible', true )->with( 'unit' );
+                            } ] );
                         }
 
                         return $product;
@@ -356,8 +358,10 @@ class CategoryController extends DashboardController
             ->trackingDisabled()
             ->get()
             ->map( function ( $product ) {
-                if ( $product->unit_quantities()->count() === 1 ) {
-                    $product->load( 'unit_quantities.unit' );
+                if ( $product->unit_quantities()->where( 'visible', true )->count() === 1 ) {
+                    $product->load( [ 'unit_quantities' => function ( $query ) {
+                        $query->where( 'visible', true )->with( 'unit' );
+                    } ] );
                 }
 
                 return $product;

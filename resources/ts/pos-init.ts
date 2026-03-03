@@ -374,7 +374,7 @@ export class POS {
         let price = 0;
 
         if ( this.options.getValue().ns_pos_vat === 'disabled' ) {
-            price = nsRawCurrency( item.sale_price_with_tax );
+            price = nsRawCurrency( item.sale_price );
         } else {
             if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
                 price = nsRawCurrency( item.sale_price_with_tax );
@@ -713,7 +713,19 @@ export class POS {
         order.products = products;
         order.total_products = products.length;
 
-        if ([ 'products_vat' ].includes(posVat) ) {
+        /**
+         * Always reset to prevent stale values from a previous
+         * VAT mode leaking into a different configuration.
+         */
+        order.products_tax_value = 0;
+
+        /**
+         * Product-level taxes are only relevant in products_vat mode.
+         * For flat_vat / variable_vat, taxes are computed via computeOrderTaxes
+         * and added directly to order.tax_value, then onto the total in refreshCart.
+         * For disabled, no tax logic should apply at all.
+         */
+        if ( posVat === 'products_vat' ) {
             const totalTaxValue =  products.map((product: OrderProduct) => {
                 return product.total_tax_value;
             });
@@ -721,18 +733,16 @@ export class POS {
             if ( totalTaxValue.length > 0 ) {
                 order.products_tax_value = totalTaxValue.reduce((before, after) => before + after);
             }
-        }
 
-        /**
-         * We need to add the product taxes to the subtotal when
-         * the price with tax is disabled and the VAT is not set to either: products_vat
-         */
-        if ( options.ns_pos_price_with_tax === 'no' ) {
             /**
-             * If the price with tax is enabled, we'll add the tax value
-             * to the subtotal.
+             * When pricing is exclusive (price does not include tax), the
+             * product tax values must be surfaced in the subtotal so they are
+             * reflected in discounts, coupons and the final total.
+             * When pricing is inclusive the tax is already embedded in the price.
              */
-            order.subtotal      =   math.chain( order.subtotal ).add( order.products_tax_value ).done();
+            if ( options.ns_pos_price_with_tax === 'no' ) {
+                order.subtotal  =   math.chain( order.subtotal ).add( order.products_tax_value ).done();
+            }
         }
 
         return order;
