@@ -8,11 +8,11 @@ export interface OrderProduct extends Product {
     unit_id: number;
     unit_name: string | undefined;
     unit_price: number;   
-    price_with_tax:number;
-    price_without_tax: number; 
+    price_gross:number;
+    price_net: number; 
     total_price: number;
-    total_price_with_tax: number;
-    total_price_without_tax: number;
+    total_price_gross: number;
+    total_price_net: number;
     total_tax_value?: number;
     product_type: 'product' | 'dynamic';
     rate?: number;

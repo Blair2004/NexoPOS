@@ -180,7 +180,7 @@ class OrdersController extends DashboardController
                 'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes' ),
                 'ns_pos_quick_product' => ns()->option->get( 'ns_pos_quick_product', 'no' ),
                 'ns_pos_quick_product_default_unit' => ns()->option->get( 'ns_pos_quick_product_default_unit', 0 ),
-                'ns_pos_price_with_tax' => ns()->option->get( 'ns_pos_price_with_tax', 'no' ),
+                'ns_pos_prefered_price' => ns()->option->get( 'ns_pos_prefered_price', 'net_prices' ),
                 'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no' ),
                 'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_orders' ),
                 'ns_pos_registers_enabled' => ns()->option->get( 'ns_pos_registers_enabled', 'no' ),

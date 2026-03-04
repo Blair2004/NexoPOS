@@ -1112,8 +1112,8 @@ class OrdersService
             $orderProduct->product_category_id = $product[ 'product' ]->category_id ?? 0;
             $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unnamed Product' );
             $orderProduct->quantity = $product[ 'quantity' ];
-            $orderProduct->price_with_tax = $product[ 'price_with_tax' ] ?? 0;
-            $orderProduct->price_without_tax = $product[ 'price_without_tax' ] ?? 0;
+            $orderProduct->price_gross = $product[ 'price_gross' ] ?? 0;
+            $orderProduct->price_net = $product[ 'price_net' ] ?? 0;
 
             /**
              * We might need to have another consideration
@@ -1166,9 +1166,9 @@ class OrdersService
             if ( ns()->option->get( 'ns_pos_vat' ) === 'disabled' ) {
                 $subTotal = $order->subtotal;
             } else {
-                if ( ns()->option->get( 'ns_pos_price_with_tax' ) === 'no' ) {
+                if ( ns()->option->get( 'ns_pos_prefered_price' ) === 'net_prices' ) {
                     $subTotal = $this->currencyService->define( $subTotal )
-                        ->additionateBy( $orderProduct->total_price_with_tax )
+                        ->additionateBy( $orderProduct->total_price_gross )
                         ->get();
                 } else {
                     $subTotal = $this->currencyService->define( $subTotal )
@@ -2221,12 +2221,12 @@ class OrdersService
 
         $productPriceWithoutTax = $products
             ->map( function ( OrderProduct $product ) {
-                return floatval( $product->total_price_without_tax );
+                return floatval( $product->total_price_net );
             } )->sum();
 
         $productPriceWithTax = $products
             ->map( function ( OrderProduct $product ) {
-                return floatval( $product->total_price_with_tax );
+                return floatval( $product->total_price_gross );
             } )->sum();
 
         $this->computeOrderTaxes( $order );
@@ -3127,8 +3127,8 @@ class OrdersService
         $settings = $order->settings();
 
         $settings->create( [
-            'key' => 'ns_pos_price_with_tax',
-            'value' => ns()->option->get( 'ns_pos_price_with_tax' ),
+            'key' => 'ns_pos_prefered_price',
+            'value' => ns()->option->get( 'ns_pos_prefered_price' ),
         ] );
 
         $settings->create( [

@@ -82,15 +82,15 @@ return [
             description: __( 'Allow product unit price to be edited.' )
         ),
 
-        FormInput::switch(
-            label: __( 'Show Price With Tax' ),
-            name: 'ns_pos_price_with_tax',
+        FormInput::select(
+            label: __( 'Prefered Price' ),
+            name: 'ns_pos_prefered_price',
             options: [
-                ['label' => __( 'Yes' ), 'value' => 'yes'],
-                ['label' => __( 'No' ), 'value' => 'no'],
+                ['label' => __( 'Gross Prices' ), 'value' => 'gross_prices'],
+                ['label' => __( 'Net Prices' ), 'value' => 'net_prices'],
             ],
-            value: ns()->option->get( 'ns_pos_price_with_tax' ),
-            description: __( 'Will display price with tax for each products.' )
+            value: ns()->option->get( 'ns_pos_prefered_price' ),
+            description: __( 'Choose the price to display for each product (gross includes tax, net excludes tax).' )
         ),
 
         FormInput::multiselect(

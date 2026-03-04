@@ -57,11 +57,11 @@
                                             </span>
                                         </template>
                                         <template v-else>
-                                            <span v-if="options.ns_pos_price_with_tax === 'yes'" class="text-sm">
-                                                {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
+                                            <span v-if="options.ns_pos_prefered_price === 'gross_prices'" class="text-sm">
+                                                {{ nsCurrency( product.unit_quantities[0].sale_price_gross ) }}
                                             </span>
                                             <span v-else class="text-sm">
-                                                {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
+                                                {{ nsCurrency( product.unit_quantities[0].sale_price_net ) }}
                                             </span>
                                         </template>
                                     </template>
@@ -114,11 +114,11 @@
                                         </span>
                                     </template>
                                     <template v-else>
-                                        <span v-if="options.ns_pos_price_with_tax === 'yes'" class="text-sm">
-                                            {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
+                                        <span v-if="options.ns_pos_prefered_price === 'gross_prices'" class="text-sm">
+                                            {{ nsCurrency( product.unit_quantities[0].sale_price_gross ) }}
                                         </span>
                                         <span v-else class="text-sm">
-                                            {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
+                                            {{ nsCurrency( product.unit_quantities[0].sale_price_net ) }}
                                         </span>
                                     </template>
                                 </template>
@@ -373,8 +373,8 @@ export default {
                             product.tax_type                =   result.product.tax_type;
                             product.unit_id                 =   result.unit.id;
                             product.unit_price              =   result.unitQuantity.sale_price;
-                            product.price_with_tax          =   result.unitQuantity.sale_price_with_tax;
-                            product.price_without_tax       =   result.unitQuantity.sale_price_without_tax;
+                            product.price_gross             =   result.unitQuantity.sale_price_gross;
+                            product.price_net               =   result.unitQuantity.sale_price_net;
                             product.unit_name               =   result.unit.name;
                             
                             // Check if this is a scale barcode with embedded data
