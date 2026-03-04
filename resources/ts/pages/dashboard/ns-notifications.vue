@@ -128,9 +128,10 @@ export default {
                          * so that after the Async operation, the notification
                          * are pulled from the server.
                          */
-                        action.url += action.url.includes( '?' ) ? `&notification_id=${notification.id}` : `?notification_id=${notification.id}`;
+                        const separator = action.url.includes('?') ? '&' : '?';
+                        const urlWithNotification = `${action.url}${separator}notification_id=${notification.id}`;
 
-                        nsHttpClient[ verb ]( action.url, action.data )
+                        nsHttpClient[ verb ]( urlWithNotification, action.data )
                             .subscribe({
                                 next: (result: StatusResponse ) => {
                                     nsSnackBar.success( result.message );

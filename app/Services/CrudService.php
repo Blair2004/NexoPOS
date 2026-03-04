@@ -926,46 +926,46 @@ class CrudService
 
                 if ( in_array( $junction, ['join', 'leftJoin', 'rightJoin', 'crossJoin'] ) ) {
                     /**
-                 * When the junction is a named key (e.g. 'leftJoin', or an explicit 'join' => [...]),
-                 * $relation is a group (array of relation arrays) and must be iterated.
-                 * When the junction was numeric it was normalised to 'join' above, but $relation
-                 * is already the flat 4-element array — detect that by checking whether the first
-                 * element itself is an array.
-                 */
-                // If the first element is itself an array, $relation is a group (named junction
-                // or explicit 'join' => [...]).  Otherwise it is a single flat 4-element array
-                // (numeric key normalised to 'join') — wrap it so the loop below is uniform.
-                $relationGroup = is_array( $relation[0] ) ? $relation : [ $relation ];
-
-                foreach ( $relationGroup as $junction_relation ) {
-                    $hasAlias = explode( ' as ', $junction_relation[0] );
-                    $hasAlias[0] = $this->hookTableName( $hasAlias[0] );
-
-                    /**
-                     * makes sure first table can be filtered. We should also check
-                     * if the column are actual column and not aliases
+                     * When the junction is a named key (e.g. 'leftJoin', or an explicit 'join' => [...]),
+                     * $relation is a group (array of relation arrays) and must be iterated.
+                     * When the junction was numeric it was normalised to 'join' above, but $relation
+                     * is already the flat 4-element array — detect that by checking whether the first
+                     * element itself is an array.
                      */
-                    $relatedTableParts = explode( '.', $junction_relation[1] );
+                    // If the first element is itself an array, $relation is a group (named junction
+                    // or explicit 'join' => [...]).  Otherwise it is a single flat 4-element array
+                    // (numeric key normalised to 'join') — wrap it so the loop below is uniform.
+                    $relationGroup = is_array( $relation[0] ) ? $relation : [ $relation ];
 
-                    if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
-                        $junction_relation[1] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
-                    }
+                    foreach ( $relationGroup as $junction_relation ) {
+                        $hasAlias = explode( ' as ', $junction_relation[0] );
+                        $hasAlias[0] = $this->hookTableName( $hasAlias[0] );
 
-                    /**
-                     * makes sure the second table can be filtered. We should also check
-                     * if the column are actual column and not aliases
-                     */
-                    $relatedTableParts = explode( '.', $junction_relation[3] );
-                    if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
-                        $junction_relation[3] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
-                    }
+                        /**
+                         * makes sure first table can be filtered. We should also check
+                         * if the column are actual column and not aliases
+                         */
+                        $relatedTableParts = explode( '.', $junction_relation[1] );
 
-                    if ( count( $hasAlias ) === 2 ) {
-                        $query->$junction( trim( $hasAlias[0] ) . ' as ' . trim( $hasAlias[1] ), $junction_relation[1], $junction_relation[2], $junction_relation[3] );
-                    } else {
-                        $query->$junction( $junction_relation[0], $junction_relation[1], $junction_relation[2], $junction_relation[3] );
+                        if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
+                            $junction_relation[1] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                        }
+
+                        /**
+                         * makes sure the second table can be filtered. We should also check
+                         * if the column are actual column and not aliases
+                         */
+                        $relatedTableParts = explode( '.', $junction_relation[3] );
+                        if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
+                            $junction_relation[3] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                        }
+
+                        if ( count( $hasAlias ) === 2 ) {
+                            $query->$junction( trim( $hasAlias[0] ) . ' as ' . trim( $hasAlias[1] ), $junction_relation[1], $junction_relation[2], $junction_relation[3] );
+                        } else {
+                            $query->$junction( $junction_relation[0], $junction_relation[1], $junction_relation[2], $junction_relation[3] );
+                        }
                     }
-                }
                 }
             }
         }
