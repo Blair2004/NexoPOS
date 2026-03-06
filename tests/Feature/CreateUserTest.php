@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 
@@ -65,9 +66,7 @@ class CreateUserTest extends TestCase
         return compact( 'configuration', 'response' );
     }
 
-    /**
-     * @depends test_create_users
-     */
+    #[Depends( 'test_create_users' )]
     public function test_create_user_with_same_username_and_different_email( $data )
     {
         $this->attemptAuthenticate();
@@ -101,9 +100,7 @@ class CreateUserTest extends TestCase
         return compact( 'configuration', 'response' );
     }
 
-    /**
-     * @depends test_create_user_with_same_username_and_different_email
-     */
+    #[Depends( 'test_create_user_with_same_username_and_different_email' )]
     public function test_create_user_with_same_email_and_different_username( $data )
     {
         $this->attemptAuthenticate();
@@ -137,9 +134,7 @@ class CreateUserTest extends TestCase
         return compact( 'configuration', 'response' );
     }
 
-    /**
-     * @depends test_create_user_with_same_email_and_different_username
-     */
+    #[Depends( 'test_create_user_with_same_email_and_different_username' )]
     public function test_update_user_from_crud( $data )
     {
         $this->attemptAuthenticate();
@@ -181,11 +176,11 @@ class CreateUserTest extends TestCase
 
         $user = Role::namespace( Role::ADMIN )->users()->first();
 
-        $order = Order::where( 'author', '<>', $user->id )->first();
+        $order = Order::where( 'author_id', '<>', $user->id )->first();
 
         if ( $order instanceof Order ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'delete', '/api/crud/ns.users/' . $order->author );
+                ->json( 'delete', '/api/crud/ns.users/' . $order->author_id );
 
             $response->assertStatus( 403 );
         }
@@ -226,9 +221,7 @@ class CreateUserTest extends TestCase
         } );
     }
 
-    /**
-     * @depends test_create_users
-     */
+    #[Depends( 'test_create_users' )]
     public function test_explorable_routes_chunk_1()
     {
         $user = User::first();
@@ -243,9 +236,7 @@ class CreateUserTest extends TestCase
         $this->attemptAllRoutes( $user, $routes[0] );
     }
 
-    /**
-     * @depends test_explorable_routes_chunk_1
-     */
+    #[Depends( 'test_explorable_routes_chunk_1' )]
     public function test_explorable_routes_chunk_2()
     {
         $user = User::first();
@@ -260,9 +251,7 @@ class CreateUserTest extends TestCase
         $this->attemptAllRoutes( $user, $routes[1] );
     }
 
-    /**
-     * @depends test_explorable_routes_chunk_2
-     */
+    #[Depends( 'test_explorable_routes_chunk_2' )]
     public function test_explorable_routes_chunk_3()
     {
         $user = User::first();
@@ -277,9 +266,7 @@ class CreateUserTest extends TestCase
         $this->attemptAllRoutes( $user, $routes[2] );
     }
 
-    /**
-     * @depends test_explorable_routes_chunk_3
-     */
+    #[Depends( 'test_explorable_routes_chunk_3' )]
     public function test_explorable_routes_chunk_4()
     {
         $user = User::first();
@@ -294,9 +281,7 @@ class CreateUserTest extends TestCase
         $this->attemptAllRoutes( $user, $routes[3] );
     }
 
-    /**
-     * @depends test_explorable_routes_chunk_4
-     */
+    #[Depends( 'test_explorable_routes_chunk_4' )]
     public function test_explorable_routes_chunk_5()
     {
         $user = User::first();

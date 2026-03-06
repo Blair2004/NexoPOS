@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int            $id
  * @property string         $uuid
  * @property string         $description
- * @property int            $author
+ * @property int            $author_id
  * @property \Carbon\Carbon $updated_at
  */
 class TaxGroup extends NsModel
@@ -42,6 +42,6 @@ class TaxGroup extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class, 'author_id' );
     }
 }

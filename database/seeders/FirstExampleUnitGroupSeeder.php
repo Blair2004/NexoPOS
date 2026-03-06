@@ -23,7 +23,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
 
         $unitGroup = new UnitGroup;
         $unitGroup->name = 'Countable';
-        $unitGroup->author = $author;
+        $unitGroup->author_id = $author;
         $unitGroup->save();
 
         $unit = new Unit;
@@ -32,7 +32,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
         $unit->identifier = 'Piece-' . Str::random( 10 );
         $unit->base_unit = true;
         $unit->name = 'Piece';
-        $unit->author = $author;
+        $unit->author_id = $author;
         $unit->save();
 
         $unit = new Unit;
@@ -41,7 +41,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
         $unit->identifier = 'Decade-' . Str::random( 10 );
         $unit->base_unit = false;
         $unit->name = 'Decade';
-        $unit->author = $author;
+        $unit->author_id = $author;
         $unit->save();
 
         $unit = new Unit;
@@ -50,12 +50,12 @@ class FirstExampleUnitGroupSeeder extends Seeder
         $unit->identifier = 'Fifties-' . Str::random( 10 );
         $unit->base_unit = false;
         $unit->name = 'Fifties';
-        $unit->author = $author;
+        $unit->author_id = $author;
         $unit->save();
 
         $unitGroup = new UnitGroup;
         $unitGroup->name = 'Wine (Yalumba)';
-        $unitGroup->author = $author;
+        $unitGroup->author_id = $author;
         $unitGroup->save();
 
         $unit = new Unit;
@@ -64,7 +64,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
         $unit->identifier = 'Shot-' . Str::random( 10 );
         $unit->base_unit = true;
         $unit->name = 'Shot (200ml)';
-        $unit->author = $author;
+        $unit->author_id = $author;
         $unit->save();
 
         $unit = new Unit;
@@ -73,7 +73,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
         $unit->identifier = 'Half-' . Str::random( 10 );
         $unit->base_unit = false;
         $unit->name = 'Half Bottle (600ml)';
-        $unit->author = $author;
+        $unit->author_id = $author;
         $unit->save();
 
         $unit = new Unit;
@@ -82,7 +82,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
         $unit->identifier = 'Bottle-' . Str::random( 10 );
         $unit->base_unit = false;
         $unit->name = 'Bottle (1200ml)';
-        $unit->author = $author;
+        $unit->author_id = $author;
         $unit->save();
 
         $unit = new Unit;
@@ -91,7 +91,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
         $unit->identifier = '6-' . Str::random( 10 );
         $unit->base_unit = false;
         $unit->name = '6 Bottles Box (1200mlx6)';
-        $unit->author = $author;
+        $unit->author_id = $author;
         $unit->save();
     }
 }

@@ -32,7 +32,7 @@ class UncountDeletedOrderForCashierJob implements ShouldQueue
     public function handle()
     {
         if ( $this->order->payment_status === Order::PAYMENT_PAID ) {
-            $user = User::find( $this->order->author );
+            $user = User::find( $this->order->author_id );
             $user->total_sales = $user->total_sales - $this->order->total;
             $user->total_sales_count = $user->total_sales_count - 1;
             $user->save();

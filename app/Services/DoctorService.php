@@ -253,7 +253,7 @@ class DoctorService
                     $billing->last_name = $customer->last_name;
                     $billing->email = $customer->email;
                     $billing->phone = $customer->phone;
-                    $billing->author = $customer->author;
+                    $billing->author_id = $customer->author_id;
                     $billing->save();
                 }
 
@@ -264,7 +264,7 @@ class DoctorService
                     $shipping->last_name = $customer->last_name;
                     $shipping->email = $customer->email;
                     $shipping->phone = $customer->phone;
-                    $shipping->author = $customer->author;
+                    $shipping->author_id = $customer->author_id;
                     $shipping->save();
                 }
             } );

@@ -132,7 +132,7 @@ class CreateUserCommand extends Command
          * then the author of this user
          * is himself.
          */
-        $user->author = Auth::user() instanceof User ? Auth::id() : $user->id;
+        $user->author_id = Auth::user() instanceof User ? Auth::id() : $user->id;
         $user->active = Auth::user() instanceof User ? 1 : 0;
         $user->save();
 

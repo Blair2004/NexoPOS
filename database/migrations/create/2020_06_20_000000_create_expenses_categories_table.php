@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->integer( 'sub_category_id' )->nullable();
                 $table->string( 'category_identifier' )->nullable();
                 $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

@@ -5,7 +5,7 @@ namespace App\Models;
 /**
  * @property int            $id
  * @property string         $uuid
- * @property int            $author
+ * @property int            $author_id
  * @property bool           $featured
  * @property \Carbon\Carbon $updated_at
  */
@@ -20,7 +20,7 @@ class ProductGallery extends NsModel
         'url',
         'order',
         'featured',
-        'author',
+        'author_id',
     ];
 
     public $casts = [

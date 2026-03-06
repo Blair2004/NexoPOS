@@ -23,7 +23,7 @@ return new class extends Migration
                 $table->integer( 'order_id' );
                 $table->string( 'key' );
                 $table->string( 'value' );
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

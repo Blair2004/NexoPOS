@@ -44,7 +44,7 @@ return new class extends Migration
                 $table->string( 'on_expiration' )->default( 'prevent_sales' ); // allow_sales, prevent_sales
                 $table->boolean( 'expires' )->default( false ); // true/false
                 $table->boolean( 'searchable' )->default( true ); // whether the product can be searched on the POS.
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->boolean( 'position' )->default(0);
                 $table->boolean( 'pinned' )->default( false );

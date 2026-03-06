@@ -59,7 +59,7 @@ class ScaleRangeCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable = [ 'name', 'range_start', 'range_end', 'next_scale_plu', 'description', 'author' ];
+    public $fillable = [ 'name', 'range_start', 'range_end', 'next_scale_plu', 'description', 'author_id' ];
 
     /**
      * Define columns and how it is structured.

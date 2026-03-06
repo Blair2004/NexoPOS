@@ -37,7 +37,7 @@ class ProductFactory extends Factory
             'sku' => $this->faker->word . date( 's' ),
             'type' => $this->faker->randomElement( [ 'materialized', 'dematerialized'] ),
             'unit_group' => $unitGroup->id,
-            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'author_id' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ] );
     }
 }

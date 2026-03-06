@@ -47,7 +47,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int customer_id
  * @property string note
  * @property string note_visibility
- * @property int author
+ * @property int author_id
  * @property string uuid
  * @property int register_id
  * @property string voidance_reason
@@ -154,7 +154,7 @@ class Order extends NsModel
 
     public function user()
     {
-        return $this->hasOne( User::class, 'id', 'author' );
+        return $this->hasOne( User::class, 'id', 'author_id' );
     }
 
     public function refunds()
@@ -202,16 +202,6 @@ class Order extends NsModel
         return $this->hasOne( OrderBillingAddress::class );
     }
 
-    public function driver()
-    {
-        return $this->belongsTo( Driver::class, 'driver_id' );
-    }
-
-    public function driverEarning()
-    {
-        return $this->hasOne( DriverEarning::class, 'order_id' );
-    }
-
     public function order_addresses()
     {
         return $this->hasMany( OrderAddress::class );
@@ -220,11 +210,6 @@ class Order extends NsModel
     public function settings()
     {
         return $this->hasMany( OrderSetting::class, 'order_id' );
-    }
-
-    public function deliveryProof()
-    {
-        return $this->hasOne( OrderDeliveryProof::class, 'order_id' );
     }
 
     public function scopeFrom( $query, $range_starts )
@@ -287,10 +272,10 @@ class Order extends NsModel
                 $stringified = Hook::filter( 'ns-products-combinaison-identifier', $product_id . '-' . $order_id . '-' . $discount . '-' . $product_category_id . '-' . $status, $product );
                 $combinaisonAttributes = Hook::filter( 'ns-products-combinaison-attributes', [
                     'quantity',
-                    'total_price_without_tax',
+                    'total_price_net',
                     'total_price',
                     'total_purchase_price',
-                    'total_price_with_tax',
+                    'total_price_gross',
                     'discount',
                 ] );
 

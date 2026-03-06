@@ -167,7 +167,7 @@ class TestService
                     'country' => 'United State Seattle',
                 ],
             ],
-            'author' => User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
+            'author_id' => User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
             'coupons' => [],
             'subtotal' => $subtotal,
             'shipping' => $shippingFees,
@@ -219,7 +219,7 @@ class TestService
                 'provider_id' => Provider::get()->random()->id,
                 'payment_status' => Procurement::PAYMENT_PAID,
                 'delivery_status' => Procurement::DELIVERED,
-                'author' => Auth::id(), // @todo is that required
+                'author_id' => Auth::id(), // @todo is that required
                 'automatic_approval' => 1,
                 'created_at' => $date->toDateTimeString(),
             ],

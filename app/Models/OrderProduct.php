@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string  $discount_type
  * @property float   $discount
  * @property float   $discount_percentage
- * @property float   $price_without_tax
+ * @property float   $price_net
  * @property float   $unit_price
  * @property int     $tax_group_id
  * @property string  $tax_type
@@ -32,11 +32,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string  $mode
  * @property float   $sale_tax_value
  * @property float   $tax_value
- * @property float   $price_with_tax
+ * @property float   $price_gross
  * @property string  $unit_name
- * @property float   $total_price_without_tax
+ * @property float   $total_price_net
  * @property float   $total_price
- * @property float   $total_price_with_tax
+ * @property float   $total_price_gross
  * @property float   $total_purchase_price
  * @property string  $return_condition
  * @property string  $return_observations
@@ -68,14 +68,14 @@ class OrderProduct extends NsModel
         'quantity' => FloatConvertCasting::class,
         'discount' => FloatConvertCasting::class,
         'discount_percentage' => FloatConvertCasting::class,
-        'price_without_tax' => FloatConvertCasting::class,
+        'price_net' => FloatConvertCasting::class,
         'unit_price' => FloatConvertCasting::class,
         'sale_tax_value' => FloatConvertCasting::class,
         'tax_value' => FloatConvertCasting::class,
-        'price_with_tax' => FloatConvertCasting::class,
-        'total_price_without_tax' => FloatConvertCasting::class,
+        'price_gross' => FloatConvertCasting::class,
+        'total_price_net' => FloatConvertCasting::class,
         'total_price' => FloatConvertCasting::class,
-        'total_price_with_tax' => FloatConvertCasting::class,
+        'total_price_gross' => FloatConvertCasting::class,
         'total_purchase_price' => FloatConvertCasting::class,
     ];
 

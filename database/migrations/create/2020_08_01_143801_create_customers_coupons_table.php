@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string( 'code' );
             $table->integer( 'coupon_id' );
             $table->integer( 'customer_id' );
-            $table->integer( 'author' );
+            $table->integer( 'author_id' );
             $table->timestamps();
         } );
     }

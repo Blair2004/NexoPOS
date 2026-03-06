@@ -20,7 +20,7 @@ return new class extends Migration
                 $table->unsignedInteger( 'range_end' );
                 $table->unsignedInteger( 'next_scale_plu' );
                 $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->timestamps();
             } );
         }
@@ -124,7 +124,7 @@ return new class extends Migration
 
         foreach ( $defaultRanges as $range ) {
             ScaleRange::create( array_merge( $range, [
-                'author' => 0, // System created
+                'author_id' => 0, // System created
             ] ) );
         }
 

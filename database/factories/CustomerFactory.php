@@ -30,7 +30,7 @@ class CustomerFactory extends Factory
             'gender' => $this->faker->randomElement( [ 'male', 'female', '' ] ),
             'phone' => $this->faker->phoneNumber(),
             'pobox' => $this->faker->postcode(),
-            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'author_id' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
             'group_id' => $this->faker->randomElement( CustomerGroup::get()->map( fn( $group ) => $group->id ) ),
         ] );
     }

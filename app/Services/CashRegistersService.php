@@ -33,7 +33,7 @@ class CashRegistersService
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_OPENING;
-        $registerHistory->author = Auth::id();
+        $registerHistory->author_id = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
         $registerHistory->value = $amount;
@@ -74,7 +74,7 @@ class CashRegistersService
         $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->toFloat();
         $registerHistory->value = ns()->currency->define( $amount )->toFloat();
         $registerHistory->balance_before = $register->balance;
-        $registerHistory->author = Auth::id();
+        $registerHistory->author_id = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->save();
 
@@ -111,7 +111,7 @@ class CashRegistersService
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CASHING;
-        $registerHistory->author = Auth::id();
+        $registerHistory->author_id = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
         $registerHistory->value = ns()->currency->define( $amount )->toFloat();
@@ -152,7 +152,7 @@ class CashRegistersService
             $cashRegisterHistory->payment_type_id = $orderPayment->type->id;
             $cashRegisterHistory->order_id = $orderPayment->order_id;
             $cashRegisterHistory->action = RegisterHistory::ACTION_ORDER_PAYMENT;
-            $cashRegisterHistory->author = $orderPayment->order->author;
+            $cashRegisterHistory->author_id = $orderPayment->order->author_id;
             $cashRegisterHistory->balance_before = $register->balance;
             $cashRegisterHistory->value = ns()->currency->define( $orderPayment->value )->toFloat();
             $cashRegisterHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $orderPayment->value )->toFloat();
@@ -227,7 +227,7 @@ class CashRegistersService
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CASHOUT;
-        $registerHistory->author = Auth::id();
+        $registerHistory->author_id = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = ns()->currency->define( $register->balance )->toFloat();
         $registerHistory->value = ns()->currency->define( $amount )->toFloat();
@@ -334,7 +334,7 @@ class CashRegistersService
                 $registerHistory->register_id = $register->id;
                 $registerHistory->order_id = $order->id;
                 $registerHistory->action = RegisterHistory::ACTION_ORDER_CHANGE;
-                $registerHistory->author = $order->author;
+                $registerHistory->author_id = $order->author_id;
                 $registerHistory->description = __( 'Change on cash' );
                 $registerHistory->balance_before = $register->balance;
                 $registerHistory->value = ns()->currency->define( $order->change )->toFloat();
@@ -558,7 +558,7 @@ class CashRegistersService
             } );
         } );
 
-        $user = User::find( $opening->author );
+        $user = User::find( $opening->author_id );
         $cashier = $user->first_name . ' ' . $user->last_name . '(' . $user->username . ')';
 
         return (object) compact(

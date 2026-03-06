@@ -90,7 +90,7 @@
                             <template v-if="[ 'products_vat' ].includes( options.ns_pos_vat )">
                                 <tr>
                                     <td width="200" class="border p-2" colspan="2">
-                                        <span v-if="options.ns_pos_price_with_tax === 'yes'" class="py-1">{{  __( 'Product Taxes (included)' ) }}</span>
+                                        <span v-if="options.ns_pos_prefered_price === 'gross_prices'" class="py-1">{{  __( 'Product Taxes (included)' ) }}</span>
                                         <span v-else class="py-1">{{  __( 'Product Taxes' ) }}</span>
                                     </td>
                                     <td width="200" class="border p-2 text-right">{{ nsCurrency( order.products_tax_value ) }}</td>
@@ -151,7 +151,7 @@
                             <template v-if="[ 'products_vat' ].includes( options.ns_pos_vat )">
                                 <tr>
                                     <td width="200" class="border p-2">
-                                        <span v-if="options.ns_pos_price_with_tax === 'yes'" class="py-1">{{  __( 'Product Taxes (included)' ) }}</span>
+                                        <span v-if="options.ns_pos_prefered_price === 'gross_prices'" class="py-1">{{  __( 'Product Taxes (included)' ) }}</span>
                                         <span v-else class="py-1">{{  __( 'Product Taxes' ) }}</span>
                                     </td>
                                     <td width="200" class="border p-2 text-right">{{ nsCurrency( order.products_tax_value ) }}</td>
@@ -203,12 +203,12 @@
                                 <td width="200" class="border p-2">
                                     <template v-if="options.ns_pos_vat !== 'disabled'">
                                         <template v-if="order && options.ns_pos_tax_type === 'exclusive'">
-                                            <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
-                                            <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Inclusive' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
+                                            <a v-if="options.ns_pos_prefered_price === 'gross_prices'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
+                                            <a v-else-if="options.ns_pos_prefered_price === 'net_prices'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Inclusive' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
                                         </template>
                                         <template v-else-if="order && options.ns_pos_tax_type === 'inclusive'">
-                                            <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
-                                            <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
+                                            <a v-if="options.ns_pos_prefered_price === 'gross_prices'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
+                                            <a v-else-if="options.ns_pos_prefered_price === 'net_prices'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
                                         </template>
                                     </template>
                                 </td>
@@ -549,8 +549,8 @@ export default {
                         ...product.$quantities(), 
                         ...{
                             custom_price_edit : newPrice,
-                            custom_price_with_tax: newPrice,
-                            custom_price_without_tax: newPrice
+                            custom_price_gross: newPrice,
+                            custom_price_net: newPrice
                         }
                     }
 

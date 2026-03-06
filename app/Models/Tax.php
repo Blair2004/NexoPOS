@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string         $uuid
  * @property string         $description
  * @property float          $rate
- * @property int            $author
+ * @property int            $author_id
  * @property \Carbon\Carbon $updated_at
  */
 class Tax extends NsModel
@@ -25,6 +25,6 @@ class Tax extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class, 'author_id' );
     }
 }

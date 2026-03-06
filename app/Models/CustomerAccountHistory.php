@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int    $order_id
  * @property float  $amount
  * @property string $operation
- * @property int    $author
+ * @property int    $author_id
  * @property string $description
  */
 class CustomerAccountHistory extends NsModel
@@ -42,6 +42,6 @@ class CustomerAccountHistory extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class, 'author_id' );
     }
 }

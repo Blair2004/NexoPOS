@@ -3,7 +3,7 @@ use App\Models\Order;
 use App\Classes\Hook;
 use Illuminate\Support\Facades\View;
 
-$price_with_tax     =   $order->settings?->where( 'key', 'ns_pos_price_with_tax' )->first()?->value;
+$prefered_price     =   $order->settings?->where( 'key', 'ns_pos_prefered_price' )->first()?->value;
 $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?->value;
 ?>
 <div class="w-full h-full">
@@ -46,7 +46,7 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                 </tbody>
                 <tbody>
                     @if( $pos_vat === 'products_vat' )
-                        @if( $price_with_tax === 'no' )
+                        @if( $prefered_price === 'net_prices' )
                         <tr>
                             <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Product Taxes' ) }}</td>
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>

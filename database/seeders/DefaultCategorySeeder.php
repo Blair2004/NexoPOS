@@ -17,7 +17,7 @@ class DefaultCategorySeeder extends Seeder
     {
         return ProductCategory::create( [
             'name' => __( 'Default Category' ),
-            'author' => Role::namespace( 'admin' )->users->first()->id,
+            'author_id' => Role::namespace( 'admin' )->users->first()->id,
         ] );
     }
 }

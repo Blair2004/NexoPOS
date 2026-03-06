@@ -50,7 +50,7 @@ class CustomerGroupCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_customers_groups.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_users', 'nexopos_customers_groups.author_id', '=', 'nexopos_users.id' ],
         'leftJoin' => [
             [ 'nexopos_rewards_system as reward', 'reward.id', '=', 'nexopos_customers_groups.reward_system_id' ],
         ],

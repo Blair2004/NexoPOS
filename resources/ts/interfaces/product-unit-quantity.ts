@@ -6,15 +6,15 @@ export interface ProductUnitQuantity {
     expiration_date: string;
     sale_price: number;
     sale_price_edit: number;
-    sale_price_without_tax: number;
-    sale_price_with_tax: number;
+    sale_price_net: number;
+    sale_price_gross: number;
     wholesale_price: number;
     wholesale_price_edit: number;
-    wholesale_price_with_tax: number;
-    wholesale_price_without_tax: number;
+    wholesale_price_gross: number;
+    wholesale_price_net: number;
     preview_url: string;
     custom_price: number;
     custom_price_edit: number;
-    custom_price_without_tax: number;
-    custom_price_with_tax: number;
+    custom_price_net: number;
+    custom_price_gross: number;
 }

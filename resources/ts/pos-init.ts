@@ -374,12 +374,12 @@ export class POS {
         let price = 0;
 
         if ( this.options.getValue().ns_pos_vat === 'disabled' ) {
-            price = nsRawCurrency( item.sale_price_with_tax );
+            price = nsRawCurrency( item.sale_price );
         } else {
-            if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-                price = nsRawCurrency( item.sale_price_with_tax );
+            if ( this.options.getValue().ns_pos_prefered_price === 'gross_prices' ) {
+                price = nsRawCurrency( item.sale_price_gross );
             } else {
-                price = nsRawCurrency( item.sale_price_without_tax );
+                price = nsRawCurrency( item.sale_price_net );
             }
         }
 
@@ -388,10 +388,10 @@ export class POS {
 
     public getCustomPrice(item) {
         let customPrice = 0;
-        if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            customPrice = nsRawCurrency( item.custom_price_with_tax );
+        if ( this.options.getValue().ns_pos_prefered_price === 'gross_prices' ) {
+            customPrice = nsRawCurrency( item.custom_price_gross );
         } else {
-            customPrice = nsRawCurrency( item.custom_price_without_tax );
+            customPrice = nsRawCurrency( item.custom_price_net );
         }
 
         return nsHooks.applyFilters( 'ns-pos-product-custom-price', customPrice, item );
@@ -399,10 +399,10 @@ export class POS {
 
     public getWholesalePrice(item) {
         let wholeSalePrice = 0;
-        if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            wholeSalePrice = nsRawCurrency( item.wholesale_price_with_tax );
+        if ( this.options.getValue().ns_pos_prefered_price === 'gross_prices' ) {
+            wholeSalePrice = nsRawCurrency( item.wholesale_price_gross );
         } else {
-            wholeSalePrice = nsRawCurrency( item.wholesale_price_without_tax );
+            wholeSalePrice = nsRawCurrency( item.wholesale_price_net );
         }
 
         return nsHooks.applyFilters( 'ns-pos-product-wholesale-price', wholeSalePrice, item );
@@ -694,7 +694,7 @@ export class POS {
     computeOrderTaxes( order: Order ) {
         const options   =   this.options.getValue();
         const posVat        =   options.ns_pos_vat;
-        const priceWithTax    =   options.ns_pos_price_with_tax === 'yes';
+        const priceWithTax    =   options.ns_pos_prefered_price === 'gross_prices';
 
         if ([ 'flat_vat', 'variable_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
             order.tax_value += order.taxes
@@ -713,7 +713,19 @@ export class POS {
         order.products = products;
         order.total_products = products.length;
 
-        if ([ 'products_vat' ].includes(posVat) ) {
+        /**
+         * Always reset to prevent stale values from a previous
+         * VAT mode leaking into a different configuration.
+         */
+        order.products_tax_value = 0;
+
+        /**
+         * Product-level taxes are only relevant in products_vat mode.
+         * For flat_vat / variable_vat, taxes are computed via computeOrderTaxes
+         * and added directly to order.tax_value, then onto the total in refreshCart.
+         * For disabled, no tax logic should apply at all.
+         */
+        if ( posVat === 'products_vat' ) {
             const totalTaxValue =  products.map((product: OrderProduct) => {
                 return product.total_tax_value;
             });
@@ -721,18 +733,16 @@ export class POS {
             if ( totalTaxValue.length > 0 ) {
                 order.products_tax_value = totalTaxValue.reduce((before, after) => before + after);
             }
-        }
 
-        /**
-         * We need to add the product taxes to the subtotal when
-         * the price with tax is disabled and the VAT is not set to either: products_vat
-         */
-        if ( options.ns_pos_price_with_tax === 'no' ) {
             /**
-             * If the price with tax is enabled, we'll add the tax value
-             * to the subtotal.
+             * When pricing is exclusive (price does not include tax), the
+             * product tax values must be surfaced in the subtotal so they are
+             * reflected in discounts, coupons and the final total.
+             * When pricing is inclusive the tax is already embedded in the price.
              */
-            order.subtotal      =   math.chain( order.subtotal ).add( order.products_tax_value ).done();
+            if ( options.ns_pos_prefered_price === 'net_prices' ) {
+                order.subtotal  =   math.chain( order.subtotal ).add( order.products_tax_value ).done();
+            }
         }
 
         return order;
@@ -930,20 +940,20 @@ export class POS {
             const quantities    =   {
                 unit: unit[0] || {},
                 
-                sale_price_with_tax: product.mode === 'normal' ? parseFloat( product.price_with_tax ) : 0,
-                sale_price_without_tax: product.mode === 'normal' ? parseFloat( product.price_without_tax ) : 0,
+                sale_price_gross: product.mode === 'normal' ? parseFloat( product.price_gross ) : 0,
+                sale_price_net: product.mode === 'normal' ? parseFloat( product.price_net ) : 0,
                 sale_price: product.mode === 'normal' ? parseFloat( product.unit_price ) : 0,
                 sale_price_tax: product.mode === 'normal' ? product.tax_value : 0,
                 sale_price_edit: 0,
 
-                wholesale_price_with_tax: product.mode === 'wholesale' ? parseFloat( product.price_with_tax ) : 0,
-                wholesale_price_without_tax: product.mode === 'wholesale' ? parseFloat( product.price_without_tax ) : 0,
+                wholesale_price_gross: product.mode === 'wholesale' ? parseFloat( product.price_gross ) : 0,
+                wholesale_price_net: product.mode === 'wholesale' ? parseFloat( product.price_net ) : 0,
                 wholesale_price: product.mode === 'wholesale' ? parseFloat( product.unit_price ) : 0,
                 wholesale_price_tax: product.mode === 'wholesale' ? product.tax_value : 0,
                 wholesale_price_edit: 0,
 
-                custom_price_with_tax: product.mode === 'custom' ? parseFloat( product.price_with_tax ) : 0,
-                custom_price_without_tax: product.mode === 'custom' ? parseFloat( product.price_without_tax ) : 0,
+                custom_price_gross: product.mode === 'custom' ? parseFloat( product.price_gross ) : 0,
+                custom_price_net: product.mode === 'custom' ? parseFloat( product.price_net ) : 0,
                 custom_price: product.mode === 'custom' ? parseFloat( product.unit_price ) : 0,
                 custom_price_tax: product.mode === 'custom' ? product.tax_value : 0,
                 custom_price_edit: product.mode === 'custom' ? parseFloat( product.unit_price ) : 0,
@@ -981,7 +991,7 @@ export class POS {
                     } else {
                         quantities.sale_price_tax       =   0;
                         quantities.wholesale_price_tax  =   0;
-                        quantities.sale_price_without_tax  =  product.unit_price;
+                        quantities.sale_price_net  =  product.unit_price;
                         
                         return resolve( quantities );
                     }
@@ -1047,8 +1057,8 @@ export class POS {
 
                                 if ( orderProduct.mode === 'custom' ) {
                                     unitQuantity.custom_price_edit = orderProduct.unit_price; 
-                                    unitQuantity.custom_price_with_tax = orderProduct.price_with_tax;
-                                    unitQuantity.custom_price_without_tax = orderProduct.price_without_tax;
+                                    unitQuantity.custom_price_gross = orderProduct.price_gross;
+                                    unitQuantity.custom_price_net = orderProduct.price_net;
                                     unitQuantity.custom_price_tax = orderProduct.tax_value;
                                 }
 
@@ -1448,12 +1458,12 @@ export class POS {
             tax_value: 0, // is computed automatically using $original()
             unit_id: product.unit_id || 0,
             unit_price: product.unit_price || 0,
-            price_with_tax: product.price_with_tax || 0,
-            price_without_tax: product.price_without_tax || 0,
+            price_gross: product.price_gross || 0,
+            price_net: product.price_net || 0,
             unit_name: <string>(product.unit_name || ''),
             total_price: 0,
-            total_price_without_tax: 0,
-            total_price_with_tax: 0,
+            total_price_net: 0,
+            total_price_gross: 0,
             mode: product.mode || 'normal',
             $original: product.$original || (() => product),
             $quantities: product.$quantities || undefined
@@ -1686,9 +1696,9 @@ export class POS {
         const originalProduct   =   product.$original();
         const taxGroup          =   originalProduct.tax_group;
 
-        let price_without_tax   =   price;
+        let price_net   =   price;
         let tax_value           =   0;
-        let price_with_tax      =   price;
+        let price_gross      =   price;
         let total_tax_value     =   0;
 
         if ( taxGroup !== undefined && taxGroup !== null && taxGroup.taxes !== undefined ) {
@@ -1728,14 +1738,14 @@ export class POS {
             
             // Derive per-unit values for consistency with existing system
             tax_value = math.chain( total_tax_value ).divide( product.quantity ).done();
-            price_with_tax = math.chain( result.price_with_tax ).divide( product.quantity ).done();
-            price_without_tax = math.chain( result.price_without_tax ).divide( product.quantity ).done();
+            price_gross = math.chain( result.price_gross ).divide( product.quantity ).done();
+            price_net = math.chain( result.price_net ).divide( product.quantity ).done();
         }
 
         return { 
-            price_without_tax, 
+            price_net, 
             tax_value,  // per-unit tax value
-            price_with_tax,
+            price_gross,
             total_tax_value  // total tax value for the line
         };
     }
@@ -1744,8 +1754,8 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
         
-        quantities.custom_price_without_tax =   result.price_without_tax;
-        quantities.custom_price_with_tax =   result.price_with_tax;
+        quantities.custom_price_net =   result.price_net;
+        quantities.custom_price_gross =   result.price_gross;
         quantities.custom_price_tax =   result.tax_value;
 
         // Also set the total tax value on the product
@@ -1763,8 +1773,8 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.sale_price_edit );
 
-        quantities.sale_price_without_tax   =   result.price_without_tax;
-        quantities.sale_price_with_tax      =   result.price_with_tax;
+        quantities.sale_price_net   =   result.price_net;
+        quantities.sale_price_gross      =   result.price_gross;
         quantities.sale_price_tax           =   result.tax_value;
 
         // Also set the total tax value on the product
@@ -1782,8 +1792,8 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.wholesale_price_edit );
 
-        quantities.wholesale_price_without_tax  =   result.price_without_tax;
-        quantities.wholesale_price_with_tax     =   result.price_with_tax;
+        quantities.wholesale_price_net  =   result.price_net;
+        quantities.wholesale_price_gross     =   result.price_gross;
         quantities.wholesale_price_tax          =   result.tax_value;
 
         // Also set the total tax value on the product
@@ -1843,9 +1853,9 @@ export class POS {
         }
 
         // Also set total prices for consistency
-        if ( product.price_with_tax !== undefined && product.price_without_tax !== undefined ) {
-            product.total_price_with_tax = math.chain( product.price_with_tax ).multiply( product.quantity ).done();
-            product.total_price_without_tax = math.chain( product.price_without_tax ).multiply( product.quantity ).done();
+        if ( product.price_gross !== undefined && product.price_net !== undefined ) {
+            product.total_price_gross = math.chain( product.price_gross ).multiply( product.quantity ).done();
+            product.total_price_net = math.chain( product.price_net ).multiply( product.quantity ).done();
         }
 
         nsHooks.doAction('ns-after-product-computed', product);
@@ -1861,15 +1871,15 @@ export class POS {
          */
         if ( product.mode === 'normal' ) {
             if ( product.tax_type === 'inclusive' ) {
-                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().sale_price_with_tax, product );
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().sale_price_gross, product );
             } else {
-                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().sale_price_without_tax, product );
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().sale_price_net, product );
             }
         } else if ( product.mode === 'wholesale' ) {
             if ( product.tax_type === 'inclusive' ) {
-                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().wholesale_price_with_tax, product );
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().wholesale_price_gross, product );
             } else {
-                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().wholesale_price_without_tax, product );
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().wholesale_price_net, product );
             }
         } else {
             unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
@@ -1897,18 +1907,18 @@ export class POS {
         // For tax calculated on line total, we need to derive per-unit values
         product.tax_value = math.chain( result.tax_value ).divide( product.quantity ).done();
         product.total_tax_value = result.tax_value;
-        product.price_with_tax = math.chain( result.price_with_tax ).divide( product.quantity ).done();
-        product.price_without_tax = math.chain( result.price_without_tax ).divide( product.quantity ).done();
+        product.price_gross = math.chain( result.price_gross ).divide( product.quantity ).done();
+        product.price_net = math.chain( result.price_net ).divide( product.quantity ).done();
         
         // Total prices are already correctly calculated since tax was computed on the final amount
-        product.total_price_with_tax = result.price_with_tax;
-        product.total_price_without_tax = result.price_without_tax;
+        product.total_price_gross = result.price_gross;
+        product.total_price_net = result.price_net;
     }
 
     computeTaxForGroup( price, tax_group, tax_type ) {
         let tax_value           =   0;     
-        let price_with_tax      =   0;
-        let price_without_tax   =   0;
+        let price_gross      =   0;
+        let price_net   =   0;
         let taxes               =   [];
         
         // Handle edge case where price is zero or negative after discount
@@ -1917,8 +1927,8 @@ export class POS {
                 ...tax_group,
                 taxes: [],
                 tax_value: 0,
-                price_with_tax: 0,
-                price_without_tax: 0
+                price_gross: 0,
+                price_net: 0
             };
         }
         
@@ -1934,20 +1944,20 @@ export class POS {
         if ( taxes.length > 0 ) {
             const rate          =   taxes.map( tax => tax.rate ).reduce( ( b, a ) => b + a );
             tax_value           =   this.getVatValue( price, rate, tax_type );            
-            price_without_tax   =   this.getPriceWithoutTax( price, rate, tax_type );
-            price_with_tax      =   this.getPriceWithTax( price, rate, tax_type );
+            price_net   =   this.getPriceWithoutTax( price, rate, tax_type );
+            price_gross      =   this.getPriceWithTax( price, rate, tax_type );
         } else {
             // No taxes defined, price remains unchanged
-            price_with_tax = price;
-            price_without_tax = price;
+            price_gross = price;
+            price_net = price;
         }
 
         return {
             ...tax_group,
             taxes,
             tax_value,
-            price_with_tax,
-            price_without_tax
+            price_gross,
+            price_net
         }
     }
 

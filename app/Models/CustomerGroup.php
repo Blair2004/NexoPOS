@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int            $id
  * @property string         $uuid
  * @property string         $description
- * @property int            $author
+ * @property int            $author_id
  * @property \Carbon\Carbon $updated_at
  */
 class CustomerGroup extends NsModel

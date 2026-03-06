@@ -28,7 +28,7 @@ return new class extends Migration
                 $table->increments( 'id' );
                 $table->string( 'username' );
                 $table->boolean( 'active' )->default( false );
-                $table->integer( 'author' )->nullable(); // the first user is created by him self
+                $table->integer( 'author_id' )->nullable(); // the first user is created by him self
                 $table->string( 'email' )->unique();
                 $table->string( 'password' );
                 $table->integer( 'group_id' )->nullable();

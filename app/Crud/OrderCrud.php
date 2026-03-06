@@ -161,7 +161,7 @@ class OrderCrud extends CrudService
             ], [
                 'type' => 'select',
                 'label' => __( 'Author' ),
-                'name' => 'nexopos_orders.author',
+                'name' => 'nexopos_orders.author_id',
                 'description' => __( 'Filter the orders by the author.' ),
                 'options' => Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ] ),
             ], [

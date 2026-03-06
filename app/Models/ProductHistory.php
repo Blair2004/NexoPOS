@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float          $unit_price
  * @property float          $total_price
  * @property string         $description
- * @property int            $author
+ * @property int            $author_id
  * @property mixed          $uuid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -139,6 +139,6 @@ class ProductHistory extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class, 'author_id' );
     }
 }

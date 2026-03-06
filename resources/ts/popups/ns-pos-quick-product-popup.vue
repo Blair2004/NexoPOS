@@ -75,8 +75,8 @@ export default {
                 product.quantity            =   parseFloat( product.quantity );
                 product.unit_price          =   parseFloat( product.unit_price );
                 product.mode                =   'custom';
-                product.price_with_tax      =   product.unit_price;
-                product.price_without_tax   =   product.unit_price;
+                product.price_gross         =   product.unit_price;
+                product.price_net           =   product.unit_price;
                 product.tax_value           =   0;
             } else {
                 product.unit_name   =   __( 'N/A' );

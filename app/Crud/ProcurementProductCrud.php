@@ -63,14 +63,14 @@ class ProcurementProductCrud extends CrudService
 
     /**
      * Adding relation
-     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author_id' ]
      *
      * @param  array
      */
     public $relations = [
         [ 'nexopos_procurements as procurement', 'procurement.id', '=', 'nexopos_procurements_products.procurement_id' ],
         [ 'nexopos_units as unit', 'unit.id', '=', 'nexopos_procurements_products.unit_id' ],
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_procurements_products.author' ],
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_procurements_products.author_id' ],
     ];
 
     /**

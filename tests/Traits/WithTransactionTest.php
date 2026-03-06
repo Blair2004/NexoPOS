@@ -18,7 +18,7 @@ trait WithTransactionTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/transactions-accounts', [
                 'name' => __( 'Exploitation Expenses' ),
-                'author' => Auth::id(),
+                'author_id' => Auth::id(),
                 'account' => '000010',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ] );
@@ -28,7 +28,7 @@ trait WithTransactionTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/transactions-accounts', [
                 'name' => __( 'Employee Salaries' ),
-                'author' => Auth::id(),
+                'author_id' => Auth::id(),
                 'account' => '000011',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ] );
@@ -38,7 +38,7 @@ trait WithTransactionTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/transactions-accounts', [
                 'name' => __( 'Random Expenses' ),
-                'author' => Auth::id(),
+                'author_id' => Auth::id(),
                 'account' => '000012',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ] );

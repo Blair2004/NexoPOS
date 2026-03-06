@@ -409,7 +409,7 @@ class OrdersService
                 $existingCoupon->type = $coupon[ 'type' ] ?: 0;
                 $existingCoupon->limit_usage = $coupon[ 'limit_usage' ] ?: 0;
                 $existingCoupon->code = $coupon[ 'code' ];
-                $existingCoupon->author = $order->author ?? Auth::id();
+                $existingCoupon->author_id = $order->author_id ?? Auth::id();
                 $existingCoupon->discount_value = $coupon[ 'discount_value' ] ?: 0;
             }
 
@@ -768,7 +768,7 @@ class OrdersService
                 }
             }
 
-            $orderShipping->author = $order->author ?? Auth::id();
+            $orderShipping->author_id = $order->author_id ?? Auth::id();
 
             return $orderShipping;
         } );
@@ -873,7 +873,7 @@ class OrdersService
 
         $orderPayment->identifier = $payment['identifier'];
         $orderPayment->value = $this->currencyService->define( $payment['value'] )->toFloat();
-        $orderPayment->author = $order->author;
+        $orderPayment->author_id = $order->author_id;
 
         return $orderPayment;
     }
@@ -1112,8 +1112,8 @@ class OrdersService
             $orderProduct->product_category_id = $product[ 'product' ]->category_id ?? 0;
             $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unnamed Product' );
             $orderProduct->quantity = $product[ 'quantity' ];
-            $orderProduct->price_with_tax = $product[ 'price_with_tax' ] ?? 0;
-            $orderProduct->price_without_tax = $product[ 'price_without_tax' ] ?? 0;
+            $orderProduct->price_gross = $product[ 'price_gross' ] ?? 0;
+            $orderProduct->price_net = $product[ 'price_net' ] ?? 0;
 
             /**
              * We might need to have another consideration
@@ -1166,9 +1166,9 @@ class OrdersService
             if ( ns()->option->get( 'ns_pos_vat' ) === 'disabled' ) {
                 $subTotal = $order->subtotal;
             } else {
-                if ( ns()->option->get( 'ns_pos_price_with_tax' ) === 'no' ) {
+                if ( ns()->option->get( 'ns_pos_prefered_price' ) === 'net_prices' ) {
                     $subTotal = $this->currencyService->define( $subTotal )
-                        ->additionateBy( $orderProduct->total_price_with_tax )
+                        ->additionateBy( $orderProduct->total_price_gross )
                         ->get();
                 } else {
                     $subTotal = $this->currencyService->define( $subTotal )
@@ -1571,7 +1571,7 @@ class OrdersService
         $order->delivery_status = 'pending';
         $order->process_status = 'pending';
         $order->support_instalments = $fields[ 'support_instalments' ] ?? true; // by default instalments are supported
-        $order->author = $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
+        $order->author_id = $fields[ 'author_id' ] ?? Auth::id(); // the author can now be changed
         $order->title = $fields[ 'title' ] ?? null;
         $order->tax_value = $this->currencyService->define( $fields[ 'tax_value' ] ?? 0 )->toFloat();
         $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
@@ -1825,7 +1825,7 @@ class OrdersService
         }
 
         $orderRefund = new OrderRefund;
-        $orderRefund->author = Auth::id();
+        $orderRefund->author_id = Auth::id();
         $orderRefund->order_id = $order->id;
         $orderRefund->payment_method = $fields[ 'payment' ][ 'identifier' ];
         $orderRefund->shipping = ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] ? $order->shipping : 0 );
@@ -1881,7 +1881,7 @@ class OrdersService
                 description: __( 'The current credit has been issued from a refund.' ),
                 details: [
                     'order_id' => $order->id,
-                    'author' => Auth::id(),
+                    'author_id' => Auth::id(),
                 ]
             );
         }
@@ -1942,7 +1942,7 @@ class OrdersService
             ->toFloat();
 
         $productRefund->quantity = $details[ 'quantity' ];
-        $productRefund->author = Auth::id();
+        $productRefund->author_id = Auth::id();
         $productRefund->order_id = $order->id;
         $productRefund->order_refund_id = $orderRefund->id;
         $productRefund->order_product_id = $orderProduct->id;
@@ -2221,12 +2221,12 @@ class OrdersService
 
         $productPriceWithoutTax = $products
             ->map( function ( OrderProduct $product ) {
-                return floatval( $product->total_price_without_tax );
+                return floatval( $product->total_price_net );
             } )->sum();
 
         $productPriceWithTax = $products
             ->map( function ( OrderProduct $product ) {
-                return floatval( $product->total_price_with_tax );
+                return floatval( $product->total_price_gross );
             } )->sum();
 
         $this->computeOrderTaxes( $order );
@@ -2596,7 +2596,7 @@ class OrdersService
             'store_email' => ns()->option->get( 'ns_store_email' ),
             'store_phone' => ns()->option->get( 'ns_store_phone' ),
             'cashier_name' => $order->user->username,
-            'cashier_id' => $order->author,
+            'cashier_id' => $order->author_id,
             'order_code' => $order->code,
             'order_type' => $this->getTypeLabel( $order->type ),
             'order_date' => ns()->date->getFormatted( $order->created_at ),
@@ -2899,7 +2899,7 @@ class OrdersService
         $payment = [
             'order_id' => $order->id,
             'identifier' => $paymentType,
-            'author' => Auth::id(),
+            'author_id' => Auth::id(),
             'value' => $instalment->amount,
         ];
 
@@ -3127,8 +3127,8 @@ class OrdersService
         $settings = $order->settings();
 
         $settings->create( [
-            'key' => 'ns_pos_price_with_tax',
-            'value' => ns()->option->get( 'ns_pos_price_with_tax' ),
+            'key' => 'ns_pos_prefered_price',
+            'value' => ns()->option->get( 'ns_pos_prefered_price' ),
         ] );
 
         $settings->create( [

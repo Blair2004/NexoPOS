@@ -723,7 +723,7 @@ class ReportService
             ->to( $end );
 
         if ( ! empty( $user_id ) ) {
-            $request = $request->where( 'author', $user_id );
+            $request = $request->where( 'author_id', $user_id );
         }
 
         if ( ! empty( $categories_id ) ) {
@@ -755,7 +755,7 @@ class ReportService
                 $product = $products->where( 'product_id', $id )->first();
                 $filtredProdcuts = $products->where( 'product_id', $id )->all();
 
-                $summable = [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_price_without_tax', 'total_price', 'total_price_with_tax', 'total_purchase_price' ];
+                $summable = [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_price_net', 'total_price', 'total_price_gross', 'total_purchase_price' ];
                 foreach ( $summable as $key ) {
                     $product->$key = collect( $filtredProdcuts )->sum( $key );
                 }
@@ -775,7 +775,7 @@ class ReportService
         $request->with( 'products' );
 
         if ( ! empty( $user_id ) ) {
-            $request = $request->where( 'author', $user_id );
+            $request = $request->where( 'author_id', $user_id );
         }
 
         if ( ! empty( $categories_id ) ) {
@@ -881,41 +881,41 @@ class ReportService
             $endDate = $endDate === null ? ns()->date->getNow()->endOfDay()->toDateTimeString() : $endDate;
 
             $totalSales = Order::paid()
-                ->where( 'author', $cashier )
+                ->where( 'author_id', $cashier )
                 ->count();
 
             $todaySales = Order::paid()
                 ->where( 'created_at', '>=', $startDate )
                 ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
+                ->where( 'author_id', $cashier )
                 ->count();
 
             $totalSalesAmount = Order::paid()
-                ->where( 'author', $cashier )
+                ->where( 'author_id', $cashier )
                 ->sum( 'total' );
 
             $todaySalesAmount = Order::paid()
                 ->where( 'created_at', '>=', $startDate )
                 ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
+                ->where( 'author_id', $cashier )
                 ->sum( 'total' );
 
             $totalRefundsAmount = Order::refunded()
-                ->where( 'author', $cashier )
+                ->where( 'author_id', $cashier )
                 ->sum( 'total' );
 
             $todayRefunds = Order::refunded()
                 ->where( 'created_at', '>=', $startDate )
                 ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
+                ->where( 'author_id', $cashier )
                 ->sum( 'total' );
 
-            $totalCustomers = Customer::where( 'author', $cashier )
+            $totalCustomers = Customer::where( 'author_id', $cashier )
                 ->count();
 
             $todayCustomers = Customer::where( 'created_at', '>=', $startDate )
                 ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
+                ->where( 'author_id', $cashier )
                 ->count();
 
             /**

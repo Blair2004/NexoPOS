@@ -184,8 +184,10 @@ None.
 .github/instructions/nexopos-module-quick-reference.instructions.md
 .github/instructions/nexopos-asidemenu.instructions.md
 .github/instructions/nexopos-blade-layouts.instructions.md
+.github/instructions/nexopos-colors.instructions.md
 .github/instructions/nexopos-crud.instructions.md
 .github/instructions/nexopos-forminput.instructions.md
+.github/instructions/nexopos-frontend-api.instructions.md
 .github/instructions/nexopos-httpclient.instructions.md
 .github/instructions/nexopos-localization.instructions.md
 .github/instructions/nexopos-middleware.instructions.md

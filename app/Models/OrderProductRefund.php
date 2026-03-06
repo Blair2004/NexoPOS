@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int            $id
- * @property int            $author
+ * @property int            $author_id
  * @property float          $total_price
  * @property string         $condition
  * @property string         $description

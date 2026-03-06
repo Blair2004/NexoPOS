@@ -24,21 +24,21 @@ class TransactionSeeder extends Seeder
         $group->name = 'Exploitation Expenses';
         $group->account = '000010';
         $group->operation = TransactionHistory::OPERATION_DEBIT;
-        $group->author = $author;
+        $group->author_id = $author;
         $group->save();
 
         $group = new TransactionAccount;
         $group->name = 'Employee Salaries';
         $group->account = '000011';
         $group->operation = TransactionHistory::OPERATION_DEBIT;
-        $group->author = $author;
+        $group->author_id = $author;
         $group->save();
 
         $group = new TransactionAccount;
         $group->name = 'Random Expenses';
         $group->account = '000012';
         $group->operation = TransactionHistory::OPERATION_DEBIT;
-        $group->author = $author;
+        $group->author_id = $author;
         $group->save();
     }
 }

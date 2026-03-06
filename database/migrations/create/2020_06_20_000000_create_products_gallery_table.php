@@ -26,7 +26,7 @@ return new class extends Migration
                 $table->string( 'url' )->nullable();
                 $table->integer( 'order' )->default( 0 );
                 $table->boolean( 'featured' )->default( 0 );
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

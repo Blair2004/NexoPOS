@@ -84,7 +84,7 @@ class CustomerCrud extends CrudService
         'leftJoin' => [
             [ 'nexopos_customers_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
         ],
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_users.author' ],
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_users.author_id' ],
     ];
 
     /**

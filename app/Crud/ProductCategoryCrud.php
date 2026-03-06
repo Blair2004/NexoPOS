@@ -98,7 +98,7 @@ class ProductCategoryCrud extends CrudService
         'parent_id',
         'displays_on_pos',
         'scale_range_id',
-        'author',
+        'author_id',
     ];
 
     /**

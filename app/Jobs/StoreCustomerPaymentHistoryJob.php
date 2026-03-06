@@ -40,7 +40,7 @@ class StoreCustomerPaymentHistoryJob implements ShouldQueue
                 description: __( 'Order Payment' ),
                 details: [
                     'order_id' => $this->payment->order->id,
-                    'author' => $this->payment->author,
+                    'author_id' => $this->payment->author_id,
                 ]
             );
         }

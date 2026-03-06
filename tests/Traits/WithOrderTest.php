@@ -986,7 +986,7 @@ trait WithOrderTest
             amount: $subtotal + $shippingFees,
             description: 'For testing purpose...',
             details: [
-                'author' => Auth::id(),
+                'author_id' => Auth::id(),
             ]
         );
         $customer->refresh();
@@ -1284,7 +1284,7 @@ trait WithOrderTest
                         'country' => 'United State Seattle',
                     ],
                 ],
-                'author' => ! empty( $this->users ) // we want to randomise the users
+                'author_id' => ! empty( $this->users ) // we want to randomise the users
                     ? collect( $this->users )->suffle()->first()
                     : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
                 'coupons' => $allCoupons,
@@ -2995,7 +2995,7 @@ trait WithOrderTest
                     'country' => 'United State Seattle',
                 ],
             ],
-            'author' => ! empty( $this->users ) // we want to randomise the users
+            'author_id' => ! empty( $this->users ) // we want to randomise the users
                 ? collect( $this->users )->suffle()->first()
                 : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
             'coupons' => $allCoupons,

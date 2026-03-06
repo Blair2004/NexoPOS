@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->integer( 'payment_type_id' )->default( 0 );
                 $table->integer( 'order_id' )->nullable();
                 $table->string( 'action' );
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->float( 'value', 18, 5 )->default( 0 );
                 $table->text( 'description' )->nullable();
                 $table->string( 'uuid' )->nullable();

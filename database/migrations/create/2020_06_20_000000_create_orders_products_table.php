@@ -41,15 +41,15 @@ return new class extends Migration
                 $table->float( 'quantity', 18, 5 ); // could be the base unit
                 $table->float( 'discount_percentage', 18, 5 )->default( 0 );
                 $table->float( 'unit_price', 18, 5 )->default( 0 );
-                $table->float( 'price_with_tax', 18, 5 )->default( 0 );
-                $table->float( 'price_without_tax', 18, 5 )->default( 0 );
+                $table->float( 'price_gross', 18, 5 )->default( 0 );
+                $table->float( 'price_net', 18, 5 )->default( 0 );
                 $table->float( 'wholesale_tax_value', 18, 5 )->default( 0 );
                 $table->float( 'sale_tax_value', 18, 5 )->default( 0 );
                 $table->float( 'tax_value', 18, 5 )->default( 0 );
                 $table->float( 'rate' )->default( 0 );
                 $table->float( 'total_price', 18, 5 )->default( 0 );
-                $table->float( 'total_price_with_tax', 18, 5 )->default( 0 );
-                $table->float( 'total_price_without_tax', 18, 5 )->default( 0 );
+                $table->float( 'total_price_gross', 18, 5 )->default( 0 );
+                $table->float( 'total_price_net', 18, 5 )->default( 0 );
                 $table->float( 'total_purchase_price', 18, 5 )->default( 0 );
                 $table->timestamps();
             } );

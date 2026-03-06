@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Register;
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithCashRegisterTest;
@@ -23,9 +24,7 @@ class CreateRegisterTest extends TestCase
         return $this->attemptCreateRegisterTransactions();
     }
 
-    /**
-     * @depends test_create_register
-     */
+    #[Depends( 'test_create_register' )]
     public function test_update_register( Register $register )
     {
         $this->attemptAuthenticate();
@@ -34,9 +33,7 @@ class CreateRegisterTest extends TestCase
         return $register;
     }
 
-    /**
-     * @depends test_update_register
-     */
+    #[Depends( 'test_update_register' )]
     public function test_delete_register( Register $register )
     {
         $this->attemptAuthenticate();
@@ -54,9 +51,7 @@ class CreateRegisterTest extends TestCase
         return $register;
     }
 
-    /**
-     * @depends test_open_register
-     */
+    #[Depends( 'test_open_register' )]
     public function test_cash_in_register( Register $register )
     {
         $this->attemptAuthenticate();
@@ -65,9 +60,7 @@ class CreateRegisterTest extends TestCase
         return $register;
     }
 
-    /**
-     * @depends test_cash_in_register
-     */
+    #[Depends( 'test_cash_in_register' )]
     public function test_cash_out_register( $register )
     {
         $this->attemptAuthenticate();
@@ -76,9 +69,7 @@ class CreateRegisterTest extends TestCase
         return $register;
     }
 
-    /**
-     * @depends test_cash_out_register
-     */
+    #[Depends( 'test_cash_out_register' )]
     public function test_close_register( $register )
     {
         $this->attemptAuthenticate();

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int            $id
- * @property int            $author
+ * @property int            $author_id
  * @property string         $uuid
  * @property float          $value
  * @property \Carbon\Carbon $updated_at

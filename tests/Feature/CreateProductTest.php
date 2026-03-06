@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithCategoryTest;
@@ -11,9 +12,7 @@ class CreateProductTest extends TestCase
 {
     use WithAuthentication, WithCategoryTest, WithProductTest;
 
-    /**
-     * @depends test_create_products
-     */
+    #[Depends( 'test_create_products' )]
     public function test_create_grouped_products()
     {
         $this->attemptAuthenticate();
@@ -23,9 +22,7 @@ class CreateProductTest extends TestCase
         }
     }
 
-    /**
-     * @depends test_create_grouped_products
-     */
+    #[Depends( 'test_create_grouped_products' )]
     public function test_delete_products()
     {
         $this->attemptAuthenticate();

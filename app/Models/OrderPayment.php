@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int    $id
  * @property int    $order_id
  * @property float  $value
- * @property int    $author
+ * @property int    $author_id
  * @property string $identifier
  * @property string $uuid
  */

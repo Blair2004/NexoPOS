@@ -48,9 +48,22 @@ tests/Post/*
 storage/snapshots/*.sql
 storage/temporary-files/*
 storage/opus-backups
+storage/ns-backups
 .idea
 public/hot
 .phpunit.cache/test-results
 storage/dotenv-editor
 .cloud
 ns
+
+# Playwright
+playwright-report/
+playwright-results/
+playwright/.auth/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

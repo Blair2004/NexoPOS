@@ -57,7 +57,7 @@ class DemoCoreService
         if ( ! $group instanceof UnitGroup ) {
             $group = new UnitGroup;
             $group->name = __( 'Countable' );
-            $group->author = Role::namespace( 'admin' )->users()->first()->id;
+            $group->author_id = Role::namespace( 'admin' )->users()->first()->id;
             $group->save();
         }
 
@@ -68,7 +68,7 @@ class DemoCoreService
             $unit->name = __( 'Piece' );
             $unit->identifier = 'piece';
             $unit->description = '';
-            $unit->author = Role::namespace( 'admin' )->users()->first()->id;
+            $unit->author_id = Role::namespace( 'admin' )->users()->first()->id;
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 1;
@@ -82,7 +82,7 @@ class DemoCoreService
             $unit->name = __( 'Small Box' );
             $unit->identifier = 'small-box';
             $unit->description = '';
-            $unit->author = Auth::id();
+            $unit->author_id = Auth::id();
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 6;
@@ -96,7 +96,7 @@ class DemoCoreService
             $unit->name = __( 'Box' );
             $unit->identifier = 'box';
             $unit->description = '';
-            $unit->author = Auth::id();
+            $unit->author_id = Auth::id();
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 12;
@@ -134,13 +134,13 @@ class DemoCoreService
         $register = new Register;
         $register->name = __( 'Terminal A' );
         $register->status = Register::STATUS_CLOSED;
-        $register->author = ns()->getValidAuthor();
+        $register->author_id = ns()->getValidAuthor();
         $register->save();
 
         $register = new Register;
         $register->name = __( 'Terminal B' );
         $register->status = Register::STATUS_CLOSED;
-        $register->author = ns()->getValidAuthor();
+        $register->author_id = ns()->getValidAuthor();
         $register->save();
     }
 
@@ -176,7 +176,7 @@ class DemoCoreService
         if ( ! $taxGroup instanceof TaxGroup ) {
             $taxGroup = new TaxGroup;
             $taxGroup->name = __( 'GST' );
-            $taxGroup->author = Role::namespace( 'admin' )->users()->first()->id;
+            $taxGroup->author_id = Role::namespace( 'admin' )->users()->first()->id;
             $taxGroup->save();
         }
 
@@ -187,7 +187,7 @@ class DemoCoreService
             $tax->name = __( 'SGST' );
             $tax->rate = 8;
             $tax->tax_group_id = $taxGroup->id;
-            $tax->author = Role::namespace( 'admin' )->users()->first()->id;
+            $tax->author_id = Role::namespace( 'admin' )->users()->first()->id;
             $tax->save();
         }
 
@@ -198,7 +198,7 @@ class DemoCoreService
             $tax->name = __( 'CGST' );
             $tax->rate = 8;
             $tax->tax_group_id = $taxGroup->id;
-            $tax->author = Role::namespace( 'admin' )->users()->first()->id;
+            $tax->author_id = Role::namespace( 'admin' )->users()->first()->id;
             $tax->save();
         }
     }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @property int            $id
  * @property string         $uuid
- * @property int            $author
+ * @property int            $author_id
  * @property int            $scale_range_id
  * @property bool           $displays_on_pos
  * @property string         $description
@@ -64,7 +64,7 @@ class ProductCategory extends NsModel
      */
     public function author()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo( User::class );
     }
 
     /**

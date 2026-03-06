@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Order;
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithOrderTest;
@@ -99,9 +100,7 @@ class CreateOrderTest extends TestCase
         $this->attemptCreateOrderWithGroupedProducts();
     }
 
-    /**
-     * @depends test_create_order_with_grouped_products
-     */
+    #[Depends( 'test_create_order_with_grouped_products' )]
     public function test_refund_order_with_grouped_products()
     {
         $this->attemptAuthenticate();

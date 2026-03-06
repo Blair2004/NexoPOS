@@ -21,7 +21,7 @@ class UnitService
         $unitGroup = new UnitGroup;
         $unitGroup->name = $data[ 'name' ];
         $unitGroup->description = @$data[ 'description' ] ?: '';
-        $unitGroup->author = Auth::id();
+        $unitGroup->author_id = Auth::id();
         $unitGroup->save();
 
         return [
@@ -38,7 +38,7 @@ class UnitService
         $unitGroup = UnitGroup::findOrFail( $id );
         $unitGroup->name = $data[ 'name' ];
         $unitGroup->description = @$data[ 'description' ] ?: '';
-        $unitGroup->author = Auth::id();
+        $unitGroup->author_id = Auth::id();
         $unitGroup->save();
 
         return [
@@ -114,7 +114,7 @@ class UnitService
             $unit->$field = $value;
         }
 
-        $unit->author = Auth::id();
+        $unit->author_id = Auth::id();
         $unit->save();
 
         return [
@@ -197,7 +197,7 @@ class UnitService
             $unit->$field = $value;
         }
 
-        $unit->author = Auth::id();
+        $unit->author_id = Auth::id();
         $unit->save();
 
         return [

@@ -59,13 +59,13 @@ class PermissionAccessCrud extends CrudService
 
     /**
      * Adding relation
-     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author_id' ]
      * Other possible combinatsion includes "leftJoin", "rightJoin", "innerJoin"
      *
      * Left Join Example
      * public $relations = [
      *  'leftJoin' => [
-     *      [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     *      [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author_id' ]
      *  ]
      * ];
      *

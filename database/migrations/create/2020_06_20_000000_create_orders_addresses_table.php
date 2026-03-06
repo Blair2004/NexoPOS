@@ -32,7 +32,7 @@ return new class extends Migration
                 $table->string( 'city' )->nullable();
                 $table->string( 'pobox' )->nullable();
                 $table->string( 'company' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             } );

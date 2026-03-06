@@ -23,7 +23,7 @@ return new class extends Migration
                 $table->string( 'name' );
                 $table->string( 'identifier' )->unique();
                 $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
+                $table->integer( 'author_id' );
                 $table->integer( 'group_id' );
                 $table->float( 'value', 18, 5 );
                 $table->string( 'preview_url' )->nullable();

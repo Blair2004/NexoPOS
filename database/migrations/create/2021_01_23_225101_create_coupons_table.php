@@ -27,7 +27,7 @@ return new class extends Migration
             $table->float( 'limit_usage', 18, 5 )->default( 0 ); // unlimited
             $table->string( 'groups_id' )->nullable();
             $table->string( 'customers_id' )->nullable();
-            $table->integer( 'author' );
+            $table->integer( 'author_id' );
             $table->timestamps();
         } );
 

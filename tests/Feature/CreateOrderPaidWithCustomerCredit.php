@@ -182,7 +182,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                         'country' => 'United State Seattle',
                     ],
                 ],
-                'author' => ! empty( $this->users ) // we want to randomise the users
+                'author_id' => ! empty( $this->users ) // we want to randomise the users
                     ? collect( $this->users )->suffle()->first()
                     : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
                 'coupons' => $allCoupons,
