@@ -4,24 +4,26 @@ use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Middleware\NsRestrictMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::get( 'products', [ ProductsController::class, 'getProduts' ] );
-Route::get( 'products/all/variations', [ ProductsController::class, 'getAllVariations' ] );
-Route::get( 'products/{identifier}', [ ProductsController::class, 'singleProduct' ] );
-Route::get( 'products/{identifier}/variations', [ ProductsController::class, 'getProductVariations' ] );
+Route::middleware( NsRestrictMiddleware::arguments( 'nexopos.read.products' ) )->group( function () {
+    Route::get( 'products', [ ProductsController::class, 'getProduts' ] );
+    Route::get( 'products/all/variations', [ ProductsController::class, 'getAllVariations' ] );
+    Route::get( 'products/{identifier}', [ ProductsController::class, 'singleProduct' ] );
+    Route::get( 'products/{identifier}/variations', [ ProductsController::class, 'getProductVariations' ] );
 
-// @deprecated
-Route::get( 'products/{identifier}/refresh-prices', [ ProductsController::class, 'refreshPrices' ] );
-Route::get( 'products/{identifier}/reset', [ ProductsController::class, 'reset' ] );
-Route::get( 'products/{identifier}/history', [ ProductsController::class, 'history' ] );
+    // @deprecated
+    Route::get( 'products/{identifier}/refresh-prices', [ ProductsController::class, 'refreshPrices' ] );
+    Route::get( 'products/{identifier}/reset', [ ProductsController::class, 'reset' ] );
+    Route::get( 'products/{identifier}/history', [ ProductsController::class, 'history' ] );
 
-// @todo duplicate of /products/{identifier}/units/quantities
-Route::get( 'products/{identifier}/units', [ ProductsController::class, 'units' ] );
-Route::get( 'products/{product}/units/{unit}/quantity', [ ProductsController::class, 'getUnitQuantity' ] );
+    // @todo duplicate of /products/{identifier}/units/quantities
+    Route::get( 'products/{identifier}/units', [ ProductsController::class, 'units' ] );
+    Route::get( 'products/{product}/units/{unit}/quantity', [ ProductsController::class, 'getUnitQuantity' ] );
 
-// @todo duplicate of /products/{identifier}/units
-Route::get( 'products/{product}/units/quantities', [ ProductsController::class, 'getUnitQuantities' ] );
-Route::get( 'products/{product}/procurements', [ ProductsController::class, 'getProcuredProducts' ] );
-Route::get( 'products/search/using-barcode/{product}', [ ProductsController::class, 'searchUsingArgument' ] );
+    // @todo duplicate of /products/{identifier}/units
+    Route::get( 'products/{product}/units/quantities', [ ProductsController::class, 'getUnitQuantities' ] );
+    Route::get( 'products/{product}/procurements', [ ProductsController::class, 'getProcuredProducts' ] );
+    Route::get( 'products/search/using-barcode/{product}', [ ProductsController::class, 'searchUsingArgument' ] );
+} );
 
 Route::middleware( [
     NsRestrictMiddleware::arguments( 'nexopos.delete.products' ),

@@ -24,7 +24,6 @@ class CrudTest extends TestCase
         foreach ( $files as $file ) {
             $path = pathinfo( $file );
             $class = 'App\Crud\\' . $path[ 'filename' ];
-            dump( $class );
             $object = new $class;
             $entries = $object->getEntries();
 
