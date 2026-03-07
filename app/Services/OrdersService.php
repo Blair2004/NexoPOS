@@ -154,14 +154,6 @@ class OrdersService
          */
         OrderAfterCheckPerformedEvent::dispatch( $fields, $order );
 
-        /**
-         * ------------------------------------------
-         *                  WARNING
-         * ------------------------------------------
-         * All what follow will proceed database
-         * modification. All verifications on current order
-         * should be made prior this section
-         */
         DB::transaction( function () use ( $customer, $payments, &$order, $paymentStatus, $fields ) {
 
             $order = $this->__initOrder( $fields, $paymentStatus, $order, $payments );
