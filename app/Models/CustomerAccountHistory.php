@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Events\CustomerAccountHistoryAfterCreatedEvent;
 use App\Events\CustomerAccountHistoryAfterUpdatedEvent;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**

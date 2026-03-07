@@ -338,18 +338,14 @@ class RewardSystemCrud extends CrudService
      *
      * @return void
      */
-    public function beforePost( $request )
-    {
-    }
+    public function beforePost( $request ) {}
 
     /**
      * Before Delete
      *
      * @return void
      */
-    public function beforePut( $request, $rewardSystem )
-    {
-    }
+    public function beforePut( $request, $rewardSystem ) {}
 
     /**
      * Define Columns

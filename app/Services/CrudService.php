@@ -606,11 +606,11 @@ class CrudService
      * The method also collects the $hidden fields declared on each related Eloquent model
      * so they can be excluded from the SELECT at the column-listing step.
      *
-     * @return array{0: array, 1: array<string, string[]>}  [$normalizedRelations, $hiddenByAlias]
+     * @return array{0: array, 1: array<string, string[]>} [$normalizedRelations, $hiddenByAlias]
      */
     private function resolveRelations(): array
     {
-        $normalized    = [];
+        $normalized = [];
         $hiddenByAlias = [];
 
         foreach ( $this->getRelations() as $junction => $relation ) {
@@ -663,9 +663,9 @@ class CrudService
                             : ltrim( (string) $aliasKey, '@' );
 
                         [ $rawRelation, $hidden ] = $this->expandModelRelation( $entry[0], $entry[1], $explicitAlias );
-                        $resolvedAlias             = $explicitAlias ?? $entry[1];
+                        $resolvedAlias = $explicitAlias ?? $entry[1];
                         $hiddenByAlias[$resolvedAlias] = $hidden;
-                        $resolvedGroup[]              = $rawRelation;
+                        $resolvedGroup[] = $rawRelation;
                     } else {
                         $resolvedGroup[] = $entry;
                     }
@@ -686,10 +686,10 @@ class CrudService
      * Only BelongsTo and HasOne relations are supported; attempting to use
      * HasMany or BelongsToMany will throw an exception.
      *
-     * @param  string      $modelClass    Fully-qualified class name of the related model.
-     * @param  string      $methodName    Name of the relationship method on $this->model.
-     * @param  string|null $explicitAlias SQL alias for the joined table; defaults to $methodName.
-     * @return array{0: array, 1: string[]}  [$canonicalRelation, $hiddenFields]
+     * @param  string                       $modelClass    Fully-qualified class name of the related model.
+     * @param  string                       $methodName    Name of the relationship method on $this->model.
+     * @param  string|null                  $explicitAlias SQL alias for the joined table; defaults to $methodName.
+     * @return array{0: array, 1: string[]} [$canonicalRelation, $hiddenFields]
      *
      * @throws Exception
      */
@@ -727,15 +727,15 @@ class CrudService
 
         $relatedModel = $relation->getRelated();
         $relatedTable = $this->hookTableName( $relatedModel->getTable() );
-        $hidden       = $relatedModel->getHidden();
+        $hidden = $relatedModel->getHidden();
 
         if ( $relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo ) {
             // Foreign key sits on the main (owning) table.
-            $fk       = $this->hookTableName( $this->table ) . '.' . $relation->getForeignKeyName();
+            $fk = $this->hookTableName( $this->table ) . '.' . $relation->getForeignKeyName();
             $ownerKey = $alias . '.' . $relation->getOwnerKeyName();
         } else {
             // HasOne: foreign key sits on the related table.
-            $fk       = $alias . '.' . $relation->getForeignKeyName();
+            $fk = $alias . '.' . $relation->getForeignKeyName();
             $ownerKey = $this->hookTableName( $this->table ) . '.' . $relation->getLocalKeyName();
         }
 
@@ -876,7 +876,7 @@ class CrudService
                     $aliasName = $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
                     $columns = collect( Schema::getColumnListing( count( $hasAlias ) === 2 ? trim( $hasAlias[0] ) : $relation[0] ) )
                         ->filter( function ( $column ) use ( $pick, $table, $aliasName, $hiddenByAlias ) {
-                            $alias  = $aliasName ? trim( $aliasName ) : $table;
+                            $alias = $aliasName ? trim( $aliasName ) : $table;
                             $picked = $pick[$alias] ?? [];
 
                             if ( ! empty( $picked ) ) {
@@ -1573,10 +1573,10 @@ class CrudService
     public function allowedTo( string $permission ): void
     {
         /**
-         * We'll adopt a quite permissive approach: if no permissions are defined, then we won't perform any check. 
+         * We'll adopt a quite permissive approach: if no permissions are defined, then we won't perform any check.
          * If permissions are defined, then we'll check if the specific permission is set to false (explicitly disabled) or if it's a string (permission name) that should be checked.
-         * 
-         * The reason of this is to not have any clue on why a request is blocked when we've not defined any permission. 
+         *
+         * The reason of this is to not have any clue on why a request is blocked when we've not defined any permission.
          * This way, the user can start with a permissive approach and then gradually add restrictions by defining permissions.
          */
         if ( isset( $this->permissions ) && isset( $this->permissions[$permission] ) ) {

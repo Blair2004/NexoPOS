@@ -59,10 +59,10 @@ trait WithProviderRouteTest
 
         $unprivilegedUser = $usersService->setUser( [
             'username' => 'test_noperm_' . $slug,
-            'email'    => 'test_noperm_' . $slug . '@test.local',
+            'email' => 'test_noperm_' . $slug . '@test.local',
             'password' => 'password',
-            'active'   => true,
-            'roles'    => [ $userRole->id ],
+            'active' => true,
+            'roles' => [ $userRole->id ],
         ] )[ 'data' ][ 'user' ];
 
         Sanctum::actingAs( $unprivilegedUser, [ '*' ] );

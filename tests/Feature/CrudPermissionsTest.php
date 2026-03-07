@@ -28,7 +28,7 @@ class CrudPermissionsTest extends TestCase
         Sanctum::actingAs( $user, [ '*' ] );
 
         $response = $this->json( 'POST', 'api/crud/ns.products-categories', [
-            'name'    => 'Unauthorized Category ' . Str::random( 5 ),
+            'name' => 'Unauthorized Category ' . Str::random( 5 ),
             'general' => [ 'displays_on_pos' => true ],
         ] );
 
@@ -72,7 +72,7 @@ class CrudPermissionsTest extends TestCase
         Sanctum::actingAs( $user, [ '*' ] );
 
         $response = $this->json( 'PUT', 'api/crud/ns.products-categories/' . $category->id, [
-            'name'    => 'Unauthorized Update ' . Str::random( 5 ),
+            'name' => 'Unauthorized Update ' . Str::random( 5 ),
             'general' => [ 'displays_on_pos' => true ],
         ] );
 
@@ -139,9 +139,9 @@ class CrudPermissionsTest extends TestCase
 
         $result = $service->setUser( [
             'username' => 'crud_perm_user_' . Str::random( 8 ),
-            'email'    => 'crud_perm_' . Str::random( 8 ) . '@nexopos-test.invalid',
+            'email' => 'crud_perm_' . Str::random( 8 ) . '@nexopos-test.invalid',
             'password' => Str::random( 16 ),
-            'active'   => true,
+            'active' => true,
         ] );
 
         // Restore the original option so this test does not pollute others.

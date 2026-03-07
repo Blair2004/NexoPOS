@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\NotificationDeletedEvent;
 use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
