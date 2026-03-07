@@ -265,12 +265,6 @@ class PaymentTypeCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
-        } else {
-            throw new NotAllowedException;
-        }
-
         Cache::forget( 'nexopos.pos.payments' );
         Cache::forget( 'nexopos.pos.payments-key' );
 
@@ -311,12 +305,6 @@ class PaymentTypeCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
-        } else {
-            throw new NotAllowedException;
-        }
-
         Cache::forget( 'nexopos.pos.payments' );
         Cache::forget( 'nexopos.pos.payments-key' );
 
@@ -352,12 +340,6 @@ class PaymentTypeCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
              **/
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
-            } else {
-                throw new NotAllowedException;
-            }
-
             if ( $model->readonly ) {
                 throw new NotAllowedException( __( 'Unable to delete a read-only payments type.' ) );
             }

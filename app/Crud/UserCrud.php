@@ -510,6 +510,17 @@ class UserCrud extends CrudService
     }
 
     /**
+     * Before saving a new record
+     *
+     * @param  Request $request
+     * @return void
+     */
+    public function beforePost( $request )
+    {
+        return $request;
+    }
+
+    /**
      * After saving a record
      *
      * @param  Request $request
@@ -561,8 +572,6 @@ class UserCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'update' );
-
         return $request;
     }
 
@@ -604,8 +613,6 @@ class UserCrud extends CrudService
     public function beforeDelete( $namespace, int $id, $model )
     {
         if ( $namespace == 'ns.users' ) {
-            $this->allowedTo( 'delete' );
-
             if ( $id === Auth::id() ) {
                 throw new NotAllowedException( __( 'You cannot delete your own account.' ) );
             }

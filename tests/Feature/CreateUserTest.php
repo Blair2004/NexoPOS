@@ -32,11 +32,6 @@ class CreateUserTest extends TestCase
 
     protected UsersService $users;
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_create_users()
     {
         $this->attemptAuthenticate();

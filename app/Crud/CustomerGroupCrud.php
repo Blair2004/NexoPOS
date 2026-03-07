@@ -252,9 +252,7 @@ class CustomerGroupCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id )
     {
-        if ( $namespace == 'ns.customers-groups' ) {
-            $this->allowedTo( 'delete' );
-        }
+        // ...
     }
 
     /**
@@ -264,7 +262,7 @@ class CustomerGroupCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
+        // ...
     }
 
     /**
@@ -274,7 +272,7 @@ class CustomerGroupCrud extends CrudService
      */
     public function beforePut( $request, $id )
     {
-        $this->allowedTo( 'delete' );
+        // ...
     }
 
     /**

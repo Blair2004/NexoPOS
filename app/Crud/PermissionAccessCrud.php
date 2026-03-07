@@ -207,8 +207,6 @@ class PermissionAccessCrud extends CrudService
      */
     public function beforePost( array $request ): array
     {
-        $this->allowedTo( 'create' );
-
         return $request;
     }
 
@@ -243,8 +241,6 @@ class PermissionAccessCrud extends CrudService
      */
     public function beforePut( array $request, PermissionAccess $entry ): array
     {
-        $this->allowedTo( 'update' );
-
         return $request;
     }
 
@@ -264,20 +260,7 @@ class PermissionAccessCrud extends CrudService
     public function beforeDelete( $identifier, $id, $model ): void
     {
         if ( $identifier == self::IDENTIFIER ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' ),
-             *  ], 403 );
-             **/
-            if ( $this->permissions['delete'] !== false ) {
-                ns()->restrict( $this->permissions['delete'] );
-            } else {
-                throw new NotAllowedException;
-            }
+            //
         }
     }
 

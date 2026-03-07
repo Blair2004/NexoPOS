@@ -12,11 +12,6 @@ class CreateOrderTest extends TestCase
 {
     use WithAuthentication, WithOrderTest;
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_posting_order( $callback = null )
     {
         $this->count = 1;
