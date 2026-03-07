@@ -154,82 +154,78 @@ class OrdersService
          */
         OrderAfterCheckPerformedEvent::dispatch( $fields, $order );
 
-        /**
-         * ------------------------------------------
-         *                  WARNING
-         * ------------------------------------------
-         * All what follow will proceed database
-         * modification. All verifications on current order
-         * should be made prior this section
-         */
-        $order = $this->__initOrder( $fields, $paymentStatus, $order, $payments );
+        DB::transaction( function () use ( $customer, $payments, &$order, $paymentStatus, $fields ) {
 
-        /**
-         * if we're editing an order. We need to loop the products in order
-         * to recover all the products that has been deleted from the POS and therefore
-         * aren't tracked no more. This also make stock adjustment for product which has changed.
-         */
-        $this->__deleteUntrackedProducts( $order, $fields[ 'products' ] );
+            $order = $this->__initOrder( $fields, $paymentStatus, $order, $payments );
 
-        $addresses = $this->__saveAddressInformations( $order, $fields );
+            /**
+             * if we're editing an order. We need to loop the products in order
+             * to recover all the products that has been deleted from the POS and therefore
+             * aren't tracked no more. This also make stock adjustment for product which has changed.
+             */
+            $this->__deleteUntrackedProducts( $order, $fields['products'] );
 
-        if ( in_array( $paymentStatus, [
-            Order::PAYMENT_PAID,
-            Order::PAYMENT_PARTIALLY,
-            Order::PAYMENT_UNPAID,
-        ] ) ) {
-            $payments = $this->__saveOrderPayments( $order, $payments, $customer );
-        }
+            $addresses = $this->__saveAddressInformations( $order, $fields );
 
-        /**
-         * save order instalments
-         */
-        $instalments = $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
+            if ( in_array( $paymentStatus, [
+                Order::PAYMENT_PAID,
+                Order::PAYMENT_PARTIALLY,
+                Order::PAYMENT_UNPAID,
+            ] ) ) {
+                $payments = $this->__saveOrderPayments( $order, $payments, $customer );
+            }
 
-        /**
-         * save order coupons
-         */
-        $coupons = $this->__saveOrderCoupons( $order, $fields[ 'coupons' ] ?? [] );
+            /**
+             * save order instalments
+             */
+            $instalments = $this->__saveOrderInstalments( $order, $fields['instalments'] ?? [] );
 
-        /**
-         * @var Order $order
-         * @var float $taxes
-         * @var float $subTotal
-         * @var array $orderProducts
-         */
-        extract( $this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
+            /**
+             * save order coupons
+             */
+            $coupons = $this->__saveOrderCoupons( $order, $fields['coupons'] ?? [] );
 
-        /**
-         * register taxes for the order
-         */
-        $order->setRelations( [
-            'products' => $orderProducts,
-            'payments' => $payments,
-            'coupons' => $coupons,
-            'instalments' => $instalments,
-            'addresses' => $addresses,
-        ] );
+            /**
+             * @var Order $order
+             * @var float $taxes
+             * @var float $subTotal
+             * @var array $orderProducts
+             */
+            extract( $this->__saveOrderProducts( $order, $fields['products'] ) );
 
-        $taxes = $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
+            /**
+             * register taxes for the order
+             */
+            $order->setRelations( [
+                'products' => $orderProducts,
+                'payments' => $payments,
+                'coupons' => $coupons,
+                'instalments' => $instalments,
+                'addresses' => $addresses,
+            ] );
 
-        /**
-         * Those fields might be used while running a listener on
-         * either the create or update event of the order.
-         */
-        $order->setData( $fields );
+            $taxes = $this->__registerTaxes( $order, $fields['taxes'] ?? [] );
 
-        $order->saveWithRelationships( [
-            'products' => $orderProducts,
-            'payments' => $payments,
-            'coupons' => $coupons,
-            'instalments' => $instalments,
-            'taxes' => $taxes,
-            'order_addresses' => $addresses,
-        ] );
+            /**
+             * Those fields might be used while running a listener on
+             * either the create or update event of the order.
+             */
+            $order->setData( $fields );
 
-        $order->load( 'payments' );
-        $order->load( 'products' );
-        $order->load( 'coupons' );
+            $order->saveWithRelationships( [
+                'products' => $orderProducts,
+                'payments' => $payments,
+                'coupons' => $coupons,
+                'instalments' => $instalments,
+                'taxes' => $taxes,
+                'order_addresses' => $addresses,
+            ] );
+
+            $order->load( 'payments' );
+            $order->load( 'products' );
+            $order->load( 'coupons' );
+
+        } );
 
         return [
             'status' => 'success',
@@ -1825,68 +1821,72 @@ class OrdersService
         }
 
         $orderRefund = new OrderRefund;
-        $orderRefund->author_id = Auth::id();
-        $orderRefund->order_id = $order->id;
-        $orderRefund->payment_method = $fields[ 'payment' ][ 'identifier' ];
-        $orderRefund->shipping = ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] ? $order->shipping : 0 );
-        $orderRefund->total = 0;
-        $orderRefund->save();
-
-        OrderRefundPaymentAfterCreatedEvent::dispatch( $orderRefund );
-
         $results = [];
 
-        foreach ( $fields[ 'products' ] as $product ) {
-            $results[] = $this->refundSingleProduct( $order, $orderRefund, OrderProduct::find( $product[ 'id' ] ), $product );
-        }
+        DB::transaction( function () use ( $fields, &$order, &$orderRefund, &$results ) {
 
-        /**
-         * if the shipping is refunded
-         * We'll do that here
-         */
-        $shipping = 0;
+            $orderRefund->author_id = Auth::id();
+            $orderRefund->order_id = $order->id;
+            $orderRefund->payment_method = $fields['payment']['identifier'];
+            $orderRefund->shipping = ( isset( $fields['refund_shipping'] ) && $fields['refund_shipping'] ? $order->shipping : 0 );
+            $orderRefund->total = 0;
+            $orderRefund->save();
 
-        if ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] === true ) {
-            $shipping = $order->shipping;
-            $order->shipping = 0;
-        }
+            OrderRefundPaymentAfterCreatedEvent::dispatch( $orderRefund );
 
-        $taxValue = collect( $results )->map( function ( $result ) {
-            $refundProduct = $result[ 'data' ][ 'productRefund' ];
+            foreach ( $fields['products'] as $product ) {
+                $results[] = $this->refundSingleProduct( $order, $orderRefund, OrderProduct::find( $product['id'] ), $product );
+            }
 
-            return $refundProduct->tax_value;
-        } )->sum() ?: 0;
+            /**
+             * if the shipping is refunded
+             * We'll do that here
+             */
+            $shipping = 0;
 
-        $orderRefund->tax_value = ns()->currency->define( $taxValue )->toFloat();
+            if ( isset( $fields['refund_shipping'] ) && $fields['refund_shipping'] === true ) {
+                $shipping = $order->shipping;
+                $order->shipping = 0;
+            }
 
-        /**
-         * let's update the order refund total
-         */
-        $orderRefund->load( 'refunded_products' );
-        $orderRefund->total = Currency::define(
-            $orderRefund->refunded_products->sum( 'total_price' )
-        )->additionateBy( $shipping )->toFloat();
+            $taxValue = collect( $results )->map( function ( $result ) {
+                $refundProduct = $result['data']['productRefund'];
 
-        $orderRefund->save();
+                return $refundProduct->tax_value;
+            } )->sum() ?: 0;
 
-        /**
-         * check if the payment used is the customer account
-         * so that we can withdraw the funds to the account
-         */
-        if ( $fields[ 'payment' ][ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
-            $this->customerService->saveTransaction(
-                customer: $order->customer,
-                operation: CustomerAccountHistory::OPERATION_REFUND,
-                amount: $fields[ 'total' ],
-                description: __( 'The current credit has been issued from a refund.' ),
-                details: [
-                    'order_id' => $order->id,
-                    'author_id' => Auth::id(),
-                ]
-            );
-        }
+            $orderRefund->tax_value = ns()->currency->define( $taxValue )->toFloat();
 
-        OrderAfterRefundedEvent::dispatch( $order, $orderRefund );
+            /**
+             * let's update the order refund total
+             */
+            $orderRefund->load( 'refunded_products' );
+            $orderRefund->total = Currency::define(
+                $orderRefund->refunded_products->sum( 'total_price' )
+            )->additionateBy( $shipping )->toFloat();
+
+            $orderRefund->save();
+
+            /**
+             * check if the payment used is the customer account
+             * so that we can withdraw the funds to the account
+             */
+            if ( $fields['payment']['identifier'] === OrderPayment::PAYMENT_ACCOUNT ) {
+                $this->customerService->saveTransaction(
+                    customer: $order->customer,
+                    operation: CustomerAccountHistory::OPERATION_REFUND,
+                    amount: $fields['total'],
+                    description: __( 'The current credit has been issued from a refund.' ),
+                    details: [
+                        'order_id' => $order->id,
+                        'author_id' => Auth::id(),
+                    ]
+                );
+            }
+
+            OrderAfterRefundedEvent::dispatch( $order, $orderRefund );
+
+        } );
 
         return [
             'status' => 'success',
