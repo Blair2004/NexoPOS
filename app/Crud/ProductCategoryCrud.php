@@ -250,8 +250,6 @@ class ProductCategoryCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
-
         return $request;
     }
 
@@ -291,8 +289,6 @@ class ProductCategoryCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'delete' );
-
         return $request;
     }
 
@@ -332,8 +328,6 @@ class ProductCategoryCrud extends CrudService
     public function beforeDelete( $namespace, $id, $model )
     {
         if ( $namespace == 'ns.products-categories' ) {
-            $this->allowedTo( 'delete' );
-
             ProductCategoryBeforeDeletedEvent::dispatch( $model );
         }
     }

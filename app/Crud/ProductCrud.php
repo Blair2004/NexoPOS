@@ -633,8 +633,6 @@ class ProductCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
-
         return $request;
     }
 
@@ -672,8 +670,6 @@ class ProductCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'update' );
-
         return $request;
     }
 
@@ -704,9 +700,7 @@ class ProductCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model )
     {
-        if ( $namespace == 'ns.products' ) {
-            $this->allowedTo( 'delete' );
-        }
+        // ...
     }
 
     /**

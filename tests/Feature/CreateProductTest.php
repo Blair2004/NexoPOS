@@ -29,11 +29,6 @@ class CreateProductTest extends TestCase
         $this->attemptDeleteProducts();
     }
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_create_products()
     {
         $this->attemptAuthenticate();

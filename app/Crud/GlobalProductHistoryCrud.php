@@ -225,13 +225,7 @@ class GlobalProductHistoryCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
-        } else {
-            throw new NotAllowedException;
-        }
-
-        return $request;
+        // ...
     }
 
     /**
@@ -268,12 +262,6 @@ class GlobalProductHistoryCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
-        } else {
-            throw new NotAllowedException;
-        }
-
         return $request;
     }
 
@@ -306,11 +294,7 @@ class GlobalProductHistoryCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
              **/
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
-            } else {
-                throw new NotAllowedException;
-            }
+            //
         }
     }
 

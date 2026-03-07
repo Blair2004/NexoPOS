@@ -219,8 +219,6 @@ class ProviderCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
-
         return $request;
     }
 
@@ -258,8 +256,6 @@ class ProviderCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'update' );
-
         return $request;
     }
 
@@ -283,7 +279,7 @@ class ProviderCrud extends CrudService
     public function beforeDelete( $namespace, $id, $model )
     {
         if ( $namespace == 'ns.providers' ) {
-            $this->allowedTo( 'delete' );
+            //
         }
     }
 

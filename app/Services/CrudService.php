@@ -318,10 +318,12 @@ class CrudService
         );
 
         if ( method_exists( $resource, 'beforePost' ) && ! $isEditing ) {
+            $resource->allowedTo( 'create' );
             $resource->beforePost( $unfiltredInputs, null, $inputs );
         }
 
         if ( method_exists( $resource, 'beforePut' ) && $isEditing ) {
+            $resource->allowedTo( 'edit' );
             $resource->beforePut( $unfiltredInputs, $entry, $inputs );
         }
 
@@ -769,6 +771,8 @@ class CrudService
      */
     public function getEntries( $config = [] ): array
     {
+        $this->allowedTo( 'read' );
+
         $table = $this->hookTableName( $this->table );
         $request = app()->make( Request::class );
         $query = DB::table( $table );
@@ -1568,10 +1572,19 @@ class CrudService
      */
     public function allowedTo( string $permission ): void
     {
-        if ( isset( $this->permissions ) && $this->permissions[$permission] !== false ) {
-            ns()->restrict( $this->permissions[$permission] );
-        } else {
-            throw new NotAllowedException;
+        /**
+         * We'll adopt a quite permissive approach: if no permissions are defined, then we won't perform any check. 
+         * If permissions are defined, then we'll check if the specific permission is set to false (explicitly disabled) or if it's a string (permission name) that should be checked.
+         * 
+         * The reason of this is to not have any clue on why a request is blocked when we've not defined any permission. 
+         * This way, the user can start with a permissive approach and then gradually add restrictions by defining permissions.
+         */
+        if ( isset( $this->permissions ) && isset( $this->permissions[$permission] ) ) {
+            if ( $this->permissions[ $permission ] !== false ) {
+                ns()->restrict( $this->permissions[$permission] );
+            } else {
+                throw new NotAllowedException;
+            }
         }
     }
 

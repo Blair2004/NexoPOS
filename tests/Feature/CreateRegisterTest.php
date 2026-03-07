@@ -12,11 +12,6 @@ class CreateRegisterTest extends TestCase
 {
     use WithAuthentication, WithCashRegisterTest;
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_create_register()
     {
         $this->attemptAuthenticate();
