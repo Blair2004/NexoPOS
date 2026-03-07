@@ -19,8 +19,6 @@ class SettingsController extends DashboardController
 {
     public function getSettings( $identifier )
     {
-        Gate::allows( 'manages.options' );
-
         return $this->handleDefaultSettings( $identifier );
     }
 
