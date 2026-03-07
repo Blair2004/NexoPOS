@@ -210,7 +210,6 @@ class ScaleRangeCrud extends CrudService
      */
     public function beforePost( $inputs )
     {
-        $this->allowedTo( 'create' );
         $this->validateRangeOverlap( $inputs );
 
         return $inputs;
@@ -221,7 +220,6 @@ class ScaleRangeCrud extends CrudService
      */
     public function beforePut( $inputs, ?ScaleRange $entry = null )
     {
-        $this->allowedTo( 'update' );
         $this->validateRangeOverlap( $inputs, $entry );
 
         return $inputs;
@@ -298,8 +296,6 @@ class ScaleRangeCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model )
     {
-        $this->allowedTo( 'delete' );
-
         // Check if any categories are using this range
         if ( $model->categories()->count() > 0 ) {
             return response()->json( [

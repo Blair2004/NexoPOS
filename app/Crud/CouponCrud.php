@@ -395,46 +395,40 @@ class CouponCrud extends CrudService
      */
     public function beforePost( array $inputs ): array
     {
-        $this->allowedTo( 'create' );
-
-        if ( $this->permissions[ 'create' ] !== false ) {
-            if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
-                foreach ( $inputs[ 'products' ] as $product_id ) {
-                    $product = Product::find( $product_id );
-                    if ( ! $product instanceof Product ) {
-                        throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
-                    }
+        if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
+            foreach ( $inputs[ 'products' ] as $product_id ) {
+                $product = Product::find( $product_id );
+                if ( ! $product instanceof Product ) {
+                    throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
                 }
             }
+        }
 
-            if ( isset( $inputs[ 'categories' ] ) && ! empty( $inputs[ 'categories' ] ) ) {
-                foreach ( $inputs[ 'categories' ] as $category_id ) {
-                    $category = ProductCategory::find( $category_id );
-                    if ( ! $category instanceof ProductCategory ) {
-                        throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
-                    }
+        if ( isset( $inputs[ 'categories' ] ) && ! empty( $inputs[ 'categories' ] ) ) {
+            foreach ( $inputs[ 'categories' ] as $category_id ) {
+                $category = ProductCategory::find( $category_id );
+                if ( ! $category instanceof ProductCategory ) {
+                    throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
                 }
             }
+        }
 
-            if ( isset( $inputs[ 'customers' ] ) && ! empty( $inputs[ 'customers' ] ) ) {
-                foreach ( $inputs[ 'customers' ] as $customer_id ) {
-                    $category = Customer::find( $customer_id );
-                    if ( ! $category instanceof Customer ) {
-                        throw new Exception( __( 'Unable to save the coupon as one of the selected customer no longer exists.' ) );
-                    }
+        if ( isset( $inputs[ 'customers' ] ) && ! empty( $inputs[ 'customers' ] ) ) {
+            foreach ( $inputs[ 'customers' ] as $customer_id ) {
+                $category = Customer::find( $customer_id );
+                if ( ! $category instanceof Customer ) {
+                    throw new Exception( __( 'Unable to save the coupon as one of the selected customer no longer exists.' ) );
                 }
             }
+        }
 
-            if ( isset( $inputs[ 'groups' ] ) && ! empty( $inputs[ 'groups' ] ) ) {
-                foreach ( $inputs[ 'groups' ] as $group_id ) {
-                    $category = CustomerGroup::find( $group_id );
-                    if ( ! $category instanceof CustomerGroup ) {
-                        throw new Exception( __( 'Unable to save the coupon as one of the selected customer group no longer exists.' ) );
-                    }
+        if ( isset( $inputs[ 'groups' ] ) && ! empty( $inputs[ 'groups' ] ) ) {
+            foreach ( $inputs[ 'groups' ] as $group_id ) {
+                $category = CustomerGroup::find( $group_id );
+                if ( ! $category instanceof CustomerGroup ) {
+                    throw new Exception( __( 'Unable to save the coupon as one of the selected customer group no longer exists.' ) );
                 }
             }
-        } else {
-            throw new NotAllowedException;
         }
 
         return $inputs;
@@ -500,38 +494,32 @@ class CouponCrud extends CrudService
      */
     public function beforePut( array $inputs, $entry ): array
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
-
-            foreach ( $inputs[ 'products' ] ?? [] as $product_id ) {
-                $product = Product::find( $product_id );
-                if ( ! $product instanceof Product ) {
-                    throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
-                }
+        foreach ( $inputs[ 'products' ] ?? [] as $product_id ) {
+            $product = Product::find( $product_id );
+            if ( ! $product instanceof Product ) {
+                throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
             }
+        }
 
-            foreach ( $inputs[ 'categories' ] ?? [] as $category_id ) {
-                $category = ProductCategory::find( $category_id );
-                if ( ! $category instanceof ProductCategory ) {
-                    throw new Exception( __( 'Unable to save the coupon as this category doens\'t exists.' ) );
-                }
+        foreach ( $inputs[ 'categories' ] ?? [] as $category_id ) {
+            $category = ProductCategory::find( $category_id );
+            if ( ! $category instanceof ProductCategory ) {
+                throw new Exception( __( 'Unable to save the coupon as this category doens\'t exists.' ) );
             }
+        }
 
-            foreach ( $inputs[ 'customers' ] ?? [] as $customer_id ) {
-                $customer = Customer::find( $customer_id );
-                if ( ! $customer instanceof Customer ) {
-                    throw new Exception( __( 'Unable to save the coupon as one of the customers provided no longer exists.' ) );
-                }
+        foreach ( $inputs[ 'customers' ] ?? [] as $customer_id ) {
+            $customer = Customer::find( $customer_id );
+            if ( ! $customer instanceof Customer ) {
+                throw new Exception( __( 'Unable to save the coupon as one of the customers provided no longer exists.' ) );
             }
+        }
 
-            foreach ( $inputs[ 'groups' ] ?? [] as $groups ) {
-                $customerGroup = CustomerGroup::find( $groups );
-                if ( ! $customerGroup instanceof CustomerGroup ) {
-                    throw new Exception( __( 'Unable to save the coupon as one of the provided customer group no longer exists.' ) );
-                }
+        foreach ( $inputs[ 'groups' ] ?? [] as $groups ) {
+            $customerGroup = CustomerGroup::find( $groups );
+            if ( ! $customerGroup instanceof CustomerGroup ) {
+                throw new Exception( __( 'Unable to save the coupon as one of the provided customer group no longer exists.' ) );
             }
-        } else {
-            throw new NotAllowedException;
         }
 
         return $inputs;
@@ -591,8 +579,6 @@ class CouponCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $coupon ): void
     {
-        ns()->restrict( $this->permissions[ 'delete' ] );
-
         if ( $namespace == 'ns.coupons' ) {
             /**
              * @var CustomerService

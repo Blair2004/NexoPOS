@@ -329,9 +329,8 @@ class RewardSystemCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id )
     {
-        if ( $namespace == 'ns.rewards_system' ) {
-            $this->allowedTo( 'delete' );
-        }
+        // ...
+
     }
 
     /**
@@ -341,7 +340,6 @@ class RewardSystemCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
     }
 
     /**
@@ -351,7 +349,6 @@ class RewardSystemCrud extends CrudService
      */
     public function beforePut( $request, $rewardSystem )
     {
-        $this->allowedTo( 'update' );
     }
 
     /**

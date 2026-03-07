@@ -232,8 +232,6 @@ class UnitCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
-
         return $request;
     }
 
@@ -271,8 +269,6 @@ class UnitCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'update' );
-
         return $request;
     }
 
@@ -295,9 +291,7 @@ class UnitCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model )
     {
-        if ( $namespace == 'ns.units' ) {
-            $this->allowedTo( 'delete' );
-        }
+        // ...
     }
 
     /**

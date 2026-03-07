@@ -253,8 +253,6 @@ class ProcurementCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
-
         return $request;
     }
 
@@ -292,8 +290,6 @@ class ProcurementCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'update' );
-
         return $request;
     }
 
@@ -317,7 +313,7 @@ class ProcurementCrud extends CrudService
     public function beforeDelete( $namespace, $id, $model )
     {
         if ( $namespace == 'ns.procurements' ) {
-            $this->allowedTo( 'delete' );
+            //
         }
     }
 

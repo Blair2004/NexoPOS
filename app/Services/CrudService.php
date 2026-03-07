@@ -318,10 +318,12 @@ class CrudService
         );
 
         if ( method_exists( $resource, 'beforePost' ) && ! $isEditing ) {
+            $resource->allowedTo( 'create' );
             $resource->beforePost( $unfiltredInputs, null, $inputs );
         }
 
         if ( method_exists( $resource, 'beforePut' ) && $isEditing ) {
+            $resource->allowedTo( 'edit' );
             $resource->beforePut( $unfiltredInputs, $entry, $inputs );
         }
 
@@ -769,6 +771,8 @@ class CrudService
      */
     public function getEntries( $config = [] ): array
     {
+        $this->allowedTo( 'read' );
+
         $table = $this->hookTableName( $this->table );
         $request = app()->make( Request::class );
         $query = DB::table( $table );
