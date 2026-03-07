@@ -167,7 +167,12 @@ class NotificationService
     public function deleteSingleNotification( $id )
     {
         $notification = Notification::find( $id );
-        NotificationDeletedEvent::dispatch( $notification );
+
+        if ( $notification->user_id !== auth()->id() ) {
+            throw new Exception( __( 'You are not authorized to delete this notification' ) );
+        }
+
+        $notification->delete();
     }
 
     public function deleteNotificationsFor( User $user )
