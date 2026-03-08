@@ -270,7 +270,7 @@ export default {
                     .subscribe( result => {
                         // ...
                     }, error => {
-                        return nsSnackBar.error( error.message || __( 'An unpexpected error occured while using the widget.' ) );
+                        return nsSnackBar.error( error.message || __( 'An unexpected error occurred while using the widget.' ) );
                     })
             }, 100 );
         },

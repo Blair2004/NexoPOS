@@ -437,7 +437,7 @@ class OrderCrud extends CrudService
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
-                throw new NotAllowedException( __( 'Deleting has been explicitely disabled on this component.' ) );
+                throw new NotAllowedException( __( 'Deleting has been explicitly disabled on this component.' ) );
             }
 
             $status = [

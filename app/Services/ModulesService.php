@@ -1190,7 +1190,7 @@ class ModulesService
     private function __runModuleMigration( string $moduleNamespace ): array
     {
         /**
-         * Load module since it has'nt yet been added to the
+         * Load module since it hasn't yet been added to the
          * runtime
          */
         $this->load( $moduleNamespace );
@@ -1875,7 +1875,7 @@ class ModulesService
 
     /**
      * Prevents module management when
-     * it's explicitely disabled from the settings
+     * it's explicitly disabled from the settings
      */
     public function checkManagementStatus(): void
     {

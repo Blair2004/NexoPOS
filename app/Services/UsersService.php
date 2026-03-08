@@ -390,7 +390,7 @@ class UsersService
         if ( ! ns()->allowedTo( $permission ) && ! $approvedTemporaryPermission instanceof PermissionAccess ) {
 
             /**
-             * If we've explicitely enabled the action permission feature
+             * If we've explicitly enabled the action permission feature
              * we should proceed otherwise we won't create any permission request.
              */
             $access = [];

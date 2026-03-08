@@ -5,7 +5,7 @@
                 <ns-notice>
                     <template #title>{{ __( 'About Token' ) }}</template>
                     <template #description>{{ __( `Token are used to provide a secure access to NexoPOS resources without having to share your personal username and password.
-                       Once generated, they won\'t expires until you explicitely revoke it.` ) }}
+                       Once generated, they won\'t expires until you explicitly revoke it.` ) }}
                     </template>
                 </ns-notice>
             </div>
@@ -103,7 +103,7 @@ export default {
                                     nsSnackBar.success( result.message );
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || 'An unexpected error occured.' );
+                                    nsSnackBar.error( error.message || 'An unexpected error occurred.' );
                                 }
                             })
                     }
@@ -119,7 +119,7 @@ export default {
                         this.tokens     =   tokens;
                     },
                     error: error => {
-                        nsSnackBar.error( 'Unable to load the token. An unexpected error occured.' );
+                        nsSnackBar.error( 'Unable to load the token. An unexpected error occurred.' );
                     }
                 })
         }

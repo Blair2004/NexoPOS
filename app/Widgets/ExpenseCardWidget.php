@@ -11,7 +11,7 @@ class ExpenseCardWidget extends WidgetService
     public function __construct()
     {
         $this->name = __( 'Expense Card Widget' );
-        $this->description = __( 'Will display a card of current and overwall expenses.' );
+        $this->description = __( 'Will display a card of current and overall expenses.' );
         $this->permission = 'nexopos.see.expense-card-widget';
     }
 }

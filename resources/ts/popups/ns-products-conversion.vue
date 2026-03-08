@@ -195,8 +195,8 @@ export default {
 
                     this.popup.params.reject( error );
                     return nsNotice.error( 
-                        __( 'An error occured' ), 
-                        error.message || __( 'An error occured while converting the product {product}' ).replace( '{product}', this.product.name ) 
+                        __( 'An error occurred' ),
+                        error.message || __( 'An error occurred while converting the product {product}' ).replace( '{product}', this.product.name )
                     );
                 }
             })
@@ -242,7 +242,7 @@ export default {
 
             if ( baseUnit.length === 0 ) {
                 return nsNotice.error(
-                    __( 'An error occured' ),
+                    __( 'An error occurred' ),
                     __( 'The product {product} has no base unit' ).replace( '{product}', this.product.name )
                 );
             }

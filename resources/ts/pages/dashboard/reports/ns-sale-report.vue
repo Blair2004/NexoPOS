@@ -434,11 +434,11 @@ export default {
                 const result    =   await new Promise( ( resolve, reject ) => {
                     nsHttpClient.get( `/api/categories` )
                         .subscribe({
-                            next: (retreivedCategories) => {
+                            next: (retrievedCategories) => {
                                 this.isLoading  =   false;
-                                categories  =   retreivedCategories;
+                                categories  =   retrievedCategories;
                                 this.filterCategory.options     =   [
-                                    ...retreivedCategories.map( category => {
+                                    ...retrievedCategories.map( category => {
                                         return {
                                             label: category.name,
                                             value: category.id

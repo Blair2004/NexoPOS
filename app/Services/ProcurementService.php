@@ -1047,7 +1047,7 @@ class ProcurementService
 
         /**
          * We'll pull the last purchase
-         * price for the item retreived
+         * price for the item retrieved
          */
         $product->unit_quantities->each( function ( $unitQuantity ) use ( $product ) {
             $unitQuantity->load( 'unit' );

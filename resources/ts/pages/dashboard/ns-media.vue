@@ -122,8 +122,8 @@ export default {
 
         openError( fileData ) {
             Popup.show( nsAlertPopup, {
-                title: __( 'An error occured' ),
-                message: fileData.error.message || __( 'An unexpected error occured.' )
+                title: __( 'An error occurred' ),
+                message: fileData.error.message || __( 'An unexpected error occurred.' )
             });
         },
 
@@ -396,7 +396,7 @@ export default {
                 },
                 error: error => {
                     selectedResource.fileEdit   =   false;
-                    nsSnackBar.success( error.message || __( 'An unexpected error occured.' ), 'OK' );
+                    nsSnackBar.success( error.message || __( 'An unexpected error occurred.' ), 'OK' );
                 }
             });
         },

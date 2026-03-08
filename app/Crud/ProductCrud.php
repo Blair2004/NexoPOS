@@ -478,7 +478,7 @@ class ProductCrud extends CrudService
                                                 return $field;
                                             } );
 
-                                            $optionLabel = __( 'Unammed Section' );
+                                            $optionLabel = __( 'Unnamed Section' );
 
                                             if ( $field->isNotEmpty() ) {
                                                 $option = collect( $field[0][ 'options' ] )->filter( fn( $option ) => $option[ 'value' ] == $field[0][ 'value' ] );

@@ -789,7 +789,7 @@ class ProductService
                 );
 
                 /**
-                 * if some other fields should be retreived from the $group variable
+                 * if some other fields should be retrieved from the $group variable
                  * we can defined that on the array below
                  */
                 foreach ( Hook::filter( 'ns-products-units-quantities-fields-names', [] ) as $field ) {
@@ -834,7 +834,7 @@ class ProductService
         $productHistory->load( 'product', 'unit' );
 
         /**
-         * if the value is explicitely defined
+         * if the value is explicitly defined
          * then we'll skip the automatic detection
          */
         if ( $productHistory->product instanceof Product && $productHistory->product->auto_cogs ) {

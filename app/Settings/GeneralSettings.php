@@ -226,7 +226,7 @@ class GeneralSettings extends SettingsPage
                         'd M Y, H:i' => ns()->date->format( 'd M Y, H:i' ),
                         'd.m.Y, H:i' => ns()->date->format( 'd.m.Y, H:i' ),
                     ] ),
-                    description: __( 'This define how the date and times hould be formated. The default format is "Y-m-d H:i".' ),
+                    description: __( 'This define how the date and times should be formated. The default format is "Y-m-d H:i".' ),
                 ),
                 FormInput::select(
                     label: sprintf( __( 'Date TimeZone' ) ),

@@ -129,7 +129,7 @@ trait WithCouponTest
                     'minimum_cart_value' => 0,
                     'maximum_cart_value' => 0,
                     'discount_value' => 0,
-                    'name' => 'Unammed',
+                    'name' => 'Unnamed',
                     'type' => 'percentage',
                     'limit_usage' => 0,
                     'value' => 0,

@@ -607,7 +607,7 @@ class OrdersService
 
             /**
              * Every product that is missing when the order is being
-             * proceesed another time should be removed. If the order has
+             * processed another time should be removed. If the order has
              * already affected the stock, we should make some adjustments.
              */
             $order->products->each( function ( $orderProduct ) use ( $ids, $order ) {
@@ -1425,7 +1425,7 @@ class OrdersService
             } catch ( NotFoundException $exception ) {
                 throw new \Exception(
                     sprintf(
-                        __( 'Unable to proceed, the product "%s" has a unit which cannot be retreived. It might have been deleted.' ),
+                        __( 'Unable to proceed, the product "%s" has a unit which cannot be retrieved. It might have been deleted.' ),
                         $product->name
                     )
                 );

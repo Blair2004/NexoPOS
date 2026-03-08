@@ -81,7 +81,7 @@ export default {
                     closable: element.getAttribute( 'closable' ) === 'true' ? true : false,
                     initialized: false,
                     visible,
-                    label: element.getAttribute( 'label' ) || __( 'Unamed Tab' )
+                    label: element.getAttribute( 'label' ) || __( 'Unnamed Tab' )
                 }
             }).filter( child => child.visible );
 

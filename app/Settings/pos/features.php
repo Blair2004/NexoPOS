@@ -147,7 +147,7 @@ return [
 
         FormInput::switch(
             label: __( 'Enable Action Permission' ),
-            description: __( 'Will allow restrict certains feature behind a permission request.' ),
+            description: __( 'Will allow restrict certain feature behind a permission request.' ),
             name: 'ns_pos_action_permission_enabled',
             options: [
                 ['label' => __( 'Yes' ), 'value' => 'yes'],

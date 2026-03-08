@@ -400,7 +400,7 @@ trait WithOrderTest
             ->json( 'POST', 'api/orders', $orderDetails );
 
         /**
-         * Step 2: Ensure no error occured
+         * Step 2: Ensure no error occurred
          */
         $response->assertStatus( 200 );
 
@@ -414,7 +414,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $details[ 'data' ][ 'order' ][ 'id' ], $details[ 'data' ][ 'order' ] );
 
-        $response->assertStatus( 200, 'An error occured while submitting the order' );
+        $response->assertStatus( 200, 'An error occurred while submitting the order' );
     }
 
     public function attemptCreateAndEditOrderWithGreaterQuantity()
@@ -472,7 +472,7 @@ trait WithOrderTest
             ->json( 'POST', 'api/orders', $orderDetails );
 
         /**
-         * Step 2: Ensure no error occured
+         * Step 2: Ensure no error occurred
          */
         $response->assertStatus( 200 );
 
@@ -493,7 +493,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $details[ 'data' ][ 'order' ][ 'id' ], $details[ 'data' ][ 'order' ] );
 
-        $response->assertStatus( 500, 'An error occured while submitting the order' );
+        $response->assertStatus( 500, 'An error occurred while submitting the order' );
     }
 
     public function attemptCreateOrderWithGroupedProducts( $data = [] )

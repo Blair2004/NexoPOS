@@ -301,7 +301,7 @@ export class POS {
                         error: (error) => {
                             nsNotice
                                 .error( 
-                                    __( 'An error has occured' ),
+                                    __( 'An error has occurred' ),
                                     __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ),
                                     {
                                         actions: {
@@ -1380,7 +1380,7 @@ export class POS {
             order = response['data'].order;
         } catch (exception) {
             if (exception !== false && exception.message !== undefined) {
-                nsSnackBar.error(exception.message || __('An unexpected error has occurred while fecthing taxes.'), __('OKAY'), { duration: 0 });
+                nsSnackBar.error(exception.message || __('An unexpected error has occurred while fetching taxes.'), __('OKAY'), { duration: 0 });
             }
         }
 
