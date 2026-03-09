@@ -39,8 +39,8 @@
                             <small class="text-xs text-fontcolor-soft" v-else>{{ __( 'No Group Assigned' ) }}</small>
                         </div>
                         <p class="flex items-center">
-                            <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owe_amount ) }}</span>
-                            <span v-if="customer.owe_amount > 0">/</span>
+                            <span v-if="customer.owed_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owed_amount ) }}</span>
+                            <span v-if="customer.owed_amount > 0">/</span>
                             <span class="purchase-amount">{{ nsCurrency( customer.purchases_amount ) }}</span>
                             <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button info">
                                 <i class="las la-eye"></i>
@@ -63,8 +63,12 @@ import nsPosCustomersVue from './ns-pos-customers.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
 import popupCloser from '~/libraries/popup-closer';
+import { Order } from "~/interfaces/order";
+import { Customer } from "~/interfaces/customer";
 
 declare const POS;
+
+type SelectableCustomer = Customer & { selected?: boolean }
 
 export default {
     props: [ 'popup' ],
@@ -72,15 +76,10 @@ export default {
         return {
             searchCustomerValue: '',
             orderSubscription: null,
-            order: {},
+            order: {} as Order,
             debounceSearch: null,
-            customers: [],
+            customers: [] as SelectableCustomer[],
             isLoading: false,
-        }
-    },
-    computed: {
-        customerSelected() {
-            return false;
         }
     },
     watch: {
@@ -130,7 +129,7 @@ export default {
             Popup.show( nsPosCustomersVue, { customer, activeTab: 'account-payment' });
         },
 
-        selectCustomer( customer ) {
+        selectCustomer( customer: SelectableCustomer ) {
             this.customers.forEach( customer => customer.selected = false );
             customer.selected   =   true;
 
@@ -150,7 +149,7 @@ export default {
         searchCustomer( value ) {
             nsHttpClient.post( '/api/customers/search', {
                 search: value
-            }).subscribe( customers => {
+            }).subscribe( (customers: SelectableCustomer[]) => {
                 customers.forEach( customer => customer.selected = false );
                 this.customers  =   customers;
             })
@@ -166,7 +165,7 @@ export default {
 
             nsHttpClient.get( '/api/customers/recently-active' )
                 .subscribe({
-                    next: customers => {
+                    next: (customers: SelectableCustomer[]) => {
                         this.isLoading  =   false;
                         customers.forEach( customer => customer.selected = false );
                         this.customers  =   customers;
