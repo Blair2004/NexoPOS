@@ -245,7 +245,7 @@ export default {
                     }
                 },
                 error: error => {
-                    nsSnackBar.error( __( 'An error has occured while loading the units.' ) );
+                    nsSnackBar.error( __( 'An error has occurred while loading the units.' ) );
                 }
             })
         },
@@ -279,7 +279,7 @@ export default {
                     }
                 },
                 error: error => {
-                    nsSnackBar.error( __( 'An error has occured while loading the categories.' ) );
+                    nsSnackBar.error( __( 'An error has occurred while loading the categories.' ) );
                 }
             })
         },

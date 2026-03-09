@@ -119,7 +119,7 @@ export default {
              * on save button before choosing the configuration.
              */
             if ( correctConfig.length !== 1 ) {
-                return nsSnackBar.error( __( 'No configuration were choosen. Unable to proceed.' ) );
+                return nsSnackBar.error( __( 'No configuration was chosen. Unable to proceed.' ) );
             }
 
             /**
@@ -157,7 +157,7 @@ export default {
                     },
                     error: error => {
                         this.validation.enableFields( correctConfig[0].fields );
-                        nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) );
+                        nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ) );
                     }
                 });
         },

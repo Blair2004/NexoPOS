@@ -6,9 +6,9 @@
         </div>
         <div v-if="Object.values( form ).length === 0 && hasError">
             <ns-notice color="error">
-                <template #title>{{ __( 'An Error Has Occured' ) }}</template>
+                <template #title>{{ __( 'An Error Has Occurred' ) }}</template>
                 <template #description>
-                    {{  __( 'An unexpected error has occured while loading the form. Please check the log or contact the support.' ) }}
+                    {{  __( 'An unexpected error has occurred while loading the form. Please check the log or contact the support.' ) }}
                 </template>
             </ns-notice>
         </div>

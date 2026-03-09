@@ -65,7 +65,7 @@
             <table class="table ns-table">
                 <thead>
                     <tr>
-                        <th colspan="2" class="p-2">{{ __( 'Developper Section' ) }}</th>
+                        <th colspan="2" class="p-2">{{ __( 'Developer Section' ) }}</th>
                     </tr>
                     <tr class="info">
                         <th class="p-2">{{ __( 'Configurations' ) }}</th>

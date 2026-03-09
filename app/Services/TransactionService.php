@@ -221,10 +221,10 @@ class TransactionService
     }
 
     /**
-     * Delete an transction using the
+     * Delete an transaction using the
      * provided id
      *
-     * @param int transction id
+     * @param int transaction id
      * @return array
      */
     public function deleteTransaction( Transaction $transaction )
@@ -234,7 +234,7 @@ class TransactionService
 
         return [
             'status' => 'success',
-            'message' => __( 'The transction has been correctly deleted.' ),
+            'message' => __( 'The transaction has been correctly deleted.' ),
         ];
     }
 
@@ -662,7 +662,7 @@ class TransactionService
 
                 return [
                     'status' => 'error',
-                    'message' => sprintf( __( 'The transactions "%s" hasn\'t been proceesed, as it\'s out of date.' ), $transaction->name ),
+                    'message' => sprintf( __( 'The transactions "%s" hasn\'t been processed, as it\'s out of date.' ), $transaction->name ),
                 ];
             } );
 
@@ -673,7 +673,7 @@ class TransactionService
             'data' => $processStatus->toArray(),
             'message' => $successFulProcesses->count() === $processStatus->count() ?
                 __( 'The process has been correctly executed and all transactions has been processed.' ) :
-                    sprintf( __( 'The process has been executed with some failures. %s/%s process(es) has successed.' ), $successFulProcesses->count(), $processStatus->count() ),
+                    sprintf( __( 'The process has been executed with some failures. %s/%s process(es) succeeded.' ), $successFulProcesses->count(), $processStatus->count() ),
         ];
     }
 

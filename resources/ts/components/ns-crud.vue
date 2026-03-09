@@ -400,7 +400,7 @@ export default {
         },
         sort( identifier ) {
             if ( this.columns[ identifier ].$sort === false ) {
-                return nsSnackBar.error( __( 'Sorting is explicitely disabled on this column' ) );
+                return nsSnackBar.error( __( 'Sorting is explicitly disabled on this column' ) );
             }
 
             for ( let key in this.columns ) {

@@ -996,7 +996,7 @@ class CrudService
         }
 
         /**
-         * This section will explicitely add support to CrudScope.
+         * This section will explicitly add support to CrudScope.
          */
         $attributes = $this->reflection->getAttributes( CrudScope::class );
 
@@ -1113,7 +1113,7 @@ class CrudService
              */
             if ( $cannotSort ) {
                 throw new NotAllowedException( sprintf(
-                    __( 'Sorting is explicitely disabled for the column "%s".' ),
+                    __( 'Sorting is explicitly disabled for the column "%s".' ),
                     $columns[$request->query( 'active' )]['label']
                 ) );
             }
@@ -1631,7 +1631,7 @@ class CrudService
 
     /**
      * We want to restrict links if matching
-     * permissons is explicitely disabled by the user
+     * permissons is explicitly disabled by the user
      */
     public function getFilteredLinks(): array
     {

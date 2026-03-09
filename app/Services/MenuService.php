@@ -56,7 +56,7 @@ class MenuService
                         href: ns()->url( '/dashboard/orders/payments-types' )
                     ),
                     AsideMenu::subMenu(
-                        label: __( 'Assignated Orders' ),
+                        label: __( 'Assigned Orders' ),
                         identifier: 'assignated-orders',
                         permissions: [ 'nexopos.deliver.orders' ],
                         href: ns()->url( '/dashboard/orders/assignated' )
@@ -481,7 +481,7 @@ class MenuService
                         href: ns()->url( '/dashboard/reports/sold-stock' )
                     ),
                     AsideMenu::subMenu(
-                        label: __( 'Incomes & Loosses' ),
+                        label: __( 'Incomes & Losses' ),
                         identifier: 'profit',
                         href: ns()->url( '/dashboard/reports/profit' )
                     ),

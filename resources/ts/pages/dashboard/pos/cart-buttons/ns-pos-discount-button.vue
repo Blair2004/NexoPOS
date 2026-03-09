@@ -31,7 +31,7 @@ export default {
             try {
                 await ActionPermission.canProceed( permissionMapping[type] );
             } catch ( error ) {
-                return nsSnackBar.error( __( `Your action were'nt granted.` ) );
+                return nsSnackBar.error( __( `Your action was not granted.` ) );
             }
 
             Popup.show( nsPosDiscountPopupVue, { 
