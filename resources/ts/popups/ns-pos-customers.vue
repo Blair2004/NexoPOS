@@ -195,7 +195,7 @@
                                                                     <h3>{{ coupon.name }}</h3>
                                                                     <div class="">
                                                                         <ul class="-mx-2 flex">
-                                                                            <li class="text-xs text-fontcolor px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
+                                                                            <li class="text-xs text-fontcolor px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage === 0 ? '∞' : coupon.limit_usage }}</li>
                                                                             <li class="text-xs text-fontcolor px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
                                                                         </ul>
                                                                     </div>
