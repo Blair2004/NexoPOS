@@ -758,19 +758,19 @@ class CustomerService
          * @todo Well we're doing this because we don't yet have a proper time picker. As we're using a date time picker
          * we're extracting the hours from it :(.
          */
-        $hourStarts = ! empty( $coupon->valid_hours_start ) ? Carbon::parse( $coupon->valid_hours_start )->format( 'H:i' ) : null;
-        $hoursEnds = ! empty( $coupon->valid_hours_end ) ? Carbon::parse( $coupon->valid_hours_end )->format( 'H:i' ) : null;
+        $hourStarts = ! empty( $coupon->valid_hours_start ) ? Carbon::parse( $coupon->valid_hours_start ) : null;
+        $hoursEnds = ! empty( $coupon->valid_hours_end ) ? Carbon::parse( $coupon->valid_hours_end ) : null;
 
         if (
             $hourStarts !== null &&
             $hoursEnds !== null ) {
-            $todayStartDate = ns()->date->format( 'Y-m-d' ) . ' ' . $hourStarts;
-            $todayEndDate = ns()->date->format( 'Y-m-d' ) . ' ' . $hoursEnds;
+            $todayStartDate = ns()->date->setTimeFrom( $hourStarts );
+            $todayEndDate = ns()->date->setTimeFrom( $hoursEnds );
 
             if (
                 ns()->date->between(
-                    date1: Carbon::parse( $todayStartDate ),
-                    date2: Carbon::parse( $todayEndDate )
+                    date1: $todayStartDate,
+                    date2: $todayEndDate
                 )
             ) {
                 throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s at this moment.' ), $coupon->name ) );
