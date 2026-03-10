@@ -1,5 +1,5 @@
 {
-    "displaying {perPage} on {items} items": "{perPage} von {items} Elementen",
+    "displaying {perPage} of {items} items": "{perPage} von {items} Elementen",
     "The document has been generated.": "Das Dokument wurde erstellt.",
     "Unexpected error occurred.": "Unerwarteter Fehler aufgetreten.",
     "{entries} entries selected": "{entries} Einträge ausgewählt",

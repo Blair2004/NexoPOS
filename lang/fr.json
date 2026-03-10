@@ -2896,7 +2896,7 @@
     "define your new password.": "définissez votre nouveau mot de passe.",
     "determine if the transaction is effective or not. Work for recurring and not recurring transactions.": "déterminer si la transaction est effective ou non. Travaillez pour les transactions récurrentes et non récurrentes.",
     "determine what is the transaction type.": "déterminer quel est le type de transaction.",
-    "displaying {perPage} on {items} items": "affichage de {perPage} sur {items} éléments",
+    "displaying {perPage} of {items} items": "affichage de {perPage} sur {items} éléments",
     "error": "erreur",
     "generated": "généré",
     "helps you creating a coupon.": "vous aide à créer un coupon.",

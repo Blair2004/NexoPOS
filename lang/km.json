@@ -2896,7 +2896,7 @@
     "define your new password.": "កំណត់ពាក្យសម្ងាត់ថ្មីរបស់អ្នក។",
     "determine if the transaction is effective or not. Work for recurring and not recurring transactions.": "កំណត់ថាតើប្រតិបត្តិការមានប្រសិទ្ធភាពឬអត់។ ធ្វើការសម្រាប់ប្រតិបត្តិការដដែលៗ និងមិនកើតឡើងដដែលៗ។",
     "determine what is the transaction type.": "កំណត់ថាតើប្រភេទប្រតិបត្តិការបែបណា។",
-    "displaying {perPage} on {items} items": "កំពុងបង្ហាញ {perPage} នៃ {items}",
+    "displaying {perPage} of {items} items": "កំពុងបង្ហាញ {perPage} នៃ {items}",
     "error": "error",
     "generated": "បានបង្កើត",
     "helps you creating a coupon.": "ជួយអ្នកបង្កើតគូប៉ុង។",

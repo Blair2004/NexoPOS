@@ -237,7 +237,7 @@ export default {
             return '';
         },
         resultInfo() {
-            return __( 'displaying {perPage} on {items} items' )
+            return __( 'displaying {perPage} of {items} items' )
                 .replace( '{perPage}', this.result.per_page || 0 )
                 .replace( '{items}', this.result.total || 0 )
         },
