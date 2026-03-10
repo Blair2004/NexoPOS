@@ -153,7 +153,7 @@
                                                                         <h3 class="font-bold">{{ __( 'Transaction' ) }}: {{ getWalletHistoryLabel( history.operation ) }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
-                                                                                <small>{{ __( 'Amount' ) }}: {{ nsCurrency( amount ) }}</small>
+                                                                                <small>{{ __( 'Amount' ) }}: {{ nsCurrency( history.amount ) }}</small>
                                                                             </div>
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
                                                                                 <small>{{ __( 'Date' ) }}: {{ history.created_at }}</small>
@@ -205,7 +205,7 @@
                                                                         ({{ coupon.coupon.discount_value }}%)
                                                                     </span>
                                                                     <span v-if="coupon.coupon.type === 'flat_discount'">
-                                                                        ({{ nsCurrency( value ) }})
+                                                                        ({{ nsCurrency( coupon.coupon.discount_value ) }})
                                                                     </span>
                                                                 </td>
                                                                 <td class="border p-2 text-right">
