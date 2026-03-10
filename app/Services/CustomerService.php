@@ -742,7 +742,7 @@ class CustomerService
         /**
          * we'll check if the coupon is still valid.
          */
-        if ( $coupon->valid_until !== null && ns()->date->lessThan( Carbon::parse( $coupon->valid_until ) ) ) {
+        if ( $coupon->valid_until !== null && ns()->date->isAfter( Carbon::parse( $coupon->valid_until ) ) ) {
             throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s as it has expired.' ), $coupon->name ) );
         }
 
