@@ -33,7 +33,7 @@ class {{ $className }} extends SettingsPage
     {
         $this->form = [
             'title' =>  __( 'Unnamed Settings Page' ),
-            'description'   =>  __( 'Description of unamed setting page' ),
+            'description'   =>  __( 'Description of unnamed setting page' ),
             'tabs' => [
                 'general' => [
                     'label' =>  __( 'General' ),
