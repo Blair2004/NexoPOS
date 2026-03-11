@@ -164,7 +164,7 @@ class Role extends NsRootModel
     {
         /**
          * If we want it to be silent
-         * then we should'nt trigger any error
+         * then we shouldn't trigger any error
          * if the $role is not a valid instance.
          */
         if ( ! $role instanceof Role && $silent === false ) {

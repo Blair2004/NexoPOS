@@ -59,7 +59,7 @@
     "A similar module has been found": "U është gjetur një modul i ngjashëm.",
     "A similar product with the same unit already exists.": "Një produkt i ngjashëm me të njëjtin unit ekziston.",
     "A simple tax must not be assigned to a parent tax with the type \"simple\", but \"grouped\" instead.": "Një taksim i thjeshtë nuk duhet të caktohet në një taksim të taksimit me tipin \"thjes\", por \"grupuar\" në vend.",
-    "A stock operation has recently been detected, however NexoPOS was'nt able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Një operim i regjistruar është zbuluar së fundmi, por NexoPOS nuk ishte në gjë të ndryshuar raportin sipas kësaj. Kjo ndodh nëse referenca e panjësisë ditore nuk është krijuar.",
+    "A stock operation has recently been detected, however NexoPOS wasn't able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Një operim i regjistruar është zbuluar së fundmi, por NexoPOS nuk ishte në gjë të ndryshuar raportin sipas kësaj. Kjo ndodh nëse referenca e panjësisë ditore nuk është krijuar.",
     "A tax cannot be his own parent.": "Një taksë nuk mund të jetë prind i vetë.",
     "A variation within the product has a SKU which is already in use : %s": "Një variant i produktit ka një SKU që është tashmë në përdorim: %s",
     "A variation within the product has a barcode which is already in use : %s.": "Një variant i produktit ka një barcode që është tashmë në përdorim: %s.",

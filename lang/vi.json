@@ -59,7 +59,7 @@
     "A similar module has been found": "Benzer bir modül bulundu",
     "A similar product with the same unit already exists.": "Có một sản phẩm tương tự với cùng đơn vị đã tồn tại.",
     "A simple tax must not be assigned to a parent tax with the type \"simple\", but \"grouped\" instead.": "Thuế đơn giản không được gán cho thuế cha với loại \"đơn giản\", mà phải là \"nhóm\".",
-    "A stock operation has recently been detected, however NexoPOS was'nt able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Một thao tác tồn kho đã được phát hiện gần đây, tuy nhiên NexoPOS không thể cập nhật báo cáo tương ứng. Điều này xảy ra nếu không tạo tham chiếu bảng điều khiển hàng ngày.",
+    "A stock operation has recently been detected, however NexoPOS wasn't able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Một thao tác tồn kho đã được phát hiện gần đây, tuy nhiên NexoPOS không thể cập nhật báo cáo tương ứng. Điều này xảy ra nếu không tạo tham chiếu bảng điều khiển hàng ngày.",
     "A tax cannot be his own parent.": "Một mục thuế không thể là cha của chính mục đó.",
     "A variation within the product has a SKU which is already in use : %s": "Một biến thể của sản phẩm có SKU đã được sử dụng: %s",
     "A variation within the product has a barcode which is already in use : %s.": "Một biến thể của sản phẩm có mã vạch đã được sử dụng: %s.",

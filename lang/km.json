@@ -59,7 +59,7 @@
     "A similar module has been found": "Module ស្រដៀងគ្នានេះត្រូវបានរកឃើញ",
     "A similar product with the same unit already exists.": "ផលិតផលស្រដៀងគ្នាដែលមានឯកតាដូចគ្នាមានរួចហើយ។",
     "A simple tax must not be assigned to a parent tax with the type \"simple\", but \"grouped\" instead.": "ภาษាក្នុងឋានសួគ៌មិនគួរត្រូវបានដាក់បញ្ចូលក្នុងឋានសួគ៌ដែលមានប្រភេទ \"សាមញ្ញ\" ប៉ុន្តែគួរជា \"រួមបញ្ចូល\" វិញ។",
-    "A stock operation has recently been detected, however NexoPOS was'nt able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "ការ​ប្រតិបត្តិ​ស្តុក​ត្រូវបាន​រក​ឃើញ​ថ្មីៗ​នេះ, ប៉ុន្តែ​NexoPOS មិន​អាច​ធ្វើ​ការ​ធ្វើ​បច្ចុប្បន្ន​របាយការណ៍​បាន។ នេះ​កើត​ឡើង​នៅ​ពេល​ដែល​របាយការណ៍​ប្រចាំថ្ងៃ​មិន​ត្រូវបាន​បង្កើត។",
+    "A stock operation has recently been detected, however NexoPOS wasn't able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "ការ​ប្រតិបត្តិ​ស្តុក​ត្រូវបាន​រក​ឃើញ​ថ្មីៗ​នេះ, ប៉ុន្តែ​NexoPOS មិន​អាច​ធ្វើ​ការ​ធ្វើ​បច្ចុប្បន្ន​របាយការណ៍​បាន។ នេះ​កើត​ឡើង​នៅ​ពេល​ដែល​របាយការណ៍​ប្រចាំថ្ងៃ​មិន​ត្រូវបាន​បង្កើត។",
     "A tax cannot be his own parent.": "ពន្ធមិនអាចជាមេបានទេ។",
     "A variation within the product has a SKU which is already in use : %s": "បំរែបំរួលនៅក្នុងផលិតផលមាន SKU ដែលកំពុងប្រើប្រាស់រួចហើយ៖ %s",
     "A variation within the product has a barcode which is already in use : %s.": "បំរែបំរួល​ក្នុង​ផលិតផល​មាន​បាកូដ​ដែល​ត្រូវ​បាន​ប្រើ​រួច​ហើយ៖ %s ។",

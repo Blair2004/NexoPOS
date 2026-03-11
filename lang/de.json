@@ -2794,7 +2794,7 @@
     "The source unit \"(%s)\" for the product \"%s\", does not have enough quantity \"%s\". \"%s\" is required for the conversion.": "The source unit \"(%s)\" for the product \"%s\", does not have enough quantity \"%s\". \"%s\" is required for the conversion.",
     "The source and the destination unit can't be the same. What are you trying to do ?": "Die Quell- und Zieleinheit dürfen nicht identisch sein.",
     "The source unit and the destination unit doesn't belong to the same unit group.": "Die Quelleinheit und die Zieleinheit gehören nicht zur selben Einheitengruppe.",
-    "A stock operation has recently been detected, however NexoPOS was'nt able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Kürzlich wurde ein Lagerbestandsvorgang erkannt, NexoPOS konnte den Bericht jedoch nicht entsprechend aktualisieren. Dies tritt auf, wenn die tägliche Dashboard-Referenz nicht erstellt wurde.",
+    "A stock operation has recently been detected, however NexoPOS wasn't able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Kürzlich wurde ein Lagerbestandsvorgang erkannt, NexoPOS konnte den Bericht jedoch nicht entsprechend aktualisieren. Dies tritt auf, wenn die tägliche Dashboard-Referenz nicht erstellt wurde.",
     "Today's Orders": "Heutige Bestellungen",
     "Today's Sales": "Heutige Verkäufe",
     "Today's Refunds": "Heutige Rückerstattungen",

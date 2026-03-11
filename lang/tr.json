@@ -59,7 +59,7 @@
     "A similar module has been found": "Benzer bir modül bulundu",
     "A similar product with the same unit already exists.": "Aynı birimle benzer bir ürün zaten mevcut.",
     "A simple tax must not be assigned to a parent tax with the type \"simple\", but \"grouped\" instead.": "Basit bir vergi, \"basit\" türünde olmamasına rağmen, \"gruplu\" türünde bir ana vergiye atanmamalıdır.",
-    "A stock operation has recently been detected, however NexoPOS was'nt able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Bir stok işlemi son zamanlarda tespit edildi, ancak NexoPOS buna göre raporu güncelleyemedi. Bu, günlük pano referansının oluşturulmaması durumunda meydana gelir.",
+    "A stock operation has recently been detected, however NexoPOS wasn't able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Bir stok işlemi son zamanlarda tespit edildi, ancak NexoPOS buna göre raporu güncelleyemedi. Bu, günlük pano referansının oluşturulmaması durumunda meydana gelir.",
     "A tax cannot be his own parent.": "Bir vergi kendi ebeveyni olamaz.",
     "A variation within the product has a SKU which is already in use : %s": "Ürünün bir varyasyonu, zaten kullanılıyor olan bir SKU içeriyor : %s",
     "A variation within the product has a barcode which is already in use : %s.": "Ürünün bir varyasyonu, zaten kullanılıyor olan bir barkod içeriyor : %s.",

@@ -59,7 +59,7 @@
     "A similar module has been found": "Se ha encontrado un módulo similar.",
     "A similar product with the same unit already exists.": "Ya existe un producto similar con la misma unidad.",
     "A simple tax must not be assigned to a parent tax with the type \"simple\", but \"grouped\" instead.": "Un impuesto simple no debe ser asignado a un impuesto agrupado con el tipo “simple”, sino “agrupado” en su lugar.",
-    "A stock operation has recently been detected, however NexoPOS was'nt able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Una operación de acciones ha sido detectada recientemente, sin embargo NexoPOS no pudo actualizar el informe en consecuencia. Esto ocurre si la referencia del panel diario no ha sido creada.",
+    "A stock operation has recently been detected, however NexoPOS wasn't able to update the report accordingly. This occurs if the daily dashboard reference hasn't been created.": "Una operación de acciones ha sido detectada recientemente, sin embargo NexoPOS no pudo actualizar el informe en consecuencia. Esto ocurre si la referencia del panel diario no ha sido creada.",
     "A tax cannot be his own parent.": "Un impuesto no puede ser su propio padre.",
     "A variation within the product has a SKU which is already in use : %s": "Una variación dentro del producto tiene un SKU que ya está en uso: %s",
     "A variation within the product has a barcode which is already in use : %s.": "Una variación dentro del producto tiene un código de barras que ya está en uso: %s.",

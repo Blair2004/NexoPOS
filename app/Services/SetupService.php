@@ -194,7 +194,7 @@ class SetupService
             } );
 
         /**
-         * The update migrations should'nt be executed.
+         * The update migrations shouldn't be executed.
          * This should improve the speed during the installation.
          */
         ns()->update
