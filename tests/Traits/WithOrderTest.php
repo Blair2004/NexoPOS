@@ -2927,7 +2927,7 @@ trait WithOrderTest
         $currentCoupons = $customer->coupons()->count();
 
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PAID );
-        $this->assertTrue( $previousCoupons < $currentCoupons, __( 'The coupons count has\'nt changed.' ) );
+        $this->assertTrue( $previousCoupons < $currentCoupons, __( 'The coupons count hasn\'t changed.' ) );
     }
 
     protected function attemptCouponUsage()

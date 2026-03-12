@@ -323,7 +323,7 @@ class OrdersService
                 if ( $minimal > Currency::raw( $fields[ 'tendered' ] ) && ns()->option->get( 'ns_orders_allow_unpaid' ) === 'no' ) {
                     throw new NotAllowedException(
                         sprintf(
-                            __( 'The minimal payment of %s has\'nt been provided.' ),
+                            __( 'The minimal payment of %s hasn\'t been provided.' ),
                             (string) Currency::define( $minimal )
                         )
                     );
@@ -948,7 +948,7 @@ class OrdersService
                      * when that payment is provided
                      */
                     if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'value' ] ) ) {
-                        throw new NotAllowedException( __( 'The customer account funds are\'nt enough to process the payment.' ) );
+                        throw new NotAllowedException( __( 'The customer account funds aren\'t enough to process the payment.' ) );
                     }
 
                     $totalPayments = $this->currencyService->define( $totalPayments )

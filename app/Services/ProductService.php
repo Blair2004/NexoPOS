@@ -195,7 +195,7 @@ class ProductService
         } elseif ( $data[ 'product_type' ] === 'variable' ) {
             return $this->createVariableProduct( $data );
         } else {
-            throw new NotAllowedException( sprintf( __( 'Unable to create a product with an unknow type : %s' ), $data[ 'product_type' ] ) );
+            throw new NotAllowedException( sprintf( __( 'Unable to create a product with an unknown type : %s' ), $data[ 'product_type' ] ) );
         }
     }
 

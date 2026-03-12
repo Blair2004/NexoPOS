@@ -368,7 +368,7 @@ export default {
                 case 'payment':
                     return __( 'Payment' );
                 default:
-                    return __( 'Unknow' );
+                    return __( 'Unknown' );
             }
         },
 

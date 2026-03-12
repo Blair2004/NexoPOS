@@ -187,7 +187,7 @@ class Options
     public function decodeOptionValue( $option )
     {
         /**
-         * We should'nt run this everytime we
+         * We shouldn't run this everytime we
          * try to pull an option from the database or from the array
          */
         if ( ! empty( $option->value ) && $option->isClean() ) {
