@@ -1,5 +1,5 @@
 {
-  "displaying {perPage} on {items} items": "displaying {perPage} on {items} items",
+  "displaying {perPage} of {items} items": "displaying {perPage} of {items} items",
   "The document has been generated.": "The document has been generated.",
   "Unexpected error occurred.": "Unexpected error occurred.",
   "{entries} entries selected": "{entries} entries selected",

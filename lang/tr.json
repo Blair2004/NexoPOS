@@ -2895,7 +2895,7 @@
     "define your new password.": "yeni şifrenizi tanımlayın.",
     "determine if the transaction is effective or not. Work for recurring and not recurring transactions.": "İşlemin geçerli olup olmadığını belirle. Hem tekrar eden hem de tekrar etmeyen işlemler için geçerlidir.",
     "determine what is the transaction type.": "İşlem türünün ne olduğunu belirleyin.",
-    "displaying {perPage} on {items} items": "{items} öğede {perPage} gösteriliyor",
+    "displaying {perPage} of {items} items": "{items} öğede {perPage} gösteriliyor",
     "error": "Hata",
     "generated": "oluşturulan",
     "helps you creating a coupon.": "kupon oluşturmanıza yardımcı olur.",

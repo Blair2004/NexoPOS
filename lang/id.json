@@ -2897,7 +2897,7 @@
     "define your new password.": "tentukan kata sandi baru Anda.",
     "determine if the transaction is effective or not. Work for recurring and not recurring transactions.": "tentukan apakah transaksi efektif atau tidak. Bekerja untuk transaksi berulang dan tidak berulang.",
     "determine what is the transaction type.": "tentukan apa jenis transaksinya.",
-    "displaying {perPage} on {items} items": "menampilkan {perPage} dari {items} item",
+    "displaying {perPage} of {items} items": "menampilkan {perPage} dari {items} item",
     "error": "kesalahan",
     "generated": "dihasilkan",
     "helps you creating a coupon.": "membantu Anda membuat kupon.",

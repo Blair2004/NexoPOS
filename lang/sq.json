@@ -2895,7 +2895,7 @@
     "define your new password.": "Vendosni parollen tu re.",
     "determine if the transaction is effective or not. Work for recurring and not recurring transactions.": "Vendosni nëse transaksioni është efektiv apo jo. Përdoret për transaksione të rregullta dhe të pa rregullta.",
     "determine what is the transaction type.": "Vendosni tipin e transaksionit.",
-    "displaying {perPage} on {items} items": "shfaqur {perPage} nga {items} rekorde",
+    "displaying {perPage} of {items} items": "shfaqur {perPage} nga {items} rekorde",
     "error": "error",
     "generated": "krijuar",
     "helps you creating a coupon.": "Plotesoni te dhenat e meposhtme.",

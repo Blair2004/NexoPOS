@@ -2895,7 +2895,7 @@
     "define your new password.": "حدد كلمة مرورك الجديدة.",
     "determine if the transaction is effective or not. Work for recurring and not recurring transactions.": "تحديد ما إذا كانت الصفقة فعالة أم لا. العمل على المعاملات المتكررة وغير المتكررة.",
     "determine what is the transaction type.": "تحديد نوع المعاملة.",
-    "displaying {perPage} on {items} items": "عرض {perPage} على {items} عنصر",
+    "displaying {perPage} of {items} items": "عرض {perPage} على {items} عنصر",
     "error": "خطأ",
     "generated": "ولدت",
     "helps you creating a coupon.": "يساعدك في إنشاء قسيمة.",

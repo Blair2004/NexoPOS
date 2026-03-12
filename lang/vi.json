@@ -2894,7 +2894,7 @@
     "define your new password.": "Nhập mật khẩu mới.",
     "determine if the transaction is effective or not. Work for recurring and not recurring transactions.": "Xác định xem giao dịch có hiệu lực hay không. Dùng cho cả giao dịch lặp lại và không lặp lại.",
     "determine what is the transaction type.": "Quy định loại giao dịch.",
-    "displaying {perPage} on {items} items": "Hiển thị {perPage} trên {items} mục",
+    "displaying {perPage} of {items} items": "Hiển thị {perPage} trên {items} mục",
     "error": "lỗi",
     "generated": "được tạo ra",
     "helps you creating a coupon.": "giúp bạn tạo phiếu giảm giá.",
