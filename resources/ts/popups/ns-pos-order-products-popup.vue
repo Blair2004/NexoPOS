@@ -62,7 +62,7 @@ export default {
                     <div class="flex-col border-b border-info-primary py-2">
                         <div class="title font-semibold text-fontcolor flex justify-between">
                             <span>{{ product.name }} (x{{ product.quantity }})</span>
-                            <span>{{ nsCurrency( price ) }}</span>
+                            <span>{{ nsCurrency( product.total_price ) }}</span>
                         </div>
                         <div class="text-sm text-font">
                             <ul>
