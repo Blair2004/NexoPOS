@@ -41,6 +41,7 @@
 <script lang="ts">
 import { __ } from '~/libraries/lang';
 import popupCloser from '~/libraries/popup-closer';
+import { nsCurrency } from "~/filters/currency";
 
 declare const nsHooks;
 
@@ -79,10 +80,10 @@ export default {
                 value: ( order ) => order.user_username
             }, {
                 label: __( 'Total' ),
-                value: ( order ) => order.total
+                value: ( order ) => nsCurrency(order.total)
             }, {
                 label: __( 'Tendered' ),
-                value: ( order ) => order.tendered
+                value: ( order ) => nsCurrency(order.tendered)
             },
         ]);
 
