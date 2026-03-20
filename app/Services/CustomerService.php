@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Classes\Currency;
+use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
 use App\Events\CustomerRewardAfterCreatedEvent;
@@ -17,6 +18,8 @@ use App\Models\CustomerGroup;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\RewardSystem;
+use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -184,6 +187,27 @@ class CustomerService
                 }
             }
         }
+
+        /**
+         * Assign the "Store Customer" role to the newly created customer.
+         * This ensures the customer is visible in the application
+         * due to the Customer model's global scope filtering.
+         */
+        $storeCustomerRole = Role::namespace( Role::STORECUSTOMER );
+
+        if ( $storeCustomerRole ) {
+            $usersService = app()->make( UsersService::class );
+            $user = User::find( $customer->id );
+
+            if ( $user ) {
+                $usersService->setUserRole( $user, [ $storeCustomerRole->id ] );
+            }
+        }
+
+        /**
+         * Dispatch the customer created event
+         */
+        CustomerAfterCreatedEvent::dispatch( $customer );
 
         $customer = $customer->fresh();
         $customer->addresses;
