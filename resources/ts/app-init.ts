@@ -19,6 +19,7 @@ const nsCreateCoupons               =   defineAsyncComponent( () => import( './p
 const nsSettings                    =   defineAsyncComponent( () => import( './pages/dashboard/ns-settings.vue' ) );
 const nsReset                       =   defineAsyncComponent( () => import( './pages/dashboard/reset.vue' ) );
 const nsModules                     =   defineAsyncComponent( () => import( './pages/dashboard/modules.vue' ) );
+const nsThemes                      =   defineAsyncComponent( () => import( './pages/dashboard/themes.vue' ) );
 const nsPermissions                 =   defineAsyncComponent( () => import( './pages/dashboard/ns-permissions.vue' ) );
 const nsProcurement                 =   defineAsyncComponent( () => import( './pages/dashboard/procurements/ns-procurement.vue' ) );
 const nsManageProducts              =   defineAsyncComponent( () => import( './pages/dashboard/procurements/manage-products.vue' ) );
@@ -57,6 +58,7 @@ window.nsHotPress   =   new NsHotPress;
 
 const allComponents    =   Object.assign({
     nsModules,
+    nsThemes,
     nsRewardsSystem,
     nsCreateCoupons,
     nsManageProducts,
