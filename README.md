@@ -36,7 +36,6 @@ We've also created a video tutorial that will help you perform those easily.
 # Get More Using Modules
 NexoPOS available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619) gives access to the premium modules marketplace. While purchasing on CodeCanyon, you get : 
 
-- $40 In credit to [My NexoPOS](https://my.nexopos.com/en/marketplace) balance.
 - Access to NexoPOS marketplace
 - Premium Support & Installation Service
 - You're eligible for customization
