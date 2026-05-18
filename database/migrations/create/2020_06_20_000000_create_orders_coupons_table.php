@@ -26,11 +26,11 @@ return new class extends Migration
                 $table->integer( 'coupon_id' );
                 $table->integer( 'order_id' );
                 $table->string( 'type' ); // discount_percentage, flat_percentage
-                $table->float( 'discount_value', 18, 5 );
-                $table->float( 'minimum_cart_value', 18, 5 )->default( 0 );
-                $table->float( 'maximum_cart_value', 18, 5 )->default( 0 );
+                $table->decimal( 'discount_value', 18, 5 );
+                $table->decimal( 'minimum_cart_value', 18, 5 )->default( 0 );
+                $table->decimal( 'maximum_cart_value', 18, 5 )->default( 0 );
                 $table->integer( 'limit_usage' )->default( 0 );
-                $table->float( 'value', 18, 5 )->default( 0 );
+                $table->decimal( 'value', 18, 5 )->default( 0 );
                 $table->integer( 'author_id' );
                 $table->boolean( 'counted' )->default( false );
                 $table->string( 'uuid' )->nullable();

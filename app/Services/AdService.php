@@ -37,7 +37,7 @@ class AdService
      * @param string $routeName
      * @return array|null
      */
-    public function getAdToDisplay($user, string $routeName): ?array
+    public function getAdToDisplay($user, string | null $routeName): ?array
     {
         // Check if the user has snoozed ads
         $userOptions = new UserOptions($user->id);

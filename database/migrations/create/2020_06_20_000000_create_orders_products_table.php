@@ -37,20 +37,20 @@ return new class extends Migration
                 $table->text( 'return_observations' )->nullable();
                 $table->string( 'return_condition' )->nullable();
                 $table->string( 'discount_type' )->default( 'none' );
-                $table->float( 'discount', 18, 5 )->default( 0 );
-                $table->float( 'quantity', 18, 5 ); // could be the base unit
-                $table->float( 'discount_percentage', 18, 5 )->default( 0 );
-                $table->float( 'unit_price', 18, 5 )->default( 0 );
-                $table->float( 'price_gross', 18, 5 )->default( 0 );
-                $table->float( 'price_net', 18, 5 )->default( 0 );
-                $table->float( 'wholesale_tax_value', 18, 5 )->default( 0 );
-                $table->float( 'sale_tax_value', 18, 5 )->default( 0 );
-                $table->float( 'tax_value', 18, 5 )->default( 0 );
-                $table->float( 'rate' )->default( 0 );
-                $table->float( 'total_price', 18, 5 )->default( 0 );
-                $table->float( 'total_price_gross', 18, 5 )->default( 0 );
-                $table->float( 'total_price_net', 18, 5 )->default( 0 );
-                $table->float( 'total_purchase_price', 18, 5 )->default( 0 );
+                $table->decimal( 'discount', 18, 5 )->default( 0 );
+                $table->decimal( 'quantity', 18, 5 ); // could be the base unit
+                $table->decimal( 'discount_percentage', 18, 5 )->default( 0 );
+                $table->decimal( 'unit_price', 18, 5 )->default( 0 );
+                $table->decimal( 'price_gross', 18, 5 )->default( 0 );
+                $table->decimal( 'price_net', 18, 5 )->default( 0 );
+                $table->decimal( 'wholesale_tax_value', 18, 5 )->default( 0 );
+                $table->decimal( 'sale_tax_value', 18, 5 )->default( 0 );
+                $table->decimal( 'tax_value', 18, 5 )->default( 0 );
+                $table->decimal( 'rate', 18, 5 )->default( 0 );
+                $table->decimal( 'total_price', 18, 5 )->default( 0 );
+                $table->decimal( 'total_price_gross', 18, 5 )->default( 0 );
+                $table->decimal( 'total_price_net', 18, 5 )->default( 0 );
+                $table->decimal( 'total_purchase_price', 18, 5 )->default( 0 );
                 $table->timestamps();
             } );
         }

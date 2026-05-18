@@ -21,7 +21,7 @@ return new class extends Migration
             Schema::createIfMissing( 'nexopos_orders_payments', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'order_id' );
-                $table->float( 'value', 18, 5 )->default( 0 );
+                $table->decimal( 'value', 18, 5 )->default( 0 );
                 $table->integer( 'author_id' );
                 $table->string( 'identifier' );
                 $table->string( 'uuid' )->nullable();

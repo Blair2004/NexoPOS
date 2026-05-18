@@ -22,9 +22,9 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->integer( 'provider_id' );
-                $table->float( 'value', 18, 5 )->default( 0 );
-                $table->float( 'cost', 18, 5 )->default( 0 );
-                $table->float( 'tax_value', 18, 5 )->default( 0 );
+                $table->decimal( 'value', 18, 5 )->default( 0 );
+                $table->decimal( 'cost', 18, 5 )->default( 0 );
+                $table->decimal( 'tax_value', 18, 5 )->default( 0 );
                 $table->string( 'invoice_reference' )->nullable();
                 $table->boolean( 'automatic_approval' )->default( false )->nullable();
                 $table->datetime( 'delivery_time' )->nullable();

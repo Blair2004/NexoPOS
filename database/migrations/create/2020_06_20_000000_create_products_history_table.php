@@ -27,11 +27,11 @@ return new class extends Migration
                 $table->integer( 'order_product_id' )->nullable();
                 $table->string( 'operation_type' ); // sale, procurement, adjustment, return, defective
                 $table->integer( 'unit_id' );
-                $table->float( 'before_quantity', 18, 5 )->nullable();
-                $table->float( 'quantity', 18, 5 ); // current unit quantity
-                $table->float( 'after_quantity', 18, 5 )->nullable();
-                $table->float( 'unit_price', 18, 5 ); // could be the cost of the procurement, the lost (defective)
-                $table->float( 'total_price', 18, 5 ); // could be the cost of the procurement, the lost (defective)
+                $table->float( 'before_quantity', 18 )->nullable();
+                $table->float( 'quantity', 18 ); // current unit quantity
+                $table->float( 'after_quantity', 18 )->nullable();
+                $table->decimal( 'unit_price', 18, 5 ); // could be the cost of the procurement, the lost (defective)
+                $table->decimal( 'total_price', 18, 5 ); // could be the cost of the procurement, the lost (defective)
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();

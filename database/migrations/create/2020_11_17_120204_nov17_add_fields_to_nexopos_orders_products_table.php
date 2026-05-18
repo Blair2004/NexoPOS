@@ -17,9 +17,9 @@ return new class extends Migration
             $table->bigIncrements( 'id' );
             $table->integer( 'order_id' );
             $table->integer( 'author_id' );
-            $table->float( 'total', 18, 5 );
-            $table->float( 'tax_value', 18, 5 )->default( 0 );
-            $table->float( 'shipping', 18, 5 );
+            $table->decimal( 'total', 18, 5 );
+            $table->decimal( 'tax_value', 18, 5 )->default( 0 );
+            $table->decimal( 'shipping', 18, 5 );
             $table->string( 'payment_method' );
             $table->timestamps();
         } );
@@ -31,10 +31,10 @@ return new class extends Migration
             $table->integer( 'order_product_id' );
             $table->integer( 'unit_id' );
             $table->integer( 'product_id' );
-            $table->float( 'unit_price', 18, 5 );
-            $table->float( 'tax_value', 18, 5 )->default( 0 );
-            $table->float( 'quantity', 18, 5 );
-            $table->float( 'total_price', 18, 5 );
+            $table->decimal( 'unit_price', 18, 5 );
+            $table->decimal( 'tax_value', 18, 5 )->default( 0 );
+            $table->decimal( 'quantity', 18, 5 );
+            $table->decimal( 'total_price', 18, 5 );
             $table->string( 'condition' ); // either unspoiled, damaged
             $table->text( 'description' )->nullable();
             $table->integer( 'author_id' );

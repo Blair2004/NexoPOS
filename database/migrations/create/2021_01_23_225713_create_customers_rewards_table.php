@@ -18,8 +18,8 @@ return new class extends Migration
             $table->integer( 'customer_id' );
             $table->integer( 'reward_id' );
             $table->string( 'reward_name' );
-            $table->float( 'points', 18, 5 );
-            $table->float( 'target', 18, 5 );
+            $table->decimal( 'points', 18, 5 );
+            $table->decimal( 'target', 18, 5 );
             $table->timestamps();
         } );
     }
