@@ -17,6 +17,7 @@ use App\Models\PermissionAccess;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\DateService;
+use App\Services\UserOptions;
 use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
@@ -400,5 +401,19 @@ class UsersController extends DashboardController
         }
 
         return $access;
+    }
+
+    /**
+     * Snooze ads for 24 hours
+     */
+    public function snoozeAds( Request $request )
+    {
+        $userOptions = new UserOptions(Auth::id());
+        $userOptions->set('snooze_ads_24h', 'yes', now()->addHours(24));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => __('Ads have been snoozed for 24 hours.')
+        ]);
     }
 }
