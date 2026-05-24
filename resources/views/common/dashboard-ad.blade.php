@@ -8,7 +8,7 @@
 @endphp
 
 @if($adToDisplay)
-<div id="ns-dashboard-ad" class="m-4 mt-0 rounded-lg {{ $bgClass }} {{ $textClass }} px-4 py-2 flex items-center justify-between border {{ $borderClass }} text-sm" style="z-index: 100;">
+<div id="ns-dashboard-ad" class="m-4 mt-0 rounded-lg {{ $bgClass }} {{ $textClass }} px-4 py-2 flex items-center justify-between border {{ $borderClass }} text-sm">
     <div class="flex flex-auto items-center">
         @if(!empty($adToDisplay['icon']))
         <i class="las {{ $adToDisplay['icon'] }} text-2xl mr-2"></i>

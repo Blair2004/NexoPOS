@@ -48,6 +48,38 @@ class DashboardController extends Controller
         return Customer::orderBy( 'purchases_amount', 'desc' )->limit( 5 )->get();
     }
 
+    public function dispatchTelemetry()
+    {
+        $version = config('nexopos.version');
+        $modules = app()->make('App\Services\ModulesService')->get();
+
+        $modulesData = [];
+        foreach ($modules as $module) {
+            if ($module['enabled'] ?? false) {
+                $modulesData[] = [
+                    'namespace' => $module['namespace'],
+                    'version'   => $module['version'],
+                ];
+            }
+        }
+
+        $payload = [
+            'version' => $version,
+            'modules' => $modulesData,
+            'host'    => request()->getHost(),
+        ];
+
+        try {
+            \Illuminate\Support\Facades\Http::post('https://my.nexopos.com/api/nexoplatform/telemetry', $payload);
+            ns()->option->set('ns_telemetry_last_sent', now()->toDateTimeString());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Telemetry failed: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Telemetry failed.'], 500);
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
     public function getRecentsOrders()
     {
         return Order::orderBy( 'created_at', 'desc' )->with( 'user' )->limit( 10 )->get();

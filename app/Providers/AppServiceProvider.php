@@ -274,10 +274,6 @@ class AppServiceProvider extends ServiceProvider
             file_put_contents( database_path( 'database.sqlite' ), '' );
         }
 
-        if ( Helper::installed() ) {
-            Schema::defaultStringLength( 191 );
-        }
-
         /**
          * We'll register a directive
          * that will help module loading
