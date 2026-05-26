@@ -45,6 +45,7 @@ class ExecuteDelayedTransactionJob implements ShouldQueue
                 $transaction->name,
                 $dateService->getNowFormatted()
             ),
+            identifier: 'ns-scheduled-transaction-' . $transaction->id,
             url: ns()->route( 'ns.dashboard.transactions.history', [ 'transaction' => $transaction->id ] ),
         )->dispatchForGroup(
             [ Role::namespace( Role::ADMIN ), Role::namespace( Role::STOREADMIN ) ]

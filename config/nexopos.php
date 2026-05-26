@@ -44,9 +44,16 @@ return [
      */
     'authentication' => [
         /**
-         * Defines in "minutes" the lifetime of each token.
+         * Defines in "minutes" the lifetime of each activation token.
          */
         'activation_token_lifetime' => 30,
+
+        /**
+         * Defines in "days" the lifetime of each API token (refresh tokens).
+         * Set to null for no expiration.
+         * Default: 30 days (1 month)
+         */
+        'api_token_lifetime_days' => 30,
     ],
 
     /**
