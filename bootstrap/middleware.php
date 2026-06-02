@@ -3,6 +3,7 @@
 /**
  * @var \Illuminate\Foundation\Configuration\Middleware $middleware
  */
+$middleware->redirectGuestsTo( fn() => route( 'ns.login' ) );
 
 /**
  * We'll list here all aliased middleware.
