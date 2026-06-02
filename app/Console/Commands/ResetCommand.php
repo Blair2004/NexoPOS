@@ -59,10 +59,8 @@ class ResetCommand extends Command
         switch ( $this->option( 'mode' ) ) {
             case 'soft':
                 return $this->softReset();
-                break;
             case 'hard':
                 return $this->hardReset();
-                break;
             case 'wipe_plus_grocery':
                 $this->softReset();
                 $this->initializeRole();
@@ -71,11 +69,27 @@ class ResetCommand extends Command
                     'create_sales' => $this->option( 'with-sales' ) && $this->option( 'with-procurements' ) ? true : false,
                     'create_procurements' => $this->option( 'with-procurements' ) ? true : false,
                 ] );
-                $this->info( __( 'The demo has been enabled.' ) );
-                break;
-            default:
-            $this->error( __( 'Unsupported reset mode.' ) );
-            break;
+            return $this->info( __( 'The demo has been enabled.' ) );
+        }
+
+        /**
+         * We'll handle custom reset in case no condition is matched above,
+         * but we want to run some custom logic.
+         */
+        $response = $this->resetService->handleCustom( [
+            'mode' => $this->option( 'mode' ),
+            'create_sales' => $this->option( 'with-sales' ) && $this->option( 'with-procurements' ) ? true : false,
+            'create_procurements' => $this->option( 'with-procurements' ) ? true : false,
+        ] );
+
+        if ( $response && is_array( $response ) && isset( $response[ 'status' ] ) && isset( $response[ 'message' ] ) ) {
+            if ( $response[ 'status' ] === 'success' ) {
+                return $this->info( $response[ 'message' ] );
+            } else {
+                return $this->error( $response[ 'message' ] );
+            }
+        } else {
+            return $this->error( __( 'An unexpected error occurred while handling the custom reset.' ) );
         }
     }
 
