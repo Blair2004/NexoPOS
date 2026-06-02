@@ -63,19 +63,19 @@ class ResetCommand extends Command
             case 'hard':
                 return $this->hardReset();
                 break;
-            case 'grocery':
+            case 'wipe_plus_grocery':
                 $this->softReset();
                 $this->initializeRole();
                 $this->demoService->run( [
-                    'mode' => 'grocery',
+                    'mode' => $this->option( 'mode' ),
                     'create_sales' => $this->option( 'with-sales' ) && $this->option( 'with-procurements' ) ? true : false,
                     'create_procurements' => $this->option( 'with-procurements' ) ? true : false,
                 ] );
                 $this->info( __( 'The demo has been enabled.' ) );
                 break;
             default:
-                $this->error( __( 'Unsupported reset mode.' ) );
-                break;
+            $this->error( __( 'Unsupported reset mode.' ) );
+            break;
         }
     }
 

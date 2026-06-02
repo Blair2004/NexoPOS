@@ -73,10 +73,9 @@ class SetupCommand extends Command
             env( 'DB_HOST', null ) === null ||
             env( 'DB_DATABASE', null ) === null ||
             env( 'DB_USERNAME', null ) === null ||
-            env( 'DB_PASSWORD', null ) === null ||
-            env( 'DB_PREFIX', null ) === null
+            env( 'DB_PASSWORD', null ) === null
         ) {
-            return $this->error( __( 'Unable to proceed, looks like the database can\'t be used.' ) );
+            return $this->error( __( 'One or more database environment variables are missing.' ) );
         }
 
         if ( Helper::installed() ) {
@@ -108,7 +107,7 @@ class SetupCommand extends Command
 
             return $this->info( 'Thank you, NexoPOS has been successfully installed.' );
         } else {
-            return $this->info( 'The installation has been aborded.' );
+            return $this->info( 'The installation has been aborted.' );
         }
     }
 
@@ -118,7 +117,7 @@ class SetupCommand extends Command
             $this->ns_store_name = $this->ask( __( 'What is the store name ? [Q] to quit.' ) );
 
             if ( $this->ns_store_name === 'Q' ) {
-                $this->info( 'the setup has been interrupted' );
+                $this->info( 'The setup has been interrupted.' );
                 exit;
             }
 

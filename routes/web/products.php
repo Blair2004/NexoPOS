@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 Route::get( '/products', [ ProductsController::class, 'listProducts' ] )->name( ns()->routeName( 'ns.dashboard.products' ) );
 Route::get( '/products/create', [ ProductsController::class, 'createProduct' ] )->name( ns()->routeName( 'ns.dashboard.products.create' ) );
 Route::get( '/products/stock-adjustment', [ ProductsController::class, 'showStockAdjustment' ] )->name( ns()->routeName( 'ns.dashboard.products.stock-adjustment' ) );
+Route::get( '/products/stock-adjustment/{history}', [ ProductsController::class, 'showStockAdjustmentEdit' ] )->name( ns()->routeName( 'ns.dashboard.products.stock-adjustment.edit' ) );
+Route::get( '/products/adjustment-history', [ ProductsController::class, 'listAdjustmentHistory' ] )->name( ns()->routeName( 'ns.dashboard.products.adjustment-history' ) );
 Route::get( '/products/print-labels', [ ProductsController::class, 'printLabels' ] )->name( ns()->routeName( 'ns.dashboard.products.print-labels' ) );
 Route::get( '/products/edit/{product}', [ ProductsController::class, 'editProduct' ] )->name( ns()->routeName( 'ns.dashboard.products.edit' ) ); // @todo update
 Route::get( '/products/{product}/units', [ ProductsController::class, 'productUnits' ] )->name( ns()->routeName( 'ns.dashboard.products.units' ) );

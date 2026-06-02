@@ -17,6 +17,8 @@ use App\Models\ProcurementProduct;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductGallery;
+use App\Models\ProductAdjustment;
+use App\Models\ProductAdjustmentItem;
 use App\Models\ProductHistory;
 use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
@@ -2465,5 +2467,101 @@ class ProductService
         }
 
         return ! $query->exists();
+    }
+
+    /**
+     * Map the frontend products payload into a normalized
+     * array ready to be stored as ProductAdjustmentItem rows.
+     */
+    public function buildAdjustmentItems( array $products ): array
+    {
+        return collect( $products )->map( function ( $product ) {
+            return [
+                'product_id'             => $product[ 'id' ],
+                'product_name'           => $product[ 'name' ],
+                'unit_id'                => $product[ 'adjust_unit' ][ 'unit_id' ],
+                'unit_name'              => $product[ 'adjust_unit' ][ 'unit' ][ 'name' ] ?? '',
+                'unit_price'             => $product[ 'adjust_unit' ][ 'sale_price' ] ?? 0,
+                'quantity'               => $product[ 'adjust_quantity' ],
+                'adjust_action'          => $product[ 'adjust_action' ],
+                'description'            => $product[ 'adjust_reason' ] ?? '',
+                'procurement_product_id' => $product[ 'procurement_product_id' ] ?? null,
+            ];
+        } )->toArray();
+    }
+
+    /**
+     * Create a draft stock adjustment batch with its line items.
+     * No stock quantities are modified at this stage.
+     */
+    public function createAdjustmentDraft( array $products, string $title = '', string $description = '' ): ProductAdjustment
+    {
+        $adjustment = ProductAdjustment::create( [
+            'author_id'   => Auth::id(),
+            'title'       => $title,
+            'status'      => ProductAdjustment::STATUS_DRAFT,
+            'description' => $description,
+        ] );
+
+        $items = $this->buildAdjustmentItems( $products );
+
+        foreach ( $items as $item ) {
+            ProductAdjustmentItem::create( array_merge( $item, [
+                'adjustment_id' => $adjustment->id,
+            ] ) );
+        }
+
+        return $adjustment->load( 'items' );
+    }
+
+    /**
+     * Replace all items of an existing draft adjustment.
+     */
+    public function updateAdjustmentDraft( ProductAdjustment $adjustment, array $products, string $title = '', string $description = '' ): ProductAdjustment
+    {
+        $adjustment->update( [
+            'title'       => $title,
+            'description' => $description,
+        ] );
+
+        $adjustment->items()->delete();
+
+        $items = $this->buildAdjustmentItems( $products );
+
+        foreach ( $items as $item ) {
+            ProductAdjustmentItem::create( array_merge( $item, [
+                'adjustment_id' => $adjustment->id,
+            ] ) );
+        }
+
+        return $adjustment->load( 'items' );
+    }
+
+    /**
+     * Execute a draft adjustment: apply all stock changes and
+     * mark the batch as performed.
+     */
+    public function executeAdjustmentDraft( ProductAdjustment $adjustment ): array
+    {
+        if ( $adjustment->status !== ProductAdjustment::STATUS_DRAFT ) {
+            throw new NotAllowedException( __( 'Only draft adjustments can be executed.' ) );
+        }
+
+        $results = [];
+
+        foreach ( $adjustment->items as $item ) {
+            $results[] = $this->stockAdjustment( $item->adjust_action, [
+                'unit_price'             => $item->unit_price,
+                'unit_id'                => $item->unit_id,
+                'procurement_product_id' => $item->procurement_product_id,
+                'product_id'             => $item->product_id,
+                'quantity'               => $item->quantity,
+                'description'            => $item->description ?? '',
+            ] );
+        }
+
+        $adjustment->update( [ 'status' => ProductAdjustment::STATUS_PERFORMED ] );
+
+        return $results;
     }
 }

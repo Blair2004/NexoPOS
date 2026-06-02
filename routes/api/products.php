@@ -38,6 +38,11 @@ Route::middleware( [
 Route::post( 'products', [ ProductsController::class, 'saveProduct' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.create.products' ) );
 Route::post( 'products/search', [ ProductsController::class, 'searchProduct' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.read.products' ) );
 Route::post( 'products/adjustments', [ ProductsController::class, 'createAdjustment' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
+Route::post( 'products/adjustments/draft', [ ProductsController::class, 'saveDraftAdjustment' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
+Route::get( 'products/adjustments/{adjustment}', [ ProductsController::class, 'getAdjustment' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
+Route::put( 'products/adjustments/{adjustment}', [ ProductsController::class, 'updateDraftAdjustment' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
+Route::get( 'products/adjustments/{adjustment}/execute', [ ProductsController::class, 'executeAdjustment' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
+Route::delete( 'products/adjustments/{adjustment}', [ ProductsController::class, 'deleteDraftAdjustment' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
 Route::post( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'createSingleVariation' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.create.products' ) );
 Route::post( 'products/{product}/units/conversion', [ ProductsController::class, 'convertUnits' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );
 Route::post( 'products/reorder', [ ProductsController::class, 'reorderProducts' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.products' ) );

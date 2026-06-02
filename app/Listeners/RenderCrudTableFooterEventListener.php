@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Crud\OrderCrud;
+use App\Crud\ProductAdjustmentCrud;
 use App\Crud\ProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Events\RenderCrudTableFooterEvent;
@@ -26,6 +27,7 @@ class RenderCrudTableFooterEventListener
             OrderCrud::class => $event->output->addView( 'pages.dashboard.orders.footer' ),
             ProductCrud::class => $event->output->addView( 'pages.dashboard.products.quantity-popup' ),
             ProductHistoryCrud::class => $event->output->addView( 'pages.dashboard.products.history' ),
+            ProductAdjustmentCrud::class => $event->output->addView( 'pages.dashboard.products.adjustment-details-popup' ),
             default => null,
         };
     }

@@ -11,17 +11,22 @@ import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
 
 export default {
     name: 'ns-stock-adjustment',
-    props: [ 'actions' ],
+    props: [ 'actions', 'adjustment' ],
     data() {
         return {
             search: '',
             timeout: null,
             suggestions: [],
             products: [],
+            title: '',
+            isDraft: false,
+            adjustmentId: null,
         }
     },
     mounted() {
-        // ...
+        if ( this.adjustment !== null && this.adjustment !== undefined ) {
+            this.loadDraft( this.adjustment );
+        }
     },
     methods: {
         __,
@@ -173,23 +178,95 @@ export default {
                 this.recalculateProduct( product );
             });
         },
+        loadDraft( adjustment ) {
+            this.adjustmentId = adjustment.id;
+            this.isDraft = true;
+            this.title = adjustment.title || '';
+            this.products = adjustment.items.map( item => {
+                const adjustUnit = {
+                    unit_id:    item.unit_id,
+                    sale_price: item.unit_price,
+                    quantity:   item.quantity,
+                    unit: { name: item.unit_name, id: item.unit_id }
+                };
+                const hasProcurement = !! item.procurement_product_id;
+                return {
+                    id:                     item.product_id,
+                    name:                   item.product_name,
+                    adjust_unit:            adjustUnit,
+                    adjust_quantity:        item.quantity,
+                    adjust_action:          item.adjust_action,
+                    adjust_reason:          item.description || '',
+                    adjust_value:           0,
+                    accurate_tracking:      hasProcurement ? 1 : 0,
+                    procurement_product_id: item.procurement_product_id,
+                    selected:               false,
+                    quantities:             [ adjustUnit ],
+                    procurement_history:    hasProcurement ? [ { label: `Procurement #${item.procurement_product_id}`, value: item.procurement_product_id } ] : [],
+                };
+            } );
+        },
+        saveDraft() {
+            if ( this.products.length === 0 ) {
+                return nsSnackBar.error( __( 'Unable to save a draft as the table is empty.' ) );
+            }
+
+            const payload = { products: this.products, title: this.title };
+
+            if ( this.isDraft && this.adjustmentId ) {
+                nsHttpClient.put( `/api/products/adjustments/${this.adjustmentId}`, payload )
+                    .subscribe({
+                        next: result => nsSnackBar.success( result.message ),
+                        error: error => nsSnackBar.error( error.message )
+                    });
+            } else {
+                nsHttpClient.post( '/api/products/adjustments/draft', payload )
+                    .subscribe({
+                        next: result => {
+                            nsSnackBar.success( result.message );
+                            setTimeout( () => {
+                                window.location.href = '/dashboard/products/adjustment-history';
+                            }, 500 );
+                        },
+                        error: error => nsSnackBar.error( error.message )
+                    });
+            }
+        },
         proceedStockAdjustment() {
             if ( this.products.length === 0 ) {
                 return nsSnackBar.error( __( 'Unable to proceed as the table is empty.' ) );
             }
 
+            const message = this.isDraft
+                ? __( 'The draft adjustment is about to be executed. Would you like to confirm?' )
+                : __( 'The stock adjustment is about to be made. Would you like to confirm ?' );
+
             Popup.show( nsPosConfirmPopupVue, { 
                 title: __( 'Confirm Your Action' ),
-                message: __( 'The stock adjustment is about to be made. Would you like to confirm ?' ),
+                message,
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( '/api/products/adjustments', { products: this.products })
-                            .subscribe( result => {
-                                nsSnackBar.success( result.message );
-                                this.products       =   [];
-                            }, error => {
-                                nsSnackBar.error( error.message );
-                            });
+                        if ( this.isDraft && this.adjustmentId ) {
+                            nsHttpClient.get( `/api/products/adjustments/${this.adjustmentId}/execute` )
+                                .subscribe({
+                                    next: result => {
+                                        nsSnackBar.success( result.message );
+                                        this.products     = [];
+                                        this.isDraft      = false;
+                                        this.adjustmentId = null;
+                                    },
+                                    error: error => nsSnackBar.error( error.message )
+                                });
+                        } else {
+                            nsHttpClient.post( '/api/products/adjustments', { products: this.products, title: this.title })
+                                .subscribe({
+                                    next: result => {
+                                        nsSnackBar.success( result.message );
+                                        this.products = [];
+                                    },
+                                    error: error => nsSnackBar.error( error.message )
+                                });
+                        }
                     }
                 }
             });
@@ -338,6 +415,9 @@ export default {
 </script>
 <template>
     <div>
+        <div class="input-field flex border-2 input-group rounded mb-2">
+            <input v-model="title" type="text" class="p-2 flex-auto outline-hidden" :placeholder="__( 'Adjustment title (optional)' )">
+        </div>
         <div class="input-field flex border-2 input-group rounded">
             <input @keyup.esc="closeSearch()" ref="searchField" v-model="search" type="text" class="p-2 flex-auto outline-hidden">
             <button class="px-3 py-2 rounded-none">{{ __( 'Search' ) }}</button>
@@ -443,7 +523,10 @@ export default {
                         </ns-button>
                     </div>
                     <div class="px-2">
-                        <ns-button @click="proceedStockAdjustment()" type="info">{{ __( 'Proceed' ) }}</ns-button>
+                        <ns-button @click="saveDraft()" type="warning">{{ __( 'Save as Draft' ) }}</ns-button>
+                    </div>
+                    <div class="px-2">
+                        <ns-button @click="proceedStockAdjustment()" type="info">{{ isDraft ? __( 'Execute Draft' ) : __( 'Proceed' ) }}</ns-button>
                     </div>
                 </div>
             </div>
