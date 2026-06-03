@@ -559,7 +559,7 @@ class ProductsController extends DashboardController
          */
         $adjustment = ProductAdjustment::create( [
             'author_id'   => auth()->id(),
-            'title'       => $request->input( 'title', '' ) ?: __( 'Stock Adjustment - ' ) . date( 'Y-m-d H:i:s' ),
+            'title'       => $request->input( 'title', '' ),
             'status'      => ProductAdjustment::STATUS_PERFORMED,
             'description' => $request->input( 'description', '' ),
         ] );
@@ -577,7 +577,7 @@ class ProductsController extends DashboardController
         ];
     }
 
-    public function searchUsingArgument( string $reference )
+    public function searchUsingArgument( $reference )
     {
         // Check if this is a scale barcode
         $scaleData = null;
@@ -749,7 +749,7 @@ class ProductsController extends DashboardController
 
         $adjustment = $this->productService->createAdjustmentDraft(
             $request->input( 'products' ),
-            $request->input( 'title', '' ) ?: __( 'Draft Adjustment - ' ) . date( 'Y-m-d H:i:s' ),
+            $request->input( 'title', '' ),
             $request->input( 'description', '' )
         );
 
