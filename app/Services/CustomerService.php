@@ -109,6 +109,7 @@ class CustomerService
         $customers = Customer::with( [ 'billing', 'shipping', 'group' ] )
             ->orWhere( 'first_name', 'like', '%' . $argument . '%' )
             ->orWhere( 'last_name', 'like', '%' . $argument . '%' )
+            ->orWhere( 'username', 'like', '%' . $argument . '%' )
             ->orWhere( 'email', 'like', '%' . $argument . '%' )
             ->orWhere( 'phone', 'like', '%' . $argument . '%' )
             ->limit( 10 )
