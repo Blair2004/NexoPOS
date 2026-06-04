@@ -18,10 +18,7 @@ use App\Mcp\Tools\SearchProductSalesTool;
 use App\Mcp\Tools\SearchWalletHistoryTool;
 use App\Mcp\Tools\CreateCategoryTool;
 use App\Mcp\Tools\UpdateCategoryTool;
-use App\Mcp\Tools\DeleteCategoryTool;
-use App\Mcp\Tools\CreateProductTool;
 use App\Mcp\Tools\UpdateProductTool;
-use App\Mcp\Tools\DeleteProductTool;
 use App\Mcp\Tools\UpdateSettingsTool;
 use App\Mcp\Tools\UploadMediaTool;
 use App\Mcp\Tools\DeleteMediaTool;
@@ -64,10 +61,7 @@ class POSServer extends Server
         SearchWalletHistoryTool::class,
         CreateCategoryTool::class,
         UpdateCategoryTool::class,
-        DeleteCategoryTool::class,
-        CreateProductTool::class,
         UpdateProductTool::class,
-        DeleteProductTool::class,
         UpdateSettingsTool::class,
         UploadMediaTool::class,
         DeleteMediaTool::class,

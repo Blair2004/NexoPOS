@@ -2,7 +2,8 @@
 
 namespace App\Mcp\Tools;
 
-use Laravel\Mcp\Tools\Tool;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Server\Tool;
 
 class UpdateSettingsTool extends Tool
 {
@@ -10,14 +11,12 @@ class UpdateSettingsTool extends Tool
 
     public string $description = 'Updates NexoPOS configuration settings via ns()->option->set(key, value).';
 
-    public function schema(): array
+    public function schema(JsonSchema $schema): array
     {
         return [
-            'settings' => [
-                'type' => 'object',
-                'description' => 'A key-value pair of settings to update (e.g. {"ns_store_name": "My Shop"}).',
-                'additionalProperties' => true,
-            ]
+            'settings' => $schema->object()
+                ->description('A key-value pair of settings to update (e.g. {"ns_store_name": "My Shop"})')
+                ->required(),
         ];
     }
 

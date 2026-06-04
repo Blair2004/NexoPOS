@@ -3,7 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Models\Product;
-use Laravel\Mcp\Tools\Tool;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Server\Tool;
 
 class UpdateProductTool extends Tool
 {
@@ -11,37 +12,30 @@ class UpdateProductTool extends Tool
 
     public string $description = 'Update an existing product main entry. Requires product id. Does not touch quantity or pricing, which are handled by product unit quantities.';
 
-    public function schema(): array
+    public function schema(JsonSchema $schema): array
     {
         return [
-            'id' => [
-                'type' => 'number',
-                'description' => 'The ID of the product to update.',
-            ],
-            'name' => [
-                'type' => 'string',
-                'description' => 'The new name of the product.',
-            ],
-            'description' => [
-                'type' => 'string',
-                'description' => 'The new description.',
-            ],
-            'status' => [
-                'type' => 'string',
-                'description' => 'Product status (e.g. available, unavailable).',
-            ],
-            'category_id' => [
-                'type' => 'number',
-                'description' => 'ID of the product category.',
-            ],
-            'barcode' => [
-                'type' => 'string',
-                'description' => 'Product barcode.',
-            ],
-            'sku' => [
-                'type' => 'string',
-                'description' => 'Product SKU.',
-            ],
+            'id' => $schema->number()
+                ->description('The ID of the product to update.')
+                ->required(),
+            'name' => $schema->string()
+                ->description('The new name of the product.')
+                ->nullable(),
+            'description' => $schema->string()
+                ->description('The new description.')
+                ->nullable(),
+            'status' => $schema->string()
+                ->description('Product status (e.g. available, unavailable).')
+                ->nullable(),
+            'category_id' => $schema->number()
+                ->description('ID of the product category.')
+                ->nullable(),
+            'barcode' => $schema->string()
+                ->description('Product barcode.')
+                ->nullable(),
+            'sku' => $schema->string()
+                ->description('Product SKU.')
+                ->nullable(),
         ];
     }
 

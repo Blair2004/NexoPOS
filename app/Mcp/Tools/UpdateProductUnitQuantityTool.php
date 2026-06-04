@@ -3,7 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Models\ProductUnitQuantity;
-use Laravel\Mcp\Tools\Tool;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Server\Tool;
 
 class UpdateProductUnitQuantityTool extends Tool
 {
@@ -11,41 +12,33 @@ class UpdateProductUnitQuantityTool extends Tool
 
     public string $description = 'Updates product pricing, inventory tracking, barcodes, etc. for a specific unit quantity. Use get_product_unit_quantities to find the correct ID.';
 
-    public function schema(): array
+    public function schema(JsonSchema $schema): array
     {
         return [
-            'id' => [
-                'type' => 'number',
-                'description' => 'The ID of the ProductUnitQuantity record to update.',
-            ],
-            'sale_price' => [
-                'type' => 'number',
-                'description' => 'The sale price of the unit.',
-            ],
-            'wholesale_price' => [
-                'type' => 'number',
-                'description' => 'The wholesale price.',
-            ],
-            'custom_price' => [
-                'type' => 'number',
-                'description' => 'A custom price.',
-            ],
-            'quantity' => [
-                'type' => 'number',
-                'description' => 'The current stock quantity.',
-            ],
-            'barcode' => [
-                'type' => 'string',
-                'description' => 'The barcode for this unit.',
-            ],
-            'scale_plu' => [
-                'type' => 'string',
-                'description' => 'The scale PLU if weighable.',
-            ],
-            'is_weighable' => [
-                'type' => 'boolean',
-                'description' => 'Whether this unit is weighable.',
-            ],
+            'id' => $schema->number()
+                ->description('The ID of the ProductUnitQuantity record to update.')
+                ->required(),
+            'sale_price' => $schema->number()
+                ->description('The sale price of the unit.')
+                ->nullable(),
+            'wholesale_price' => $schema->number()
+                ->description('The wholesale price.')
+                ->nullable(),
+            'custom_price' => $schema->number()
+                ->description('A custom price.')
+                ->nullable(),
+            'quantity' => $schema->number()
+                ->description('The current stock quantity.')
+                ->nullable(),
+            'barcode' => $schema->string()
+                ->description('The barcode for this unit.')
+                ->nullable(),
+            'scale_plu' => $schema->string()
+                ->description('The scale PLU if weighable.')
+                ->nullable(),
+            'is_weighable' => $schema->boolean()
+                ->description('Whether this unit is weighable.')
+                ->nullable(),
         ];
     }
 

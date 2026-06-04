@@ -3,7 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Models\ProductCategory;
-use Laravel\Mcp\Tools\Tool;
+use Laravel\Mcp\Server\Tool;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Request;
 
 class CreateCategoryTool extends Tool
@@ -12,25 +13,21 @@ class CreateCategoryTool extends Tool
 
     public string $description = 'Create a new product category in NexoPOS.';
 
-    public function schema(): array
+    public function schema( JsonSchema $schema ): array
     {
         return [
-            'name' => [
-                'type' => 'string',
-                'description' => 'The name of the new category.',
-            ],
-            'description' => [
-                'type' => 'string',
-                'description' => 'A description of the category.',
-            ],
-            'displays_on_pos' => [
-                'type' => 'boolean',
-                'description' => 'Whether this category should be displayed on the POS interface. Defaults to true.',
-            ],
-            'parent_id' => [
-                'type' => 'number',
-                'description' => 'ID of the parent category, if applicable.',
-            ]
+            'name' => $schema->string()
+                ->description('The name of the new category.')
+                ->required(),
+            'description' => $schema->string()
+                ->description('A description of the category.')
+                ->nullable(),
+            'displays_on_pos' => $schema->boolean()
+                ->description('Whether this category should be displayed on the POS interface. Defaults to true.')
+                ->nullable(),
+            'parent_id' => $schema->number()
+                ->description('ID of the parent category, if applicable.')
+                ->nullable(),
         ];
     }
 

@@ -2,30 +2,23 @@
 
 namespace App\Mcp\Tools;
 
-use Laravel\Mcp\Tools\Tool;
+use Laravel\Mcp\Server\Tool;
 use App\Models\Media;
 use App\Services\MediaService;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 
 class DeleteMediaTool extends Tool
 {
-    public function name(): string
-    {
-        return 'delete_media';
-    }
+    public string $name = 'delete_media';
 
-    public function description(): string
-    {
-        return 'Deletes a media item and its corresponding files from storage.';
-    }
+    public string $description = 'Deletes a media item and its corresponding files from storage.';
 
-    public function parameters(): array
+    public function schema(JsonSchema $schema): array
     {
         return [
-            'id' => [
-                'type' => 'integer',
-                'description' => 'The ID of the media item to delete.',
-                'required' => true,
-            ],
+            'id' => $schema->integer()
+                ->description('The ID of the media item to delete.')
+                ->required(),
         ];
     }
 

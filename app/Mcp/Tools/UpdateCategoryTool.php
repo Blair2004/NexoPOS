@@ -3,7 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Models\ProductCategory;
-use Laravel\Mcp\Tools\Tool;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Server\Tool;
 
 class UpdateCategoryTool extends Tool
 {
@@ -11,29 +12,24 @@ class UpdateCategoryTool extends Tool
 
     public string $description = 'Update an existing product category. Requires category id.';
 
-    public function schema(): array
+    public function schema(JsonSchema $schema): array
     {
         return [
-            'id' => [
-                'type' => 'number',
-                'description' => 'The ID of the category to update.',
-            ],
-            'name' => [
-                'type' => 'string',
-                'description' => 'The new name of the category.',
-            ],
-            'description' => [
-                'type' => 'string',
-                'description' => 'The new description of the category.',
-            ],
-            'displays_on_pos' => [
-                'type' => 'boolean',
-                'description' => 'Whether this category should be displayed on the POS interface.',
-            ],
-            'parent_id' => [
-                'type' => 'number',
-                'description' => 'ID of the parent category, if applicable. Can be null to remove parent.',
-            ]
+            'id' => $schema->number()
+                ->description('The ID of the category to update.')
+                ->required(),
+            'name' => $schema->string()
+                ->description('The new name of the category.')
+                ->nullable(),
+            'description' => $schema->string()
+                ->description('The new description of the category.')
+                ->nullable(),
+            'displays_on_pos' => $schema->boolean()
+                ->description('Whether this category should be displayed on the POS interface.')
+                ->nullable(),
+            'parent_id' => $schema->number()
+                ->description('ID of the parent category, if applicable. Can be null to remove parent.')
+                ->nullable(),
         ];
     }
 

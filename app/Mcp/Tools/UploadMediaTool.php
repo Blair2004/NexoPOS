@@ -2,36 +2,28 @@
 
 namespace App\Mcp\Tools;
 
-use Laravel\Mcp\Tools\Tool;
+use Laravel\Mcp\Server\Tool;
 use App\Models\Media;
 use App\Services\MediaService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 
 class UploadMediaTool extends Tool
 {
-    public function name(): string
-    {
-        return 'upload_media';
-    }
+    public string $name = 'upload_media';
 
-    public function description(): string
-    {
-        return 'Uploads a local file to the media library. Note: this tool requires a valid local file path within the workspace.';
-    }
+    public string $description = 'Uploads a local file to the media library. Note: this tool requires a valid local file path within the workspace.';
 
-    public function parameters(): array
+    public function schema(JsonSchema $schema): array
     {
         return [
-            'file_path' => [
-                'type' => 'string',
-                'description' => 'The absolute local path to the file to upload.',
-                'required' => true,
-            ],
-            'custom_name' => [
-                'type' => 'string',
-                'description' => 'An optional custom name for the uploaded file (excluding extension).',
-            ],
+            'file_path' => $schema->string()
+                ->description('The absolute local path to the file to upload.')
+                ->required(),
+            'custom_name' => $schema->string()
+                ->description('An optional custom name for the uploaded file (excluding extension).')
+                ->nullable(),
         ];
     }
 

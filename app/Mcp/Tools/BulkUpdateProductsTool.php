@@ -3,7 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Models\Product;
-use Laravel\Mcp\Tools\Tool;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Server\Tool;
 
 class BulkUpdateProductsTool extends Tool
 {
@@ -11,22 +12,19 @@ class BulkUpdateProductsTool extends Tool
 
     public string $description = 'Applies the provided field updates to an array of product IDs.';
 
-    public function schema(): array
+    public function schema(JsonSchema $schema): array
     {
         return [
-            'ids' => [
-                'type' => 'array',
-                'items' => ['type' => 'number'],
-                'description' => 'List of Product IDs to update.',
-            ],
-            'status' => [
-                'type' => 'string',
-                'description' => 'The status to set on all provided products (e.g. available, unavailable).',
-            ],
-            'category_id' => [
-                'type' => 'number',
-                'description' => 'Move all provided products to this category ID.',
-            ]
+            'ids' => $schema->array()
+                ->items($schema->number())
+                ->description('List of Product IDs to update.')
+                ->required(),
+            'status' => $schema->string()
+                ->description('The status to set on all provided products (e.g. available, unavailable)')
+                ->nullable(),
+            'category_id' => $schema->number()
+                ->description('Move all provided products to this category ID.')
+                ->nullable(),
         ];
     }
 
