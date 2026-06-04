@@ -19,6 +19,7 @@
         "gumlet/php-image-resize": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^12.0",
+        "laravel/mcp": "^0.7.2",
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.0",

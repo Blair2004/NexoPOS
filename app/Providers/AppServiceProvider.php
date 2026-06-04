@@ -39,11 +39,14 @@ use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Http\Request;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -301,6 +304,15 @@ class AppServiceProvider extends ServiceProvider
          */
         Event::listen( JobProcessing::class, function () {
             ns()->option->rebuild();
+        } );
+
+        /**
+         * Rate limiter for MCP API endpoints.
+         * 60 requests per minute, keyed by authenticated user or IP.
+         */
+        RateLimiter::for( 'mcp', function ( Request $request ) {
+            return Limit::perMinute( 60 )
+                ->by( $request->user()?->id ?: $request->ip() );
         } );
     }
 
