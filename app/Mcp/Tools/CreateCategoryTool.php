@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Models\ProductCategory;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Request;
@@ -31,35 +32,35 @@ class CreateCategoryTool extends Tool
         ];
     }
 
-    public function handle(array $parameters): array
+    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
     {
-        if (empty($parameters['name'])) {
-            return $this->error('The name parameter is required.');
+        if (empty($request->get('name'))) {
+            return Response::error('The name parameter is required.');
         }
 
         $userId = auth()->id() ?? 1;
 
         $category = new ProductCategory();
-        $category->name = $parameters['name'];
-        if (isset($parameters['description'])) {
-            $category->description = $parameters['description'];
+        $category->name = $request->get('name');
+        if (($request->get('description') !== null)) {
+            $category->description = $request->get('description');
         }
-        if (isset($parameters['displays_on_pos'])) {
-            $category->displays_on_pos = $parameters['displays_on_pos'];
+        if (($request->get('displays_on_pos') !== null)) {
+            $category->displays_on_pos = $request->get('displays_on_pos');
         } else {
             $category->displays_on_pos = true;
         }
-        if (isset($parameters['parent_id'])) {
-            $category->parent_id = $parameters['parent_id'];
+        if (($request->get('parent_id') !== null)) {
+            $category->parent_id = $request->get('parent_id');
         }
         $category->author_id = $userId;
         
         $category->save();
 
-        return [
+        return Response::json([
             'id' => $category->id,
             'name' => $category->name,
             'message' => 'Product category created successfully.'
-        ];
+        ]);
     }
 }

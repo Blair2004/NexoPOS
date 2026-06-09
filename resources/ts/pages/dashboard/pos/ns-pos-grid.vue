@@ -18,9 +18,23 @@
                     <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-hidden w-10 h-10 border-r ">
                         <i class="las la-compress-arrows-alt"></i>
                     </button>
-                    <button :title="__( 'Toggle auto focus.' )" @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" class="outline-hidden w-10 h-10 border-r ">
-                        <i class="las la-barcode"></i>
-                    </button>
+                    <template v-if="options.ns_pos_barcode_reader_type === 'wireless'">
+                        <button :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
+                            @click="POS.toggleWirelessBarcodeReaderConnection()"
+                            :class="wirelessBarcodeConnected ? 'text-green-500' : 'text-red-500'"
+                            class="outline-hidden w-10 h-10 border-r">
+                            <i v-if="! wirelessBarcodeConnected" :class="wirelessBarcodeConnected ? '' : 'animate-ping'" class="absolute las la-wifi text-lg"></i>
+                            <i class="relative las la-wifi text-lg"></i>
+                        </button>
+                    </template>
+                    <template v-else>
+                        <button :title="__( 'Toggle auto focus.' )" 
+                            @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" 
+                            :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" 
+                            class="outline-hidden w-10 h-10 border-r">
+                            <i class="las la-barcode"></i>
+                        </button>
+                    </template>
                     <input ref="search" v-model="barcode" type="text" class="flex-auto outline-hidden px-2 ">
                 </div>
             </div>
@@ -165,6 +179,15 @@ export default {
             gridItemsWidth: 0,
             gridItemsHeight:0,
             isLoading: false,
+            wirelessState: null,
+            wirelessStateSubscriber: null,
+            // ...
+            wirelessBarcodeConnected: false,
+            wirelessSocket: null,
+            wirelessChannelData: {},
+            wirelessRetryCount: 0,
+            wirelessRetryDelay: 5,
+            wirelessInterval: null,
         }
     },
     computed: {
@@ -181,7 +204,7 @@ export default {
     },
     watch: {
         options: {
-            handler() {
+            handler( oldVal, newVal ) {
                 if ( this.options.ns_pos_force_autofocus ) {
                     clearTimeout( this.searchTimeout );
 
@@ -208,6 +231,10 @@ export default {
         this.settingsSubscriber         =   POS.settings.subscribe( settings => {
             this.settings               =   settings;
             this.$forceUpdate();
+        });
+
+        this.wirelessStateSubscriber   =   POS.wirelessBarcodeReader.subscribe( state => {
+            this.wirelessBarcodeConnected   = state.connected
         });
 
         this.optionsSubscriber          =   POS.options.subscribe( options => {
@@ -280,6 +307,7 @@ export default {
         this.settingsSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
         this.cartProductsSubscribe.unsubscribe();
+        this.wirelessStateSubscriber.unsubscribe();
 
         clearInterval( this.interval );
 

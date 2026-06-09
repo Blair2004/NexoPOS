@@ -60,6 +60,11 @@ use Illuminate\Support\Facades\Gate;
         });
 
         POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
+
+        /**
+         * This will initialize the wireless barcode reader connection if the type is set to wireless. 
+         */
+        POS.initWirelessBarcodeServer();
     });
 
     /**

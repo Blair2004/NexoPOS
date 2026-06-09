@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\ProductCategory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
 class UpdateCategoryTool extends Tool
@@ -33,37 +34,37 @@ class UpdateCategoryTool extends Tool
         ];
     }
 
-    public function handle(array $parameters): array
+    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
     {
-        if (empty($parameters['id'])) {
-            return $this->error('The id parameter is required.');
+        if (empty($request->get('id'))) {
+            return Response::error('The id parameter is required.');
         }
 
-        $category = ProductCategory::find($parameters['id']);
+        $category = ProductCategory::find($request->get('id'));
 
         if (!$category) {
-            return $this->error('Category not found.');
+            return Response::error('Category not found.');
         }
 
-        if (isset($parameters['name'])) {
-            $category->name = $parameters['name'];
+        if (($request->get('name') !== null)) {
+            $category->name = $request->get('name');
         }
         if (array_key_exists('description', $parameters)) {
-            $category->description = $parameters['description'];
+            $category->description = $request->get('description');
         }
-        if (isset($parameters['displays_on_pos'])) {
-            $category->displays_on_pos = $parameters['displays_on_pos'];
+        if (($request->get('displays_on_pos') !== null)) {
+            $category->displays_on_pos = $request->get('displays_on_pos');
         }
         if (array_key_exists('parent_id', $parameters)) {
-            $category->parent_id = $parameters['parent_id'];
+            $category->parent_id = $request->get('parent_id');
         }
         
         $category->save();
 
-        return [
+        return Response::json([
             'id' => $category->id,
             'name' => $category->name,
             'message' => 'Product category updated successfully.'
-        ];
+        ]);
     }
 }

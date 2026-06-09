@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\Product;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
 class UpdateProductTool extends Tool
@@ -39,32 +40,32 @@ class UpdateProductTool extends Tool
         ];
     }
 
-    public function handle(array $parameters): array
+    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
     {
-        if (empty($parameters['id'])) {
-            return $this->error('The id parameter is required.');
+        if (empty($request->get('id'))) {
+            return Response::error('The id parameter is required.');
         }
 
-        $product = Product::find($parameters['id']);
+        $product = Product::find($request->get('id'));
 
         if (!$product) {
-            return $this->error('Product not found.');
+            return Response::error('Product not found.');
         }
 
-        $fillable = ['name', 'description', 'status', 'category_id', 'barcode', 'sku'];
+        $fillable = ['name', 'description', 'status', 'category_id', 'barcode', 'sku']);
 
         foreach ($fillable as $field) {
-            if (array_key_exists($field, $parameters)) {
-                $product->$field = $parameters[$field];
+            if ($request->get($field) !== null) {
+                $product->$field = $request->get($field);
             }
         }
         
         $product->save();
 
-        return [
+        return Response::json([
             'id' => $product->id,
             'name' => $product->name,
             'message' => 'Product updated successfully.'
-        ];
+        ]);
     }
 }

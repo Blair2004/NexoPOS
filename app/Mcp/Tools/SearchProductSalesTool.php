@@ -47,22 +47,22 @@ class SearchProductSalesTool extends Tool
     {
         try {
             $query = OrderProduct::query()
-                ->join('nexopos_orders', 'nexopos_orders.id', '=', 'nexopos_orders_products.order_id')
-                ->join('nexopos_products', 'nexopos_products.id', '=', 'nexopos_orders_products.product_id');
+                ->join((new \App\Models\Order)->getTable(), (new \App\Models\Order)->getTable() . '.id', '=', (new \App\Models\OrderProduct)->getTable() . '.order_id')
+                ->join((new \App\Models\Product)->getTable(), (new \App\Models\Product)->getTable() . '.id', '=', (new \App\Models\OrderProduct)->getTable() . '.product_id');
 
             $dateStart = $request->get('date_start');
             if (!empty($dateStart)) {
-                $query->where('nexopos_orders.created_at', '>=', Carbon::parse($dateStart));
+                $query->where((new \App\Models\Order)->getTable() . '.created_at', '>=', Carbon::parse($dateStart));
             }
 
             $dateEnd = $request->get('date_end');
             if (!empty($dateEnd)) {
-                $query->where('nexopos_orders.created_at', '<=', Carbon::parse($dateEnd)->endOfDay());
+                $query->where((new \App\Models\Order)->getTable() . '.created_at', '<=', Carbon::parse($dateEnd)->endOfDay());
             }
 
             $orderType = $request->get('order_type');
             if (!empty($orderType)) {
-                $query->where('nexopos_orders.type', $orderType);
+                $query->where((new \App\Models\Order)->getTable() . '.type', $orderType);
             }
 
             $metric = $request->get('metric', 'top_purchased');
@@ -70,12 +70,12 @@ class SearchProductSalesTool extends Tool
 
             if ($metric === 'top_purchased') {
                 $results = $query->select(
-                    'nexopos_products.id',
-                    'nexopos_products.name',
-                    DB::raw('SUM(nexopos_orders_products.quantity) as total_quantity'),
-                    DB::raw('SUM(nexopos_orders_products.total_price) as total_revenue')
+                    (new \App\Models\Product)->getTable() . '.id',
+                    (new \App\Models\Product)->getTable() . '.name',
+                    DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.quantity) as total_quantity'),
+                    DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.total_price) as total_revenue')
                 )
-                ->groupBy('nexopos_products.id', 'nexopos_products.name')
+                ->groupBy((new \App\Models\Product)->getTable() . '.id', (new \App\Models\Product)->getTable() . '.name')
                 ->orderBy('total_quantity', 'desc')
                 ->limit($limit)
                 ->get();
@@ -83,15 +83,15 @@ class SearchProductSalesTool extends Tool
             }
 
             if ($metric === 'top_returned') {
-                $query->join('nexopos_orders_products_refunds', 'nexopos_orders_products_refunds.product_id', '=', 'nexopos_orders_products.product_id')
-                    ->whereColumn('nexopos_orders_products_refunds.order_id', 'nexopos_orders.id');
+                $query->join((new \App\Models\OrderRefund)->getTable(), (new \App\Models\OrderRefund)->getTable() . '.product_id', '=', (new \App\Models\OrderProduct)->getTable() . '.product_id')
+                    ->whereColumn((new \App\Models\OrderRefund)->getTable() . '.order_id', (new \App\Models\Order)->getTable() . '.id');
 
                 $results = $query->select(
-                    'nexopos_products.id',
-                    'nexopos_products.name',
-                    DB::raw('SUM(nexopos_orders_products_refunds.quantity) as total_returned')
+                    (new \App\Models\Product)->getTable() . '.id',
+                    (new \App\Models\Product)->getTable() . '.name',
+                    DB::raw('SUM(' . (new \App\Models\OrderRefund)->getTable() . '.quantity) as total_returned')
                 )
-                ->groupBy('nexopos_products.id', 'nexopos_products.name')
+                ->groupBy((new \App\Models\Product)->getTable() . '.id', (new \App\Models\Product)->getTable() . '.name')
                 ->orderBy('total_returned', 'desc')
                 ->limit($limit)
                 ->get();
@@ -100,8 +100,8 @@ class SearchProductSalesTool extends Tool
 
             // Default: 'volume'
             $results = $query->select(
-                DB::raw('SUM(nexopos_orders_products.quantity) as total_items_sold'),
-                DB::raw('SUM(nexopos_orders_products.total_price) as gross_revenue')
+                DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.quantity) as total_items_sold'),
+                DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.total_price) as gross_revenue')
             )->first();
 
             return Response::json($results ? $results->toArray() : []);

@@ -40,6 +40,8 @@ Route::middleware( [
         include dirname( __FILE__ ) . '/api/users.php';
         include dirname( __FILE__ ) . '/api/permissions.php';
         include dirname( __FILE__ ) . '/api/system.php';
+        include dirname( __FILE__ ) . '/api/scan-utility.php';
+        include dirname( __FILE__ ) . '/api/marketplace.php';
     } );
 } );
 

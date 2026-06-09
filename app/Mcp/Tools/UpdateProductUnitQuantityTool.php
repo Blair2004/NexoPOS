@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\ProductUnitQuantity;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
 class UpdateProductUnitQuantityTool extends Tool
@@ -42,16 +43,16 @@ class UpdateProductUnitQuantityTool extends Tool
         ];
     }
 
-    public function handle(array $parameters): array
+    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
     {
-        if (empty($parameters['id'])) {
-            return $this->error('The id parameter is required.');
+        if (empty($request->get('id'))) {
+            return Response::error('The id parameter is required.');
         }
 
-        $unitQuantity = ProductUnitQuantity::find($parameters['id']);
+        $unitQuantity = ProductUnitQuantity::find($request->get('id'));
 
         if (!$unitQuantity) {
-            return $this->error('Product Unit Quantity not found.');
+            return Response::error('Product Unit Quantity not found.');
         }
 
         $fillable = [
@@ -62,20 +63,20 @@ class UpdateProductUnitQuantityTool extends Tool
             'barcode', 
             'scale_plu', 
             'is_weighable'
-        ];
+        ]);
 
         foreach ($fillable as $field) {
-            if (array_key_exists($field, $parameters)) {
-                $unitQuantity->$field = $parameters[$field];
+            if ($request->get($field) !== null) {
+                $unitQuantity->$field = $request->get($field);
             }
         }
         
         $unitQuantity->save();
 
-        return [
+        return Response::json([
             'id' => $unitQuantity->id,
             'product_id' => $unitQuantity->product_id,
             'message' => 'Product Unit Quantity updated successfully.'
-        ];
+        ]);
     }
 }

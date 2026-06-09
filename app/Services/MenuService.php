@@ -357,6 +357,11 @@ class MenuService
                         identifier: 'upload-module',
                         href: ns()->url( '/dashboard/modules/upload' )
                     ),
+                    AsideMenu::subMenu(
+                        label: __( 'Marketplace' ),
+                        identifier: 'marketplace',
+                        href: ns()->url( '/dashboard/modules/marketplace' )
+                    ),
                 ),
             ),
             AsideMenu::menu(

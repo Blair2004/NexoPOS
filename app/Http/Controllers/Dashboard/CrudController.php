@@ -447,4 +447,36 @@ class CrudController extends DashboardController
 
         throw new NotFoundException( __( 'The requested file cannot be downloaded or has already been downloaded.' ) );
     }
+
+    public function getResource( string $identifier, Request $request )
+    {
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
+
+        /**
+         * Let's check it the resource has a method to retrieve an item
+         *
+         * @var CrudService
+         */
+        $resource = new $crudClass;
+
+        $model = $resource->getModel();
+
+        $entry = $model::find( $request->route( 'id' ) );
+
+        if ( $entry instanceof $model ) {
+            if ( $request->query( 'with-relations' ) ) {
+                $relationExploded = explode( ',', $request->query( 'with-relations' ) );
+                
+                foreach ( $relationExploded as $relation ) {
+                    if ( method_exists( $model, $relation ) ) {
+                        $entry->$relation;
+                    }
+                }
+            }
+
+            return $entry;
+        } else {
+            throw new NotFoundException( __( 'Unable to retrieve the item. The requested entry does not exist.' ) );
+        }
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use App\Models\Media;
 use App\Services\MediaService;
@@ -22,24 +23,24 @@ class DeleteMediaTool extends Tool
         ];
     }
 
-    public function handle(array $parameters): string
+    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
     {
-        $id = $parameters['id'];
+        $id = $request->get('id');
         $media = Media::find($id);
 
         if (!$media) {
             $this->error('Media not found.');
-            return '';
+            return Response::text('');
         }
 
         $service = app()->make(MediaService::class);
         $result = $service->deleteMedia($id);
 
         if (isset($result['status']) && $result['status'] === 'success') {
-            return "Media deleted successfully: {$result['message']}";
+            return Response::text("Media deleted successfully: {$result['message']}");
         }
 
         $this->error('Failed to delete media.');
-        return '';
+        return Response::text('');
     }
 }

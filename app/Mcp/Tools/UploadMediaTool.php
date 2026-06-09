@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use App\Models\Media;
 use App\Services\MediaService;
@@ -27,14 +28,14 @@ class UploadMediaTool extends Tool
         ];
     }
 
-    public function handle(array $parameters): string
+    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
     {
-        $filePath = $parameters['file_path'];
-        $customName = $parameters['custom_name'] ?? null;
+        $filePath = $request->get('file_path');
+        $customName = $request->get('custom_name') ?? null;
 
         if (!File::exists($filePath)) {
             $this->error("File not found at path: {$filePath}");
-            return '';
+            return Response::text('');
         }
 
         $originalName = File::basename($filePath);
@@ -56,7 +57,7 @@ class UploadMediaTool extends Tool
 
         if (!$media) {
             $this->error('Failed to upload media. Ensure the file type is allowed (e.g., typical image types).');
-            return '';
+            return Response::text('');
         }
 
         return json_encode([

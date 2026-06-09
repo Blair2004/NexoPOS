@@ -9,6 +9,7 @@ Route::get( 'crud/{namespace}/columns', [ CrudController::class, 'getColumns' ] 
 Route::get( 'crud/{namespace}/config', [ CrudController::class, 'getConfig' ] );
 Route::get( 'crud/{namespace}/form-config/{id?}', [ CrudController::class, 'getFormConfig' ] );
 Route::put( 'crud/{namespace}/{id}', [ CrudController::class, 'crudPut' ] )->where( ['id' => '[0-9]+'] );
+Route::get( 'crud/{namespace}/{id}', [ CrudController::class, 'getResource' ] )->where( ['id' => '[0-9]+'] );
 Route::post( 'crud/{namespace}', [ CrudController::class, 'crudPost' ] );
 Route::post( 'crud/{namespace}/export', [ CrudController::class, 'exportCrud' ] );
 Route::post( 'crud/{namespace}/bulk-actions', [ CrudController::class, 'crudBulkActions' ] )->name( Hook::filter( 'ns-route-name', 'ns.api.crud-bulk-actions' ) );

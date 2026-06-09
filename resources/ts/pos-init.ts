@@ -75,6 +75,7 @@ export class POS {
     private _processingAddQueue = false;
     private _selectedPaymentType: BehaviorSubject<PaymentType>;
     private _userPermissions: BehaviorSubject<{[key:string]: any}[]>;
+    private _wirelessBarcodeReader: BehaviorSubject<{[key:string]: any}[]>;
     
     public print: Print;
 
@@ -246,6 +247,14 @@ export class POS {
             delivery,
         ];
 
+        this._wirelessBarcodeReader = new BehaviorSubject<{[key:string]: any}[]>([]);
+        this._wirelessBarcodeReader.next({
+            channel: null,
+            connected: false,
+            secret: null,
+            domain: null,
+        })
+
         this.initialQueue.push(() => new Promise((resolve, reject) => {
             nsHttpClient.get(`/api/users/permissions/` ).subscribe({
                 next: (response: any) => {
@@ -370,6 +379,106 @@ export class POS {
         }
     }
 
+    public storeWirelessState( data )
+    {
+        const currentState = this.wirelessBarcodeReader.getValue();
+
+        this._wirelessBarcodeReader.next({
+            ...currentState,
+            ...data
+        });
+    }
+
+    public initWirelessBarcodeServer() {
+        const options = this.options.getValue();
+        const settings = this.settings.getValue();
+
+        if ( options.ns_pos_barcode_reader_type === 'wireless' ) {
+            const domain = options.ns_pos_websocket_domain;
+            const password = options.ns_pos_websocket_server_password;
+
+            if ( domain !== null && password !== null ) {
+                /**
+                 * we'll first initialize the channel and then we'll connect or disconnect based on the current state of the connection
+                 */
+                const request = new XMLHttpRequest;
+                request.open( 'POST', `http://${domain}/api/admin/channels`, true );
+                request.onload = () => {
+                    if ( request.status >= 200 && request.status < 300 ) {
+
+                        const response = JSON.parse( request.responseText );
+
+                        if ( Object.keys( response ).includes( 'name' ) && Object.keys( response ).includes( 'secret' ) ) {
+                            this.storeWirelessState( response );
+                            setTimeout( () => {
+                                this.startWirelessBarcodeChannel();
+                            }, 1000 );
+                        }
+                    }
+                }
+
+                request.setRequestHeader( 'Content-Type', 'application/json' );
+                request.setRequestHeader( 'Authorization', `Bearer ${ password }` );
+                request.setRequestHeader( 'Accept', 'application/json' );
+
+                request.onerror = function() {
+                    console.error( 'Failed to initialize wireless barcode reader connection.' );
+                }
+
+                request.send();
+            }
+        }
+    }
+
+    public startWirelessBarcodeChannel() {
+        const wirelessState = this.wirelessBarcodeReader.getValue();
+        const options = this.options.getValue();
+
+        console.log({ wirelessState, options })
+
+        if( wirelessState.name && wirelessState.secret ) {
+            const socket = new WebSocket( `ws://${ this.options.ns_pos_websocket_domain }/ws?token=1${ this.options.ns_pos_websocket_server_password }&role=master&channel=${wirelessState.name}&secret=${ wirelessState.secret }` );
+
+            socket.onopen = () => {
+                this.wirelessBarcodeConnected = true;
+                nsSnackBar.success( __( 'Wireless barcode reader connected.' ) );
+            };
+
+            socket.onmessage = ( event ) => {
+                try {
+                    const data = JSON.parse( event.data );
+                    if ( data.barcode ) {
+                        this.submitSearch( data.barcode );
+                    }
+                } catch ( error ) {
+                    console.error( 'Error parsing message from wireless barcode reader:', error );
+                }
+            };
+
+            socket.onclose = () => {
+                this.wirelessBarcodeConnected = false;
+
+                this.wirelessInterval = setInterval( () => {
+                    if ( this.wirelessRetryCount >= this.wirelessRetryDelay ) {
+                        this.startWirelessBarcodeSocketConnexion();
+                        this.wirelessRetryCount = 0;
+                        clearInterval( this.wirelessInterval );
+                        return;
+                    }
+                    
+                    this.wirelessRetryCount++;
+                    console.log( this.wirelessRetryCount );
+                }, 1000 );
+                
+                nsSnackBar.warning( __( 'Wireless barcode reader disconnected.' ) );
+            };
+
+            socket.onerror = ( error ) => {
+                console.error( 'WebSocket error with wireless barcode reader connection:', error );
+            };
+        }
+    }
+
     public getSalePrice(item) {
         let price = 0;
 
@@ -467,6 +576,10 @@ export class POS {
         order.coupons.push(coupon);
         this.order.next(order);
         this.refreshCart();
+    }
+
+    get wirelessBarcodeReader() {
+        return this._wirelessBarcodeReader;
     }
 
     get header() {

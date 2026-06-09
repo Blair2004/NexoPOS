@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\Product;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
 class BulkUpdateProductsTool extends Tool
@@ -28,30 +29,30 @@ class BulkUpdateProductsTool extends Tool
         ];
     }
 
-    public function handle(array $parameters): array
+    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
     {
-        if (empty($parameters['ids']) || !is_array($parameters['ids'])) {
-            return $this->error('The ids parameter must be a non-empty array of product IDs.');
+        if (empty($request->get('ids')) || !is_array($request->get('ids'))) {
+            return Response::error('The ids parameter must be a non-empty array of product IDs.');
         }
 
-        $fillable = ['status', 'category_id'];
-        $updateData = [];
+        $fillable = ['status', 'category_id']);
+        $updateData = []);
 
         foreach ($fillable as $field) {
-            if (array_key_exists($field, $parameters)) {
-                $updateData[$field] = $parameters[$field];
+            if ($request->get($field) !== null) {
+                $updateData[$field] = $request->get($field);
             }
         }
 
         if (empty($updateData)) {
-            return $this->error('No valid update fields provided. Please provide status or category_id.');
+            return Response::error('No valid update fields provided. Please provide status or category_id.');
         }
 
-        $updatedCount = Product::whereIn('id', $parameters['ids'])->update($updateData);
+        $updatedCount = Product::whereIn('id', $request->get('ids'))->update($updateData);
 
-        return [
+        return Response::json([
             'updated_count' => $updatedCount,
             'message' => "Successfully updated {$updatedCount} products."
-        ];
+        ]);
     }
 }

@@ -191,4 +191,18 @@ class ModulesController extends DashboardController
             ], 500 );
         }
     }
+
+    public function showMarketplace()
+    {
+        $accessToken = ns()->option->get( 'mynexopos_access_token' );
+        $refreshToken = ns()->option->get( 'mynexopos_refresh_token' );
+
+        $isConnected = ! empty( $accessToken ) && ! empty( $refreshToken );
+
+        return View::make( 'pages.dashboard.modules.marketplace', [
+            'title' => __( 'Module Marketplace' ),
+            'description' => __( 'Connect your NexoPOS account to access the module marketplace.' ),
+            'isConnected' => $isConnected,
+        ] );
+    }
 }
