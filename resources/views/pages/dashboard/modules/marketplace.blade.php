@@ -9,3 +9,10 @@
     </div>
 </div>
 @endsection
+
+@section( 'layout.dashboard.footer' )
+    <script>
+        const authorizationUrl = '{{ $authorizationUrl }}';
+    </script>
+    @parent
+@endsection

@@ -203,6 +203,7 @@ class ModulesController extends DashboardController
             'title' => __( 'Module Marketplace' ),
             'description' => __( 'Connect your NexoPOS account to access the module marketplace.' ),
             'isConnected' => $isConnected,
+            'authorizationUrl' => route( ns()->routeName( 'ns.oauth.mynexopos.authorize' ) ),
         ] );
     }
 }

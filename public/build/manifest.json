@@ -190,7 +190,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-UJg-e-e9.css",
+    "file": "assets/app-iXuDfNiA.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -199,7 +199,7 @@
     ]
   },
   "resources/css/dark.css": {
-    "file": "assets/dark-Qq1yjU1K.css",
+    "file": "assets/dark-Bwzu3gb6.css",
     "src": "resources/css/dark.css",
     "isEntry": true,
     "name": "dark",
@@ -217,7 +217,7 @@
     ]
   },
   "resources/css/grid.css": {
-    "file": "assets/grid-CQvlwenw.css",
+    "file": "assets/grid-Di6-Edbm.css",
     "src": "resources/css/grid.css",
     "isEntry": true,
     "name": "grid",
@@ -226,7 +226,7 @@
     ]
   },
   "resources/css/light.css": {
-    "file": "assets/light-CBjP7rrF.css",
+    "file": "assets/light-BbqfSQCo.css",
     "src": "resources/css/light.css",
     "isEntry": true,
     "name": "light",
@@ -235,7 +235,7 @@
     ]
   },
   "resources/css/phosphor.css": {
-    "file": "assets/phosphor-DF606x9x.css",
+    "file": "assets/phosphor-BaiI5d1Y.css",
     "src": "resources/css/phosphor.css",
     "isEntry": true,
     "name": "phosphor",
@@ -337,7 +337,7 @@
     ]
   },
   "resources/ts/app-init.ts": {
-    "file": "assets/app-init-BKbDuhuT.js",
+    "file": "assets/app-init-DDN3qPnR.js",
     "name": "app-init",
     "src": "resources/ts/app-init.ts",
     "isEntry": true,
@@ -386,6 +386,8 @@
       "resources/ts/pages/dashboard/products/ns-print-label.vue",
       "resources/ts/pages/dashboard/transactions/ns-transactions-rules.vue",
       "resources/ts/components/ns-scale-settings-preview.vue",
+      "resources/ts/pages/dashboard/settings/ns-wireless-barcode-tab.vue",
+      "resources/ts/pages/dashboard/modules/ns-marketplace.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ]
   },
@@ -592,6 +594,17 @@
       "_chart--HL2-LwL.js"
     ]
   },
+  "resources/ts/pages/dashboard/modules/ns-marketplace.vue": {
+    "file": "assets/ns-marketplace-DsJD6VVb.js",
+    "name": "ns-marketplace",
+    "src": "resources/ts/pages/dashboard/modules/ns-marketplace.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "__plugin-vue_export-helper-DlAUqK2U.js",
+      "_runtime-core.esm-bundler-67mTMT6H.js",
+      "_runtime-dom.esm-bundler-lWRGEi3W.js"
+    ]
+  },
   "resources/ts/pages/dashboard/ns-notifications.vue": {
     "file": "assets/ns-notifications-DKh35LUN.js",
     "name": "ns-notifications",
@@ -776,7 +789,7 @@
     ]
   },
   "resources/ts/pages/dashboard/pos/ns-pos-grid.vue": {
-    "file": "assets/ns-pos-grid-BBvZNSH0.js",
+    "file": "assets/ns-pos-grid-An8OkCAa.js",
     "name": "ns-pos-grid",
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
     "isDynamicEntry": true,
@@ -793,7 +806,7 @@
     ]
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
-    "file": "assets/ns-pos-PaHNBjMv.js",
+    "file": "assets/ns-pos-DDC6P_j-.js",
     "name": "ns-pos",
     "src": "resources/ts/pages/dashboard/pos/ns-pos.vue",
     "isDynamicEntry": true,
@@ -1125,6 +1138,16 @@
       "_chart--HL2-LwL.js"
     ]
   },
+  "resources/ts/pages/dashboard/settings/ns-wireless-barcode-tab.vue": {
+    "file": "assets/ns-wireless-barcode-tab-BAh32mQB.js",
+    "name": "ns-wireless-barcode-tab",
+    "src": "resources/ts/pages/dashboard/settings/ns-wireless-barcode-tab.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "__plugin-vue_export-helper-DlAUqK2U.js",
+      "_runtime-core.esm-bundler-67mTMT6H.js"
+    ]
+  },
   "resources/ts/pages/dashboard/transactions/ns-transaction.vue": {
     "file": "assets/ns-transaction-DV7BMuvU.js",
     "name": "ns-transaction",
@@ -1223,7 +1246,7 @@
     ]
   },
   "resources/ts/pos-init.ts": {
-    "file": "assets/pos-init-D-gYKaQ_.js",
+    "file": "assets/pos-init-DN5LDCA7.js",
     "name": "pos-init",
     "src": "resources/ts/pos-init.ts",
     "isEntry": true,
@@ -1250,7 +1273,7 @@
     ]
   },
   "resources/ts/pos.ts": {
-    "file": "assets/pos-DWpDXdxs.js",
+    "file": "assets/pos-CpUIC69x.js",
     "name": "pos",
     "src": "resources/ts/pos.ts",
     "isEntry": true,

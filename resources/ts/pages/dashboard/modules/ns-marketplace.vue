@@ -14,6 +14,7 @@
         </template>
         <template v-else>
             <ns-marketplace-item 
+                @buy="handleBuy( $event)"
                 @install="handleInstall( $event )" v-for="item in result.data" :key="item.id" :item="item"></ns-marketplace-item>
         </template>
     </div>
@@ -32,7 +33,13 @@
 </template>
 <script lang="ts">
 import NsMarketplaceItem from './ns-marketplace-item.vue';
+import NsMynexoposLicenseSelection from './ns-mynexopos-license-selection.vue';
 import NsMynexopos from './ns-mynexopos.vue';
+
+declare const nsSnackBar;
+declare const nsHttpClient;
+declare const Popup;
+declare const __;
 
 interface MarketplacePaginationLink {
     url: string | null;
@@ -82,19 +89,90 @@ export default {
     methods: {
         handleInstall( item: Record<string, any> ) {
             if ( ! this.isConnected ) {
-                Popup.show( NsMynexopos )
+                return Popup.show( NsMynexopos )
             }
+
+            item.isInstalling = true;
+
+            nsHttpClient.get( `/api/marketplace/licenses/${item.id}` ).subscribe({
+                next: async (licenses) => {
+                    try {
+                        const license = await new Promise( ( resolve, reject ) => {
+                            Popup.show( NsMynexoposLicenseSelection, { item, licenses, resolve, reject })
+                        });
+    
+                        this.assignLicense( license, item )
+                    } catch( exception ) {
+                        console.log({ exception })
+                        item.isInstalling = false;
+                    }
+                },
+                error: err => {
+                    item.isInstalling = false;
+
+                    nsSnackBar.error( err.message || __( 'An error occurred while installing the module.' ) );
+                    // Handle error, maybe show a notification
+                }
+            })
+        },
+
+        assignLicense( license, item ) {
+            nsHttpClient.post( `/api/marketplace/download`, { item_id: item.id, license_id: license.license_uuid } ).subscribe({
+                next: response => {
+                    nsSnackBar.success( __( 'Module downloaded and installed successfully.' ) );
+                    // Optionally, you can refresh the list or update the item state here
+                },
+                error: err => {
+                    nsSnackBar.error( err.message || __( 'An error occurred while downloading the module.' ) );
+                },
+                complete: () => {
+                    item.isInstalling = false;
+                }
+            })
         },
 
         loadItems( page = 1 ) {
             this.loading = true;
-            nsHttpClient.get( `/api/marketplace/modules?per_page=3&page=${page}` ).subscribe({
+            nsHttpClient.get( `/api/marketplace/modules?per_page=12&page=${page}` ).subscribe({
                 next: pagination => {
                     this.loading = false;
+
+                    /**
+                     * We need to add some state to make sure to 
+                     * update the UI accordingly.
+                     */
+                    pagination.data.forEach( item => {
+                        item.isAddingToCart = false;
+                        item.isInstalling = false;
+                    });
+
                     this.result = pagination;
                 },
                 error: err => {
                     this.loading = false;
+                }
+            })
+        },
+
+        handleBuy( item ) {
+            item.isAddingToCart = true;
+            
+            nsHttpClient.post( `/api/marketplace/add-to-cart/`, { item_id: item.id } ).subscribe({
+                next: response => {
+                    if( response.data.action === 'already-on-cart' ) {
+                        nsSnackBar.info( __( 'You\'re redirected to your card to complete the purchase.' ) );
+                        document.location = response.data.redirect;
+                    }
+
+                    if ( response.data.action === 'added-to-cart' ) {
+                        nsSnackBar.success( __( 'Item added to cart. Redirecting you to the cart...' ) );
+                        document.location = response.data.redirect;
+                    }
+                },
+                error: err => {
+                    item.isAddingToCart = false;
+                    nsSnackBar.error( err.message || __( 'An error occurred while adding the item to the cart.' ) );
+                    // Handle error, maybe show a notification
                 }
             })
         },

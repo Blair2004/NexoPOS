@@ -21,4 +21,45 @@ class MarketplaceController extends DashboardController
             'page' => $request->query( 'page', 1 ),
         ]);
     }
+
+    public function oauthAuthorize()
+    {
+        $url = $this->marketplaceService->authorize();
+
+        return $url;
+    }
+
+    public function oauthCallback( Request $request )
+    {
+        $validated = $request->validate( [
+            'code' => 'required|string',
+            'state' => 'required|string',
+        ] );
+
+        return $this->marketplaceService->handleCallback( $validated );
+    }
+
+    public function addToCart( Request $request )
+    {
+        $validated = $request->validate( [
+            'item_id' => 'required|integer',
+        ] );
+
+        return $this->marketplaceService->addToCart( $validated[ 'item_id' ] );
+    }
+
+    public function getLicenses( int | string $itemId )
+    {
+        return $this->marketplaceService->getLicenses( $itemId );
+    }
+
+    public function downloadModule( Request $request )
+    {
+        $validated = $request->validate( [
+            'item_id' => 'required|integer',
+            'license_id' => 'required|string',
+        ] );
+
+        return $this->marketplaceService->downloadModule( $validated[ 'item_id' ], $validated[ 'license_id' ] );
+    }
 }

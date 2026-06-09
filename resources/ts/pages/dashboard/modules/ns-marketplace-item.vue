@@ -19,15 +19,23 @@
                 </span>
             </div>
             <div class="flex gap-2">
-                <ns-button class="info text-xs p-0">
-                    <i class="las la-shopping-basket"></i>
+                <ns-button :disabled="item.isInstalling" v-if="item.has_purchased === 1" @click="$emit('install', item)" class="text-xs p-0">
+                    <i v-if="!item.isInstalling" class="las la-shopping-basket mr-2"></i>
+                    <i v-else class="las la-spinner animate-spin mr-2"></i>
+                    {{ __( 'Install' ) }}
                 </ns-button>
-                <ns-button @click="$emit('install', item)" class="text-xs p-0">Install</ns-button>
+                <ns-button :disabled="item.isAddingToCart" @click="$emit('buy', item)" v-else class="info text-xs p-0">
+                    <i class="las la-shopping-basket mr-2"></i>
+                    <span v-if="item.regular_price > 0">{{ __( 'Buy' ) }}</span>
+                    <span v-else>{{ __( 'Get It' ) }}</span>
+                </ns-button>
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
+declare const __;
+
 export default {
     props: [ 'item' ],
     computed: {
@@ -37,6 +45,9 @@ export default {
 
             return description.length > limit ? description.substring( 0, limit ) + '...' : description;
         }
+    },
+    methods: {
+        __,
     }
 }
 </script>
