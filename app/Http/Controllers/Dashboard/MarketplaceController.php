@@ -19,6 +19,8 @@ class MarketplaceController extends DashboardController
             'host' => $request->getHost(),
             'per_page' => $request->query( 'per_page', 12 ),
             'page' => $request->query( 'page', 1 ),
+            'categories' => $request->query( 'categories', null ),
+            'search' => $request->query( 'search', null ),
         ]);
     }
 
@@ -61,5 +63,10 @@ class MarketplaceController extends DashboardController
         ] );
 
         return $this->marketplaceService->downloadModule( $validated[ 'item_id' ], $validated[ 'license_id' ] );
+    }
+
+    public function getCategories()
+    {
+        return $this->marketplaceService->getCategories();
     }
 }

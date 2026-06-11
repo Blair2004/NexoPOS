@@ -76,7 +76,7 @@ class AdService
      */
     private function getDefaultAds(): array
     {
-        return [
+        $ads    =   [
             [
                 'title' => __( 'Need Something Specific?' ),
                 'message' => __( 'Check out our store for exclusive NexoPOS modules.' ),
@@ -84,7 +84,22 @@ class AdService
                 'url' => 'https://my.nexopos.com/en/marketplace?utm_source=nexopos&utm_medium=dashboard_ad&utm_campaign=default_ad',
                 'routes' => [],
                 'strict' => false,
-            ]
+            ],
         ];
+
+        $marketplaceService     =   app()->make( MarketplaceService::class );
+
+        if ( $marketplaceService->testConnection() ) {
+            $ads[]  =   [
+                'title' => __( 'New to NexoPOS?' ),
+                'message' => __( 'Connect your store to our marketplace and discover new modules.' ),
+                'icon' => 'la-plug',
+                'url' => route( 'marketplace.connect' ),
+                'routes' => [ 'marketplace.connect' ],
+                'strict' => true,
+            ];
+        }
+
+        return $ads;
     }
 }

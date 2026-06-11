@@ -18,9 +18,11 @@ use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\EnvEditor;
 use App\Services\Helper;
+use App\Services\MarketplaceService;
 use App\Services\MathService;
 use App\Services\MediaService;
 use App\Services\MenuService;
+use App\Services\ModulesService;
 use App\Services\NotificationService;
 use App\Services\Options;
 use App\Services\OrdersService;
@@ -248,6 +250,12 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton( Config::class, function () {
             return new ClassesConfig;
+        } );
+
+        $this->app->singleton( MarketplaceService::class, function ( $app ) {
+            return new MarketplaceService(
+                app()->make( ModulesService::class )
+            );
         } );
 
         /**

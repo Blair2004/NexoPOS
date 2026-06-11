@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ModuleUploadRequest;
 use App\Models\Notification;
 use App\Services\DateService;
+use App\Services\MarketplaceService;
 use App\Services\ModulesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +24,8 @@ class ModulesController extends DashboardController
 {
     public function __construct(
         protected ModulesService $modules,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected MarketplaceService $marketplaceService
     ) {
         $this->middleware( function ( $request, $next ) {
             ns()->restrict( [ 'manage.modules' ] );
@@ -194,6 +196,8 @@ class ModulesController extends DashboardController
 
     public function showMarketplace()
     {
+        $this->marketplaceService->testConnection();
+
         $accessToken = ns()->option->get( 'mynexopos_access_token' );
         $refreshToken = ns()->option->get( 'mynexopos_refresh_token' );
 

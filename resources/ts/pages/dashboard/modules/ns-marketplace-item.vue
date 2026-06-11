@@ -6,7 +6,7 @@
         <div class="p-2 flex-auto flex flex-col gap-2">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold">{{ item.name}}</h3>
-                <span class="text-xs">v1.0.0</span>
+                <span class="text-xs">v{{ item.latest_version.version}}</span>
             </div>
             <p>{{ description }}</p>
         </div>
@@ -19,16 +19,37 @@
                 </span>
             </div>
             <div class="flex gap-2">
-                <ns-button :disabled="item.isInstalling" v-if="item.has_purchased === 1" @click="$emit('install', item)" class="text-xs p-0">
-                    <i v-if="!item.isInstalling" class="las la-shopping-basket mr-2"></i>
-                    <i v-else class="las la-spinner animate-spin mr-2"></i>
-                    {{ __( 'Install' ) }}
-                </ns-button>
-                <ns-button :disabled="item.isAddingToCart" @click="$emit('buy', item)" v-else class="info text-xs p-0">
-                    <i class="las la-shopping-basket mr-2"></i>
-                    <span v-if="item.regular_price > 0">{{ __( 'Buy' ) }}</span>
-                    <span v-else>{{ __( 'Get It' ) }}</span>
-                </ns-button>
+                <template v-if="item.has_purchased === 1">
+                    <template v-if="item.is_installed">
+                        <template v-if="item.is_up_to_date">
+                            <ns-button disabled class="text-xs p-0">
+                                <i class="las la-check mr-2"></i>
+                                {{ __( 'Installed' ) }}
+                            </ns-button>
+                        </template>
+                        <template v-else>
+                            <ns-button :disabled="item.isInstalling"  @click="$emit('install', item)" class="text-xs p-0">
+                                <i v-if="!item.isInstalling" class="las la-shopping-basket mr-2"></i>
+                                <i v-else class="las la-spinner animate-spin mr-2"></i>
+                                {{ __( 'Update' ) }}
+                            </ns-button>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <ns-button :disabled="item.isInstalling"  @click="$emit('install', item)" class="text-xs p-0">
+                            <i v-if="!item.isInstalling" class="las la-shopping-basket mr-2"></i>
+                            <i v-else class="las la-spinner animate-spin mr-2"></i>
+                            {{ __( 'Install' ) }}
+                        </ns-button>
+                    </template>
+                </template>
+                <template v-else>
+                    <ns-button :disabled="item.isAddingToCart" @click="$emit('buy', item)" class="info text-xs p-0">
+                        <i class="las la-shopping-basket mr-2"></i>
+                        <span v-if="item.regular_price > 0">{{ __( 'Buy' ) }}</span>
+                        <span v-else>{{ __( 'Get It' ) }}</span>
+                    </ns-button>
+                </template>
             </div>
         </div>
     </div>

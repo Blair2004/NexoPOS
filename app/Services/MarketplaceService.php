@@ -8,18 +8,25 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MarketplaceService
 {
+    public function __construct(
+        protected ModulesService $moduleService
+    ) {}
+
     /**
      * This method will return the list of modules available in the marketplace, it will also handle the authentication 
      * if we have a valid access token and refresh it if it's expired
      */
-    public function getModules( array $data = [] ): Response
+    public function getModules( array $data = [] ): array
     {
         $queryParams =  [
             'per_page' => $data[ 'per_page' ] ?? 12,
@@ -27,11 +34,15 @@ class MarketplaceService
             'type' => 'zip'
         ];
 
-        $request = Http::withHeader( 'X-NEXOPOS-DOMAIN', $data[ 'host' ] ?? request()->getHost() );
-
-        if ( env( 'APP_ENV' ) === 'local' ) {
-            $request->withoutVerifying();
+        if ( isset( $data['categories'] ) ) {
+            $queryParams['categories'] = $data['categories'];
         }
+
+        if ( isset( $data['search'] ) ) {
+            $queryParams['search'] = $data['search'];
+        }
+
+        $request = Http::accept( 'application/json' );
 
         /**
          * if we have access and refresh token, we'll test the token if that works if it's not the case we'll try to refresh it if the refresh fails
@@ -39,9 +50,33 @@ class MarketplaceService
          */
         $this->authenticateRequest( $request );
 
-        return $request->accept( 'application/json' )
+        $response = $request->accept( 'application/json' )
             ->withoutVerifying()
             ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/marketplace/items?' . http_build_query( $queryParams ) );
+
+        if ( $response->failed() ) {
+            throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to retrieve modules from marketplace.' ) );
+        }
+
+        /**
+         * We'll indicate if the latest version is the vers that is currently installed.
+         * This will also enable/disable the installation button.
+         */
+        $response = $response->json();
+
+        foreach ( $response[ 'data' ] as &$module ) {
+            $installedModule = $this->moduleService->get( $module[ 'namespace' ] );
+
+            if ( $installedModule ) {
+                $module[ 'is_installed' ] = true;
+                $module[ 'is_up_to_date' ] = version_compare( $installedModule[ 'version' ], $module[ 'latest_version' ][ 'version' ], '>=' );
+            } else {
+                $module[ 'is_installed' ] = false;
+                $module[ 'is_up_to_date' ] = false;
+            }
+        }
+
+        return $response;
     }
 
     /**
@@ -49,20 +84,84 @@ class MarketplaceService
      * if it's expired it will try to refresh it using the refresh token, 
      * if the refresh token is also expired or invalid it will just return without authenticating the request
      */
-    public function authenticateRequest( PendingRequest $request ): void
-    {
-        $accessToken = ns()->option->get( 'mynexopos_access_token' );
-        $refreshToken = ns()->option->get( 'mynexopos_refresh_token' );
-        $tokenExpiresAt = ns()->option->get( 'mynexopos_token_expires_in' );
+    public function authenticateRequest(
+    PendingRequest $request,
+    string $method = '',
+    string $endpoint = '',
+    array $body = []
+    ): void {
+        $accessToken = ns()->option->get('mynexopos_access_token');
+        $refreshToken = ns()->option->get('mynexopos_refresh_token');
+        $tokenExpiresAt = ns()->option->get('mynexopos_token_expires_in');
 
-        if ( $accessToken && $refreshToken && Carbon::now()->lessThan( Carbon::parse( $tokenExpiresAt ) ) ) {
-            $request->withToken( $accessToken );
-        } elseif ( $refreshToken ) {
+        $identity = ns()->getIdentity();
+
+        $installationId = $identity['installation_id'] ?? '';
+        $timestamp = now()->timestamp;
+        $nonce = bin2hex(random_bytes(32));
+
+        /**
+         * Important:
+         * For GET requests, the body should be empty.
+         * For POST/PUT/PATCH requests, encode the body exactly the same way
+         * you will send it using ->withBody().
+         */
+        $jsonBody = empty($body)
+            ? ''
+            : json_encode($body, JSON_UNESCAPED_SLASHES);
+
+        $bodyHash = hash('sha256', $jsonBody);
+
+        $privateKey = base64_decode(
+            decrypt($identity['private_key'] ?? '')
+        );
+
+        /**
+         * This replaces your old:
+         *
+         * $message = json_encode($identity, JSON_UNESCAPED_SLASHES);
+         *
+         * The old message only proved the installation identity.
+         * This new canonical message proves the exact request.
+         */
+        $message = implode("\n", [
+            strtoupper($method),
+            '/' . ltrim($endpoint, '/'),
+            $timestamp,
+            $nonce,
+            $installationId,
+            $bodyHash,
+        ]);
+
+        $signature = base64_encode(
+            sodium_crypto_sign_detached($message, $privateKey)
+        );
+
+        $request->withHeader('X-NEXOPOS-DOMAIN', $identity['domain'] ?? request()->getHost());
+        $request->withHeader('X-NEXOPOS-INSTALLATION-ID', $installationId);
+        $request->withHeader('X-NEXOPOS-FINGERPRINT', $identity['fingerprint'] ?? '');
+        $request->withHeader('X-NEXOPOS-TIMESTAMP', $timestamp);
+        $request->withHeader('X-NEXOPOS-NONCE', $nonce);
+        $request->withHeader('X-NEXOPOS-BODY-SHA256', $bodyHash);
+        $request->withHeader('X-NEXOPOS-SIGNATURE', $signature);
+
+        if (env('APP_ENV') === 'local') {
+            $request->withoutVerifying();
+        }
+
+        if (
+            $accessToken &&
+            $refreshToken &&
+            $tokenExpiresAt &&
+            Carbon::now()->lessThan(Carbon::parse($tokenExpiresAt))
+        ) {
+            $request->withToken($accessToken);
+        } elseif ($refreshToken) {
             try {
-                $this->refreshAccessToken( $request, $refreshToken );
-            } catch ( CoreException $e ) {
-                // If refreshing the token fails, we can choose to log the error or ignore it and proceed without authentication
-                // For this example, we'll just ignore it and proceed without authentication
+                $this->refreshAccessToken($request, $refreshToken);
+            } catch (CoreException $e) {
+                // If refreshing the token fails, we can choose to log the error
+                // or ignore it and proceed without authentication.
             }
         }
     }
@@ -99,11 +198,7 @@ class MarketplaceService
      */
     public function authorize(): Redirector | RedirectResponse
     {
-        $request = Http::withHeader( 'X-NEXOPOS-DOMAIN', request()->getHost() );
-
-        if ( env( 'APP_ENV' ) === 'local' ) {
-            $request->withoutVerifying();
-        }
+        $identity = ns()->getIdentity();
 
         $codeVerifier = Str::random(96);
 
@@ -122,9 +217,14 @@ class MarketplaceService
             'domain' => request()->getHost(),
             'client_id' => env( 'MARKETPLACE_CLIENT_ID', '019eac04-114e-711d-8433-2cde59066bad' ),
             'scope' => 'read-licenses update-licenses manage-cart download-products',
-            'code_verifier' => $codeVerifier,
+
             'code_challenge' => $codeChallenge,
             'code_challenge_method' => 'S256',
+
+            'public_key' => $identity[ 'public_key' ],
+            'installation_id' => $identity[ 'installation_id' ],
+            'fingerprint' => $identity[ 'fingerprint' ],
+
             'state' => $state,
             'callback_url' => route( ns()->routeName( 'ns.oauth.mynexopos.callback' ) ),
         ] ) );
@@ -177,13 +277,22 @@ class MarketplaceService
 
     public function addToCart( int | string $productId )
     {
-        $request = Http::withHeader( 'X-NEXOPOS-DOMAIN', request()->getHost() );
+        $request = Http::accept( 'application/json' );
 
-        if ( env( 'APP_ENV' ) === 'local' ) {
-            $request->withoutVerifying();
-        }
+        $payload = [
+            'product_id' => $productId,
+            'quantity' => 1,
+            'meta' => []
+        ];
 
-        $this->authenticateRequest( $request );
+        $endpoint = '/api/nexoplatform/oauth/user/cart/items';
+
+        $this->authenticateRequest(
+            request: $request,
+            method: 'POST',
+            endpoint: $endpoint,
+            body: $payload
+        );
 
         /**
          * We might need to check if the item is already added to the cart. If it's the case
@@ -204,11 +313,8 @@ class MarketplaceService
 
         $response = $request->accept( 'application/json' )
             ->withoutVerifying()
-            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/cart/items', [
-                'product_id' => $productId,
-                'quantity' => 1,
-                'meta' => []
-            ] );
+            ->withBody( json_encode( $payload, JSON_UNESCAPED_SLASHES ), 'application/json' )
+            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
 
         if ( $response->failed() ) {
             throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to add item to cart.' ) );
@@ -230,17 +336,23 @@ class MarketplaceService
      */
     public function hasItemOnCart( PendingRequest $request, $productId ): array
     {
-        $query = Http::withHeader( 'X-NEXOPOS-DOMAIN', request()->getHost() )
-            ->withToken( ns()->option->get( 'mynexopos_access_token' ) )
-            ->accept( 'application/json' );
+        $request = Http::accept( 'application/json' );
 
-        if ( env( 'APP_ENV' ) === 'local' ) {
-            $query->withoutVerifying();
-        }
-            
-        $response = $query->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/cart/has-item', [
+        $payload = [
             'product_id' => $productId,
-        ]);
+        ];
+
+        $endpoint = '/api/nexoplatform/oauth/user/cart/has-item';
+
+        $this->authenticateRequest(
+            request: $request,
+            method: 'POST',
+            endpoint: $endpoint,
+            body: $payload
+        );
+            
+        $response = $request->withBody( json_encode( $payload, JSON_UNESCAPED_SLASHES ), 'application/json' )
+            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
 
         if ( $response->failed() ) {
             throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to retrieve cart information.' ) );
@@ -249,36 +361,105 @@ class MarketplaceService
         return $response->json();
     }
 
-    public function getLicenses( int | string $itemId ): Response
+    public function getLicenses( int | string $itemId ): Collection
     {
-        $request = Http::withHeader( 'X-NEXOPOS-DOMAIN', request()->getHost() );
-
-        if ( env( 'APP_ENV' ) === 'local' ) {
-            $request->withoutVerifying();
-        }
+        $request = Http::accept( 'application/json' );
 
         $this->authenticateRequest( $request );
 
-        return $request->accept( 'application/json' )
+        $response = $request->accept( 'application/json' )
             ->withoutVerifying()
             ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/licenses/for-product/' . $itemId );
+
+        if ( $response->failed() ) {
+            throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to retrieve licenses.' ) );
+        }
+
+        /**
+         * we need to check for each available check the version that 
+         * can be downloaded for the current license
+         */
+        return collect( $response->json() )->map( function( $license ) {
+            return $license;
+        });
     }
 
-    public function downloadModule( int | string $itemId, string $licenseId ): Response
+    public function downloadModule( int | string $itemId, string $licenseId )
     {
-        $request = Http::withHeader( 'X-NEXOPOS-DOMAIN', request()->getHost() );
+        $request = Http::accept( 'application/json' );
 
-        if ( env( 'APP_ENV' ) === 'local' ) {
-            $request->withoutVerifying();
+        $payload = [
+            'product_id' => $itemId,
+            'license_id' => $licenseId,
+        ];
+
+        $this->authenticateRequest(
+            request: $request,
+            method: 'POST',
+            endpoint: '/api/nexoplatform/oauth/user/download',
+            body: $payload
+        );
+
+        $response = $request->accept( 'application/json' )
+            ->withoutVerifying()
+            ->withBody( json_encode( $payload, JSON_UNESCAPED_SLASHES ), 'application/json' )
+            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/download', $payload );
+
+        if ( $response->failed() ) {
+            throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to download module.' ) );
         }
+
+        /**
+         * at this point the $response should be the binary content of the module zip file.
+         * We need to store it on a temporary directory and upload it.
+         */
+        Storage::disk( 'ns-modules-temp' )->put( $itemId . '-' . $licenseId . '.zip', $response->body() );
+
+        $uploadFile = new UploadedFile(
+            Storage::disk( 'ns-modules-temp' )->path( $itemId . '-' . $licenseId . '.zip' ),
+            $itemId . '-' . $licenseId . '.zip',
+            'application/zip',
+            null,
+            true
+        );
+
+        return $this->moduleService->upload( $uploadFile );
+    }
+
+    public function testConnection()
+    {
+        $request = Http::accept( 'application/json' );
 
         $this->authenticateRequest( $request );
 
-        return $request->accept( 'application/json' )
+        $response = $request->accept( 'application/json' )
+            ->withToken( ns()->option->get( 'mynexopos_access_token' ) )
+            ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user' );
+
+        if ( $response->failed() ) {
+            ns()->option->delete( 'mynexopos_access_token' );
+            ns()->option->delete( 'mynexopos_refresh_token' );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getCategories()
+    {
+        $request = Http::accept( 'application/json' );
+
+        $this->authenticateRequest( $request );
+
+        $response = $request->accept( 'application/json' )
             ->withoutVerifying()
-            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/download', [
-                'product_id' => $itemId,
-                'license_id' => $licenseId,
-            ] );
+            ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/marketplace/categories' );
+
+        if ( $response->failed() ) {
+            throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to retrieve categories from marketplace.' ) );
+        }
+
+        return $response->json();
     }
 }
