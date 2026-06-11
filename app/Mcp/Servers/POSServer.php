@@ -18,7 +18,7 @@ use App\Mcp\Tools\SearchProductSalesTool;
 use App\Mcp\Tools\SearchWalletHistoryTool;
 use App\Mcp\Tools\CreateCategoryTool;
 use App\Mcp\Tools\UpdateCategoryTool;
-use App\Mcp\Tools\UpdateProductTool;
+use App\Mcp\Tools\UpdateProductTool;    
 use App\Mcp\Tools\UpdateSettingsTool;
 use App\Mcp\Tools\UploadMediaTool;
 use App\Mcp\Tools\DeleteMediaTool;

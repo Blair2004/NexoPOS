@@ -345,13 +345,11 @@ export default {
             nsHttpClient.post( `/api/marketplace/download`, { item_id: item.id, license_id: license.license_uuid } ).subscribe({
                 next: response => {
                     nsSnackBar.success( __( 'Module downloaded and installed successfully.' ) );
-                    // Optionally, you can refresh the list or update the item state here
+                    this.loadItems( this.result.meta.current_page );
                 },
                 error: err => {
-                    nsSnackBar.error( err.message || __( 'An error occurred while downloading the module.' ) );
-                },
-                complete: () => {
                     item.isInstalling = false;
+                    nsSnackBar.error( err.message || __( 'An error occurred while downloading the module.' ) );
                 }
             })
         },
