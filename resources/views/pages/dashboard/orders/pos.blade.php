@@ -56,6 +56,7 @@ use Illuminate\Support\Facades\Gate;
             products_queue          :   [],
             ns_pos_items_merge      :   <?php echo ns()->option->get( 'ns_pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
             unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
+            marketplace_connected   :  <?php echo $marketplaceConnected ? 'true' : 'false';?>,
             urls                    :   <?php echo json_encode( $urls );?>
         });
 

@@ -1,24 +1,9 @@
 <template>
     <div class="marketplace-shell w-full flex flex-col gap-6">
 
-        <div class="grid grid-cols-1 gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
+        <div class="grid grid-cols-1 gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
             <aside class="marketplace-filters self-start xl:sticky xl:top-6">
                 <div class="rounded-lg border border-box-edge bg-box-background shadow-[0_24px_80px_-48px_rgba(15,23,42,0.28)] overflow-hidden">
-                    <div class="border-b border-box-edge bg-gradient-to-br from-primary/10 via-background to-transparent p-5">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-[0.22em] text-primary">{{ __( 'Filters' ) }}</p>
-                                <h3 class="mt-1 text-lg font-semibold text-fontcolor">{{ __( 'Refine results' ) }}</h3>
-                                <p class="mt-1 text-sm text-fontcolor-soft">
-                                    {{ __( 'Choose categories and tags to narrow the marketplace quickly.' ) }}
-                                </p>
-                            </div>
-                            <div class="rounded-2xl border border-primary/15 bg-background px-3 py-2 text-right">
-                                <p class="text-[11px] uppercase tracking-[0.18em] text-fontcolor-soft">{{ __( 'Active' ) }}</p>
-                                <p class="text-lg font-semibold text-fontcolor">{{ selectedFiltersCount }}</p>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="space-y-6 p-5">
                         <section>
@@ -95,7 +80,7 @@
                         class="h-12 w-full rounded-[18px] border-2 border-input-edge bg-background px-11 pr-4 text-sm text-fontcolor outline-none transition-colors placeholder:text-fontcolor-soft focus:border-primary/60 focus:ring-4 focus:ring-primary/10"
                     >
                 </div>
-                <div class="marketplace-content grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <div class="marketplace-content grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                     <template v-if="result.data.length === 0">
                         <div v-if="!loading" class="col-span-full rounded-[28px] border border-dashed border-box-edge bg-box-background py-16 text-center">
                             <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -182,6 +167,10 @@ interface MarketplacePagination {
 
 export default {
     props: {
+        authenticate: {
+            type: Boolean,
+            default: false
+        },
         isConnected: {
             type: Boolean,
             default: false
@@ -453,6 +442,10 @@ export default {
         },
     },
     mounted() {
+        if ( this.authenticate ) {
+            Popup.show( NsMynexopos );
+        }
+
         this.loadItems();
         this.loadCategories();
         this.emitFiltersChange();

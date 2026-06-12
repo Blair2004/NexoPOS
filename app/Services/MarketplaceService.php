@@ -272,6 +272,15 @@ class MarketplaceService
         ns()->option->set( 'mynexopos_token_type', $response->json( 'token_type' ) );
         ns()->option->set( 'mynexopos_token_expires_in', Carbon::now()->addSeconds( $response->json( 'expires_in' ) ) );
 
+        /**
+         * if the user was invited to authenticate from a specific page,
+         * we should redirect him back to this page after authentication. 
+         */
+        if ( session()->has( 'marketplace_auth_redirect_url' ) ) {
+            $redirectUrl = session()->pull( 'marketplace_auth_redirect_url' );
+            return redirect( $redirectUrl )->with( 'success', __( 'Successfully connected to My NexoPOS.' ) );
+        }
+
         return redirect( route( ns()->routeName( 'ns.dashboard.modules-marketplace' ) ) )->with( 'success', __( 'Successfully connected to My NexoPOS.' ) );
     }
 

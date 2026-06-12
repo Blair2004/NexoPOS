@@ -5,10 +5,10 @@
         </div>
         <div class="p-2 flex-auto flex flex-col gap-2">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold">{{ item.name}}</h3>
+                <h3 class="font-bold text-sm">{{ item.name}}</h3>
                 <span class="text-xs">v{{ item.latest_version.version}}</span>
             </div>
-            <p>{{ description }}</p>
+            <p class="text-sm text-fontcolor-soft">{{ description }}</p>
         </div>
         <div class="flex justify-between items-center p-2 gap-2">
             <div class="flex gap-2">

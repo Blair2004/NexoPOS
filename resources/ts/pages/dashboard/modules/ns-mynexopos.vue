@@ -25,6 +25,56 @@
                 </div>
             </div>
 
+            <div class="mt-5 rounded-lg border border-box-edge bg-background p-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-semibold text-fontcolor-hard">{{ __( 'Why connect your account?' ) }}</h3>
+                        <p class="mt-1 text-xs text-fontcolor-soft">{{ __( 'Unlock marketplace access and keep module installation smooth.' ) }}</p>
+                    </div>
+                    <div class="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+                        {{ __( 'Benefits' ) }}
+                    </div>
+                </div>
+
+                <div class="mt-4 grid gap-3">
+                    <div class="flex items-start gap-3 rounded-2xl bg-box-elevation-background px-3 py-3">
+                        <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success/10 text-success">
+                            <i class="las la-check text-lg"></i>
+                        </span>
+                        <div>
+                            <h4 class="text-sm font-medium text-fontcolor-hard">{{ __( 'One-click module installation' ) }}</h4>
+                            <p class="mt-1 text-xs leading-5 text-fontcolor-soft">
+                                {{ __( 'Authenticate once and keep moving without repeating setup steps for every extension.' ) }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 rounded-2xl bg-box-elevation-background px-3 py-3">
+                        <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-info/10 text-info">
+                            <i class="las la-plug text-lg"></i>
+                        </span>
+                        <div>
+                            <h4 class="text-sm font-medium text-fontcolor-hard">{{ __( 'Socket Features' ) }}</h4>
+                            <p class="mt-1 text-xs leading-5 text-fontcolor-soft">
+                                {{ __( 'These are useful to use the Barcode Scanner Utility on NexoPOS.' ) }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 rounded-2xl bg-box-elevation-background px-3 py-3">
+                        <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-warning/10 text-warning">
+                            <i class="las la-bolt text-lg"></i>
+                        </span>
+                        <div>
+                            <h4 class="text-sm font-medium text-fontcolor-hard">{{ __( 'Faster updates and upgrades' ) }}</h4>
+                            <p class="mt-1 text-xs leading-5 text-fontcolor-soft">
+                                {{ __( 'Get access to the latest extensions, fixes, and improvements as they ship.' ) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="mt-5 flex flex-col-reverse md:flex-row md:items-center md:justify-between gap-3">
                 <div class="text-xs text-fontcolor-soft flex items-center gap-2">
                     <i class="las la-lock"></i>

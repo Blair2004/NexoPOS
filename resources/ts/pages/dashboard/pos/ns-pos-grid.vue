@@ -19,12 +19,21 @@
                         <i class="las la-compress-arrows-alt"></i>
                     </button>
                     <template v-if="options.ns_pos_barcode_reader_type === 'wireless'">
-                        <button :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
-                            @click="POS.toggleWirelessBarcodeReaderConnection()"
+                        <button v-if="! settings.marketplace_connected" :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
+                            @click="inviteToMyNexoPOSConnexion()"
                             :class="wirelessBarcodeConnected ? 'text-green-500' : 'text-red-500'"
-                            class="outline-hidden w-10 h-10 border-r">
-                            <i v-if="! wirelessBarcodeConnected" :class="wirelessBarcodeConnected ? '' : 'animate-ping'" class="absolute las la-wifi text-lg"></i>
-                            <i class="relative las la-wifi text-lg"></i>
+                            class="outline-hidden border-r">
+                            <div class="animate-pulse bg-red-500/10 px-2 h-10 flex items-center justify-center">                                
+                                <i class="las la-exclamation-triangle text-lg animate-pulse"></i>
+                            </div>
+                        </button>
+                        <button v-else :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
+                            @click="inviteToMyNexoPOSConnexion()"
+                            :class="wirelessBarcodeConnected ? 'text-green-500' : 'text-red-500'"
+                            class="outline-hidden border-r">
+                            <div class="animate-pulse bg-red-500/10 px-2 h-10 flex items-center justify-center">                                
+                                <i class="las la-exclamation-triangle text-lg animate-pulse"></i>
+                            </div>
                         </button>
                     </template>
                     <template v-else>
@@ -144,12 +153,14 @@
         </div>
     </div>
 </template>
-<script >
+<script lang="ts">
 import { nsHttpClient, nsSnackBar } from '../../../bootstrap'
 import switchTo from "~/libraries/pos-section-switch";
 import nsPosSearchProductVue from '~/popups/ns-pos-search-product.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+
+declare const nsNotice;
 
 export default {
     name: 'ns-pos-grid',
@@ -519,6 +530,27 @@ export default {
 
         addToTheCart( product ) {
             POS.addToCart( product );
+        },
+
+        inviteToMyNexoPOSConnexion() {
+            nsNotice.info( 
+                __( 'Authentication Required' ),
+                __( 'You need to connect your installation to My NexoPOS for using websocket features.' ), {
+                actions: {
+                    close: {
+                        type: 'info',
+                        label: __( 'No thanks' ),
+                    },
+                    confirm: {
+                        label: __( 'Continue' ),
+                        type: 'error',
+                        onClick: ( instance ) => {
+                            const settings  =   POS.settings.getValue();
+                            document.location = settings.urls.marketplace_url;
+                        }
+                    }
+                }
+            })
         }
     }
 }

@@ -25,6 +25,7 @@ use App\Models\OrderPayment;
 use App\Models\OrderRefund;
 use App\Models\PaymentType;
 use App\Services\DateService;
+use App\Services\MarketplaceService;
 use App\Services\Options;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
@@ -38,7 +39,8 @@ class OrdersController extends DashboardController
     public function __construct(
         private OrdersService $ordersService,
         private Options $optionsService,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected MarketplaceService $marketplaceService
     ) {
         $this->middleware( function ( $request, $next ) {
             /**
@@ -154,6 +156,18 @@ class OrdersController extends DashboardController
 
     public function showPOS()
     {
+        $marketplaceConnected = false;
+
+        /**
+         * if the barcode reader type is set to wireless, we'll check if the system is 
+         * connected to my.nexopos.com as the wireless barcode relies 
+         * on the socket feature provided by the platform.
+         */
+        if ( ns()->option->get( 'ns_pos_barcode_reader_type' ) === 'wireless' ) {
+            $marketplaceConnected = $this->marketplaceService->testConnection();
+        }
+
+
         /**
          * let's inject the necessary dependency
          * for being able to manage orders.
@@ -214,8 +228,10 @@ class OrdersController extends DashboardController
                 'categories_url' => ns()->route( 'ns.dashboard.products.categories.create' ),
                 'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
                 'order_type_url' => ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ] ),
+                'marketplace_url' => ns()->route( 'ns.dashboard.modules-marketplace' ) . '?action=authenticate&return=pos',
             ],
             'paymentTypes' => $this->paymentTypes,
+            'marketplaceConnected' => $marketplaceConnected,
         ] );
     }
 
