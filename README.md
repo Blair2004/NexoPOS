@@ -37,14 +37,6 @@ We've also created a video tutorial that will help you perform those easily.
 ![image](https://user-images.githubusercontent.com/5265663/163531524-408757a8-d5a8-40b1-8e8f-c4e59e778e05.png)
 ](https://www.youtube.com/watch?v=V80-hOJCywY)
 
-# Get More Using Modules
-NexoPOS available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619) gives access to the premium modules marketplace. While purchasing on CodeCanyon, you get : 
-
-- $40 In credit to [My NexoPOS](https://my.nexopos.com/en/marketplace) balance.
-- Access to NexoPOS marketplace
-- Premium Support & Installation Service
-- You're eligible for customization
-
 ## Changelog & Feature Announcement
 We frequently discuss the future of the app (while waiting, discussions are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS.
 
