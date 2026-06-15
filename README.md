@@ -7,10 +7,10 @@
 NexoPOS is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer most businesses all the tools they need to manage their store more effectively. NexoPOS includes a responsive and beautiful dashboard that ease the interaction either on a smartphone, tablet, or desktop.
 
 ## Demo
-Now you can create demo instances on [NexoPOS Cloud](https://cloud.nexopos.com).
+Try a demo right now in our [Demo Instance](https://demo.nexopos.com).
 
 ## Deploy
-NexoPOS is partenering with InstaPods to offer you a smooth deploying experience with NexoPOS.
+NexoPOS is partnering with InstaPods to offer you a smooth deploying experience with NexoPOS.
 
 [![Deploy On InstaPods](https://instapods.com/deploy-button.svg)](https://app.instapods.com/dashboard/pods/create?app=nexopos&ref=nexopos) 
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS/tree/v5.0.x&refcode=ebdb80cb0ec7)
