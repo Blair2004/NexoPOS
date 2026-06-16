@@ -1,0 +1,153 @@
+/* DefaultTheme CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #f5f5f5;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+nav a:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+main h2 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.posts article {
+    background: white;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.posts article h3 a {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.posts article h3 a:hover {
+    color: #3498db;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.product-card h3 a {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.product-card .price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #27ae60;
+    margin: 0.5rem 0;
+}
+
+.product-card button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.product-card button:hover {
+    background: #2980b9;
+}
+
+.error-page {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.error-page h1 {
+    font-size: 6rem;
+    color: #3498db;
+}
+
+.error-page h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.error-page .button {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.75rem 2rem;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.error-page .button:hover {
+    background: #2980b9;
+}
+
+footer {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+}
