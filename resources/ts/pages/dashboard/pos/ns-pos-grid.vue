@@ -21,20 +21,15 @@
                     <template v-if="options.ns_pos_barcode_reader_type === 'wireless'">
                         <button v-if="! settings.marketplace_connected" :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
                             @click="inviteToMyNexoPOSConnexion()"
-                            :class="wirelessBarcodeConnected ? 'text-green-500' : 'text-red-500'"
+                            :class="wirelessBarcodeConnected ? 'text-blue-500' : 'text-red-500'"
                             class="outline-hidden border-r">
                             <div class="animate-pulse bg-red-500/10 px-2 h-10 flex items-center justify-center">                                
                                 <i class="las la-exclamation-triangle text-lg animate-pulse"></i>
                             </div>
                         </button>
-                        <button v-else :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
-                            @click="inviteToMyNexoPOSConnexion()"
-                            :class="wirelessBarcodeConnected ? 'text-green-500' : 'text-red-500'"
-                            class="outline-hidden border-r">
-                            <div class="animate-pulse bg-red-500/10 px-2 h-10 flex items-center justify-center">                                
-                                <i class="las la-exclamation-triangle text-lg animate-pulse"></i>
-                            </div>
-                        </button>
+                        <template v-else>
+                            <ns-pos-grid-wireless-barcode></ns-pos-grid-wireless-barcode>
+                        </template>
                     </template>
                     <template v-else>
                         <button :title="__( 'Toggle auto focus.' )" 
@@ -159,6 +154,7 @@ import switchTo from "~/libraries/pos-section-switch";
 import nsPosSearchProductVue from '~/popups/ns-pos-search-product.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import NsPosGridWirelessBarcode from './ns-pos-grid-wireless-barcode.vue';
 
 declare const nsNotice;
 
@@ -166,7 +162,6 @@ export default {
     name: 'ns-pos-grid',
     data() {
         return {
-            items: Array.from({length: 1000}, (_, index) => ({ data: '#' + index })),
             products: [],
             pinnedProducts: [],
             cartProductsSubscribe: null,
@@ -190,15 +185,9 @@ export default {
             gridItemsWidth: 0,
             gridItemsHeight:0,
             isLoading: false,
-            wirelessState: null,
-            wirelessStateSubscriber: null,
             // ...
+            wirelessStateSubscriber: null,
             wirelessBarcodeConnected: false,
-            wirelessSocket: null,
-            wirelessChannelData: {},
-            wirelessRetryCount: 0,
-            wirelessRetryDelay: 5,
-            wirelessInterval: null,
         }
     },
     computed: {
@@ -212,6 +201,9 @@ export default {
             // link to create category defined on OrdersController.
             return POS.settings.getValue().urls.categories_url; 
         }
+    },
+    components: {
+        'ns-pos-grid-wireless-barcode': NsPosGridWirelessBarcode,
     },
     watch: {
         options: {
@@ -244,8 +236,10 @@ export default {
             this.$forceUpdate();
         });
 
-        this.wirelessStateSubscriber   =   POS.wirelessBarcodeReader.subscribe( state => {
-            this.wirelessBarcodeConnected   = state.connected
+        this.wirelessStateSubscriber   =   POS.wirelessBarcodeState.property( 'barcode' ).subscribe( state => {
+            if ( typeof state === "string" && state.length > 0 ) {
+                this.submitSearch( state );
+            }
         });
 
         this.optionsSubscriber          =   POS.options.subscribe( options => {
@@ -310,6 +304,15 @@ export default {
             }
         }
 
+        /**
+         * We'll apply a reset on the barcode value. This will ensure
+         * similar barcode scan will work
+         */
+        nsHooks.addAction( 'ns-after-cart-changed', 'ns-pos-grid', () => {
+            POS.wirelessBarcodeState.update({
+                barcode: ''
+            });
+        })
     },
     unmounted() {
         this.orderSubscription.unsubscribe();
@@ -415,6 +418,7 @@ export default {
                             product.price_gross             =   result.unitQuantity.sale_price_gross;
                             product.price_net               =   result.unitQuantity.sale_price_net;
                             product.unit_name               =   result.unit.name;
+                            product.unitQuantity            =   result.unitQuantity;
                             
                             // Check if this is a scale barcode with embedded data
                             if ( result.scale ) {
@@ -451,8 +455,7 @@ export default {
                                     );
                                 }
                             }
-                            
-                            console.log( JSON.parse( JSON.stringify( product ) ) );
+
                             POS.addToCart( product );
                         },
                         error: ( error ) => {

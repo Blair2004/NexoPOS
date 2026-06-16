@@ -3,7 +3,9 @@ namespace App\Services;
 
 use App\Exceptions\CoreException;
 use App\Exceptions\NotAllowedException;
+use App\Models\Role;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\RedirectResponse;
@@ -216,7 +218,7 @@ class MarketplaceService
         return redirect()->away( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/oauth/nexopos/enroll?' . http_build_query( [
             'domain' => request()->getHost(),
             'client_id' => env( 'MARKETPLACE_CLIENT_ID', '019eac04-114e-711d-8433-2cde59066bad' ),
-            'scope' => 'read-licenses update-licenses manage-cart download-products',
+            'scope' => 'read-profile read-licenses update-licenses manage-cart download-products',
 
             'code_challenge' => $codeChallenge,
             'code_challenge_method' => 'S256',
@@ -437,22 +439,71 @@ class MarketplaceService
 
     public function testConnection()
     {
-        $request = Http::accept( 'application/json' );
-
-        $this->authenticateRequest( $request );
-
-        $response = $request->accept( 'application/json' )
-            ->withToken( ns()->option->get( 'mynexopos_access_token' ) )
-            ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user' );
-
-        if ( $response->failed() ) {
-            ns()->option->delete( 'mynexopos_access_token' );
-            ns()->option->delete( 'mynexopos_refresh_token' );
+        try {
+            $request = Http::accept( 'application/json' );
+    
+            $this->authenticateRequest( $request );
+    
+            $response = $request->accept( 'application/json' )
+                ->withToken( ns()->option->get( 'mynexopos_access_token' ) )
+                ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user' );
+    
+            /**
+             * The request failed. We need to inform the user of what might have
+             * happened, this gives more details than just redirecting with no clear guidance.
+             */
+            if ( $response->failed() ) {
+                $parsedResponse  =  $this->parseHttpErrorResponse( $response );
+    
+                ns()->option->delete( 'mynexopos_access_token' );
+                ns()->option->delete( 'mynexopos_refresh_token' );
+    
+                ns()->notification->create(
+                    title: __( 'My NexoPOS: Authentication Failed' ),
+                    description: sprintf( __( 'We\'re unable to retrieve the user details from my.nexopos.com. %s.' ), $parsedResponse ),
+                    url: route( 'ns.dashboard.modules-list' ),
+                    identifier: 'marketplace.authentication.feedback'
+                )->dispatchForGroup( Role::ADMIN );
+    
+                return false;
+            }
+    
+            return true;
+        } catch( Exception $exception ) {
+            ns()->notification->create(
+                title: __( 'My NexoPOS: Authentication Failed' ),
+                description: sprintf( __( 'An unexpected error occured: %s.' ), $exception->getMessage() ),
+                url: route( 'ns.dashboard.modules-list' ),
+                identifier: 'marketplace.authentication.feedback'
+            )->dispatchForGroup( Role::ADMIN );
 
             return false;
         }
+    }
 
-        return true;
+    private function parseHttpErrorResponse( Response $response )
+    {
+        $body = trim($response->body());
+
+        if ($body === '') {
+            return 'HTTP request failed with status '.$response->status();
+        }
+
+        $json = $response->json();
+
+        if (is_array($json)) {
+            return $json['message']
+                ?? $json['error']
+                ?? $json['detail']
+                ?? data_get($json, 'errors.0')
+                ?? json_encode($json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        }
+
+        if (is_string($json)) {
+            return $json;
+        }
+
+        return $body;
     }
 
     public function getCategories()

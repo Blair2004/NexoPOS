@@ -577,10 +577,11 @@ class ProductsController extends DashboardController
         ];
     }
 
-    public function searchUsingArgument( $reference )
+    public function searchUsingArgument( string $reference )
     {
         // Check if this is a scale barcode
         $scaleData = null;
+
         if ( $this->productService->isScaleBarcode( $reference ) ) {
             try {
                 $scaleData = $this->productService->parseScaleBarcode( $reference );
@@ -668,6 +669,8 @@ class ProductsController extends DashboardController
         if ( $product instanceof Product ) {
             return [
                 'type' => 'product',
+                'unit' => $product?->selectedUnitQuantity?->unit,
+                'unitQuantity' => $product?->selectedUnitQuantity,
                 'product' => $product,
             ];
         }

@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="ns-body flex-auto flex p-2 overflow-y-auto">
-            <ns-tabs :active="activeTab" @active="activeTab = $event">
+            <ns-tabs :active="activeTab" @changeTab="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" :label="__( 'New Customer' )">
                     <ns-crud-form
                         v-if="userCan( 'nexopos.create.customers' )"
@@ -295,7 +295,7 @@ declare const POS;
 
 export default {
     name: 'ns-pos-customers',
-    props: [ 'popup' ],
+    props: [ 'popup', 'tab', 'customer' ],
     data() {
         return {
             activeTab: 'create-customers',
@@ -332,6 +332,8 @@ export default {
 
         this.subscription   =   POS.order.subscribe( order => {
             this.order  =   order;
+
+            console.log( 'fires...' );
 
             if ( this.popup.params.customer !== undefined ) {
                 this.activeTab  =   'account-payment';

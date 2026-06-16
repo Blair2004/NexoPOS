@@ -32,10 +32,6 @@ class PosSettings extends SettingsPage
             $posSettingsTabs['scale-barcode'] = include dirname( __FILE__ ) . '/pos/scale-barcode.php';
         }
 
-        if ( ns()->option->get( 'ns_pos_barcode_reader_type' ) === 'wireless' ) {
-            $posSettingsTabs['wireless-barcode'] = include dirname( __FILE__ ) . '/pos/wireless-barcode.php';
-        }
-
         $this->form = [
             'tabs' => $posSettingsTabs,
             'title' => __( 'POS Settings' ),

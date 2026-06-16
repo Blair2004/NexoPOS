@@ -58,9 +58,9 @@ export default {
          * provided, we assume the product was added using the unit
          * quantity barcode.
          */
-        if ( this.popup.params.product.$original().selectedUnitQuantity !== undefined ) {
-            this.selectUnit( this.popup.params.product.$original().selectedUnitQuantity );
-        } else if ( 
+        if ( this.popup.params.product.$original().unitQuantity !== undefined ) {
+            this.selectUnit( this.popup.params.product.$original().unitQuantity );
+        } else if ( // @todo this might be deprecated 
                 this.popup.params.product.$original().unit_quantities !== undefined && 
                 this.popup.params.product.$original().unit_quantities.length === 1 
             ) {

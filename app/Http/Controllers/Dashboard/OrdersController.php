@@ -217,9 +217,8 @@ class OrdersController extends DashboardController
                 'ns_pos_action_permission_enabled' => ns()->option->get( 'ns_pos_action_permission_enabled', 'no' ),
                 'ns_pos_show_preview_pinned_products' => ns()->option->get( 'ns_pos_show_preview_pinned_products', 'no' ) === 'yes' ? true : false,
                 'ns_pos_enable_pinned_products' => ns()->option->get( 'ns_pos_enable_pinned_products', 'no' ) === 'yes' ? true : false,
-                'ns_pos_websocket_domain' => ns()->option->get( 'ns_pos_websocket_domain' ),
-                'ns_pos_websocket_server_password' => ns()->option->get( 'ns_pos_websocket_server_password' ),
                 'ns_pos_barcode_reader_type' => ns()->option->get( 'ns_pos_barcode_reader_type' ),
+                'mynexopos_access_token' => ns()->option->get( 'mynexopos_access_token' ),
             ] ),
             'urls' => [
                 'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),

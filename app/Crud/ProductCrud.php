@@ -214,6 +214,14 @@ class ProductCrud extends CrudService
                 description: __( 'Define the regular selling price.' ),
                 validation: 'required',
             ),
+            FormInput::text(
+                errors: [],
+                label: __( 'Barcode' ),
+                name: 'barcode',
+                value: 0,
+                description: __( 'Define the unit barcode value.' ),
+                validation: '',
+            ),
             FormInput::number(
                 errors: [],
                 label: __( 'Wholesale Price' ),

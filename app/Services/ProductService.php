@@ -807,7 +807,7 @@ class ProductService
                 /**
                  * save custom barcode for the created unit quantity
                  */
-                $unitQuantity->barcode = $product->barcode . '-' . $unitQuantity->id;
+                $unitQuantity->barcode = $group[ 'barcode' ] ?: $product->barcode . '-' . $unitQuantity->id;
                 $unitQuantity->save();
 
                 /**
@@ -821,6 +821,17 @@ class ProductService
                     } catch ( \Exception $e ) {
                         // PLU generation failed - product category may not have a range assigned
                         // This is not a critical error, so we'll just skip it
+                        ns()->notification->create(
+                            title:__( 'PLU Range: Failure' ),
+                            identifier: 'product-scale-plu-error-' . $unitQuantity->id,
+                            url: route( 'ns.dashboard.products-categories', [
+                                'id' => $product->category_id
+                            ]),
+                            description: sprintf( __( 'Unable to generate a scale PLU for %s: %s' ), $product->name, $e->getMessage() ),
+                        )->dispatchForPermissions([
+                            'nexopos.create.products',
+                            'nexopos.update.products'
+                        ]);
                     }
                 }
             }
