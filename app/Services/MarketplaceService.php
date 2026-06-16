@@ -259,7 +259,7 @@ class MarketplaceService
                 'client_id' => env( 'MARKETPLACE_CLIENT_ID', '019eac04-114e-711d-8433-2cde59066bad' ),
                 'code' => $data[ 'code' ],
                 'code_verifier' => Session::get( 'mynexopos_code_verifier' ),
-                'redirect_uri' => Str::chopEnd( env( 'MARKETPLACE_DOMAIN' ), '/' ) . '/oauth/nexopos/callback',
+                'redirect_uri' => Str::chopEnd( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ), '/' ) . '/oauth/nexopos/callback',
             ] );
 
         if ( $response->failed() ) {
