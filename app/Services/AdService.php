@@ -81,7 +81,7 @@ class AdService
                 'title' => __( 'Need Something Specific?' ),
                 'message' => __( 'Check out our store for exclusive NexoPOS modules.' ),
                 'icon' => 'la-store',
-                'url' => 'https://my.nexopos.com/en/marketplace?utm_source=nexopos&utm_medium=dashboard_ad&utm_campaign=default_ad',
+                'url' => ns()->route( 'ns.dashboard.modules-list' ),
                 'routes' => [],
                 'strict' => false,
             ],
@@ -94,8 +94,8 @@ class AdService
                 'title' => __( 'New to NexoPOS?' ),
                 'message' => __( 'Connect your store to our marketplace and discover new modules.' ),
                 'icon' => 'la-plug',
-                'url' => route( 'marketplace.connect' ),
-                'routes' => [ 'marketplace.connect' ],
+                'url' => ns()->route( 'ns.dashboard.modules-list' ),
+                'routes' => [],
                 'strict' => true,
             ];
         }

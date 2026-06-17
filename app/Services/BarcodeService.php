@@ -13,20 +13,27 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 class BarcodeService
 {
     const TYPE_EAN8 = 'ean8';
+    const TYPE_EAN_8 = 'ean_8';
 
     const TYPE_EAN13 = 'ean13';
+    const TYPE_EAN_13 = 'ean_13';
 
     const TYPE_CODABAR = 'codabar';
 
     const TYPE_CODE128 = 'code128';
+    const TYPE_CODE_128 = 'code_128';
 
     const TYPE_CODE39 = 'code39';
+    const TYPE_CODE_39 = 'code_39';
 
     const TYPE_CODE11 = 'code11';
+    const TYPE_CODE_11 = 'code_11';
 
     const TYPE_UPCA = 'upca';
+    const TYPE_UPC_A = 'upc_a';
 
     const TYPE_UPCE = 'upce';
+    const TYPE_UPC_E = 'upc_e';
 
     /**
      * Will generate code
@@ -49,23 +56,30 @@ class BarcodeService
         do {
             switch ( $code ) {
                 case self::TYPE_EAN8:
+                case self::TYPE_EAN_8:
                     $barcode = $factory->ean8();
                     break;
                 case self::TYPE_EAN13:
+                case self::TYPE_EAN_13:
                     $barcode = $factory->ean13();
                     break;
                 case self::TYPE_CODABAR:
                 case self::TYPE_CODE128:
+                case self::TYPE_CODE_128:
                 case self::TYPE_CODE39:
+                case self::TYPE_CODE_39:
                     $barcode = Str::random( 10 );
                     break;
                 case self::TYPE_CODE11:
+                case self::TYPE_CODE_11:
                     $barcode = rand( 1000000000, 999999999 );
                     break;
                 case self::TYPE_UPCA:
+                case self::TYPE_UPC_A:
                     $barcode = rand( 10000000000, 99999999999 );
                     break;
-                case self::TYPE_UPCA:
+                case self::TYPE_UPCE:
+                case self::TYPE_UPC_E:
                     $barcode = rand( 1000000, 9999999 );
                     break;
                 default:
@@ -84,23 +98,31 @@ class BarcodeService
         $generator = new BarcodeGeneratorPNG;
 
         switch ( $type ) {
-            case 'ean8': $realType = $generator::TYPE_EAN_8;
+            case self::TYPE_EAN8: 
+            case self::TYPE_EAN_8:
+                $realType = $generator::TYPE_EAN_8;
                 break;
-            case 'ean13': $realType = $generator::TYPE_EAN_13;
+            case self::TYPE_EAN13:
+            case self::TYPE_EAN_13:  $realType = $generator::TYPE_EAN_13;
                 break;
-            case 'codabar': $realType = $generator::TYPE_CODABAR;
+            case self::TYPE_CODABAR: $realType = $generator::TYPE_CODABAR;
                 break;
-            case 'code128': $realType = $generator::TYPE_CODE_128;
+            case self::TYPE_CODE128: 
+            case self::TYPE_CODE_128: $realType = $generator::TYPE_CODE_128;
                 break;
-            case 'code39': $realType = $generator::TYPE_CODE_39;
+            case self::TYPE_CODE39: 
+            case self::TYPE_CODE_39: $realType = $generator::TYPE_CODE_39;
                 break;
-            case 'code11': $realType = $generator::TYPE_CODE_11;
+            case self::TYPE_CODE11:
+            case self::TYPE_CODE_11: $realType = $generator::TYPE_CODE_11;
                 break;
-            case 'upca': $realType = $generator::TYPE_UPC_A;
+            case self::TYPE_UPCA: 
+            case self::TYPE_UPC_A: $realType = $generator::TYPE_UPC_A;
                 break;
-            case 'upce': $realType = $generator::TYPE_UPC_E;
+            case self::TYPE_UPCE: 
+            case self::TYPE_UPC_E: $realType = $generator::TYPE_UPC_E;
                 break;
-            default: $realType = $generator::TYPE_EAN_8;
+            default: $realType = $generator::TYPE_CODE_128;
                 break;
         }
 
@@ -119,23 +141,31 @@ class BarcodeService
         $generator = new BarcodeGeneratorPNG;
 
         switch ( $type ) {
-            case 'ean8': $realType = $generator::TYPE_EAN_8;
+            case self::TYPE_EAN8: 
+            case self::TYPE_EAN_8:
+                $realType = $generator::TYPE_EAN_8;
                 break;
-            case 'ean13': $realType = $generator::TYPE_EAN_13;
+            case self::TYPE_EAN13:
+            case self::TYPE_EAN_13:  $realType = $generator::TYPE_EAN_13;
                 break;
-            case 'codabar': $realType = $generator::TYPE_CODABAR;
+            case self::TYPE_CODABAR: $realType = $generator::TYPE_CODABAR;
                 break;
-            case 'code128': $realType = $generator::TYPE_CODE_128;
+            case self::TYPE_CODE128: 
+            case self::TYPE_CODE_128: $realType = $generator::TYPE_CODE_128;
                 break;
-            case 'code39': $realType = $generator::TYPE_CODE_39;
+            case self::TYPE_CODE39: 
+            case self::TYPE_CODE_39: $realType = $generator::TYPE_CODE_39;
                 break;
-            case 'code11': $realType = $generator::TYPE_CODE_11;
+            case self::TYPE_CODE11:
+            case self::TYPE_CODE_11: $realType = $generator::TYPE_CODE_11;
                 break;
-            case 'upca': $realType = $generator::TYPE_UPC_A;
+            case self::TYPE_UPCA: 
+            case self::TYPE_UPC_A: $realType = $generator::TYPE_UPC_A;
                 break;
-            case 'upce': $realType = $generator::TYPE_UPC_E;
+            case self::TYPE_UPCE: 
+            case self::TYPE_UPC_E: $realType = $generator::TYPE_UPC_E;
                 break;
-            default: $realType = $generator::TYPE_EAN_8;
+            default: $realType = $generator::TYPE_CODE_128;
                 break;
         }
 
