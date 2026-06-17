@@ -15,6 +15,7 @@
         "brick/math": "^0.14.1",
         "dekor/php-array-table": "^2.0",
         "doctrine/dbal": "^3.0",
+        "dompdf/dompdf": "^3.1",
         "fakerphp/faker": "^1.12",
         "gumlet/php-image-resize": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",

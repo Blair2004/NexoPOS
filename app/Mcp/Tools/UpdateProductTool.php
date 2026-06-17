@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\Product;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
@@ -16,9 +17,6 @@ class UpdateProductTool extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'id' => $schema->number()
-                ->description('The ID of the product to update.')
-                ->required(),
             'name' => $schema->string()
                 ->description('The new name of the product.')
                 ->nullable(),
@@ -40,7 +38,7 @@ class UpdateProductTool extends Tool
         ];
     }
 
-    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
+    public function handle( Request $request): Response
     {
         if (empty($request->get('id'))) {
             return Response::error('The id parameter is required.');
@@ -52,7 +50,7 @@ class UpdateProductTool extends Tool
             return Response::error('Product not found.');
         }
 
-        $fillable = ['name', 'description', 'status', 'category_id', 'barcode', 'sku']);
+        $fillable = ['name', 'description', 'status', 'category_id', 'barcode', 'sku'];
 
         foreach ($fillable as $field) {
             if ($request->get($field) !== null) {

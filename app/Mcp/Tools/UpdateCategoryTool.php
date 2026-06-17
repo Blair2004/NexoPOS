@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\ProductCategory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
@@ -16,9 +17,6 @@ class UpdateCategoryTool extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'id' => $schema->number()
-                ->description('The ID of the category to update.')
-                ->required(),
             'name' => $schema->string()
                 ->description('The new name of the category.')
                 ->nullable(),
@@ -34,7 +32,7 @@ class UpdateCategoryTool extends Tool
         ];
     }
 
-    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
+    public function handle( Request $request): Response
     {
         if (empty($request->get('id'))) {
             return Response::error('The id parameter is required.');
@@ -49,13 +47,13 @@ class UpdateCategoryTool extends Tool
         if (($request->get('name') !== null)) {
             $category->name = $request->get('name');
         }
-        if (array_key_exists('description', $parameters)) {
+        if (array_key_exists('description', $request->all() )) {
             $category->description = $request->get('description');
         }
         if (($request->get('displays_on_pos') !== null)) {
             $category->displays_on_pos = $request->get('displays_on_pos');
         }
-        if (array_key_exists('parent_id', $parameters)) {
+        if (array_key_exists('parent_id', $request->all() )) {
             $category->parent_id = $request->get('parent_id');
         }
         

@@ -27,7 +27,7 @@ class UpdateSettingsTool extends Tool
             return Response::error('The settings parameter must be a non-empty object containing key-value pairs.');
         }
 
-        $applied = []);
+        $applied = [];
 
         foreach ($request->get('settings') as $key => $value) {
             ns()->option->set($key, $value);

@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\ProductUnitQuantity;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
@@ -16,9 +17,6 @@ class UpdateProductUnitQuantityTool extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'id' => $schema->number()
-                ->description('The ID of the ProductUnitQuantity record to update.')
-                ->required(),
             'sale_price' => $schema->number()
                 ->description('The sale price of the unit.')
                 ->nullable(),
@@ -43,7 +41,7 @@ class UpdateProductUnitQuantityTool extends Tool
         ];
     }
 
-    public function handle(\Laravel\Mcp\Request $request): \Laravel\Mcp\Response
+    public function handle( Request $request): Response
     {
         if (empty($request->get('id'))) {
             return Response::error('The id parameter is required.');
@@ -63,7 +61,7 @@ class UpdateProductUnitQuantityTool extends Tool
             'barcode', 
             'scale_plu', 
             'is_weighable'
-        ]);
+        ];
 
         foreach ($fillable as $field) {
             if ($request->get($field) !== null) {

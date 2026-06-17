@@ -20,6 +20,8 @@ use App\Models\Role;
 use App\Models\TransactionAccount;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Resources\Json\PaginatedResourceResponse;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -28,9 +30,9 @@ use stdClass;
 
 class ReportService
 {
-    private $dayStarts;
+    private string $dayStarts;
 
-    private $dayEnds;
+    private string $dayEnds;
 
     public function __construct(
         protected DateService $dateService,
@@ -70,7 +72,7 @@ class ReportService
     /**
      * Will compute the report for the current day
      */
-    public function computeDayReport( $dateStart = null, $dateEnd = null )
+    public function computeDayReport( string | null $dateStart = null, string | null $dateEnd = null ): DashboardDay
     {
         $this->dayStarts = $dateStart ?: $this->dateService->copy()->startOfDay()->toDateTimeString();
         $this->dayEnds = $dateEnd ?: $this->dateService->copy()->endOfDay()->toDateTimeString();
@@ -88,7 +90,7 @@ class ReportService
         return $todayReport;
     }
 
-    public function computeDashboardMonth( $todayCarbon = null )
+    public function computeDashboardMonth( string | null $todayCarbon = null ): DashboardMonth
     {
         if ( $todayCarbon === null ) {
             $todayCarbon = $this->dateService->copy()->now();
@@ -147,7 +149,7 @@ class ReportService
         return $dashboardMonth;
     }
 
-    public function computeOrdersTaxes( $previousReport, $todayReport )
+    public function computeOrdersTaxes( DashboardDay $previousReport, DashboardDay $todayReport ): void
     {
         $timeRangeTaxes = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -163,7 +165,7 @@ class ReportService
      *
      * @return void
      */
-    public function handleStockAdjustment( ProductHistory $history )
+    public function handleStockAdjustment( ProductHistory $history ): array
     {
         if ( in_array( $history->operation_type, [
             ProductHistory::ACTION_DEFECTIVE,
@@ -215,7 +217,7 @@ class ReportService
         ];
     }
 
-    public function computeIncome( $previousReport, $todayReport )
+    public function computeIncome( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalIncome = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -239,7 +241,7 @@ class ReportService
      *
      * @return void
      */
-    private function computeUnpaidOrdersCount( $previousReport, $todayReport )
+    private function computeUnpaidOrdersCount( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalUnpaidOrders = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -256,7 +258,7 @@ class ReportService
      *
      * @return void
      */
-    private function computeUnpaidOrders( $previousReport, $todayReport )
+    private function computeUnpaidOrders( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalUnpaidOrders = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -273,7 +275,7 @@ class ReportService
      *
      * @return void
      */
-    private function computePaidOrders( $previousReport, $todayReport )
+    private function computePaidOrders( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalPaid = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -290,7 +292,7 @@ class ReportService
      *
      * @return void
      */
-    private function computePaidOrdersCount( $previousReport, $todayReport )
+    private function computePaidOrdersCount( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalPaidOrders = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -307,7 +309,7 @@ class ReportService
      *
      * @return void
      */
-    private function computePartiallyPaidOrders( $previousReport, $todayReport )
+    private function computePartiallyPaidOrders( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalPaid = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -324,7 +326,7 @@ class ReportService
      *
      * @return void
      */
-    private function computePartiallyPaidOrdersCount( $previousReport, $todayReport )
+    private function computePartiallyPaidOrdersCount( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalPartiallyPaidOrdersCount = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -335,7 +337,7 @@ class ReportService
         $todayReport->total_partially_paid_orders_count = ( $previousReport->total_partially_paid_orders_count ?? 0 ) + $totalPartiallyPaidOrdersCount;
     }
 
-    private function computeDiscounts( $previousReport, $todayReport )
+    private function computeDiscounts( DashboardDay $previousReport, DashboardDay $todayReport )
     {
         $totalDiscount = Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -346,36 +348,7 @@ class ReportService
         $todayReport->total_discounts = ( $previousReport->total_discounts ?? 0 ) + $totalDiscount;
     }
 
-    /**
-     * @deprecated
-     */
-    public function increaseDailyExpenses( ActiveTransactionHistory $cashFlow, $today = null )
-    {
-        $today = $today === null ? DashboardDay::forToday() : $today;
-
-        if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === ActiveTransactionHistory::OPERATION_DEBIT ) {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_expenses += $cashFlow->getRawOriginal( 'value' );
-                $today->total_expenses = ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
-                $today->save();
-            } else {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_income += $cashFlow->getRawOriginal( 'value' );
-                $today->total_income = ( $yesterday->total_income ?? 0 ) + $today->day_income;
-                $today->save();
-            }
-
-            return [
-                'status' => 'success',
-                'message' => __( 'The expense has been correctly saved.' ),
-            ];
-        }
-
-        return $this->notifyIncorrectDashboardReport();
-    }
-
-    public function notifyIncorrectDashboardReport()
+    public function notifyIncorrectDashboardReport(): array
     {
         $message = __( 'A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
 
@@ -400,7 +373,7 @@ class ReportService
      * @param  string     $endDate
      * @return Collection
      */
-    public function getFromTimeRange( $startDate, $endDate )
+    public function getFromTimeRange( string $startDate, string $endDate ): Collection
     {
         return DashboardDay::from( $startDate )
             ->to( $endDate )
@@ -448,7 +421,7 @@ class ReportService
      * @param  string $sort
      * @return array
      */
-    public function getProductSalesDiff( $startDate, $endDate, $sort )
+    public function getProductSalesDiff( string $startDate, string $endDate, string $sort ): array
     {
         $startDate = Carbon::parse( $startDate );
         $endDate = Carbon::parse( $endDate );
@@ -542,9 +515,9 @@ class ReportService
      *
      * @param  array  $previousDates
      * @param  string $sort
-     * @return void
+     * @return array
      */
-    private function getBestRecords( $previousDates, $sort )
+    private function getBestRecords( array $previousDates, string $sort ): array
     {
         $orderProductTable = Hook::filter( 'ns-model-table', 'nexopos_orders_products' );
         $orderTable = Hook::filter( 'ns-model-table', 'nexopos_orders' );
@@ -679,7 +652,7 @@ class ReportService
         }
     }
 
-    private function getSalesSummary( $orders )
+    private function getSalesSummary( Collection $orders ): array
     {
         $allSales = $orders->map( function ( $order ) {
             $productTaxes = $order->products()->sum( 'tax_value' );
@@ -716,7 +689,7 @@ class ReportService
     /**
      * @todo add support for category filter
      */
-    public function getProductsReports( $start, $end, $user_id = null, $categories_id = null )
+    public function getProductsReports( string $start, string $end, $user_id = null, $categories_id = null ): array
     {
         $request = Order::paymentStatus( Order::PAYMENT_PAID )
             ->from( $start )
@@ -868,7 +841,7 @@ class ReportService
     /**
      * Will returns the details for a specific cashier
      */
-    public function getCashierDashboard( $cashier, $startDate = null, $endDate = null )
+    public function getCashierDashboard( int $cashier, string $startDate = null, string $endDate = null ): array
     {
         $cacheKey = 'cashier-report-' . $cashier;
 
@@ -1004,7 +977,7 @@ class ReportService
         ];
     }
 
-    public function getStockReport( $categories, $units )
+    public function getStockReport( array $categories, array $units )
     {
         $query = Product::notGrouped()
             ->withStockEnabled()
@@ -1026,9 +999,9 @@ class ReportService
     /**
      * Will retrun products having low stock
      *
-     * @return array $products
+     * @return Collection $products
      */
-    public function getLowStockProducts( $categories, $units )
+    public function getLowStockProducts( array $categories, array $units )
     {
         return ProductUnitQuantity::query()
             ->where( 'stock_alert_enabled', 1 )
@@ -1058,7 +1031,7 @@ class ReportService
             ->get();
     }
 
-    public function recomputeTransactions( $fromDate, $toDate )
+    public function recomputeTransactions( Carbon $fromDate, Carbon $toDate ): void
     {
         ActiveTransactionHistory::truncate();
         DashboardDay::truncate();
@@ -1257,7 +1230,7 @@ class ReportService
         return $currentDetailedHistory;
     }
 
-    public function getCombinedProductHistory( $date, $categories, $units )
+    public function getCombinedProductHistory( string $date, array $categories, array $units ): SupportCollection
     {
         $request = DB::query()->select( [
             'nexopos_products_unit_quantities.*',
@@ -1300,7 +1273,7 @@ class ReportService
     /**
      * Only trigger the job for combined products.
      */
-    public function computeCombinedReport( $date )
+    public function computeCombinedReport( string | null $date ): array
     {
         EnsureCombinedProductHistoryExistsJob::dispatch( $date );
 
@@ -1310,7 +1283,7 @@ class ReportService
         ];
     }
 
-    public function getAccountSummaryReport( $startDate = null, $endDate = null )
+    public function getAccountSummaryReport( string | null $startDate = null, string | null $endDate = null ): array
     {
         $startDate = $startDate === null ? ns()->date->getNow()->startOfMonth()->toDateTimeString() : $startDate;
         $endDate = $endDate === null ? ns()->date->getNow()->endOfMonth()->toDateTimeString() : $endDate;

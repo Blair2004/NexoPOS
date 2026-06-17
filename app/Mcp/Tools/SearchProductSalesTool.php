@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools;
 
+use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\OrderProductRefund;
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
@@ -46,23 +49,32 @@ class SearchProductSalesTool extends Tool
     public function handle(Request $request): Response
     {
         try {
+            $ordersTable = (new Order)->getTable();
+            $orderProductsTable = (new OrderProduct)->getTable();
+            $productsTable = (new Product)->getTable();
+            $orderProductRefundsTable = (new OrderProductRefund)->getTable();
+            $queryGrammar = DB::connection()->getQueryGrammar();
+            $orderProductsQuantityColumn = $queryGrammar->wrap($orderProductsTable . '.quantity');
+            $orderProductsTotalPriceColumn = $queryGrammar->wrap($orderProductsTable . '.total_price');
+            $orderProductRefundsQuantityColumn = $queryGrammar->wrap($orderProductRefundsTable . '.quantity');
+
             $query = OrderProduct::query()
-                ->join((new \App\Models\Order)->getTable(), (new \App\Models\Order)->getTable() . '.id', '=', (new \App\Models\OrderProduct)->getTable() . '.order_id')
-                ->join((new \App\Models\Product)->getTable(), (new \App\Models\Product)->getTable() . '.id', '=', (new \App\Models\OrderProduct)->getTable() . '.product_id');
+                ->join($ordersTable, $ordersTable . '.id', '=', $orderProductsTable . '.order_id')
+                ->join($productsTable, $productsTable . '.id', '=', $orderProductsTable . '.product_id');
 
             $dateStart = $request->get('date_start');
             if (!empty($dateStart)) {
-                $query->where((new \App\Models\Order)->getTable() . '.created_at', '>=', Carbon::parse($dateStart));
+                $query->where($ordersTable . '.created_at', '>=', Carbon::parse($dateStart));
             }
 
             $dateEnd = $request->get('date_end');
             if (!empty($dateEnd)) {
-                $query->where((new \App\Models\Order)->getTable() . '.created_at', '<=', Carbon::parse($dateEnd)->endOfDay());
+                $query->where($ordersTable . '.created_at', '<=', Carbon::parse($dateEnd)->endOfDay());
             }
 
             $orderType = $request->get('order_type');
             if (!empty($orderType)) {
-                $query->where((new \App\Models\Order)->getTable() . '.type', $orderType);
+                $query->where($ordersTable . '.type', $orderType);
             }
 
             $metric = $request->get('metric', 'top_purchased');
@@ -70,12 +82,12 @@ class SearchProductSalesTool extends Tool
 
             if ($metric === 'top_purchased') {
                 $results = $query->select(
-                    (new \App\Models\Product)->getTable() . '.id',
-                    (new \App\Models\Product)->getTable() . '.name',
-                    DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.quantity) as total_quantity'),
-                    DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.total_price) as total_revenue')
+                    $productsTable . '.id',
+                    $productsTable . '.name',
+                    DB::raw('SUM(' . $orderProductsQuantityColumn . ') as total_quantity'),
+                    DB::raw('SUM(' . $orderProductsTotalPriceColumn . ') as total_revenue')
                 )
-                ->groupBy((new \App\Models\Product)->getTable() . '.id', (new \App\Models\Product)->getTable() . '.name')
+                ->groupBy($productsTable . '.id', $productsTable . '.name')
                 ->orderBy('total_quantity', 'desc')
                 ->limit($limit)
                 ->get();
@@ -83,15 +95,14 @@ class SearchProductSalesTool extends Tool
             }
 
             if ($metric === 'top_returned') {
-                $query->join((new \App\Models\OrderRefund)->getTable(), (new \App\Models\OrderRefund)->getTable() . '.product_id', '=', (new \App\Models\OrderProduct)->getTable() . '.product_id')
-                    ->whereColumn((new \App\Models\OrderRefund)->getTable() . '.order_id', (new \App\Models\Order)->getTable() . '.id');
+                $query->join($orderProductRefundsTable, $orderProductRefundsTable . '.order_product_id', '=', $orderProductsTable . '.id');
 
                 $results = $query->select(
-                    (new \App\Models\Product)->getTable() . '.id',
-                    (new \App\Models\Product)->getTable() . '.name',
-                    DB::raw('SUM(' . (new \App\Models\OrderRefund)->getTable() . '.quantity) as total_returned')
+                    $productsTable . '.id',
+                    $productsTable . '.name',
+                    DB::raw('SUM(' . $orderProductRefundsQuantityColumn . ') as total_returned')
                 )
-                ->groupBy((new \App\Models\Product)->getTable() . '.id', (new \App\Models\Product)->getTable() . '.name')
+                ->groupBy($productsTable . '.id', $productsTable . '.name')
                 ->orderBy('total_returned', 'desc')
                 ->limit($limit)
                 ->get();
@@ -100,8 +111,8 @@ class SearchProductSalesTool extends Tool
 
             // Default: 'volume'
             $results = $query->select(
-                DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.quantity) as total_items_sold'),
-                DB::raw('SUM(' . (new \App\Models\OrderProduct)->getTable() . '.total_price) as gross_revenue')
+                DB::raw('SUM(' . $orderProductsQuantityColumn . ') as total_items_sold'),
+                DB::raw('SUM(' . $orderProductsTotalPriceColumn . ') as gross_revenue')
             )->first();
 
             return Response::json($results ? $results->toArray() : []);

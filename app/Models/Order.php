@@ -15,44 +15,44 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * ns-generated-comments
  *
- * @property int id
- * @property string description
- * @property string code
- * @property string title
- * @property string type
- * @property string payment_status
- * @property string process_status
- * @property string delivery_status
- * @property float discount
- * @property string discount_type
- * @property float discount_percentage
- * @property float shipping
- * @property float shipping_rate
- * @property string shipping_type
- * @property float total_without_tax
- * @property float subtotal
- * @property float total_with_tax
- * @property float total_coupons
- * @property float total_cogs
- * @property float total
- * @property float tax_value
- * @property float products_tax_value
- * @property float total_tax_value
- * @property int tax_group_id
- * @property string tax_type
- * @property float tendered
- * @property float change
- * @property string final_payment_date
- * @property string total_instalments
- * @property int customer_id
- * @property string note
- * @property string note_visibility
- * @property int author_id
- * @property string uuid
- * @property int register_id
- * @property string voidance_reason
- * @property string created_at
- * @property string updated_at
+ * @property int $id
+ * @property string $description
+ * @property string $code
+ * @property string $title
+ * @property string $type
+ * @property string $payment_status
+ * @property string $process_status
+ * @property string $delivery_status
+ * @property float $discount
+ * @property string $discount_type
+ * @property float $discount_percentage
+ * @property float $shipping
+ * @property float $shipping_rate
+ * @property string $shipping_type
+ * @property float $total_without_tax
+ * @property float $subtotal
+ * @property float $total_with_tax
+ * @property float $total_coupons
+ * @property float $total_cogs
+ * @property float $total
+ * @property float $tax_value
+ * @property float $products_tax_value
+ * @property float $total_tax_value
+ * @property int $tax_group_id
+ * @property string $tax_type
+ * @property float $tendered
+ * @property float $change
+ * @property string $final_payment_date
+ * @property string $total_instalments
+ * @property int $customer_id
+ * @property string $note
+ * @property string $note_visibility
+ * @property int $author_id
+ * @property string $uuid
+ * @property int $register_id
+ * @property string $voidance_reason
+ * @property string $created_at
+ * @property string $updated_at
  *
  * @method from( $startRange )
  * @method to( $endRange )
@@ -212,12 +212,12 @@ class Order extends NsModel
         return $this->hasMany( OrderSetting::class, 'order_id' );
     }
 
-    public function scopeFrom( $query, $range_starts )
+    public function scopeFrom( $query, string $range_starts )
     {
         return $query->where( 'created_at', '>=', $range_starts );
     }
 
-    public function scopeTo( $query, $range_ends )
+    public function scopeTo( $query, string $range_ends )
     {
         return $query->where( 'created_at', '<=', $range_ends );
     }

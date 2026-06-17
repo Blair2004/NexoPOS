@@ -7,6 +7,7 @@ use App\Mcp\Resources\ProductCategoriesResource;
 use App\Mcp\Resources\StoreConfigResource;
 use App\Mcp\Resources\TaxGroupsResource;
 use App\Mcp\Tools\GetCustomerTool;
+use App\Mcp\Tools\GenerateReportTool;
 use App\Mcp\Tools\GetDashboardSummaryTool;
 use App\Mcp\Tools\GetLowStockProductsTool;
 use App\Mcp\Tools\GetOrderTool;
@@ -38,6 +39,7 @@ use Laravel\Mcp\Server\Attributes\Version;
     'Use search_wallet_history to track customer account operations (ADD, DEDUCT, PAYMENT, REFUND). ' .
     'Use get_low_stock_products to identify inventory that needs restocking. ' .
     'Use get_dashboard_summary to retrieve sales metrics for a given day or date range. ' .
+    'Use generate_report after collecting data to produce a temporary signed PDF report with store branding, tables, KPI cards, and pie or bar charts. ' .
     'Use create_category, update_category, and delete_category to manage product categories. ' .
     'Use create_product, update_product, and delete_product to manage products. ' .
     'Use update_settings to modify global store settings and options. ' .
@@ -56,6 +58,7 @@ class POSServer extends Server
         GetCustomerTool::class,
         GetOrderTool::class,
         GetDashboardSummaryTool::class,
+        GenerateReportTool::class,
         SearchOrdersTool::class,
         SearchProductSalesTool::class,
         SearchWalletHistoryTool::class,
