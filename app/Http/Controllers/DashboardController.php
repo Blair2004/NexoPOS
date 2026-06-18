@@ -16,6 +16,8 @@ use App\Models\Role;
 use App\Services\DateService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
@@ -70,10 +72,10 @@ class DashboardController extends Controller
         ];
 
         try {
-            \Illuminate\Support\Facades\Http::post('https://my.nexopos.com/api/nexoplatform/telemetry', $payload);
+            Http::post('https://my.nexopos.com/api/nexoplatform/telemetry', $payload);
             ns()->option->set('ns_telemetry_last_sent', now()->toDateTimeString());
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Telemetry failed: ' . $e->getMessage());
+            Log::error('Telemetry failed: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Telemetry failed.'], 500);
         }
 

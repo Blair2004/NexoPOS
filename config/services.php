@@ -34,4 +34,10 @@ return [
         'endpoint' => env( 'TRANSLATOR_ENDPOINT' ),
     ],
 
+    'ollama' => [
+        'endpoint' => env( 'OLLAMA_ENDPOINT', 'http://127.0.0.1:11434' ),
+        'model' => env( 'OLLAMA_MODEL' ),
+        'timeout' => env( 'OLLAMA_TIMEOUT', 120 ),
+    ],
+
 ];
