@@ -45,12 +45,14 @@ use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
 use App\Models\Register;
 use App\Models\Role;
+use App\Models\TaxGroup;
 use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache as FacadesCache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;
@@ -506,10 +508,10 @@ class OrdersService
      * that aren't tracked.
      *
      * @param  Order $order
-     * @param  array $products
+     * @param  SupportCollection $products
      * @return void
      */
-    public function __deleteUntrackedProducts( Order $order, array $products ): void
+    public function __deleteUntrackedProducts( Order $order, SupportCollection $products ): void
     {
         if ( $order instanceof Order && ! $order->wasRecentlyCreated ) {
             $ids = collect( $products )
@@ -742,9 +744,9 @@ class OrdersService
      *
      * @param Order $order
      * @param array $fields
-     * @return Collection<OrderAddress>
+     * @return SupportCollection<OrderAddress>
      */
-    private function __saveAddressInformations( Order $order, array $fields ): Collection
+    private function __saveAddressInformations( Order $order, array $fields ): SupportCollection
     {
         $addresses = collect( ['shipping', 'billing'] )->map( function ( $type ) use ( $order, $fields ) {
             /**
@@ -777,7 +779,7 @@ class OrdersService
         return $addresses;
     }
 
-    private function __saveOrderPayments( $order, $payments, $customer )
+    private function __saveOrderPayments( Order $order, array $payments, $customer )
     {
         /**
          * As we're about to record new payments,
@@ -1003,6 +1005,8 @@ class OrdersService
             $paymentStatus = Order::PAYMENT_UNPAID;
         } elseif ( $totalPayments === 0 && ( isset( $fields[ 'payment_status' ] ) && ( $fields[ 'payment_status' ] === Order::PAYMENT_HOLD ) ) ) {
             $paymentStatus = Order::PAYMENT_HOLD;
+        } else {
+            $paymentStatus = Order::PAYMENT_HOLD;
         }
 
         /**
@@ -1071,10 +1075,10 @@ class OrdersService
 
     /**
      * @param Order order instance
-     * @param Collection<OrderProduct> array of products
+     * @param SupportCollection<OrderProduct> array of products
      * @return array [$subTotal, $orderProducts, $order]
      */
-    private function __saveOrderProducts( Order $order, Collection $products ): array
+    private function __saveOrderProducts( Order $order, SupportCollection $products ): array
     {
         $subTotal = 0;
         $taxes = 0;
@@ -1488,12 +1492,14 @@ class OrdersService
             ->toFloat();
         }
 
-        if ( empty( $rawProduct[ 'total_gross_price' ] ) ) {
-            $tax = $this->taxService->getTaxesComputed(
-                tax_type: $rawProduct[ 'tax_type' ] ?? $product->tax_type ?? null,
-                rates: $rawProduct[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
-                price: $sale_price
-            );
+        if ( empty( $rawProduct[ 'total_gross_price' ] ) && isset( $rawOrder[ 'tax_group_id' ] ) ) {
+            $rate = FacadesCache::remember( 'tax-rate-' . $rawOrder[ 'tax_group_id' ], now()->addMinute(), function() use ( $rawOrder ) {
+                $tax = TaxGroup::with( 'taxes' )->find( $rawOrder[ 'tax_group_id' ] );
+                return $tax->taxes->sum( 'rate' );
+            });
+
+            // $rawProduct[ 'total_gross_price' ] = $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, 1 );
+            $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, 1 );
         }
 
         /**
