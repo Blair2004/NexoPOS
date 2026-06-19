@@ -2477,17 +2477,18 @@ class ProductService
      */
     public function buildAdjustmentItems( array $products ): array
     {
-        return collect( $products )->map( function ( $product ) {
+        return collect( $products )->map( function ( $rawProduct ) {
+            $product = Product::find( $rawProduct[ 'id' ] );
             return [
-                'product_id'             => $product[ 'id' ],
-                'product_name'           => $product[ 'name' ],
-                'unit_id'                => $product[ 'adjust_unit' ][ 'unit_id' ],
-                'unit_name'              => $product[ 'adjust_unit' ][ 'unit' ][ 'name' ] ?? '',
-                'unit_price'             => $product[ 'adjust_unit' ][ 'sale_price' ] ?? 0,
-                'quantity'               => $product[ 'adjust_quantity' ],
-                'adjust_action'          => $product[ 'adjust_action' ],
-                'description'            => $product[ 'adjust_reason' ] ?? '',
-                'procurement_product_id' => $product[ 'procurement_product_id' ] ?? null,
+                'product_id'             => $rawProduct[ 'id' ],
+                'product_name'           => $product->name,
+                'unit_id'                => $rawProduct[ 'adjust_unit' ][ 'unit_id' ],
+                'unit_name'              => $rawProduct[ 'adjust_unit' ][ 'unit' ][ 'name' ] ?? '',
+                'unit_price'             => $rawProduct[ 'adjust_unit' ][ 'sale_price' ] ?? 0,
+                'quantity'               => $rawProduct[ 'adjust_quantity' ],
+                'adjust_action'          => $rawProduct[ 'adjust_action' ],
+                'description'            => $rawProduct[ 'adjust_reason' ] ?? '',
+                'procurement_product_id' => $rawProduct[ 'procurement_product_id' ] ?? null,
             ];
         } )->toArray();
     }

@@ -45,6 +45,7 @@ use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
 use App\Models\Register;
 use App\Models\Role;
+use App\Models\Tax;
 use App\Models\TaxGroup;
 use App\Models\Unit;
 use Carbon\Carbon;
@@ -1495,11 +1496,12 @@ class OrdersService
         if ( empty( $rawProduct[ 'total_gross_price' ] ) && isset( $rawOrder[ 'tax_group_id' ] ) ) {
             $rate = FacadesCache::remember( 'tax-rate-' . $rawOrder[ 'tax_group_id' ], now()->addMinute(), function() use ( $rawOrder ) {
                 $tax = TaxGroup::with( 'taxes' )->find( $rawOrder[ 'tax_group_id' ] );
-                return $tax->taxes->sum( 'rate' );
+                return $tax->taxes->map( fn( Tax $tax ) => $tax->rate )->toArray();
             });
 
-            // $rawProduct[ 'total_gross_price' ] = $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, 1 );
-            $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, 1 );
+            $response = $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, $rawProduct[ 'unit_price' ] );
+
+            $response[ 'total_gross_price' ] = $response[ 'with-tax' ];
         }
 
         /**
