@@ -25,7 +25,6 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
-use App\Models\Driver;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderAddress;
@@ -1121,6 +1120,8 @@ class OrdersService
             $orderProduct->quantity = $product[ 'quantity' ];
             $orderProduct->price_gross = $product[ 'price_gross' ] ?? 0;
             $orderProduct->price_net = $product[ 'price_net' ] ?? 0;
+            $orderProduct->total_price_gross = $product[ 'total_price_gross' ] ?? 0;
+            $orderProduct->total_price_net = $product[ 'total_price_net' ] ?? 0;
 
             /**
              * We might need to have another consideration
@@ -1493,17 +1494,6 @@ class OrdersService
             ->toFloat();
         }
 
-        if ( empty( $rawProduct[ 'total_gross_price' ] ) && isset( $rawOrder[ 'tax_group_id' ] ) ) {
-            $rate = FacadesCache::remember( 'tax-rate-' . $rawOrder[ 'tax_group_id' ], now()->addMinute(), function() use ( $rawOrder ) {
-                $tax = TaxGroup::with( 'taxes' )->find( $rawOrder[ 'tax_group_id' ] );
-                return $tax->taxes->map( fn( Tax $tax ) => $tax->rate )->toArray();
-            });
-
-            $response = $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, $rawProduct[ 'unit_price' ] );
-
-            $response[ 'total_gross_price' ] = $response[ 'with-tax' ];
-        }
-
         /**
          * If the total_price is not defined
          * let's compute that
@@ -1512,6 +1502,30 @@ class OrdersService
             $rawProduct[ 'total_price' ] = (
                 $sale_price * floatval( $rawProduct[ 'quantity' ] )
             ) - $rawProduct[ 'discount' ];
+        }
+
+        if ( isset( $rawOrder[ 'tax_group_id' ] ) ) {
+            $rate = FacadesCache::remember( 'tax-rate-' . $rawOrder[ 'tax_group_id' ], now()->addMinute(), function() use ( $rawOrder ) {
+                $tax = TaxGroup::with( 'taxes' )->find( $rawOrder[ 'tax_group_id' ] );
+                return $tax->taxes->map( fn( Tax $tax ) => $tax->rate )->toArray();
+            });
+
+            $response = $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, $rawProduct[ 'unit_price' ] );
+
+            if ( empty( $response[ 'price_gross' ] ) ) {
+                $rawProduct[ 'price_gross' ] = $response[ 'with-tax' ];
+                $rawProduct[ 'total_price_gross' ] = ns()->currency->define( $rawProduct[ 'price_gross' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
+            }
+            
+            if ( empty( $response[ 'price_net' ] ) ) {
+                $rawProduct[ 'price_net' ] = $response[ 'without-tax' ];
+                $rawProduct[ 'total_price_net' ] = ns()->currency->define( $rawProduct[ 'price_net' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
+            }
+        } else {
+            $rawProduct[ 'price_net' ] = $sale_price;
+            $rawProduct[ 'total_price_net' ] = ns()->currency->define( $rawProduct[ 'price_net' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
+            $rawProduct[ 'price_gross' ] = $sale_price;
+            $rawProduct[ 'total_price_gross' ] = ns()->currency->define( $rawProduct[ 'price_gross' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
         }
 
         return $rawProduct;
@@ -1607,14 +1621,6 @@ class OrdersService
         $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
         $order->code = $order->code ?: ''; // to avoid generating a new code
         $order->tendered = $this->currencyService->define( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() )->toFloat();
-
-        /**
-         * The driver is only defined when
-         * the order is a delivery order.
-         */
-        if ( $order->type === 'delivery' ) {
-            $order->driver_id = $fields[ 'driver_id' ] ?? null;
-        }
 
         if ( $order->code === '' ) {
             $order->code = $this->generateOrderCode( $order ); // to avoid generating a new code
@@ -2134,15 +2140,6 @@ class OrdersService
             }
 
             $order->products;
-
-            /**
-             * If the order is assigned to the driver, while loading the order
-             * we'll make sure to load the driver name.
-             */
-            if ( $order->driver_id ) {
-                $driver = Driver::with( [ 'billing' ] )->find( $order->driver_id );
-                $order->driver_name = ( $driver->billing?->first_name || $driver->billing?->last_name ) ? $driver->billing?->first_name . ' ' . $driver->billing?->last_name : $driver->username;
-            }
 
             OrderAfterLoadedEvent::dispatch( $order );
 

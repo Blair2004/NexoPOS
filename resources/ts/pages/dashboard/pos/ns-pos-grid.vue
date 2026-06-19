@@ -94,7 +94,7 @@
                     <div @click="loadCategories( category )" v-for="category of categories" :key="category.id" 
                         class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
                         <div class="h-full w-full flex items-center justify-center">
-                            <img v-if="category.preview_url" :src="category.preview_url" class="object-cover h-full" :alt="category.name">
+                            <img v-if="category.preview_url" :src="category.preview_url" class="object-cover h-full w-full" :alt="category.name">
                             <i class="las la-image text-6xl" v-if="! category.preview_url"></i>
                         </div>
                         <div class="w-full absolute z-10 -bottom-10">
@@ -118,8 +118,8 @@
                     <div @click="addToTheCart( product )" v-for="product of products" :key="product.id" 
                         class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
                         <div class="h-full w-full flex items-center justify-center overflow-hidden">
-                            <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full" :alt="product.name"/>
-                            <img v-else-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full" :alt="product.name"/>
+                            <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full w-full" :alt="product.name"/>
+                            <img v-else-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full w-full" :alt="product.name"/>
                             <i v-else="! product.galleries || product.galleries.filter( i => i.featured ).length === 0" class="las la-image text-6xl"></i>
                         </div>
                         <div class="w-full absolute z-10 -bottom-10">

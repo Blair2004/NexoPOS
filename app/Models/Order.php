@@ -10,6 +10,7 @@ use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Services\DateService;
 use App\Traits\NsFlashData;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -56,10 +57,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @method from( $startRange )
  * @method to( $endRange )
- * @method paid( )
- * @method refunded( )
- * @method paymentStatus( )
- * @method paymentExpired( )
+ * @method paid(): Builder
+ * @method refunded(): Builder
+ * @method paymentStatus(): Builder
+ * @method paymentExpired(): Builder
  */
 class Order extends NsModel
 {
@@ -212,32 +213,32 @@ class Order extends NsModel
         return $this->hasMany( OrderSetting::class, 'order_id' );
     }
 
-    public function scopeFrom( $query, string $range_starts )
+    public function scopeFrom( Builder $query, string $range_starts )
     {
         return $query->where( 'created_at', '>=', $range_starts );
     }
 
-    public function scopeTo( $query, string $range_ends )
+    public function scopeTo( Builder $query, string $range_ends )
     {
         return $query->where( 'created_at', '<=', $range_ends );
     }
 
-    public function scopePaid( $query )
+    public function scopePaid( Builder $query )
     {
         return $query->where( 'payment_status', self::PAYMENT_PAID );
     }
 
-    public function scopeRefunded( $query )
+    public function scopeRefunded( Builder $query )
     {
         return $query->where( 'payment_status', self::PAYMENT_REFUNDED );
     }
 
-    public function scopePaymentStatus( $query, $status )
+    public function scopePaymentStatus( Builder $query, string $status )
     {
         return $query->where( 'payment_status', $status );
     }
 
-    public function scopePaymentExpired( $query )
+    public function scopePaymentExpired( Builder $query )
     {
         $date = app()->make( DateService::class );
 
@@ -247,7 +248,7 @@ class Order extends NsModel
             ->where( 'final_payment_date', '<', $date->now()->toDateTimeString() );
     }
 
-    public function scopePaymentStatusIn( $query, array $statuses )
+    public function scopePaymentStatusIn( Builder $query, array $statuses )
     {
         return $query->whereIn( 'payment_status', $statuses );
     }

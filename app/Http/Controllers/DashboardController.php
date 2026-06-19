@@ -14,6 +14,7 @@ use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Role;
 use App\Services\DateService;
+use App\Services\ModulesService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -53,7 +54,7 @@ class DashboardController extends Controller
     public function dispatchTelemetry()
     {
         $version = config('nexopos.version');
-        $modules = app()->make('App\Services\ModulesService')->get();
+        $modules = app()->make( ModulesService::class )->get();
 
         $modulesData = [];
         foreach ($modules as $module) {

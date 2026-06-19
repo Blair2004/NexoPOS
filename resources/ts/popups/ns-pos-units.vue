@@ -15,7 +15,7 @@
                     <div class="h-0 w-full">
                         <div class="relative w-full flex items-center justify-center -top-20 h-20 py-2 flex-col overlay">
                             <h3 class="font-bold text-fontcolor py-2 text-center">{{ unitQuantity.unit.name }} ({{ unitQuantity .quantity }})</h3>
-                            <p class="text-sm font-medium text-font">{{ nsCurrency( displayRightPrice( unitQuantity ) ) }}</p>
+                            <p class="text-sm font-medium text-fontcolor-soft text-font">{{ nsCurrency( displayRightPrice( unitQuantity ) ) }}</p>
                         </div>
                     </div>
                 </div>
