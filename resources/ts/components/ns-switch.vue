@@ -48,6 +48,10 @@ export default {
     methods: {
         __,
         setSelected( option ) {
+            if ( this.field.disabled || option.disabled ) {
+                return;
+            }
+
             this.field.value    =   option.value;
             this._options.forEach( option => option.selected = false );
             option.selected     =   true;

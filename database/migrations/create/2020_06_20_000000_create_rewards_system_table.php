@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'author_id' );
                 $table->string( 'name' );
-                $table->float( 'target', 18, 5 )->default( 0 );
+                $table->decimal( 'target', 18, 5 )->default( 0 );
                 $table->text( 'description' )->nullable();
                 $table->integer( 'coupon_id' )->nullable();
                 $table->string( 'uuid' )->nullable();

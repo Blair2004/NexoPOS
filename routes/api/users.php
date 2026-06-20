@@ -24,3 +24,4 @@ Route::get( '/users/permissions', [ UsersController::class, 'getPermissions' ] )
 Route::get( '/users/roles', [ UsersController::class, 'getRoles' ] )->middleware( NsRestrictMiddleware::arguments( 'read.roles' ) );
 Route::put( '/users/roles', [ UsersController::class, 'updateRole' ] )->middleware( NsRestrictMiddleware::arguments( 'update.roles' ) );
 Route::get( '/users/roles/{role}/clone', [ UsersController::class, 'cloneRole' ] )->middleware( NsRestrictMiddleware::arguments( 'create.roles' ) );
+Route::post( '/user/snooze-ads', [ UsersController::class, 'snoozeAds' ] );

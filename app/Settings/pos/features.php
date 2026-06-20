@@ -198,5 +198,16 @@ return [
             ],
             value: ns()->option->get( 'ns_pos_show_preview_pinned_products' ),
         ),
+
+        FormInput::switch(
+            label: __( 'Barcode Reader Type' ),
+            description: __( 'When enabled, NexoPOS will establish a secure connection with terminal runnning ScanMate.' ),
+            name: 'ns_pos_barcode_reader_type',
+            options: Helper::kvToJsOptions( [
+                'regular' => __( 'Regular' ),
+                'wireless' => __( 'Wireless' ),
+            ] ),
+            value: ns()->option->get( 'ns_pos_barcode_reader_type', 'regular' ),
+        )
     ],
 ];

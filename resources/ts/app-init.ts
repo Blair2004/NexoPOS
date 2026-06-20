@@ -42,6 +42,8 @@ const nsOrderInvoice                =   defineAsyncComponent( () => import( './p
 const nsPrintLabel                  =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-print-label.vue' ) );
 const nsTransactionsRules           =   defineAsyncComponent( () => import( './pages/dashboard/transactions/ns-transactions-rules.vue' ) );
 const nsScaleSettingsPreview        =   defineAsyncComponent( () => import( './components/ns-scale-settings-preview.vue' ) );
+const nsWirelessBarcodeSettingsTab  =   defineAsyncComponent( () => import( './pages/dashboard/settings/ns-wireless-barcode-tab.vue' ) );
+const nsMarketplace                 =   defineAsyncComponent( () => import( './pages/dashboard/modules/ns-marketplace.vue' ) );
 
 declare const window;
 declare let nsExtraComponents;   
@@ -86,6 +88,8 @@ const allComponents    =   Object.assign({
     nsStockAdjustment,
     nsOrderInvoice,
     nsScaleSettingsPreview,
+    NsWireLessBarcodeSettingsTab: nsWirelessBarcodeSettingsTab,
+    nsMarketplace,
     ...baseComponents
 }, nsExtraComponents );
 

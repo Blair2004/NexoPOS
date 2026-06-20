@@ -17,7 +17,7 @@ class EnsureCombinedProductHistoryExistsJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct( public $date = null )
+    public function __construct( public string | null $date = null )
     {
         $this->prepareSerialization();
     }

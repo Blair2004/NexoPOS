@@ -20,9 +20,9 @@ return new class extends Migration
                 $table->integer( 'product_id' );
                 $table->integer( 'unit_id' );
                 $table->integer( 'unit_quantity_id' );
-                $table->float( 'sale_price' )->default( 0 );
+                $table->decimal( 'sale_price', 18, 5 )->default( 0 );
                 $table->float( 'quantity' )->default( 0 );
-                $table->float( 'total_price' )->default( 0 );
+                $table->decimal( 'total_price', 18, 5 )->default( 0 );
                 $table->integer( 'author_id' );
                 $table->timestamps();
             } );

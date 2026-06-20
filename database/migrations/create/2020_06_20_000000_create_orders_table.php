@@ -27,25 +27,25 @@ return new class extends Migration
                 $table->string( 'payment_status' ); // paid, unpaid, partially_paid
                 $table->string( 'process_status' )->default( 'pending' ); // complete, ongoing, pending
                 $table->string( 'delivery_status' )->default( 'pending' ); // pending, shipped, delivered,
-                $table->float( 'discount', 18, 5 )->default( 0 );
+                $table->decimal( 'discount', 18, 5 )->default( 0 );
                 $table->string( 'discount_type' )->nullable();
                 $table->boolean( 'support_instalments' )->default( true ); // define whether an order should only be paid using instalments feature
-                $table->float( 'discount_percentage', 18, 5 )->nullable();
-                $table->float( 'shipping', 18, 5 )->default( 0 ); // could be set manually or computed based on shipping_rate and shipping_type
-                $table->float( 'shipping_rate', 18, 5 )->default( 0 );
+                $table->decimal( 'discount_percentage', 18, 5 )->nullable();
+                $table->decimal( 'shipping', 18, 5 )->default( 0 ); // could be set manually or computed based on shipping_rate and shipping_type
+                $table->decimal( 'shipping_rate', 18, 5 )->default( 0 );
                 $table->string( 'shipping_type' )->nullable(); // "flat" | "percentage" (based on the order total)
-                $table->float( 'total_without_tax', 18, 5 )->default( 0 );
-                $table->float( 'subtotal', 18, 5 )->default( 0 );
-                $table->float( 'total_with_tax', 18, 5 )->default( 0 );
-                $table->float( 'total_coupons', 18, 5 )->default( 0 );
-                $table->float( 'total_cogs', 18, 5 )->default( 0 );
-                $table->float( 'total', 18, 5 )->default( 0 );
-                $table->float( 'tax_value', 18, 5 )->default( 0 );
-                $table->float( 'products_tax_value' )->default( 0 );
+                $table->decimal( 'total_without_tax', 18, 5 )->default( 0 );
+                $table->decimal( 'subtotal', 18, 5 )->default( 0 );
+                $table->decimal( 'total_with_tax', 18, 5 )->default( 0 );
+                $table->decimal( 'total_coupons', 18, 5 )->default( 0 );
+                $table->decimal( 'total_cogs', 18, 5 )->default( 0 );
+                $table->decimal( 'total', 18, 5 )->default( 0 );
+                $table->decimal( 'tax_value', 18, 5 )->default( 0 );
+                $table->decimal( 'products_tax_value', 18, 5 )->default( 0 );
                 $table->integer( 'tax_group_id' )->nullable();
                 $table->string( 'tax_type' )->nullable();
-                $table->float( 'tendered', 18, 5 )->default( 0 );
-                $table->float( 'change', 18, 5 )->default( 0 );
+                $table->decimal( 'tendered', 18, 5 )->default( 0 );
+                $table->decimal( 'change', 18, 5 )->default( 0 );
                 $table->datetime( 'final_payment_date' )->nullable();
                 $table->integer( 'total_instalments' )->default( 0 );
                 $table->integer( 'customer_id' );
@@ -75,7 +75,7 @@ return new class extends Migration
                 $table->integer( 'order_id' )->nullable();
                 $table->float( 'rate' );
                 $table->string( 'tax_name' )->nullable();
-                $table->float( 'tax_value' )->default( 0 );
+                $table->decimal( 'tax_value', 18, 5 )->default( 0 );
             } );
         }
     }

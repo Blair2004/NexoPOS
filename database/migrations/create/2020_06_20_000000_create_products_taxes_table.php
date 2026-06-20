@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->string( 'tax_id' ); // grouped, simple
                 $table->string( 'name' );
                 $table->float( 'rate', 18, 5 );
-                $table->float( 'value', 18, 5 ); // actual computed tax value
+                $table->decimal( 'value', 18, 5 ); // actual computed tax value
                 $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

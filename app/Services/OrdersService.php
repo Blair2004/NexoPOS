@@ -25,7 +25,6 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
-use App\Models\Driver;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderAddress;
@@ -45,12 +44,15 @@ use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
 use App\Models\Register;
 use App\Models\Role;
+use App\Models\Tax;
+use App\Models\TaxGroup;
 use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache as FacadesCache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;
@@ -101,7 +103,7 @@ class OrdersService
          * Building the products. This ensure to links the orinal
          * products alongs with cogs and other details.
          */
-        $fields[ 'products' ] = $this->__buildOrderProducts( $fields['products'] );
+        $fields[ 'products' ] = $this->__buildOrderProducts( $fields );
 
         /**
          * determine the value of the product
@@ -243,7 +245,7 @@ class OrdersService
      * it's provider
      *
      * @param  array $instalments
-     * @return void
+     * @return Collection<OrderInstalment|array>
      */
     public function __saveOrderInstalments( Order $order, $instalments = [] )
     {
@@ -335,13 +337,13 @@ class OrdersService
     /**
      * Checks whether the attached coupons are valid
      *
-     * @param  array $coupons
+     * @param  array $fields
      * @return void
      */
-    public function __checkAttachedCoupons( $fields )
+    public function __checkAttachedCoupons( array $fields ): void
     {
         collect( $fields[ 'coupons' ] ?? [] )->each( function ( $coupon ) use ( $fields ) {
-            $result = $this->customerService->checkCouponExistence( $coupon, $fields );
+            $this->customerService->checkCouponExistence( $coupon, $fields );
         } );
     }
 
@@ -367,7 +369,7 @@ class OrdersService
         return 0;
     }
 
-    private function __computeCouponValue( $coupon, $subtotal )
+    private function __computeCouponValue( array $coupon, float | int $subtotal )
     {
         return match ( $coupon[ 'discount_type' ] ) {
             'percentage_discount' => $this->computeDiscountValues( $coupon[ 'discount_value' ], $subtotal ),
@@ -379,7 +381,7 @@ class OrdersService
      * Save the coupons by attaching them to the processed order
      *
      * @param  array $coupons
-     * @return void
+     * @return array
      */
     public function __saveOrderCoupons( Order $order, $coupons )
     {
@@ -444,7 +446,7 @@ class OrdersService
     /**
      * Will compute the taxes assigned to an order
      */
-    public function __saveOrderTaxes( Order $order, $taxes ): array
+    public function __saveOrderTaxes( Order $order, array $taxes ): array
     {
         if ( ! $order->wasRecentlyCreated ) {
             /**
@@ -483,9 +485,9 @@ class OrdersService
      * Assign taxes to the processed order
      *
      * @param  array $taxes
-     * @return void
+     * @return array
      */
-    public function __registerTaxes( Order $order, $taxes )
+    public function __registerTaxes( Order $order, $taxes ): array
     {
         $orderTaxes = $this->__saveOrderTaxes( $order, $taxes );
 
@@ -506,10 +508,10 @@ class OrdersService
      * that aren't tracked.
      *
      * @param  Order $order
-     * @param  array $products
+     * @param  SupportCollection $products
      * @return void
      */
-    public function __deleteUntrackedProducts( $order, $products )
+    public function __deleteUntrackedProducts( Order $order, SupportCollection $products ): void
     {
         if ( $order instanceof Order && ! $order->wasRecentlyCreated ) {
             $ids = collect( $products )
@@ -645,10 +647,10 @@ class OrdersService
     /**
      * get the current shipping
      * feels
-     *
-     * @param array fields
+     * @param array $fields
+     * @return float
      */
-    private function __getShippingFee( $fields ): float
+    private function __getShippingFee( array $fields ): float
     {
         return $this->currencyService->define( $fields['shipping'] ?? 0 )->toFloat();
     }
@@ -657,12 +659,12 @@ class OrdersService
      * Check whether a discount is valid or
      * not
      *
-     * @param array fields
+     * @param array $fields
      * @return void
      *
      * @throws NotAllowedException
      */
-    public function __checkDiscountValidity( $fields )
+    public function __checkDiscountValidity( array $fields ): void
     {
         if ( ! empty( @$fields['discount_type'] ) ) {
             if ( $fields['discount_type'] === 'percentage' && ( floatval( $fields['discount_percentage'] ) < 0 ) || ( floatval( $fields['discount_percentage'] ) > 100 ) ) {
@@ -697,10 +699,10 @@ class OrdersService
      * Check defined address informations
      * and throw an error if a fields is not supported
      *
-     * @param array fields
+     * @param array $fields
      * @return array $fields
      */
-    private function __checkAddressesInformations( $fields )
+    private function __checkAddressesInformations( array $fields ): array
     {
         $allowedKeys = [
             'id',
@@ -740,10 +742,11 @@ class OrdersService
      * Save address informations
      * for a specific order
      *
-     * @param Order
-     * @param array of key=>value fields submitted
+     * @param Order $order
+     * @param array $fields
+     * @return SupportCollection<OrderAddress>
      */
-    private function __saveAddressInformations( $order, $fields )
+    private function __saveAddressInformations( Order $order, array $fields ): SupportCollection
     {
         $addresses = collect( ['shipping', 'billing'] )->map( function ( $type ) use ( $order, $fields ) {
             /**
@@ -776,7 +779,7 @@ class OrdersService
         return $addresses;
     }
 
-    private function __saveOrderPayments( $order, $payments, $customer )
+    private function __saveOrderPayments( Order $order, array $payments, $customer )
     {
         /**
          * As we're about to record new payments,
@@ -883,10 +886,11 @@ class OrdersService
      * it to the product values and determine
      * if the order can proceed
      *
-     * @param Collection $products
-     * @param array field
+     * @param array $fields
+     * @param Order|null $order
+     * @param Customer $customer
      */
-    private function __checkOrderPayments( $fields, ?Order $order, Customer $customer )
+    private function __checkOrderPayments( array $fields, ?Order $order, Customer $customer )
     {
         /**
          * we shouldn't process order if while
@@ -1001,6 +1005,8 @@ class OrdersService
             $paymentStatus = Order::PAYMENT_UNPAID;
         } elseif ( $totalPayments === 0 && ( isset( $fields[ 'payment_status' ] ) && ( $fields[ 'payment_status' ] === Order::PAYMENT_HOLD ) ) ) {
             $paymentStatus = Order::PAYMENT_HOLD;
+        } else {
+            $paymentStatus = Order::PAYMENT_HOLD;
         }
 
         /**
@@ -1069,10 +1075,10 @@ class OrdersService
 
     /**
      * @param Order order instance
-     * @param array<OrderProduct> array of products
+     * @param SupportCollection<OrderProduct> array of products
      * @return array [$subTotal, $orderProducts, $order]
      */
-    private function __saveOrderProducts( $order, $products )
+    private function __saveOrderProducts( Order $order, SupportCollection $products ): array
     {
         $subTotal = 0;
         $taxes = 0;
@@ -1114,6 +1120,8 @@ class OrdersService
             $orderProduct->quantity = $product[ 'quantity' ];
             $orderProduct->price_gross = $product[ 'price_gross' ] ?? 0;
             $orderProduct->price_net = $product[ 'price_net' ] ?? 0;
+            $orderProduct->total_price_gross = $product[ 'total_price_gross' ] ?? 0;
+            $orderProduct->total_price_net = $product[ 'total_price_net' ] ?? 0;
 
             /**
              * We might need to have another consideration
@@ -1226,9 +1234,14 @@ class OrdersService
         }
     }
 
-    private function __buildOrderProducts( $products )
+    /**
+     * Prebuild order products to be used for order creation or update.
+     * @param array $order
+     * @return SupportCollection<array>
+     */
+    private function __buildOrderProducts( array $order ): SupportCollection
     {
-        return collect( $products )->map( function ( $orderProduct ) {
+        return collect( $order[ 'products' ] )->map( function ( $orderProduct ) use ( $order ) {
             /**
              * by default, we'll assume a quick
              * product is being created.
@@ -1251,7 +1264,8 @@ class OrdersService
             $orderProduct = $this->__buildOrderProduct(
                 $orderProduct,
                 $productUnitQuantity,
-                $product
+                $product,
+                $order
             );
 
             return $orderProduct;
@@ -1341,13 +1355,19 @@ class OrdersService
      * @param array Order Product
      * @return array Order Product (updated)
      */
-    public function __buildOrderProduct( array $orderProduct, ?ProductUnitQuantity $productUnitQuantity = null, ?Product $product = null )
+    public function __buildOrderProduct( array $orderProduct, ?ProductUnitQuantity $productUnitQuantity = null, ?Product $product = null, array $order = [] )
     {
         /**
          * This will calculate the product default field
          * when they aren't provided.
          */
-        $orderProduct = $this->computeProduct( $orderProduct, $product, $productUnitQuantity );
+        $orderProduct = $this->computeProduct( 
+            rawProduct: $orderProduct, 
+            product: $product, 
+            productUnitQuantity: $productUnitQuantity,
+            rawOrder: $order 
+        );
+
         $orderProduct[ 'unit_id' ] = $productUnitQuantity->unit->id ?? $orderProduct[ 'unit_id' ] ?? 0;
         $orderProduct[ 'unit_quantity_id' ] = $productUnitQuantity->id ?? 0;
         $orderProduct[ 'product' ] = $product;
@@ -1433,9 +1453,9 @@ class OrdersService
         }
     }
 
-    public function computeProduct( $fields, ?Product $product = null, ?ProductUnitQuantity $productUnitQuantity = null )
+    public function computeProduct( array $rawProduct, ?Product $product = null, ?ProductUnitQuantity $productUnitQuantity = null, array $rawOrder )
     {
-        $sale_price = ( $fields[ 'unit_price' ] ?? $productUnitQuantity->sale_price );
+        $sale_price = ( $rawProduct[ 'unit_price' ] ?? $productUnitQuantity->sale_price );
 
         /**
          * if the discount value wasn't provided, it would have
@@ -1443,18 +1463,18 @@ class OrdersService
          * informations.
          */
         if (
-            isset( $fields[ 'discount_percentage' ] ) &&
-            isset( $fields[ 'discount_type' ] ) &&
-            $fields[ 'discount_type' ] === 'percentage' ) {
+            isset( $rawProduct[ 'discount_percentage' ] ) &&
+            isset( $rawProduct[ 'discount_type' ] ) &&
+            $rawProduct[ 'discount_type' ] === 'percentage' ) {
 
-            $fields[ 'discount' ] = ( $fields[ 'discount' ] ??
+            $rawProduct[ 'discount' ] = ( $rawProduct[ 'discount' ] ??
                 ns()->currency->define(
                     ns()->currency->define(
-                        ns()->currency->define( $sale_price )->multiplyBy( $fields[ 'discount_percentage' ] )->toFloat()
+                        ns()->currency->define( $sale_price )->multiplyBy( $rawProduct[ 'discount_percentage' ] )->toFloat()
                     )->dividedBy( 100 )->toFloat()
-                )->multiplyBy( $fields[ 'quantity' ] )->toFloat() );
+                )->multiplyBy( $rawProduct[ 'quantity' ] )->toFloat() );
         } else {
-            $fields[ 'discount' ] = $fields[ 'discount' ] ?? 0;
+            $rawProduct[ 'discount' ] = $rawProduct[ 'discount' ] ?? 0;
         }
 
         /**
@@ -1462,29 +1482,53 @@ class OrdersService
          * it should compute the tax otherwise
          * the value is "0".
          */
-        if ( empty( $fields[ 'tax_value' ] ) ) {
-            $fields[ 'tax_value' ] = $this->currencyService->define(
+        if ( empty( $rawProduct[ 'tax_value' ] ) ) {
+            $rawProduct[ 'tax_value' ] = $this->currencyService->define(
                 $this->taxService->getComputedTaxGroupValue(
-                    tax_type: $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
-                    tax_group_id: $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
+                    tax_type: $rawProduct[ 'tax_type' ] ?? $product->tax_type ?? null,
+                    tax_group_id: $rawProduct[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
                     price: $sale_price
                 )
             )
-                ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
-                ->toFloat();
+            ->multiplyBy( floatval( $rawProduct[ 'quantity' ] ) )
+            ->toFloat();
         }
 
         /**
          * If the total_price is not defined
          * let's compute that
          */
-        if ( empty( $fields[ 'total_price' ] ) ) {
-            $fields[ 'total_price' ] = (
-                $sale_price * floatval( $fields[ 'quantity' ] )
-            ) - $fields[ 'discount' ];
+        if ( empty( $rawProduct[ 'total_price' ] ) ) {
+            $rawProduct[ 'total_price' ] = (
+                $sale_price * floatval( $rawProduct[ 'quantity' ] )
+            ) - $rawProduct[ 'discount' ];
         }
 
-        return $fields;
+        if ( isset( $rawOrder[ 'tax_group_id' ] ) ) {
+            $rate = FacadesCache::remember( 'tax-rate-' . $rawOrder[ 'tax_group_id' ], now()->addMinute(), function() use ( $rawOrder ) {
+                $tax = TaxGroup::with( 'taxes' )->find( $rawOrder[ 'tax_group_id' ] );
+                return $tax->taxes->map( fn( Tax $tax ) => $tax->rate )->toArray();
+            });
+
+            $response = $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, $rawProduct[ 'unit_price' ] );
+
+            if ( empty( $response[ 'price_gross' ] ) ) {
+                $rawProduct[ 'price_gross' ] = $response[ 'with-tax' ];
+                $rawProduct[ 'total_price_gross' ] = ns()->currency->define( $rawProduct[ 'price_gross' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
+            }
+            
+            if ( empty( $response[ 'price_net' ] ) ) {
+                $rawProduct[ 'price_net' ] = $response[ 'without-tax' ];
+                $rawProduct[ 'total_price_net' ] = ns()->currency->define( $rawProduct[ 'price_net' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
+            }
+        } else {
+            $rawProduct[ 'price_net' ] = $sale_price;
+            $rawProduct[ 'total_price_net' ] = ns()->currency->define( $rawProduct[ 'price_net' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
+            $rawProduct[ 'price_gross' ] = $sale_price;
+            $rawProduct[ 'total_price_gross' ] = ns()->currency->define( $rawProduct[ 'price_gross' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
+        }
+
+        return $rawProduct;
     }
 
     /**
@@ -1577,14 +1621,6 @@ class OrdersService
         $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
         $order->code = $order->code ?: ''; // to avoid generating a new code
         $order->tendered = $this->currencyService->define( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() )->toFloat();
-
-        /**
-         * The driver is only defined when
-         * the order is a delivery order.
-         */
-        if ( $order->type === 'delivery' ) {
-            $order->driver_id = $fields[ 'driver_id' ] ?? null;
-        }
 
         if ( $order->code === '' ) {
             $order->code = $this->generateOrderCode( $order ); // to avoid generating a new code
@@ -2104,15 +2140,6 @@ class OrdersService
             }
 
             $order->products;
-
-            /**
-             * If the order is assigned to the driver, while loading the order
-             * we'll make sure to load the driver name.
-             */
-            if ( $order->driver_id ) {
-                $driver = Driver::with( [ 'billing' ] )->find( $order->driver_id );
-                $order->driver_name = ( $driver->billing?->first_name || $driver->billing?->last_name ) ? $driver->billing?->first_name . ' ' . $driver->billing?->last_name : $driver->username;
-            }
 
             OrderAfterLoadedEvent::dispatch( $order );
 

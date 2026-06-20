@@ -65,15 +65,14 @@ export default {
 ## Events
 
 ### ns-tabs Events
-- `@active`: Fired when a tab is clicked/activated, receives the tab identifier
-- `@changeTab`: Alias for `@active`, fired when tab changes
+- `@changeTab`: Fired when a tab is clicked/activated, receives the tab identifier
 - `@close`: Fired when a closable tab's close button is clicked, receives the tab object
 
 ## Advanced Examples
 
 ### 1. Tabs with Custom Padding
 ```vue
-<ns-tabs :active="currentTab" @active="setActiveTab">
+<ns-tabs :active="currentTab" @changeTab="setActiveTab">
   <ns-tabs-item 
     :label="__('Settings')" 
     identifier="settings"
@@ -99,7 +98,7 @@ export default {
 
 ### 2. Closable Tabs
 ```vue
-<ns-tabs :active="activeTab" @active="setActiveTab" @close="closeTab">
+<ns-tabs :active="activeTab" @changeTab="setActiveTab" @close="closeTab">
   <ns-tabs-item 
     :label="__('Document 1')" 
     identifier="doc1"

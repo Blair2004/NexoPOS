@@ -77,7 +77,6 @@ class ModulesService
         $this->composer = [
             '_composer_bin_dir' => $GLOBALS[ '_composer_bin_dir' ] ?? null,
             '_composer_autoload_path' => $GLOBALS[ '_composer_autoload_path' ] ?? null,
-            '_composer_bin_dir' => $GLOBALS[ '_composer_bin_dir' ] ?? null,
             '__composer_autoload_files' => $GLOBALS[ '__composer_autoload_files' ] ?? null,
         ];
     }
@@ -97,7 +96,7 @@ class ModulesService
     /**
      * Load modules for a defined path.
      *
-     * @param string path to load
+     * @param string|null $dir to load
      */
     public function load( ?string $dir = null ): void
     {
@@ -132,7 +131,7 @@ class ModulesService
         }
     }
 
-    public function resolveRelativePathToClass( $filePath )
+    public function resolveRelativePathToClass( string $filePath ): string
     {
         $filePath = str_replace( '/', '\\', $filePath );
         $filePath = str_replace( '.php', '', $filePath );
@@ -513,16 +512,16 @@ class ModulesService
     /**
      * Boot a module if it's enabled.
      */
-    public function boot( $module = null ): void
+    public function boot( array | null $module = null ): void
     {
         if ( ! empty( $module ) && ( $module[ 'enabled' ] || $module[ 'autoloaded' ] ) ) {
             $this->__boot( $module );
         } else {
-            foreach ( $this->modules as $module ) {
-                if ( ! ( $module[ 'enabled' ] || $module[ 'autoloaded' ] ) ) {
+            foreach ( $this->modules as $_module ) {
+                if ( ! ( $_module[ 'enabled' ] || $_module[ 'autoloaded' ] ) ) {
                     continue;
                 }
-                $this->__boot( $module );
+                $this->__boot( $_module );
             }
         }
     }
@@ -895,21 +894,21 @@ class ModulesService
              * @step 1 : creating host folder
              * No errors has been found, We\'ll install the module then
              */
-            Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace, 0755, true );
+            Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace );
 
             /**
              * @step 2 : move files
              * We're now looping to move files
              * and create symlink for the assets
              */
-            foreach ( $rawFiles as $file ) {
+            foreach ( $rawFiles as $_file ) {
                 $search = $extractionFolderName . '/' . $directoryName . '/';
                 $replacement = $moduleNamespace . DIRECTORY_SEPARATOR;
-                $final = str_replace( $search, $replacement, $file );
+                $final = str_replace( $search, $replacement, $_file );
 
                 Storage::disk( 'ns-modules' )->put(
                     $final,
-                    Storage::disk( 'ns-modules-temp' )->get( $file )
+                    Storage::disk( 'ns-modules-temp' )->get( $_file )
                 );
             }
 
@@ -1384,11 +1383,6 @@ class ModulesService
                     return $this->triggerClass( $className, $method );
                 }
             }
-
-            return [
-                'status' => 'error',
-                'message' => sprintf( __( 'The migration file doens\'t have a valid class name. Expected class : %s' ), $className ),
-            ];
         }
 
         return [
@@ -1397,7 +1391,7 @@ class ModulesService
         ];
     }
 
-    public function triggerObject( $object, $method )
+    public function triggerObject( $object, string $method )
     {
         /**
          * In case the migration file is an anonymous class,
@@ -1414,7 +1408,7 @@ class ModulesService
         ];
     }
 
-    public function triggerClass( $className, $method )
+    public function triggerClass( string $className, string $method )
     {
         /**
          * Create Object
@@ -1905,21 +1899,21 @@ class ModulesService
                 Storage::disk( 'ns-modules' )->deleteDirectory( $config[ 'namespace' ] );
             }
 
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ], 0755, true );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] );
 
             /**
              * Geneate Internal Directories
              */
             foreach ( [ 'Config', 'Crud', 'Events', 'Mail', 'Fields', 'Facades', 'Http', 'Migrations', 'Resources', 'Routes', 'Models', 'Providers', 'Services', 'Public' ] as $folder ) {
-                Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder, 0755, true );
+                Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
             }
 
             /**
              * Generate Sub Folders
              */
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers', 0755, true );
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations', 0755, true );
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views', 0755, true );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views' );
 
             /**
              * Generate Files
@@ -1950,8 +1944,9 @@ class ModulesService
 
     /**
      * Stream Content
-     *
-     * @return string content
+     * @param string $content
+     * @param array $config
+     * @return ViewView
      */
     public function streamContent( string $content, array $config ): ViewView
     {

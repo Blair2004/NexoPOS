@@ -14,8 +14,11 @@ use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Role;
 use App\Services\DateService;
+use App\Services\ModulesService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
@@ -46,6 +49,38 @@ class DashboardController extends Controller
     public function getBestCustomers()
     {
         return Customer::orderBy( 'purchases_amount', 'desc' )->limit( 5 )->get();
+    }
+
+    public function dispatchTelemetry()
+    {
+        $version = config('nexopos.version');
+        $modules = app()->make( ModulesService::class )->get();
+
+        $modulesData = [];
+        foreach ($modules as $module) {
+            if ($module['enabled'] ?? false) {
+                $modulesData[] = [
+                    'namespace' => $module['namespace'],
+                    'version'   => $module['version'],
+                ];
+            }
+        }
+
+        $payload = [
+            'version' => $version,
+            'modules' => $modulesData,
+            'host'    => request()->getHost(),
+        ];
+
+        try {
+            Http::post('https://my.nexopos.com/api/nexoplatform/telemetry', $payload);
+            ns()->option->set('ns_telemetry_last_sent', now()->toDateTimeString());
+        } catch (\Exception $e) {
+            Log::error('Telemetry failed: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Telemetry failed.'], 500);
+        }
+
+        return response()->json(['status' => 'success']);
     }
 
     public function getRecentsOrders()

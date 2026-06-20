@@ -3,7 +3,7 @@
     
     <template v-else>
         <p :key="index" v-for="(error,index) of field.errors" class="text-xs ns-error">
-            <template v-if="field.custom_errors">
+            <template v-if="field.custom_errors && field.custom_errors[ error.identifier ]">
                 <p v-if="field.custom_errors[ error.identifier ]" class="text-xs ns-error">{{ field.custom_errors[ error.identifier ] }}</p>
             </template>
             <template v-else>

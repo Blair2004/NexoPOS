@@ -3,7 +3,7 @@
         <template v-if="to && ! hasChildren">
             <a @click="goTo( to, $event )" :href="to" :class="defaultToggledState ? 'toggled' : 'normal'" class="flex justify-between py-2 border-l-8 px-3 font-bold ns-aside-menu">
                 <span class="flex items-center">
-                <i class="las text-lg mr-2" :class="icon?.length > 0 ? icon : 'la-star'"></i>
+                <i class="text-lg mr-2" :class="iconClass"></i>
                 {{ label }}
                 </span>
                 <span v-if="notification > 0" class="rounded-full notification-label font-bold w-6 h-6 text-xs justify-center items-center flex">{{ notification }}</span>
@@ -12,7 +12,7 @@
         <template v-else>
             <a @click="toggleEmit()" :href="href || 'javascript:void(0)'" :class="defaultToggledState ? 'toggled' : 'normal'" class="flex justify-between py-2 border-l-8 px-3 font-bold  ns-aside-menu">
                 <span class="flex items-center">
-                <i class="las text-lg mr-2" :class="icon?.length > 0 ? icon : 'la-star'"></i>
+                <i class="text-lg mr-2" :class="iconClass"></i>
                 {{ label }}
                 </span>
                 <span v-if="notification > 0" class="rounded-full notification-label font-bold w-6 h-6 text-xs justify-center items-center flex">{{ notification }}</span>
@@ -36,6 +36,19 @@ export default {
         }
     },
     props: [ 'href', 'to', 'label', 'icon', 'notification', 'toggled', 'identifier' ],
+    computed: {
+        iconClass() {
+            if ( !this.icon || this.icon.length === 0 ) {
+                return 'las la-star';
+            }
+            // If icon already includes 'las' or 'lab', use it as is
+            if ( this.icon.includes( 'las' ) || this.icon.includes( 'lab' ) ) {
+                return this.icon;
+            }
+            // Otherwise, prepend 'las' to the icon
+            return 'las ' + this.icon;
+        }
+    },
     mounted() {
         this.hasChildren    =   this.$el.querySelectorAll( '.submenu' ).length > 0;
 

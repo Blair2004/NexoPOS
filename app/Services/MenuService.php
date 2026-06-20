@@ -285,6 +285,12 @@ class MenuService
                         href: ns()->url( '/dashboard/products/stock-adjustment' )
                     ),
                     AsideMenu::subMenu(
+                        label: __( 'Adjustment History' ),
+                        identifier: 'products-adjustments-history',
+                        permissions: [ 'nexopos.make.products-adjustments' ],
+                        href: ns()->url( '/dashboard/products/adjustment-history' )
+                    ),
+                    AsideMenu::subMenu(
                         label: __( 'Scale Range' ),
                         identifier: 'scale-range',
                         permissions: [ 'nexopos.make.products-adjustments' ],
@@ -350,6 +356,11 @@ class MenuService
                         label: __( 'Upload Module' ),
                         identifier: 'upload-module',
                         href: ns()->url( '/dashboard/modules/upload' )
+                    ),
+                    AsideMenu::subMenu(
+                        label: __( 'Marketplace' ),
+                        identifier: 'marketplace',
+                        href: ns()->url( '/dashboard/modules/marketplace' )
                     ),
                 ),
             ),

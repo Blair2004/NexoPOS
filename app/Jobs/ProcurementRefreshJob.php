@@ -46,7 +46,7 @@ class ProcurementRefreshJob implements ShouldQueue
                 __( 'The procurement "%s" has been successfully refreshed.' ),
                 $this->procurement->name
             ),
-            identifier: 'ns.procurement-refresh' . $this->procurement->id,
+            identifier: 'ns.procurement-refresh-' . $this->procurement->id,
             url: ns()->route( 'ns.procurement-invoice', [ 'procurement' => $this->procurement->id ] ),
         )->dispatchForGroup(
             [ Role::ADMIN, Role::STOREADMIN ]

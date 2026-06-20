@@ -29,6 +29,9 @@ import { nsAlertPopup, nsConfirmPopup, nsPromptPopup } from "./components/compon
 import nsPosShippingPopup from "./popups/ns-pos-shipping-popup.vue";
 import nsLayawayPopup from "./popups/ns-pos-layaway-popup.vue";
 import delivery from "./pages/dashboard/pos/queues/order-type/delivery";
+import axios from "axios";
+import { io, Socket } from "socket.io-client";
+import { ReactiveObject } from "./libraries/reactive-objects";
 
 /**
  * these are dynamic component
@@ -53,6 +56,7 @@ declare const systemOptions;
 declare const systemUrls;
 declare const nsEvent;
 declare const nsHooks;
+declare const nsSnackBar;
 
 export class POS {
     private _cartButtons: BehaviorSubject<{ [key: string]: any }>;
@@ -75,6 +79,8 @@ export class POS {
     private _processingAddQueue = false;
     private _selectedPaymentType: BehaviorSubject<PaymentType>;
     private _userPermissions: BehaviorSubject<{[key:string]: any}[]>;
+    private _wirelessBarcodeState: ReactiveObject<{[key:string]: any}[]>;
+    private wirelessSocket: Socket | null = null;
     
     public print: Print;
 
@@ -246,6 +252,16 @@ export class POS {
             delivery,
         ];
 
+        this._wirelessBarcodeState = new ReactiveObject({
+            socket_status: 'disconnected',
+            http_status: 'pending',
+            channel: null,
+            secret: null, 
+            domain: null,
+            clients: [],
+            barcode: '',
+        });
+
         this.initialQueue.push(() => new Promise((resolve, reject) => {
             nsHttpClient.get(`/api/users/permissions/` ).subscribe({
                 next: (response: any) => {
@@ -370,6 +386,197 @@ export class POS {
         }
     }
 
+    public storeWirelessState( data )
+    {
+        const currentState = this.wirelessBarcodeState.getValue();
+
+        this._wirelessBarcodeState.next({
+            ...currentState,
+            ...data
+        });
+    }
+
+    public initWirelessBarcodeServer() {
+        const options = this.options.getValue();
+        const settings = this.settings.getValue();
+
+        if ( options.ns_pos_barcode_reader_type === 'wireless' ) {
+            const domain = settings.wireless_socket_domain;
+
+            if ( domain !== null ) {
+                /**
+                 * we'll first initialize the channel and then we'll connect or disconnect based on the current state of the connection
+                 */
+                this.wirelessBarcodeState.update({
+                    http_status: 'pending'
+                });
+
+                const request = new XMLHttpRequest;
+
+                request.open( 'POST', `https://${domain}/api/scanutility/channels`, true );
+                request.onload = () => {
+                    if ( request.status >= 200 && request.status < 300 ) {
+
+                        const response = JSON.parse( request.responseText );
+
+                        if ( Object.keys( response ).includes( 'channel' ) ) {
+                            this.wirelessBarcodeState.update({
+                                channel: response.channel,
+                                http_status: 'successful',
+                            })
+
+                            setTimeout( () => {
+                                this.startWirelessBarcodeChannel();
+                            }, 1000 );
+                        }
+                    }
+                }
+
+                request.setRequestHeader( 'Authorization', `Bearer ${  options.mynexopos_access_token }` );
+                request.setRequestHeader( 'Accept', 'application/json' );
+
+                request.onerror = () => {
+                    this.wirelessBarcodeState.update({
+                        http_status: 'error'
+                    });
+
+                    console.error( 'Failed to initialize wireless barcode reader connection.' );
+                }
+
+                request.ontimeout = () => {
+                    this.wirelessBarcodeState.update({
+                        http_status: 'error'
+                    });
+                }
+
+                request.onabort = () => {
+                    this.wirelessBarcodeState.update({
+                        http_status: 'error'
+                    });
+                };
+
+                request.timeout = 10000; // 10 seconds timeout
+
+                request.send(JSON.stringify({
+                    'name' : `pos_${Math.random().toString(36).substring(2, 15)}`,
+                }));
+            }
+        }
+    }
+
+    public startWirelessBarcodeChannel() {
+        const wirelessState = this.wirelessBarcodeState.value;
+        const channel = wirelessState.channel;
+        const options = this.options.getValue();
+        const settings = this.settings.getValue();
+
+        if ( channel.channel_uuid && channel.password ) {
+            if ( this.wirelessSocket ) {
+                this.wirelessSocket.removeAllListeners();
+                this.wirelessSocket.disconnect();
+                this.wirelessSocket = null;
+            }
+
+            this.wirelessSocket = io( `https://${ settings.wireless_socket_domain }/scanutility`, {
+                transports: [ "websocket" ],
+                reconnection: true,
+                reconnectionAttempts: Infinity,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                auth: {
+                    access_token: options.mynexopos_access_token,
+                    role: "host",
+                    license_uuid: channel.license_uuid,
+                }
+            } );
+
+            this.wirelessSocket.on( "connect", () => {
+                this._wirelessBarcodeState.update({
+                    socket_status: 'connected'
+                });
+            } );
+
+            this.wirelessSocket.on( "scanutility.authenticated", () => {
+                console.log({ wirelessState })
+                this.wirelessSocket.emit( 'scanutility.host.attach_channel', { channel_uuid: channel.channel_uuid, password: wirelessState.channel.password } );
+            });
+
+            this.wirelessSocket.on( "scanutility.message", ( payload ) => {
+                this.handleWirelessBarcodePayload( payload );
+            } );
+
+            this.wirelessSocket.on( "barcode", ( payload ) => {
+                this.handleWirelessBarcodePayload( payload );
+            } );
+
+            this.wirelessSocket.on( "disconnect", ( reason ) => {
+                this._wirelessBarcodeState.update({
+                    socket_status: 'disconnected'
+                });
+
+                if ( reason !== "io client disconnect" ) {
+                    nsSnackBar.error( __( "Wireless barcode reader disconnected." ) );
+                }
+            } );
+
+            this.wirelessSocket.on( "scanutility.get.channel.clients", ( response ) => {
+                this.wirelessBarcodeState.update({
+                    clients: response.clients
+                })
+            });
+
+            this.wirelessSocket.on( "connect_error", ( error ) => {
+                this._wirelessBarcodeState.update({
+                    socket_status: 'connexion_error'
+                });
+                console.error( "Socket.IO error with wireless barcode reader connection:", error );
+            } );
+ 
+            this.wirelessSocket.on( 'scanutility.channel.joined', ( data ) => {
+                const state = this.wirelessBarcodeState.getValue();
+                state.clients = state.clients || [];
+
+                console.log( 'Hello World' );
+
+                this._wirelessBarcodeState.update({
+                    clients: [...state.clients, data.user]
+                });
+            });
+        }
+    }
+
+    public stopWirelessBarcodeChannel() {
+        console.log( this.wirelessSocket )
+        if ( this.wirelessSocket ) {
+            this.wirelessSocket.removeAllListeners();
+            this.wirelessSocket.disconnect();
+            this.wirelessSocket = null;
+            this.wirelessBarcodeState.update({
+                socket_status: 'disconnected',
+                clients: [],
+                http_status: 'stopped',
+            })
+        }
+    }
+
+    public getChannelClients( channeluuid: string ){
+        if ( this.wirelessSocket ) {
+            this.wirelessSocket.emit( 'scanutility.ask.channel.clients', { channel_uuid: channeluuid } );
+        } else {
+            nsSnackBar.info( __( 'The wireless barcode reader is not connected. Please check your connection and try again.' ) );
+        }
+    }
+
+    private handleWirelessBarcodePayload( message: any ) {
+        console.log({ message })
+
+        if ( message.type === 'barcode.scanned' ) {
+            this.wirelessBarcodeState.update({
+                barcode: message.payload.barcode
+            });
+        }
+    }
+
     public getSalePrice(item) {
         let price = 0;
 
@@ -467,6 +674,10 @@ export class POS {
         order.coupons.push(coupon);
         this.order.next(order);
         this.refreshCart();
+    }
+
+    get wirelessBarcodeState() {
+        return this._wirelessBarcodeState;
     }
 
     get header() {
@@ -1558,7 +1769,6 @@ export class POS {
              * push the new product
              * at the front of the cart
              */
-            console.log( JSON.parse( JSON.stringify( cartProduct ) ) );
             products.unshift(cartProduct);
         }
 

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::createIfMissing( 'nexopos_transactions_balance_months', function ( Blueprint $table ) {
             $table->id();
-            $table->float( 'opening_balance' )->default( 0 );
-            $table->float( 'income' )->default( 0 );
-            $table->float( 'expense' )->default( 0 );
-            $table->float( 'closing_balance' )->default( 0 );
+            $table->decimal( 'opening_balance', 18, 5 )->default( 0 );
+            $table->decimal( 'income', 18, 5 )->default( 0 );
+            $table->decimal( 'expense', 18, 5 )->default( 0 );
+            $table->decimal( 'closing_balance', 18, 5 )->default( 0 );
             $table->date( 'date' )->nullable();
             $table->timestamps();
         } );

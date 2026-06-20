@@ -18,9 +18,27 @@
                     <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-hidden w-10 h-10 border-r ">
                         <i class="las la-compress-arrows-alt"></i>
                     </button>
-                    <button :title="__( 'Toggle auto focus.' )" @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" class="outline-hidden w-10 h-10 border-r ">
-                        <i class="las la-barcode"></i>
-                    </button>
+                    <template v-if="options.ns_pos_barcode_reader_type === 'wireless'">
+                        <button v-if="! settings.marketplace_connected" :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
+                            @click="inviteToMyNexoPOSConnexion()"
+                            :class="wirelessBarcodeConnected ? 'text-blue-500' : 'text-red-500'"
+                            class="outline-hidden border-r">
+                            <div class="animate-pulse bg-red-500/10 px-2 h-10 flex items-center justify-center">                                
+                                <i class="las la-exclamation-triangle text-lg animate-pulse"></i>
+                            </div>
+                        </button>
+                        <template v-else>
+                            <ns-pos-grid-wireless-barcode></ns-pos-grid-wireless-barcode>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <button :title="__( 'Toggle auto focus.' )" 
+                            @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" 
+                            :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" 
+                            class="outline-hidden w-10 h-10 border-r">
+                            <i class="las la-barcode"></i>
+                        </button>
+                    </template>
                     <input ref="search" v-model="barcode" type="text" class="flex-auto outline-hidden px-2 ">
                 </div>
             </div>
@@ -76,7 +94,7 @@
                     <div @click="loadCategories( category )" v-for="category of categories" :key="category.id" 
                         class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
                         <div class="h-full w-full flex items-center justify-center">
-                            <img v-if="category.preview_url" :src="category.preview_url" class="object-cover h-full" :alt="category.name">
+                            <img v-if="category.preview_url" :src="category.preview_url" class="object-cover h-full w-full" :alt="category.name">
                             <i class="las la-image text-6xl" v-if="! category.preview_url"></i>
                         </div>
                         <div class="w-full absolute z-10 -bottom-10">
@@ -100,8 +118,8 @@
                     <div @click="addToTheCart( product )" v-for="product of products" :key="product.id" 
                         class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
                         <div class="h-full w-full flex items-center justify-center overflow-hidden">
-                            <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full" :alt="product.name"/>
-                            <img v-else-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full" :alt="product.name"/>
+                            <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full w-full" :alt="product.name"/>
+                            <img v-else-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full w-full" :alt="product.name"/>
                             <i v-else="! product.galleries || product.galleries.filter( i => i.featured ).length === 0" class="las la-image text-6xl"></i>
                         </div>
                         <div class="w-full absolute z-10 -bottom-10">
@@ -130,18 +148,20 @@
         </div>
     </div>
 </template>
-<script >
+<script lang="ts">
 import { nsHttpClient, nsSnackBar } from '../../../bootstrap'
 import switchTo from "~/libraries/pos-section-switch";
 import nsPosSearchProductVue from '~/popups/ns-pos-search-product.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import NsPosGridWirelessBarcode from './ns-pos-grid-wireless-barcode.vue';
+
+declare const nsNotice;
 
 export default {
     name: 'ns-pos-grid',
     data() {
         return {
-            items: Array.from({length: 1000}, (_, index) => ({ data: '#' + index })),
             products: [],
             pinnedProducts: [],
             cartProductsSubscribe: null,
@@ -165,6 +185,9 @@ export default {
             gridItemsWidth: 0,
             gridItemsHeight:0,
             isLoading: false,
+            // ...
+            wirelessStateSubscriber: null,
+            wirelessBarcodeConnected: false,
         }
     },
     computed: {
@@ -179,9 +202,12 @@ export default {
             return POS.settings.getValue().urls.categories_url; 
         }
     },
+    components: {
+        'ns-pos-grid-wireless-barcode': NsPosGridWirelessBarcode,
+    },
     watch: {
         options: {
-            handler() {
+            handler( oldVal, newVal ) {
                 if ( this.options.ns_pos_force_autofocus ) {
                     clearTimeout( this.searchTimeout );
 
@@ -208,6 +234,12 @@ export default {
         this.settingsSubscriber         =   POS.settings.subscribe( settings => {
             this.settings               =   settings;
             this.$forceUpdate();
+        });
+
+        this.wirelessStateSubscriber   =   POS.wirelessBarcodeState.property( 'barcode' ).subscribe( state => {
+            if ( typeof state === "string" && state.length > 0 ) {
+                this.submitSearch( state );
+            }
         });
 
         this.optionsSubscriber          =   POS.options.subscribe( options => {
@@ -272,6 +304,15 @@ export default {
             }
         }
 
+        /**
+         * We'll apply a reset on the barcode value. This will ensure
+         * similar barcode scan will work
+         */
+        nsHooks.addAction( 'ns-after-cart-changed', 'ns-pos-grid', () => {
+            POS.wirelessBarcodeState.update({
+                barcode: ''
+            });
+        })
     },
     unmounted() {
         this.orderSubscription.unsubscribe();
@@ -280,6 +321,7 @@ export default {
         this.settingsSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
         this.cartProductsSubscribe.unsubscribe();
+        this.wirelessStateSubscriber.unsubscribe();
 
         clearInterval( this.interval );
 
@@ -376,6 +418,7 @@ export default {
                             product.price_gross             =   result.unitQuantity.sale_price_gross;
                             product.price_net               =   result.unitQuantity.sale_price_net;
                             product.unit_name               =   result.unit.name;
+                            product.unitQuantity            =   result.unitQuantity;
                             
                             // Check if this is a scale barcode with embedded data
                             if ( result.scale ) {
@@ -412,8 +455,7 @@ export default {
                                     );
                                 }
                             }
-                            
-                            console.log( JSON.parse( JSON.stringify( product ) ) );
+
                             POS.addToCart( product );
                         },
                         error: ( error ) => {
@@ -491,6 +533,27 @@ export default {
 
         addToTheCart( product ) {
             POS.addToCart( product );
+        },
+
+        inviteToMyNexoPOSConnexion() {
+            nsNotice.info( 
+                __( 'Authentication Required' ),
+                __( 'You need to connect your installation to My NexoPOS for using websocket features.' ), {
+                actions: {
+                    close: {
+                        type: 'info',
+                        label: __( 'No thanks' ),
+                    },
+                    confirm: {
+                        label: __( 'Continue' ),
+                        type: 'error',
+                        onClick: ( instance ) => {
+                            const settings  =   POS.settings.getValue();
+                            document.location = settings.urls.marketplace_url;
+                        }
+                    }
+                }
+            })
         }
     }
 }

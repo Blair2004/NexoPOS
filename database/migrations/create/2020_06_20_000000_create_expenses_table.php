@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer( 'account_id' );
             $table->text( 'description' )->nullable();
             $table->integer( 'media_id' )->default( 0 );
-            $table->float( 'value', 18, 5 )->default( 0 );
+            $table->decimal( 'value', 18, 5 )->default( 0 );
             $table->boolean( 'recurring' )->default( false );
             $table->string( 'type' )->nullable(); // direct, recurring, salary
             $table->boolean( 'active' )->default( false );

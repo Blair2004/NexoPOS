@@ -42,7 +42,6 @@ class OptionSavingTest extends TestCase
             $value[ 'hello' ] === $array[ 'hello' ],
             'The option with array wasn\'t saved'
         );
-
         ns()->option->delete( '_custom_option' );
 
         $this->assertTrue(

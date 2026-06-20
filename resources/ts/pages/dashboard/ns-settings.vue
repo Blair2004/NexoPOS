@@ -36,7 +36,7 @@
                     <div>
                         <template v-if="activeTab.footer && activeTab.footer.extraComponents">
                             <template v-for="( component, index ) of activeTab.footer.extraComponents" v-bind:key="index">
-                                <component :parent="component" :is="loadComponent( component ).value"></component>
+                                <component v-if="typeof component === 'string' && component.length > 0" :parent="component" :is="loadComponent( component ).value"></component>
                             </template>
                         </template>
                     </div>
@@ -175,7 +175,7 @@ export default {
 
             } catch( error ) {
                 this.validation.enableForm( this.form );
-                this.validation.triggerFieldsErrors( this.form, error );
+                this.validation.triggerFormErrors( this.form, error );
                 
                 nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
 

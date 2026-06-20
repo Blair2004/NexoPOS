@@ -18,9 +18,11 @@ use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\EnvEditor;
 use App\Services\Helper;
+use App\Services\MarketplaceService;
 use App\Services\MathService;
 use App\Services\MediaService;
 use App\Services\MenuService;
+use App\Services\ModulesService;
 use App\Services\NotificationService;
 use App\Services\Options;
 use App\Services\OrdersService;
@@ -39,11 +41,14 @@ use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Http\Request;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -247,6 +252,12 @@ class AppServiceProvider extends ServiceProvider
             return new ClassesConfig;
         } );
 
+        $this->app->singleton( MarketplaceService::class, function ( $app ) {
+            return new MarketplaceService(
+                app()->make( ModulesService::class )
+            );
+        } );
+
         /**
          * When the module has started,
          * we can load the configuration.
@@ -269,10 +280,6 @@ class AppServiceProvider extends ServiceProvider
          */
         if ( ! is_file( database_path( 'database.sqlite' ) ) ) {
             file_put_contents( database_path( 'database.sqlite' ), '' );
-        }
-
-        if ( Helper::installed() ) {
-            Schema::defaultStringLength( 191 );
         }
 
         /**
@@ -301,6 +308,15 @@ class AppServiceProvider extends ServiceProvider
          */
         Event::listen( JobProcessing::class, function () {
             ns()->option->rebuild();
+        } );
+
+        /**
+         * Rate limiter for MCP API endpoints.
+         * 60 requests per minute, keyed by authenticated user or IP.
+         */
+        RateLimiter::for( 'mcp', function ( Request $request ) {
+            return Limit::perMinute( 60 )
+                ->by( $request->user()?->id ?: $request->ip() );
         } );
     }
 

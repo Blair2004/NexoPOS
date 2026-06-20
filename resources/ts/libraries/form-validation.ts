@@ -395,6 +395,27 @@ export default class FormValidation {
         }
     }
 
+    triggerFormErrors( form, data ) {
+        if ( data && data.errors ) {
+            for( let fieldName in data.errors ) {
+                /**
+                 * we expect the fieldName to be in format "tabName.fieldName" when the error is related to a field within a tab. 
+                 * Otherwise, it's a main field error.
+                 */
+                const path = fieldName.split( '.' );
+
+                if ( path.length === 2 ) {
+                    const tabIdentifier = path[0];
+                    const tab = form.tabs[ tabIdentifier ];
+
+                    if ( tab ) {
+                        this.triggerFieldsErrors( tab.fields, { errors: { [ path[1] ]: data.errors[ fieldName ] } } );
+                    }
+                }
+            }
+        }
+    }
+
     trackError( field, rule, form, labels ) {
         field.errors.push({
             identifier: rule.identifier,

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Validator as ValidatorInstance;
 
 class UserProfileForm extends SettingsPage
 {
@@ -27,6 +28,7 @@ class UserProfileForm extends SettingsPage
         $this->form = [
             'tabs' => Hook::filter( 'ns-user-profile-form', [
                 'attribute' => include ( dirname( __FILE__ ) . '/user-profile/attribute.php' ),
+                'personal' => include ( dirname( __FILE__ ) . '/user-profile/personal.php' ),
                 'shipping' => include ( dirname( __FILE__ ) . '/user-profile/shipping.php' ),
                 'billing' => include ( dirname( __FILE__ ) . '/user-profile/billing.php' ),
                 'security' => include ( dirname( __FILE__ ) . '/user-profile/security.php' ),
@@ -44,6 +46,7 @@ class UserProfileForm extends SettingsPage
         $results = [];
         $results[] = $this->processCredentials( $request, $validator );
         $results[] = $this->processOptions( $request );
+        $results[] = $this->processPersonal( $request );
         $results[] = $this->processAddresses( $request );
         $results[] = $this->processAttribute( $request );
         $results = collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values()->map( function ( $result ) {
@@ -60,7 +63,22 @@ class UserProfileForm extends SettingsPage
         );
     }
 
-    public function processAttribute( $request )
+    public function processPersonal( Request $request )
+    {
+        $user = User::find( Auth::id() );
+        $user->first_name = strip_tags( $request->input( 'personal.first_name' ) );
+        $user->last_name = strip_tags( $request->input( 'personal.last_name' ) );
+        $user->gender = strip_tags( $request->input( 'personal.gender' ) );
+        $user->phone = strip_tags( $request->input( 'personal.phone' ) );
+        $user->pobox = strip_tags( $request->input( 'personal.pobox' ) );
+        $user->save();
+
+        return JsonResponse::success(
+            message: __( 'The personal information has been saved.' )
+        );
+    }
+
+    public function processAttribute( Request $request )
     {
         $allowedInputs = collect( $this->form[ 'tabs' ][ 'attribute' ][ 'fields' ] )
             ->map( fn( $field ) => $field[ 'name' ] )
@@ -88,7 +106,7 @@ class UserProfileForm extends SettingsPage
         return [];
     }
 
-    public function processOptions( $request )
+    public function processOptions( Request $request )
     {
         /**
          * @var UserOptions
@@ -114,7 +132,7 @@ class UserProfileForm extends SettingsPage
         return [];
     }
 
-    public function processCredentials( $request, $validator )
+    public function processCredentials( Request $request, ValidatorInstance $validator )
     {
         if ( ! empty( $request->input( 'security.old_password' ) ) ) {
             if ( ! Hash::check( $request->input( 'security.old_password' ), Auth::user()->password ) ) {

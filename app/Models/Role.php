@@ -37,7 +37,7 @@ class Role extends NsRootModel
     const STORECASHIER = 'nexopos.store.cashier';
 
     /**
-     * @var string STOREDRIVER store role with purchasing capacity
+     * @var string STORECUSTOMER store role with purchasing capacity
      */
     const STORECUSTOMER = 'nexopos.store.customer';
 
@@ -45,11 +45,6 @@ class Role extends NsRootModel
      * @var string USER base role with no or less permissions
      */
     const USER = 'user';
-
-    /**
-     * We're introducing driver role
-     */
-    const DRIVER = 'nexopos.driver';
 
     protected $cats = [
         'locked' => 'boolean',

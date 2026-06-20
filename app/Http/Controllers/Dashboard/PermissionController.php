@@ -25,4 +25,17 @@ class PermissionController extends DashboardController
             ->where( 'granter_id', Auth::id() )
             ->paginate( 10 );
     }
+
+    public function checkPermissionAccess( string $namespace )
+    {
+        if ( ns()->allowedTo( $namespace ) ) {
+            return response()->json( [
+                'message' => 'Permission granted',
+            ], 200 );
+        }
+
+        return response()->json( [
+            'message' => 'Permission denied',
+        ], 403 );
+    }
 }

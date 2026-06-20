@@ -288,7 +288,6 @@ class TaxService
             );
 
             $response[ 'tax' ] = $response[ 'with-tax' ] - $value;
-        } else {
         }
 
         /**
@@ -398,12 +397,12 @@ class TaxService
      * Compute tax for a provided unit group
      *
      * @param  string    $type  inclusive or exclusive
-     * @param  float|int $value
+     * @param  float|int $value 
      * @return float
      *
      * @deprecated
      */
-    public function getTaxGroupComputedValue( $type, TaxGroup $group, $value )
+    public function getTaxGroupComputedValue( $type, TaxGroup $group, float | int $value )
     {
         $rate = $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
 
@@ -414,6 +413,7 @@ class TaxService
 
         return 0;
     }
+
 
     /**
      * We might not need to perform this if
@@ -511,7 +511,7 @@ class TaxService
      * Computes the net price using the gross
      * price along with a TaxGroup rate.
      */
-    public function getPriceWithTaxUsingGroup( string $type, TaxGroup $group, $price ): float
+    public function getPriceWithTaxUsingGroup( string $type, TaxGroup $group, float | int $price ): float
     {
         $rate = $group->taxes()->get()->map( fn( $tax ) => $tax->rate )->sum();
 

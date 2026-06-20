@@ -43,9 +43,9 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'customer_id' );
                 $table->integer( 'order_id' )->nullable();
-                $table->float( 'previous_amount' )->default( 0 );
-                $table->float( 'amount' )->default( 0 );
-                $table->float( 'next_amount' )->default( 0 );
+                $table->decimal( 'previous_amount', 18, 5 )->default( 0 );
+                $table->decimal( 'amount', 18, 5 )->default( 0 );
+                $table->decimal( 'next_amount', 18, 5 )->default( 0 );
                 $table->string( 'operation' ); // sub / add
                 $table->integer( 'author_id' );
                 $table->text( 'description' )->nullable();

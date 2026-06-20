@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ModuleUploadRequest;
 use App\Models\Notification;
 use App\Services\DateService;
+use App\Services\MarketplaceService;
 use App\Services\ModulesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +24,8 @@ class ModulesController extends DashboardController
 {
     public function __construct(
         protected ModulesService $modules,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected MarketplaceService $marketplaceService
     ) {
         $this->middleware( function ( $request, $next ) {
             ns()->restrict( [ 'manage.modules' ] );
@@ -190,5 +192,33 @@ class ModulesController extends DashboardController
                 'message' => sprintf( __( 'Failed to fix permissions: %s' ), $e->getMessage() ),
             ], 500 );
         }
+    }
+
+    public function showMarketplace( Request $request )
+    {
+        $this->marketplaceService->testConnection();
+
+        $accessToken = ns()->option->get( 'mynexopos_access_token' );
+        $refreshToken = ns()->option->get( 'mynexopos_refresh_token' );
+
+        /**
+         * if the user is authenticated from a specific page, we should redirect him back to this page after authentication. 
+         * We use the "return" query parameter for that.
+         */
+        if ( $request->has( 'action' ) && $request->input( 'action' ) === 'authenticate' && $request->has( 'return' )) {
+            match( $request->input( 'return' ) ) {
+                'pos' => $request->session()->put( 'marketplace_auth_redirect_url', route( 'ns.dashboard.pos' ) . '?action=wireless-connect' ),
+                default => null,
+            };
+        }
+
+        $isConnected = ! empty( $accessToken ) && ! empty( $refreshToken );
+
+        return View::make( 'pages.dashboard.modules.marketplace', [
+            'title' => __( 'Module Marketplace' ),
+            'description' => __( 'Connect your NexoPOS account to access the module marketplace.' ),
+            'isConnected' => $isConnected,
+            'authorizationUrl' => route( ns()->routeName( 'ns.oauth.mynexopos.authorize' ) ),
+        ] );
     }
 }
