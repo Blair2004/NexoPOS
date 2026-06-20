@@ -408,12 +408,12 @@ class UsersController extends DashboardController
      */
     public function snoozeAds( Request $request )
     {
-        $userOptions = new UserOptions(Auth::id());
-        $userOptions->set('snooze_ads_24h', 'yes', now()->addHours(24));
+        $userOptions = new UserOptions( Auth::id() );
+        $userOptions->set( 'snooze_ads_24h', 'yes', now()->addHours( 24 ) );
 
-        return response()->json([
+        return response()->json( [
             'status' => 'success',
-            'message' => __('Ads have been snoozed for 24 hours.')
-        ]);
+            'message' => __( 'Ads have been snoozed for 24 hours.' ),
+        ] );
     }
 }

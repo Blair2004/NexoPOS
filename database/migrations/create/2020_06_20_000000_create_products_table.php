@@ -46,7 +46,7 @@ return new class extends Migration
                 $table->boolean( 'searchable' )->default( true ); // whether the product can be searched on the POS.
                 $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
-                $table->boolean( 'position' )->default(0);
+                $table->boolean( 'position' )->default( 0 );
                 $table->boolean( 'pinned' )->default( false );
                 $table->timestamps();
             } );

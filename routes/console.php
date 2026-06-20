@@ -9,7 +9,6 @@ use App\Jobs\EnsureCombinedProductHistoryExistsJob;
 use App\Jobs\PurgeOrderStorageJob;
 use App\Jobs\StockProcurementJob;
 use App\Jobs\TrackLaidAwayOrdersJob;
-use App\Jobs\TriggerRecurringTransactionJob;
 use App\Models\Transaction;
 use App\Services\Helper;
 use Illuminate\Support\Facades\Artisan;
@@ -36,7 +35,6 @@ Schedule::call( function () {
         Artisan::call( 'telescope:prune', [ 'hours' => 12 ] );
     }
 } )->daily();
-
 
 /**
  * Will execute here recurring transaction

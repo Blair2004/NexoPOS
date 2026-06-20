@@ -202,11 +202,11 @@ class ModulesController extends DashboardController
         $refreshToken = ns()->option->get( 'mynexopos_refresh_token' );
 
         /**
-         * if the user is authenticated from a specific page, we should redirect him back to this page after authentication. 
+         * if the user is authenticated from a specific page, we should redirect him back to this page after authentication.
          * We use the "return" query parameter for that.
          */
-        if ( $request->has( 'action' ) && $request->input( 'action' ) === 'authenticate' && $request->has( 'return' )) {
-            match( $request->input( 'return' ) ) {
+        if ( $request->has( 'action' ) && $request->input( 'action' ) === 'authenticate' && $request->has( 'return' ) ) {
+            match ( $request->input( 'return' ) ) {
                 'pos' => $request->session()->put( 'marketplace_auth_redirect_url', route( 'ns.dashboard.pos' ) . '?action=wireless-connect' ),
                 default => null,
             };

@@ -18,23 +18,23 @@ class SearchCustomersTool extends Tool
 
     protected string $description = 'Search for customers by name, email, username, or phone number. Returns up to 10 matching customers.';
 
-    public function schema(JsonSchema $schema): array
+    public function schema( JsonSchema $schema ): array
     {
         return [
             'query' => $schema->string()
-                ->description('The search term to match against customer first name, last name, username, email, or phone.')
+                ->description( 'The search term to match against customer first name, last name, username, email, or phone.' )
                 ->required(),
         ];
     }
 
-    public function handle(Request $request, CustomerService $service): Response
+    public function handle( Request $request, CustomerService $service ): Response
     {
         try {
-            $results = $service->search($request->get('query', ''));
+            $results = $service->search( $request->get( 'query', '' ) );
 
-            return Response::json($results->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $results->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

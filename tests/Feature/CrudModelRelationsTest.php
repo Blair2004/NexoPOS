@@ -53,7 +53,7 @@ class CrudModelRelationsTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $crud    = new ProviderCrud;
+        $crud = new ProviderCrud;
         $entries = $crud->getEntries();
 
         $this->assertArrayHasKey( 'data', $entries );
@@ -109,7 +109,8 @@ class CrudModelRelationsTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $crud = new class extends CrudService {
+        $crud = new class extends CrudService
+        {
             const IDENTIFIER = 'test.legacy-numeric';
 
             protected $table = 'nexopos_providers';
@@ -158,7 +159,8 @@ class CrudModelRelationsTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $crud = new class extends CrudService {
+        $crud = new class extends CrudService
+        {
             const IDENTIFIER = 'test.explicit-alias';
 
             protected $table = 'nexopos_providers';
@@ -224,7 +226,8 @@ class CrudModelRelationsTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $crud = new class extends CrudService {
+        $crud = new class extends CrudService
+        {
             const IDENTIFIER = 'test.at-alias';
 
             protected $table = 'nexopos_providers';
@@ -270,7 +273,8 @@ class CrudModelRelationsTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $crud = new class extends CrudService {
+        $crud = new class extends CrudService
+        {
             const IDENTIFIER = 'test.legacy-grouped';
 
             protected $table = 'nexopos_providers';

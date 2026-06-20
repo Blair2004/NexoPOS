@@ -15,10 +15,10 @@ use App\Models\OrderProduct;
 use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
-use App\Models\ProductCategory;
-use App\Models\ProductGallery;
 use App\Models\ProductAdjustment;
 use App\Models\ProductAdjustmentItem;
+use App\Models\ProductCategory;
+use App\Models\ProductGallery;
 use App\Models\ProductHistory;
 use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
@@ -47,7 +47,6 @@ class ProductService
      * the provided id
      *
      * @param int $id Product id
-     * @return Product
      */
     public function get( int $id ): Product
     {
@@ -62,9 +61,6 @@ class ProductService
 
     /**
      * Get Product using barcode
-     *
-     * @param string $barcode
-     * @return Product|false
      */
     public function getProductUsingBarcode( string $barcode ): Product|false
     {
@@ -84,9 +80,6 @@ class ProductService
 
     /**
      * Get Product using barcode
-     *
-     * @param string $barcode
-     * @return Product|false
      */
     public function getProductUsingBarcodeOrFail( string $barcode ): Product|false
     {
@@ -106,9 +99,6 @@ class ProductService
 
     /**
      * Get Product using sku
-     *
-     * @param string $sku
-     * @return Product|false
      */
     public function getProductUsingSKU( string $sku ): Product|false
     {
@@ -129,9 +119,6 @@ class ProductService
     /**
      * retrive a product using a SKU or fail
      * if the product is not found
-     *
-     * @param string $sku
-     * @return Product
      */
     public function getProductUsingSKUOrFail( string $sku ): Product
     {
@@ -148,7 +135,7 @@ class ProductService
      * Create a product either it's a "product"
      * or a "variable" product
      *
-     * @param array $data Data to handle
+     * @param  array $data Data to handle
      * @return array response
      */
     public function create( array $data ): array
@@ -204,7 +191,7 @@ class ProductService
     /**
      * create a variable product
      *
-     * @param array $data Data to handle
+     * @param  array $data Data to handle
      * @return array response
      */
     public function createVariableProduct( array $data ): array
@@ -255,7 +242,7 @@ class ProductService
     /**
      * Create a simple product
      *
-     * @param array $data Data to handle
+     * @param  array $data Data to handle
      * @return array response
      */
     public function createSimpleProduct( array $data ): array
@@ -368,9 +355,9 @@ class ProductService
     /**
      * Update a product either is a "product" or a "variable"
      *
-     * @param Product $product Product instance
-     * @param array   $data    Fields
-     * @return array response
+     * @param  Product $product Product instance
+     * @param  array   $data    Fields
+     * @return array   response
      */
     public function update( Product $product, array $data ): array
     {
@@ -426,9 +413,6 @@ class ProductService
     /**
      * Will release the product taxes
      * before a new modification is made to it
-     *
-     * @param Product $product
-     * @return void
      */
     public function releaseProductTaxes( Product $product ): void
     {
@@ -438,8 +422,6 @@ class ProductService
     /**
      * Performs a verification to see if the subitems only
      * consist of valid items (not gruoped items).
-     *
-     * @param array $fields
      */
     public function checkGroupProduct( array $fields ): void
     {
@@ -461,9 +443,9 @@ class ProductService
      * the variable within a product, if this latest has
      * the type "product" before
      *
-     * @param Product|int $id     Product id or instance
-     * @param array       $fields Fields
-     * @return array response
+     * @param  Product|int $id     Product id or instance
+     * @param  array       $fields Fields
+     * @return array       response
      */
     public function updateSimpleProduct( Product|int $id, array $fields ): array
     {
@@ -545,7 +527,6 @@ class ProductService
     /**
      * Saves the sub items by binding that to a product
      *
-     * @param array $subItems
      * @return array response
      */
     public function saveSubItems( Product $product, array $subItems ): array
@@ -648,7 +629,7 @@ class ProductService
     /**
      * Update a variable product
      *
-     * @param array $data Fields to save
+     * @param  array $data Fields to save
      * @return array response of the process
      */
     public function updateVariableProduct( Product $product, array $data ): array
@@ -732,7 +713,7 @@ class ProductService
          * @param string $field
          * @param mixed  $value
          * @param string $mode
-         * @param array $fields
+         * @param array  $fields
          */
         extract( $data );
 
@@ -818,16 +799,16 @@ class ProductService
                         // PLU generation failed - product category may not have a range assigned
                         // This is not a critical error, so we'll just skip it
                         ns()->notification->create(
-                            title:__( 'PLU Range: Failure' ),
+                            title: __( 'PLU Range: Failure' ),
                             identifier: 'product-scale-plu-error-' . $unitQuantity->id,
                             url: route( 'ns.dashboard.products-categories', [
-                                'id' => $product->category_id
-                            ]),
+                                'id' => $product->category_id,
+                            ] ),
                             description: sprintf( __( 'Unable to generate a scale PLU for %s: %s' ), $product->name, $e->getMessage() ),
-                        )->dispatchForPermissions([
+                        )->dispatchForPermissions( [
                             'nexopos.create.products',
-                            'nexopos.update.products'
-                        ]);
+                            'nexopos.update.products',
+                        ] );
                     }
                 }
             }
@@ -891,8 +872,8 @@ class ProductService
     /**
      * refresh the price for a specific product
      *
-     * @param ProductUnitQuantity $product Instance of the product
-     * @return array response of the operation
+     * @param  ProductUnitQuantity $product Instance of the product
+     * @return array               response of the operation
      *
      * @deprecated
      */
@@ -921,8 +902,8 @@ class ProductService
     /**
      * save product history
      *
-     * @param string $operationType Operation type
-     * @param array $data History to save
+     * @param  string $operationType Operation type
+     * @param  array  $data          History to save
      * @return array
      */
     public function saveHistory( $operationType, array $data )
@@ -939,7 +920,6 @@ class ProductService
      * a specific set of product informations
      *
      * @param array $data Product information to handle
-     * @return void
      */
     private function __saveProcurementHistory( array $data ): void
     {
@@ -980,9 +960,9 @@ class ProductService
      * this will update the quantity of
      * a product using a unit as a reference
      *
-     * @param int   $product_id Product id
-     * @param int   $unit_id    Unit id
-     * @param float $quantity   Quantity
+     * @param  int   $product_id Product id
+     * @param  int   $unit_id    Unit id
+     * @param  float $quantity   Quantity
      * @return array response
      */
     public function setQuantity( int $product_id, int $unit_id, float|int $quantity ): array
@@ -1012,8 +992,8 @@ class ProductService
      * Reset a product quantity
      * this will delete all quantity
      *
-     * @param int|Product $product_id Product id or instance
-     * @return array response
+     * @param  int|Product $product_id Product id or instance
+     * @return array       response
      */
     public function resetProduct( Product|int $product_id ): array
     {
@@ -1075,7 +1055,6 @@ class ProductService
      * delete a product using the
      * provided identifier
      *
-     * @param int $product_id
      * @return array operation status
      */
     public function deleteUsingID( int $product_id ): array
@@ -1088,8 +1067,8 @@ class ProductService
     /**
      * delete an instance of a product
      *
-     * @param Product $product Instance to delete
-     * @return array operation status
+     * @param  Product $product Instance to delete
+     * @return array   operation status
      */
     public function deleteProduct( Product $product ): array
     {
@@ -1124,7 +1103,8 @@ class ProductService
 
     /**
      * get variations
-     * @param int $product_id Product id
+     *
+     * @param  int                 $product_id Product id
      * @return Collection<Product>
      */
     public function getVariations( int $product_id ): Collection
@@ -1136,7 +1116,6 @@ class ProductService
      * get speciifc variation
      *
      * @param int $id Variation id
-     * @return Product
      */
     public function getVariation( int $id ): Product
     {
@@ -1154,7 +1133,6 @@ class ProductService
     /**
      * get unit quantity for a specific product
      *
-     * @param int $product_id
      * @return Collection<ProductUnitQuantity>
      */
     public function getUnitQuantities( int $product_id ): Collection
@@ -1178,7 +1156,7 @@ class ProductService
     /**
      * get specific product quantity using the provided id
      *
-     * @param int $product_id Product id
+     * @param  int                        $product_id Product id
      * @return Collection<ProductHistory>
      */
     public function getProductHistory( int $product_id ): Collection
@@ -1193,7 +1171,6 @@ class ProductService
     /**
      * @param ProcurementProduct $oldProduct Updating procurement product
      * @param array              $fields     Fields [ quantity, unit_id, purchase_price ]
-     * @return array
      */
     public function procurementStockOuting( ProcurementProduct $oldProduct, array $fields ): array
     {
@@ -1218,8 +1195,8 @@ class ProductService
     /**
      * Make a unit adjustment for a specific product.
      *
-     * @param string $action Operation: deducted, sold, procured, deleted, adjusted, damaged
-     * @param array{unit_id?: int, unit?: Unit, product_id?: int, sku?: string, unit_price: float|int, total_price?: float|int, procurement_id?: int|null, procurement_product_id?: int|null, sale_id?: int|null, quantity: float|int, orderProduct?: OrderProduct|null, procurementProduct?: ProcurementProduct|null, description?: string, author?: int} $data Data to manage
+     * @param string                                                                                                                                                                                                                                                                                                                                       $action Operation: deducted, sold, procured, deleted, adjusted, damaged
+     * @param array{unit_id?: int, unit?: Unit, product_id?: int, sku?: string, unit_price: float|int, total_price?: float|int, procurement_id?: int|null, procurement_product_id?: int|null, sale_id?: int|null, quantity: float|int, orderProduct?: OrderProduct|null, procurementProduct?: ProcurementProduct|null, description?: string, author?: int} $data   Data to manage
      */
     public function stockAdjustment( string $action, array $data ): ProductHistory|EloquentCollection|bool
     {
@@ -1308,13 +1285,6 @@ class ProductService
 
     /**
      * Handle stock transaction for grouped products.
-     *
-     * @param string            $action
-     * @param float|int         $orderProductQuantity
-     * @param Product           $product
-     * @param Unit              $parentUnit
-     * @param int               $author
-     * @param OrderProduct|null $orderProduct
      */
     private function handleStockAdjustmentsForGroupedProducts(
         string $action,
@@ -1412,9 +1382,8 @@ class ProductService
     /**
      * Will prevent negativity to occurs
      *
-     * @param  float $oldQuantity
-     * @param  float $quantity
-     * @return void
+     * @param float $oldQuantity
+     * @param float $quantity
      */
     private function preventNegativity( float|int $oldQuantity, float|int $quantity ): void
     {
@@ -1434,17 +1403,6 @@ class ProductService
 
     /**
      * Handle stock adjustment for regular products.
-     *
-     * @param string                  $action
-     * @param float|int               $quantity
-     * @param int                     $product_id
-     * @param int                     $unit_id
-     * @param int                     $author
-     * @param OrderProduct|null       $orderProduct
-     * @param float|int               $unit_price
-     * @param float|int               $total_price
-     * @param ProcurementProduct|null $procurementProduct
-     * @return ProductHistory
      */
     private function handleStockAdjustmentRegularProducts( string $action, float|int $quantity, int $product_id, int $unit_id, int $author = 0, ?OrderProduct $orderProduct = null, float|int $unit_price = 0, float|int $total_price = 0, ?ProcurementProduct $procurementProduct = null ): ProductHistory
     {
@@ -1564,14 +1522,11 @@ class ProductService
     /**
      * Records stock transaction for the provided product.
      *
-     * @param int    $product_id
-     * @param string $action
-     * @param int    $unit_id
-     * @param float  $unit_price
-     * @param float  $quantity
-     * @param float  $total_price
-     * @param float  $old_quantity
-     * @param float  $new_quantity
+     * @param float $unit_price
+     * @param float $quantity
+     * @param float $total_price
+     * @param float $old_quantity
+     * @param float $new_quantity
      */
     public function recordStockHistory(
         int $product_id,
@@ -1634,10 +1589,6 @@ class ProductService
 
     /**
      * Update procurement product quantity
-     *
-     * @param ProcurementProduct $procurementProduct
-     * @param float|int          $quantity
-     * @param string             $action
      */
     public function updateProcurementProductQuantity( ProcurementProduct $procurementProduct, float|int $quantity, string $action ): void
     {
@@ -1858,8 +1809,8 @@ class ProductService
      * Get a specific product using the
      * provided argument & identifier
      *
-     * @param string $argument Argument
-     * @param string|int|null $identifier Identifier
+     * @param  string          $argument   Argument
+     * @param  string|int|null $identifier Identifier
      * @return Product
      */
     public function getProductUsingArgument( $argument = 'id', $identifier = null )
@@ -1887,8 +1838,7 @@ class ProductService
      * specified parent product
      *
      * @param Product $parent Parent product
-     * @param array $fields Fields
-     * @return array
+     * @param array   $fields Fields
      */
     public function createProductVariation( Product $parent, array $fields ): array
     {
@@ -2177,9 +2127,6 @@ class ProductService
      * or throw an exception if the product
      * doesn't exist.
      *
-     * @param string $search
-     * @param int $limit
-     * @param array $arguments
      * @return Collection<Product>
      *
      * @throws NotFoundException
@@ -2479,15 +2426,16 @@ class ProductService
     {
         return collect( $products )->map( function ( $rawProduct ) {
             $product = Product::find( $rawProduct[ 'id' ] );
+
             return [
-                'product_id'             => $rawProduct[ 'id' ],
-                'product_name'           => $product->name,
-                'unit_id'                => $rawProduct[ 'adjust_unit' ][ 'unit_id' ],
-                'unit_name'              => $rawProduct[ 'adjust_unit' ][ 'unit' ][ 'name' ] ?? '',
-                'unit_price'             => $rawProduct[ 'adjust_unit' ][ 'sale_price' ] ?? 0,
-                'quantity'               => $rawProduct[ 'adjust_quantity' ],
-                'adjust_action'          => $rawProduct[ 'adjust_action' ],
-                'description'            => $rawProduct[ 'adjust_reason' ] ?? '',
+                'product_id' => $rawProduct[ 'id' ],
+                'product_name' => $product->name,
+                'unit_id' => $rawProduct[ 'adjust_unit' ][ 'unit_id' ],
+                'unit_name' => $rawProduct[ 'adjust_unit' ][ 'unit' ][ 'name' ] ?? '',
+                'unit_price' => $rawProduct[ 'adjust_unit' ][ 'sale_price' ] ?? 0,
+                'quantity' => $rawProduct[ 'adjust_quantity' ],
+                'adjust_action' => $rawProduct[ 'adjust_action' ],
+                'description' => $rawProduct[ 'adjust_reason' ] ?? '',
                 'procurement_product_id' => $rawProduct[ 'procurement_product_id' ] ?? null,
             ];
         } )->toArray();
@@ -2500,9 +2448,9 @@ class ProductService
     public function createAdjustmentDraft( array $products, string $title = '', string $description = '' ): ProductAdjustment
     {
         $adjustment = ProductAdjustment::create( [
-            'author_id'   => Auth::id(),
-            'title'       => $title,
-            'status'      => ProductAdjustment::STATUS_DRAFT,
+            'author_id' => Auth::id(),
+            'title' => $title,
+            'status' => ProductAdjustment::STATUS_DRAFT,
             'description' => $description,
         ] );
 
@@ -2523,7 +2471,7 @@ class ProductService
     public function updateAdjustmentDraft( ProductAdjustment $adjustment, array $products, string $title = '', string $description = '' ): ProductAdjustment
     {
         $adjustment->update( [
-            'title'       => $title,
+            'title' => $title,
             'description' => $description,
         ] );
 
@@ -2554,12 +2502,12 @@ class ProductService
 
         foreach ( $adjustment->items as $item ) {
             $results[] = $this->stockAdjustment( $item->adjust_action, [
-                'unit_price'             => $item->unit_price,
-                'unit_id'                => $item->unit_id,
+                'unit_price' => $item->unit_price,
+                'unit_id' => $item->unit_id,
                 'procurement_product_id' => $item->procurement_product_id,
-                'product_id'             => $item->product_id,
-                'quantity'               => $item->quantity,
-                'description'            => $item->description ?? '',
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'description' => $item->description ?? '',
             ] );
         }
 

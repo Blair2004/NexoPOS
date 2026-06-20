@@ -14,56 +14,56 @@ class UpdateProductTool extends Tool
 
     public string $description = 'Update an existing product main entry. Requires product id. Does not touch quantity or pricing, which are handled by product unit quantities.';
 
-    public function schema(JsonSchema $schema): array
+    public function schema( JsonSchema $schema ): array
     {
         return [
             'name' => $schema->string()
-                ->description('The new name of the product.')
+                ->description( 'The new name of the product.' )
                 ->nullable(),
             'description' => $schema->string()
-                ->description('The new description.')
+                ->description( 'The new description.' )
                 ->nullable(),
             'status' => $schema->string()
-                ->description('Product status (e.g. available, unavailable).')
+                ->description( 'Product status (e.g. available, unavailable).' )
                 ->nullable(),
             'category_id' => $schema->number()
-                ->description('ID of the product category.')
+                ->description( 'ID of the product category.' )
                 ->nullable(),
             'barcode' => $schema->string()
-                ->description('Product barcode.')
+                ->description( 'Product barcode.' )
                 ->nullable(),
             'sku' => $schema->string()
-                ->description('Product SKU.')
+                ->description( 'Product SKU.' )
                 ->nullable(),
         ];
     }
 
-    public function handle( Request $request): Response
+    public function handle( Request $request ): Response
     {
-        if (empty($request->get('id'))) {
-            return Response::error('The id parameter is required.');
+        if ( empty( $request->get( 'id' ) ) ) {
+            return Response::error( 'The id parameter is required.' );
         }
 
-        $product = Product::find($request->get('id'));
+        $product = Product::find( $request->get( 'id' ) );
 
-        if (!$product) {
-            return Response::error('Product not found.');
+        if ( ! $product ) {
+            return Response::error( 'Product not found.' );
         }
 
         $fillable = ['name', 'description', 'status', 'category_id', 'barcode', 'sku'];
 
-        foreach ($fillable as $field) {
-            if ($request->get($field) !== null) {
-                $product->$field = $request->get($field);
+        foreach ( $fillable as $field ) {
+            if ( $request->get( $field ) !== null ) {
+                $product->$field = $request->get( $field );
             }
         }
-        
+
         $product->save();
 
-        return Response::json([
+        return Response::json( [
             'id' => $product->id,
             'name' => $product->name,
-            'message' => 'Product updated successfully.'
-        ]);
+            'message' => 'Product updated successfully.',
+        ] );
     }
 }

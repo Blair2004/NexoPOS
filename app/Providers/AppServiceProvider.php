@@ -17,7 +17,6 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\EnvEditor;
-use App\Services\Helper;
 use App\Services\MarketplaceService;
 use App\Services\MathService;
 use App\Services\MediaService;
@@ -49,7 +48,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

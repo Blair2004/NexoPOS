@@ -21,9 +21,9 @@ class PaymentTypesResource extends Resource
         try {
             $types = PaymentType::all();
 
-            return Response::json($types->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $types->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

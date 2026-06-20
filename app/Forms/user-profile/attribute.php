@@ -35,6 +35,7 @@ return SettingForm::tab(
         ),
     )
 );
+
 return [
     'label' => __( 'General' ),
     'fields' => [

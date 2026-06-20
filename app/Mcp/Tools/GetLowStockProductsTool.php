@@ -18,34 +18,34 @@ class GetLowStockProductsTool extends Tool
 
     protected string $description = 'Retrieve products that have fallen below their configured low-stock alert threshold. Optionally filter by category or unit IDs.';
 
-    public function schema(JsonSchema $schema): array
+    public function schema( JsonSchema $schema ): array
     {
         return [
             'categories' => $schema->array()
-                ->description('Optional array of category IDs to filter results. Leave empty for all categories.')
-                ->items($schema->integer())
-                ->default([]),
+                ->description( 'Optional array of category IDs to filter results. Leave empty for all categories.' )
+                ->items( $schema->integer() )
+                ->default( [] ),
             'units' => $schema->array()
-                ->description('Optional array of unit IDs to filter results. Leave empty for all units.')
-                ->items($schema->integer())
-                ->default([]),
+                ->description( 'Optional array of unit IDs to filter results. Leave empty for all units.' )
+                ->items( $schema->integer() )
+                ->default( [] ),
         ];
     }
 
-    public function handle(Request $request, ReportService $service): Response
+    public function handle( Request $request, ReportService $service ): Response
     {
         try {
-            $categories = $request->get('categories', []);
-            $units      = $request->get('units', []);
+            $categories = $request->get( 'categories', [] );
+            $units = $request->get( 'units', [] );
 
             $results = $service->getLowStockProducts(
-                is_array($categories) ? $categories : [],
-                is_array($units) ? $units : []
+                is_array( $categories ) ? $categories : [],
+                is_array( $units ) ? $units : []
             );
 
-            return Response::json($results->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $results->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

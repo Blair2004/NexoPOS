@@ -244,7 +244,7 @@ class OrdersService
      * Will save order installments if
      * it's provider
      *
-     * @param  array $instalments
+     * @param  array                             $instalments
      * @return Collection<OrderInstalment|array>
      */
     public function __saveOrderInstalments( Order $order, $instalments = [] )
@@ -336,9 +336,6 @@ class OrdersService
 
     /**
      * Checks whether the attached coupons are valid
-     *
-     * @param  array $fields
-     * @return void
      */
     public function __checkAttachedCoupons( array $fields ): void
     {
@@ -369,7 +366,7 @@ class OrdersService
         return 0;
     }
 
-    private function __computeCouponValue( array $coupon, float | int $subtotal )
+    private function __computeCouponValue( array $coupon, float|int $subtotal )
     {
         return match ( $coupon[ 'discount_type' ] ) {
             'percentage_discount' => $this->computeDiscountValues( $coupon[ 'discount_value' ], $subtotal ),
@@ -484,8 +481,7 @@ class OrdersService
     /**
      * Assign taxes to the processed order
      *
-     * @param  array $taxes
-     * @return array
+     * @param array $taxes
      */
     public function __registerTaxes( Order $order, $taxes ): array
     {
@@ -506,10 +502,6 @@ class OrdersService
     /**
      * will delete the products belonging to an order
      * that aren't tracked.
-     *
-     * @param  Order $order
-     * @param  SupportCollection $products
-     * @return void
      */
     public function __deleteUntrackedProducts( Order $order, SupportCollection $products ): void
     {
@@ -647,8 +639,6 @@ class OrdersService
     /**
      * get the current shipping
      * feels
-     * @param array $fields
-     * @return float
      */
     private function __getShippingFee( array $fields ): float
     {
@@ -659,8 +649,6 @@ class OrdersService
      * Check whether a discount is valid or
      * not
      *
-     * @param array $fields
-     * @return void
      *
      * @throws NotAllowedException
      */
@@ -699,7 +687,6 @@ class OrdersService
      * Check defined address informations
      * and throw an error if a fields is not supported
      *
-     * @param array $fields
      * @return array $fields
      */
     private function __checkAddressesInformations( array $fields ): array
@@ -742,8 +729,6 @@ class OrdersService
      * Save address informations
      * for a specific order
      *
-     * @param Order $order
-     * @param array $fields
      * @return SupportCollection<OrderAddress>
      */
     private function __saveAddressInformations( Order $order, array $fields ): SupportCollection
@@ -885,10 +870,6 @@ class OrdersService
      * Checks the order payements and compare
      * it to the product values and determine
      * if the order can proceed
-     *
-     * @param array $fields
-     * @param Order|null $order
-     * @param Customer $customer
      */
     private function __checkOrderPayments( array $fields, ?Order $order, Customer $customer )
     {
@@ -1236,7 +1217,7 @@ class OrdersService
 
     /**
      * Prebuild order products to be used for order creation or update.
-     * @param array $order
+     *
      * @return SupportCollection<array>
      */
     private function __buildOrderProducts( array $order ): SupportCollection
@@ -1361,11 +1342,11 @@ class OrdersService
          * This will calculate the product default field
          * when they aren't provided.
          */
-        $orderProduct = $this->computeProduct( 
-            rawProduct: $orderProduct, 
-            product: $product, 
+        $orderProduct = $this->computeProduct(
+            rawProduct: $orderProduct,
+            product: $product,
             productUnitQuantity: $productUnitQuantity,
-            rawOrder: $order 
+            rawOrder: $order
         );
 
         $orderProduct[ 'unit_id' ] = $productUnitQuantity->unit->id ?? $orderProduct[ 'unit_id' ] ?? 0;
@@ -1453,7 +1434,7 @@ class OrdersService
         }
     }
 
-    public function computeProduct( array $rawProduct, ?Product $product = null, ?ProductUnitQuantity $productUnitQuantity = null, array $rawOrder )
+    public function computeProduct( array $rawProduct, ?Product $product, ?ProductUnitQuantity $productUnitQuantity, array $rawOrder )
     {
         $sale_price = ( $rawProduct[ 'unit_price' ] ?? $productUnitQuantity->sale_price );
 
@@ -1490,8 +1471,8 @@ class OrdersService
                     price: $sale_price
                 )
             )
-            ->multiplyBy( floatval( $rawProduct[ 'quantity' ] ) )
-            ->toFloat();
+                ->multiplyBy( floatval( $rawProduct[ 'quantity' ] ) )
+                ->toFloat();
         }
 
         /**
@@ -1505,10 +1486,11 @@ class OrdersService
         }
 
         if ( isset( $rawOrder[ 'tax_group_id' ] ) ) {
-            $rate = FacadesCache::remember( 'tax-rate-' . $rawOrder[ 'tax_group_id' ], now()->addMinute(), function() use ( $rawOrder ) {
+            $rate = FacadesCache::remember( 'tax-rate-' . $rawOrder[ 'tax_group_id' ], now()->addMinute(), function () use ( $rawOrder ) {
                 $tax = TaxGroup::with( 'taxes' )->find( $rawOrder[ 'tax_group_id' ] );
+
                 return $tax->taxes->map( fn( Tax $tax ) => $tax->rate )->toArray();
-            });
+            } );
 
             $response = $this->taxService->getTaxesComputed( $rawOrder[ 'tax_type' ], $rate, $rawProduct[ 'unit_price' ] );
 
@@ -1516,7 +1498,7 @@ class OrdersService
                 $rawProduct[ 'price_gross' ] = $response[ 'with-tax' ];
                 $rawProduct[ 'total_price_gross' ] = ns()->currency->define( $rawProduct[ 'price_gross' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();
             }
-            
+
             if ( empty( $response[ 'price_net' ] ) ) {
                 $rawProduct[ 'price_net' ] = $response[ 'without-tax' ];
                 $rawProduct[ 'total_price_net' ] = ns()->currency->define( $rawProduct[ 'price_net' ] )->multipliedBy( $rawProduct[ 'quantity' ] )->toFloat();

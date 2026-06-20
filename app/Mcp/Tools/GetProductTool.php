@@ -18,47 +18,47 @@ class GetProductTool extends Tool
 
     protected string $description = 'Retrieve a single product by its ID, barcode, or SKU. Exactly one of id, barcode, or sku must be provided.';
 
-    public function schema(JsonSchema $schema): array
+    public function schema( JsonSchema $schema ): array
     {
         return [
             'id' => $schema->integer()
-                ->description('The product\'s numeric ID.')
+                ->description( 'The product\'s numeric ID.' )
                 ->nullable(),
             'barcode' => $schema->string()
-                ->description('The product\'s barcode string.')
+                ->description( 'The product\'s barcode string.' )
                 ->nullable(),
             'sku' => $schema->string()
-                ->description('The product\'s SKU string.')
+                ->description( 'The product\'s SKU string.' )
                 ->nullable(),
         ];
     }
 
-    public function handle(Request $request, ProductService $service): Response
+    public function handle( Request $request, ProductService $service ): Response
     {
         try {
-            $id      = $request->get('id');
-            $barcode = $request->get('barcode');
-            $sku     = $request->get('sku');
+            $id = $request->get( 'id' );
+            $barcode = $request->get( 'barcode' );
+            $sku = $request->get( 'sku' );
 
-            if ($id !== null) {
-                $product = $service->get((int) $id);
-            } elseif ($barcode !== null) {
-                $product = $service->getProductUsingBarcode($barcode);
-                if ($product === false) {
-                    return Response::error("No product found with barcode: {$barcode}");
+            if ( $id !== null ) {
+                $product = $service->get( (int) $id );
+            } elseif ( $barcode !== null ) {
+                $product = $service->getProductUsingBarcode( $barcode );
+                if ( $product === false ) {
+                    return Response::error( "No product found with barcode: {$barcode}" );
                 }
-            } elseif ($sku !== null) {
-                $product = $service->getProductUsingSKU($sku);
-                if ($product === false) {
-                    return Response::error("No product found with SKU: {$sku}");
+            } elseif ( $sku !== null ) {
+                $product = $service->getProductUsingSKU( $sku );
+                if ( $product === false ) {
+                    return Response::error( "No product found with SKU: {$sku}" );
                 }
             } else {
-                return Response::error('Provide at least one of: id, barcode, or sku.');
+                return Response::error( 'Provide at least one of: id, barcode, or sku.' );
             }
 
-            return Response::json($product->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $product->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

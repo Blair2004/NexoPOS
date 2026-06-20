@@ -20,7 +20,6 @@ use App\Models\Role;
 use App\Models\TransactionAccount;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Resources\Json\PaginatedResourceResponse;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -72,7 +71,7 @@ class ReportService
     /**
      * Will compute the report for the current day
      */
-    public function computeDayReport( string | null $dateStart = null, string | null $dateEnd = null ): DashboardDay
+    public function computeDayReport( ?string $dateStart = null, ?string $dateEnd = null ): DashboardDay
     {
         $this->dayStarts = $dateStart ?: $this->dateService->copy()->startOfDay()->toDateTimeString();
         $this->dayEnds = $dateEnd ?: $this->dateService->copy()->endOfDay()->toDateTimeString();
@@ -368,10 +367,6 @@ class ReportService
 
     /**
      * get from a specific date
-     *
-     * @param  string     $startDate
-     * @param  string     $endDate
-     * @return Collection
      */
     public function getFromTimeRange( string $startDate, string $endDate ): Collection
     {
@@ -415,11 +410,6 @@ class ReportService
 
     /**
      * Will return the products report
-     *
-     * @param  string $startDate
-     * @param  string $endDate
-     * @param  string $sort
-     * @return array
      */
     public function getProductSalesDiff( string $startDate, string $endDate, string $sort ): array
     {
@@ -512,10 +502,6 @@ class ReportService
     /**
      * Will proceed the request to the
      * database that returns the products report
-     *
-     * @param  array  $previousDates
-     * @param  string $sort
-     * @return array
      */
     private function getBestRecords( array $previousDates, string $sort ): array
     {
@@ -841,7 +827,7 @@ class ReportService
     /**
      * Will returns the details for a specific cashier
      */
-    public function getCashierDashboard( int $cashier, string $startDate = null, string $endDate = null ): array
+    public function getCashierDashboard( int $cashier, ?string $startDate = null, ?string $endDate = null ): array
     {
         $cacheKey = 'cashier-report-' . $cashier;
 
@@ -1273,7 +1259,7 @@ class ReportService
     /**
      * Only trigger the job for combined products.
      */
-    public function computeCombinedReport( string | null $date ): array
+    public function computeCombinedReport( ?string $date ): array
     {
         EnsureCombinedProductHistoryExistsJob::dispatch( $date );
 
@@ -1283,7 +1269,7 @@ class ReportService
         ];
     }
 
-    public function getAccountSummaryReport( string | null $startDate = null, string | null $endDate = null ): array
+    public function getAccountSummaryReport( ?string $startDate = null, ?string $endDate = null ): array
     {
         $startDate = $startDate === null ? ns()->date->getNow()->startOfMonth()->toDateTimeString() : $startDate;
         $endDate = $endDate === null ? ns()->date->getNow()->endOfMonth()->toDateTimeString() : $endDate;

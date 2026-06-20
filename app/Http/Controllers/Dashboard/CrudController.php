@@ -466,7 +466,7 @@ class CrudController extends DashboardController
         if ( $entry instanceof $model ) {
             if ( $request->query( 'with-relations' ) ) {
                 $relationExploded = explode( ',', $request->query( 'with-relations' ) );
-                
+
                 foreach ( $relationExploded as $relation ) {
                     if ( method_exists( $model, $relation ) ) {
                         $entry->$relation;

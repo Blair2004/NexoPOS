@@ -15,7 +15,7 @@ use Tests\Traits\WithAuthentication;
  */
 class ApiRoutePermissionTest extends TestCase
 {
-    use WithAuthentication, WithApiRoutePermissionTest;
+    use WithApiRoutePermissionTest, WithAuthentication;
 
     /**
      * An unprivileged user must receive 403 on every protected API route.

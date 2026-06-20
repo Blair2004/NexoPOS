@@ -3,9 +3,9 @@
 namespace App\Crud;
 
 use App\Models\TaxGroup;
+use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Models\User;
 use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;

@@ -33,7 +33,7 @@ return new class extends Migration
             $table->decimal( 'total_paid_orders', 18, 5 )->default( 0 );
             $table->float( 'total_paid_orders_count', 18 )->default( 0 );
             $table->decimal( 'total_partially_paid_orders', 18, 5 )->default( 0 );
-            $table->float( 'total_partially_paid_orders_count', 18  )->default( 0 );
+            $table->float( 'total_partially_paid_orders_count', 18 )->default( 0 );
             $table->decimal( 'total_income', 18, 5 )->default( 0 );
             $table->float( 'total_discounts', 18 )->default( 0 );
             $table->decimal( 'total_taxes', 18, 5 )->default( 0 );

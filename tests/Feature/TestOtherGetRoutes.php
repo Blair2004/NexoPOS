@@ -85,7 +85,7 @@ class TestOtherGetRoutes extends TestCase
                     if ( $response->status() === 302 ) {
                         $this->assertTrue( in_array( $uri, [
                             'dashboard/accounting/transactions/create',
-                            'dashboard/oauth/mynexopos/authorize'
+                            'dashboard/oauth/mynexopos/authorize',
                         ] ) );
                     } else {
                         if ( $response->status() == 200 ) {
@@ -94,8 +94,8 @@ class TestOtherGetRoutes extends TestCase
                             } else {
                                 $response->assertSee( 'dashboard-body' );
                             }
-                        } else if ( $response->status() === 422 ) {
-                            $this->assertTrue( in_array($uri, [
+                        } elseif ( $response->status() === 422 ) {
+                            $this->assertTrue( in_array( $uri, [
                                 'dashboard/oauth/mynexopos/callback',
                             ] ) );
                         } else {

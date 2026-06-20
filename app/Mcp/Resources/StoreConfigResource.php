@@ -18,7 +18,7 @@ class StoreConfigResource extends Resource
     public function handle(): Response
     {
         try {
-            $config = ns()->option->get([
+            $config = ns()->option->get( [
                 'ns_store_name',
                 'ns_currency_symbol',
                 'ns_currency_precision',
@@ -28,11 +28,11 @@ class StoreConfigResource extends Resource
                 'ns_store_address',
                 'ns_store_phone',
                 'ns_store_email',
-            ]);
+            ] );
 
-            return Response::json((array) $config);
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( (array) $config );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

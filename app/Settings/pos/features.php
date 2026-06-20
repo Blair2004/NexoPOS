@@ -208,6 +208,6 @@ return [
                 'wireless' => __( 'Wireless' ),
             ] ),
             value: ns()->option->get( 'ns_pos_barcode_reader_type', 'regular' ),
-        )
+        ),
     ],
 ];

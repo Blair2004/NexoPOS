@@ -15,13 +15,13 @@ class MarketplaceController extends DashboardController
 
     public function getModules( Request $request )
     {
-        return $this->marketplaceService->getModules([
+        return $this->marketplaceService->getModules( [
             'host' => $request->getHost(),
             'per_page' => $request->query( 'per_page', 12 ),
             'page' => $request->query( 'page', 1 ),
             'categories' => $request->query( 'categories', null ),
             'search' => $request->query( 'search', null ),
-        ]);
+        ] );
     }
 
     public function oauthAuthorize()
@@ -50,7 +50,7 @@ class MarketplaceController extends DashboardController
         return $this->marketplaceService->addToCart( $validated[ 'item_id' ] );
     }
 
-    public function getLicenses( int | string $itemId )
+    public function getLicenses( int|string $itemId )
     {
         return $this->marketplaceService->getLicenses( $itemId );
     }

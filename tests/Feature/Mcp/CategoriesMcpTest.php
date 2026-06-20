@@ -14,18 +14,18 @@ class CategoriesMcpTest extends TestCase
 
     public function test_create_category()
     {
-        $response = $this->runMcpTool(CreateCategoryTool::class, [
+        $response = $this->runMcpTool( CreateCategoryTool::class, [
             'name' => 'Awesome Category',
-        ]);
+        ] );
 
-        $this->assertIsArray($response);
-        $this->assertArrayNotHasKey('error', $response);
+        $this->assertIsArray( $response );
+        $this->assertArrayNotHasKey( 'error', $response );
 
         // Should return the ID of the new category
-        $this->assertArrayHasKey('id', $response);
+        $this->assertArrayHasKey( 'id', $response );
 
-        $category = ProductCategory::find($response['id']);
-        $this->assertNotNull($category);
-        $this->assertEquals('Awesome Category', $category->name);
+        $category = ProductCategory::find( $response['id'] );
+        $this->assertNotNull( $category );
+        $this->assertEquals( 'Awesome Category', $category->name );
     }
 }

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Events\OrderCouponAfterCreatedEvent;
 use App\Events\OrderCouponAfterUpdatedEvent;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**

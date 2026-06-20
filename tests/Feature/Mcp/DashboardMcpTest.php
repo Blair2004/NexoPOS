@@ -3,8 +3,6 @@
 namespace Tests\Feature\Mcp;
 
 use App\Mcp\Tools\GetDashboardSummaryTool;
-use App\Models\Order;
-use App\Models\OrderPayment;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\Traits\TestsMcpTools;
@@ -15,11 +13,11 @@ class DashboardMcpTest extends TestCase
 
     public function test_get_dashboard_summary()
     {
-        $response = $this->runMcpTool(GetDashboardSummaryTool::class, []);
+        $response = $this->runMcpTool( GetDashboardSummaryTool::class, [] );
 
-        $this->assertIsArray($response);
-        $this->assertArrayNotHasKey('error', $response);
-        $this->assertArrayHasKey('day_paid_orders', $response);
-        $this->assertArrayHasKey('total_income', $response);
+        $this->assertIsArray( $response );
+        $this->assertArrayNotHasKey( 'error', $response );
+        $this->assertArrayHasKey( 'day_paid_orders', $response );
+        $this->assertArrayHasKey( 'total_income', $response );
     }
 }

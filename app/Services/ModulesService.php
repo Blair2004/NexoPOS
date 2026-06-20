@@ -512,7 +512,7 @@ class ModulesService
     /**
      * Boot a module if it's enabled.
      */
-    public function boot( array | null $module = null ): void
+    public function boot( ?array $module = null ): void
     {
         if ( ! empty( $module ) && ( $module[ 'enabled' ] || $module[ 'autoloaded' ] ) ) {
             $this->__boot( $module );
@@ -1944,9 +1944,6 @@ class ModulesService
 
     /**
      * Stream Content
-     * @param string $content
-     * @param array $config
-     * @return ViewView
      */
     public function streamContent( string $content, array $config ): ViewView
     {

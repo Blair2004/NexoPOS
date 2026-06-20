@@ -4,9 +4,9 @@ namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
+use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Models\User;
 use App\Services\ProviderService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;

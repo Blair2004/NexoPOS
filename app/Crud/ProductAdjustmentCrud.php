@@ -6,7 +6,6 @@ use App\Casts\DateCast;
 use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductAdjustment;
-use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use Illuminate\Http\Request;
@@ -57,7 +56,7 @@ class ProductAdjustmentCrud extends CrudService
 
     protected $permissions = [
         'create' => 'nexopos.update.products',
-        'read'   => 'nexopos.update.products',
+        'read' => 'nexopos.update.products',
         'update' => 'nexopos.update.products',
         'delete' => 'nexopos.update.products',
     ];
@@ -89,7 +88,7 @@ class ProductAdjustmentCrud extends CrudService
         return [
             'list' => ns()->url( '/dashboard/products/adjustment-history' ),
             'post' => ns()->url( '/api/crud/' . self::IDENTIFIER ),
-            'put'  => ns()->url( '/api/crud/' . self::IDENTIFIER . '/{id}' ),
+            'put' => ns()->url( '/api/crud/' . self::IDENTIFIER . '/{id}' ),
         ];
     }
 
@@ -114,7 +113,7 @@ class ProductAdjustmentCrud extends CrudService
     public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->{ '$cssClass' } = match ( $entry->getOriginalValue( 'status' ) ) {
-            ProductAdjustment::STATUS_DRAFT     => 'warning border text-sm',
+            ProductAdjustment::STATUS_DRAFT => 'warning border text-sm',
             ProductAdjustment::STATUS_PERFORMED => 'success border text-sm',
             default => '',
         };
@@ -184,9 +183,9 @@ class ProductAdjustmentCrud extends CrudService
     {
         return [
             [
-                'label'      => __( 'Delete Selected' ),
+                'label' => __( 'Delete Selected' ),
                 'identifier' => 'delete_selected',
-                'url'        => ns()->route( 'ns.api.crud-bulk-actions', [
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
                 ] ),
             ],
@@ -200,7 +199,7 @@ class ProductAdjustmentCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'error'   => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {

@@ -18,23 +18,23 @@ class GetCustomerTool extends Tool
 
     protected string $description = 'Retrieve a single customer by their numeric ID, including their billing and shipping addresses.';
 
-    public function schema(JsonSchema $schema): array
+    public function schema( JsonSchema $schema ): array
     {
         return [
             'id' => $schema->integer()
-                ->description('The customer\'s numeric ID.')
+                ->description( 'The customer\'s numeric ID.' )
                 ->required(),
         ];
     }
 
-    public function handle(Request $request, CustomerService $service): Response
+    public function handle( Request $request, CustomerService $service ): Response
     {
         try {
-            $customer = $service->get((int) $request->get('id'));
+            $customer = $service->get( (int) $request->get( 'id' ) );
 
-            return Response::json($customer->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $customer->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }
