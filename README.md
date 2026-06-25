@@ -1,111 +1,104 @@
 [![Latest Stable Version](https://poser.pugx.org/blair2004/nexopos/v)](//packagist.org/packages/blair2004/nexopos) [![Total Downloads](https://poser.pugx.org/blair2004/nexopos/downloads)](//packagist.org/packages/blair2004/nexopos) [![Latest Unstable Version](https://poser.pugx.org/blair2004/nexopos/v/unstable)](//packagist.org/packages/blair2004/nexopos) [![License](https://poser.pugx.org/blair2004/nexopos/license)](//packagist.org/packages/blair2004/nexopos)
 
+
 <p align="center">
   <img src="https://user-images.githubusercontent.com/5265663/162700085-40ed00ca-9154-42cb-850a-ccf1c2db2d5d.png" alt="NexoPOS"/>
 </p>
 
-NexoPOS is a free point-of-sale system built using Laravel, TailwindCSS, Vue, and other open-source resources. This POS System focuses on utilities and functionalities to offer most businesses all the tools they need to manage their store more effectively. NexoPOS includes a responsive and beautiful dashboard that ease the interaction either on a smartphone, tablet, or desktop.
+NexoPOS is more than a standalone Point of Sale application. It is part of a growing ecosystem designed to help businesses install, extend, and operate their POS system across different environments.
 
-## Demo
+The ecosystem includes the free NexoPOS core, official modules, mobile companion applications, desktop utilities, developer tools, documentation, and services available through [My NexoPOS](https://my.nexopos.com/en?utm_source=github.com&utm_campaign=readme).
+
+### Core Application
+
+This repository contains the base version of NexoPOS. It provides the main POS foundation, including:
+
+* Product and category management
+* Customer management
+* Accounting
+* Scale Barcode Support
+* Order and sales processing
+* Inventory tracking
+* Taxes, payments, and receipts
+* Dashboard and reporting foundations
+* User roles and permissions
+* Module support for extending the application
+
+Developers can use this repository to install NexoPOS, customize workflows, build modules, integrate third-party services, and adapt the POS to specific business needs.
+
 Try a demo right now in our [Demo Instance](https://demo.nexopos.com).
 
-## Deploy
-NexoPOS is partnering with InstaPods to offer you a smooth deploying experience with NexoPOS.
+<p align="center">
+  <img width="1477" height="1025" alt="image" src="https://github.com/user-attachments/assets/8397ce11-ee03-4bb0-911c-57d6295cb096" />
+</p>
+
+### Deployment
+NexoPOS is partnering with InstaPods to offer you a smooth deployment experience with NexoPOS.
 
 [![Deploy On InstaPods](https://instapods.com/deploy-button.svg)](https://app.instapods.com/dashboard/pods/create?app=nexopos&ref=nexopos) 
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS/tree/v5.0.x&refcode=ebdb80cb0ec7)
 
-Read Review On:
-[![Laravel News](https://user-images.githubusercontent.com/5265663/186377311-c42ddd2c-bc84-465c-a3b6-94e6df8d68bc.jpg)](https://laravel-news.com/nexopos-point-of-sale-for-laravel?utm_source=github.com&utm_medium=readme&utm_campagin=nexopos)
+### Recommended Modules
 
-## Documentation
-All the documentation for NexoPOS can be found on [My NexoPOS](https://my.nexopos.com/en/documentation). That includes : 
+NexoPOS can be extended with official modules available on [My NexoPOS](https://my.nexopos.com/en?utm_source=github.com&utm_campaign=readme). These modules add advanced features for restaurants, warehouses, multi-store businesses, inventory control, printing, reporting, and more.
 
-- [Configuring the environment](https://my.nexopos.com/en/documentation/getting-started/configuring-the-environment)
-- [Downloading NexoPOS](https://my.nexopos.com/en/documentation/getting-started/download-and-install)
-- [Installing NexoPOS](https://my.nexopos.com/en/documentation/getting-started/installation-wizard)
-- [Rest API](https://docs.api.nexopos.com)
+Some recommended modules include:
 
-And for developers, there are more technical tutorials that cover:
-- [Creating a module](https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-module-for-nexopos-4-x)
-- [Create a menu for a module](https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-menu-on-nexopos-4-x)
-- [Create a route](https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-routes-for-modules)
-
-We've also created a video tutorial that will help you perform those easily.
-
-[
-![image](https://user-images.githubusercontent.com/5265663/163531524-408757a8-d5a8-40b1-8e8f-c4e59e778e05.png)
-](https://www.youtube.com/watch?v=V80-hOJCywY)
-
-## Changelog & Feature Announcement
-We frequently discuss the future of the app (while waiting, discussions are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS.
+* **[Gastro - Restaurant Extension for NexoPOS](https://my.nexopos.com/en/marketplace/item/gastro-restaurant-extension-for-nexopos?utm_source=github.com&utm_campaign=readme)** — Adds restaurant management features to NexoPOS, including food-service workflows and restaurant-focused operations.
+* **[Raw Material Tracker](https://my.nexopos.com/en/marketplace/item/raw-material-tracker?utm_source=github.com&utm_campaign=readme)** — Helps restaurants and food businesses monitor ingredient usage by linking ingredients to products and recipes.
+* **[Multistore for NexoPOS](https://my.nexopos.com/en/marketplace/item/multistore-for-nexopos?utm_source=github.com&utm_campaign=readme)** — Enables businesses to manage multiple stores from a single NexoPOS installation.
+* **[Stock Transfers](https://my.nexopos.com/en/marketplace/item/stock-transfers?utm_source=github.com&utm_campaign=readme)** — Allows multiple stores to send, request, approve, and track inventory transfers.
+* **[Racks Manager](https://my.nexopos.com/en/marketplace/item/racks-manager?utm_source=github.com&utm_campaign=readme)** — Adds structured warehouse storage to NexoPOS using racks, shelves, and storage locations.
+* **[Bulk Importer](https://my.nexopos.com/en/marketplace/item/bulk-importer?utm_source=github.com&utm_campaign=readme)** — Helps import products, customers, categories, and other resources using CSV files.
+* **[Sales Commissions](https://my.nexopos.com/en/marketplace/item/sales-commissions?utm_source=github.com&utm_campaign=readme)** — Allows businesses to reward sales staff by calculating commissions on completed sales.
+* **[WhatsApp Notification](https://my.nexopos.com/en/marketplace/item/whatsapp-notification?utm_source=github.com&utm_campaign=readme)** — Forwards system and module notifications from NexoPOS to WhatsApp-supported workflows.
 
 
-## Support Terms
+You can browse available modules from the [NexoPOS Marketplace](https://my.nexopos.com).
 
-1 - The support on NexoPOS only applies to the information provided by the users while creating an issue. This means we won't either do the installation on your server or check an issue on your server. You're therefore invited not to post your server information while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
+### Mobile Applications
 
-2 - If you would like to have dedicated support. Consider registering as a member to [My NexoPOS platform](https://my.nexopos.com/en/account/checkout/premium).
+NexoPOS also provides mobile companion applications designed to improve daily store operations.
 
-## Troubleshooting
-Here we list the known issues and the way around them. Not everyone is likely to face these issues, as it depends on the environment used.
+Recommended mobile apps include:
 
-- CSRF error After Installation
-Chances are when you make your installation, you'll have your website URL changed. Unfortunately, if the domain has to change, it must be clearly described on the .env file. We've written a guide that explains how to solve the [CSRF issue on NexoPOS](https://my.nexopos.com/en/documentation/troubleshooting/how-to-fix-csrf-token-mismatch-on-nexopos-4-x).
+* **[Barcode Utility for NexoPOS](https://play.google.com/store/apps/details?id=com.nexopos.barcodeutility?utm_source=github.com&utm_campaign=readme)** — Turns a phone or tablet into a wireless barcode scanner connected to the POS.
+* **[NexoPOS Authorizer](https://my.nexopos.com/en/marketplace/item/nexopos-authorizer?utm_source=github.com&utm_campaign=readme)** — Secure sensitive features such as discounts, order modifications, and more behind a unique QR code that can only be granted by admin staff.
 
-- Error After Database Details (using `php artisan serve`)
-If you're serving the project using `php artisan serve`, after setting up the database credentials and having them validated, you might get stuck in an infinite
-loading page. 
+These mobile tools are useful for stores that want a flexible scanning experience without relying only on traditional barcode scanners.
 
-![screenshot-127 0 0 1_8000-2020 10 01-00_33_17](https://user-images.githubusercontent.com/5265663/94781001-17809f00-037e-11eb-9f14-3bf4427054bf.png)
+### Desktop Utilities
 
-This is caused because during the database setup, the ".env" is updated which causes Laravel to restart the development server and therefore invalidate your session. The way around this is to refresh the page, and you'll reach the application details section.
+For businesses that prefer running NexoPOS locally or need better hardware integration, NexoPOS also provides desktop utilities.
 
-## Contribution Guidelines
-Do you plan to contribute? That's awesome. We don't have that many developers on it, so we're open to any type of contributions. If you're a developer, you'll start by forking the project and deploying that locally for further tests. Refer to the package.json file to see the available commands to build the project.
+Available desktop tools include:
 
-**To install Node.js dependencies**
-```
-npm install
-```
+* **[NexoPOS For Windows](https://my.nexopos.com/en/marketplace/item/nexopos-for-windows?utm_source=github.com&utm_campaign=readme)** — A companion tool that improves thermal printer connectivity between NexoPOS and local printers.
 
-**To Launch The Dev Mode (Watch)**
-```
-npx vite
-```
+These tools are especially useful for local stores, restaurants, and businesses that need reliable access to printers and local network devices.
 
-**To Build The Project**
-```
-npx vite build
-```
+### My NexoPOS Platform
 
-## Star History
-Thank you for all your support over the years :).
+[My NexoPOS](https://my.nexopos.com/en?utm_source=github.com&utm_campaign=readme) is the official platform for the NexoPOS ecosystem. It provides access to:
 
-[![Star History Chart](https://api.star-history.com/svg?repos=blair2004/NexoPOS&type=Date)](https://star-history.com/#blair2004/NexoPOS&Date)
+* Official documentation
+* Module downloads
+* Marketplace access
+* Account and license management
+* Developer resources
+* Premium support options
+* Updates and announcements
 
+If you are using NexoPOS in production, My NexoPOS is the recommended place to manage official extensions and access the latest ecosystem resources.
 
-## Screenshots
-The branch 4.7.x introduces the "Dark Mode" which will make working continuously with NexoPOS easier without hurting sight.
+### For Developers
 
-### Media Component
-The media components help upload images and manage them. This comes with a field that will ease assigning images to products.
-![image](https://user-images.githubusercontent.com/5265663/159091815-5b022ec6-9df4-419b-86f0-85db73ce35c5.png)
+NexoPOS is built with Laravel, Vue.js, Tailwind CSS, and Vite. Developers can extend it by creating modules, registering routes, adding menus, integrating APIs, customizing workflows, and building business-specific features.
 
-### POS Component
-The POS is the place where sales are made and handled. The POS is made to provide everything the cashier needs to process orders quickly and easily.
-![image](https://user-images.githubusercontent.com/5265663/159092595-3b2e4371-fef4-471c-84cd-b04cb2b7c611.png)
+Useful developer resources:
+* [Creating a module](https://my.nexopos.com/en/documentation/developers-guide/module-creation/creating-module)
+* [Creating a menu for a module](https://my.nexopos.com/en/documentation/developers-guide/module-creation/dashboard-menus)
+* [Registering routes for modules](https://my.nexopos.com/en/documentation/developers-guide/module-creation/module-routing)
+* [NexoPOS REST API](https://docs.api.nexopos.com)
 
-### Orders Components
-Every saved sale is listed on the orders list. From there, various operations such as opening the receipt, proceeding with a refund, and making a payment can be performed.
-![image](https://user-images.githubusercontent.com/5265663/159092684-53a0c41a-d76d-4b69-b737-4420a20b33a1.png)
-
-### Products Components
-The resources that are sold are the products. The product UI has been simplified to ensure all necessary details can be added.
-![image](https://user-images.githubusercontent.com/5265663/159092753-845b930c-0b4f-4b3d-a42e-8658f74e7499.png)
-
-### Settings Components
-Configure how NexoPOS works. From the settings, you can configure various sections of your application including the currency, the POS features, the orders, and much more.
-![image](https://user-images.githubusercontent.com/5265663/159092979-267841bc-531d-4a27-b35f-902866fa742a.png)
-
-6-99-302-183
+Whether you want to contribute to the core, build private extensions, or create modules for distribution, NexoPOS is designed to be extended.
