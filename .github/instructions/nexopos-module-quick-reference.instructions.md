@@ -77,13 +77,12 @@ class YourModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // ...
     }
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Resources/Views', 'YourModule');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/api.php');
+        // ...
     }
 }
 ```
@@ -173,7 +172,7 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, '../../resources/ts'),
+            '@': path.resolve(__dirname, 'Resources/ts'),
         }
     },
     build: {
@@ -212,12 +211,14 @@ class YourController extends Controller
 
 ## API Routes Template
 
+Route should not be prefixed with "api" as NexoPOS already prefix all api.php files routes with "api".
+
 ```php
 <?php
 use Illuminate\Support\Facades\Route;
 use Modules\YourModule\Http\Controllers\YourController;
 
-Route::prefix('api/your-module')->middleware(['auth:sanctum'])->group(function () {
+Route::prefix('your-module')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/data', [YourController::class, 'index']);
     Route::post('/data', [YourController::class, 'store']);
 });
