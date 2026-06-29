@@ -268,7 +268,7 @@ class ProductService
         }
 
         if ( empty( $data[ 'barcode_type' ] ) ) {
-            $data[ 'barcode_type' ] = 'ean8';
+            $data[ 'barcode_type' ] = ns()->option->get( 'ns_pos_default_barcode_type', 'code128' );
         }
 
         if ( empty( $data[ 'barcode' ] ) ) {

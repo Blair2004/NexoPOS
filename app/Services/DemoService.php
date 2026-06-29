@@ -134,7 +134,7 @@ class DemoService extends DemoCoreService
                     'name' => $product->name,
                     'sku' => $random,
                     'barcode' => $random,
-                    'barcode_type' => 'code128',
+                    'barcode_type' => ns()->option->get( 'ns_pos_default_barcode_type', 'code128' ),
                     'category_id' => $createdCategory[ 'id' ],
                     'description' => __( 'generated' ),
                     'type' => 'dematerialized',
