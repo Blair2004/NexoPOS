@@ -349,7 +349,7 @@ class ProductCrud extends CrudService
                                     'name' => 'barcode_type',
                                     'label' => __( 'Barcode Type' ),
                                     'validation' => 'required',
-                                    'value' => $entry->barcode_type ?? 'code128',
+                                    'value' => $entry->barcode_type ?? ns()->option->get( 'ns_pos_default_barcode_type', 'code128' ),
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
