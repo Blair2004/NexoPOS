@@ -413,12 +413,19 @@ export default {
                             product.rate                    =   result.product.rate;
                             product.tax_group_id            =   result.product.tax_group_id;
                             product.tax_type                =   result.product.tax_type;
-                            product.unit_id                 =   result.unit.id;
-                            product.unit_price              =   result.unitQuantity.sale_price;
-                            product.price_gross             =   result.unitQuantity.sale_price_gross;
-                            product.price_net               =   result.unitQuantity.sale_price_net;
-                            product.unit_name               =   result.unit.name;
-                            product.unitQuantity            =   result.unitQuantity;
+                            product.stock_management        =   result.product.stock_management;
+                            product.type                    =   result.product.type;
+                            
+                            // Use result.unit/unitQuantity if set, otherwise fall back to first unit_quantity
+                            const uq = result.unitQuantity || (result.product.unit_quantities && result.product.unit_quantities[0]);
+                            const unit = result.unit || (uq && uq.unit);
+                            
+                            product.unit_id                 =   unit?.id || uq?.unit_id;
+                            product.unit_price              =   uq?.sale_price;
+                            product.price_gross             =   uq?.sale_price_gross;
+                            product.price_net               =   uq?.sale_price_net;
+                            product.unit_name               =   unit?.name || '';
+                            product.unitQuantity            =   uq;
                             
                             // Check if this is a scale barcode with embedded data
                             if ( result.scale ) {
@@ -433,7 +440,7 @@ export default {
                                     product.quantity = scaleData.value;
                                     
                                     // Show notification with unit name
-                                    const unitName = scaleData.unit?.name || 'kg';
+                                    const unitName = result.unit?.name || (uq && uq.unit && uq.unit.name) || '';
                                     nsSnackBar.info( 
                                         __( 'Scale barcode detected: {weight} {unit}' )
                                             .replace( '{weight}', scaleData.value.toFixed(3) )
@@ -442,8 +449,7 @@ export default {
                                 } else if ( scaleData.type === 'price' ) {
                                     // For price-based scales, we need to calculate quantity
                                     // based on the price and unit price
-                                    const unitPrice = result.product.selectedUnitQuantity?.sale_price || 
-                                                     result.product.unit_quantities[0]?.sale_price || 0;
+                                    const unitPrice = uq?.sale_price || 0;
                                     if ( unitPrice > 0 ) {
                                         product.quantity = scaleData.value / unitPrice;
                                     }
