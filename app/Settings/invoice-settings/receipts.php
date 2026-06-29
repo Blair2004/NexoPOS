@@ -12,6 +12,8 @@ $tags = [
     __( '{cashier_id}: displays the cashier id.' ),
     __( '{order_code}: displays the order code.' ),
     __( '{order_date}: displays the order date.' ),
+    __( '{order_date_only}: displays the order date without time.' ),
+    __( '{order_time}: displays the order time.' ),
     __( '{order_type}: displays the order type.' ),
     __( '{customer_first_name}: displays the customer first name.' ),
     __( '{customer_last_name}: displays the customer last name.' ),

@@ -70,6 +70,12 @@ class DateService extends Carbon
             case 'full':
                 return $this->parse( $date )->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
                 break;
+            case 'date':
+                return $this->parse( $date )->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
+                break;
+            case 'time':
+                return $this->parse( $date )->format( 'h:i:s A' );
+                break;
         }
     }
 
