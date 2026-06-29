@@ -5,26 +5,26 @@
                 <div class="grid" :class="'grid-cols-' + ( form.max_columns || 1 )">
                     <div class="item border border-black" :style="itemsStyle" v-for="item of itemsToPrint">
                         <h3 class="font-bold text-black text-xl text-center" v-if="visibility.show_store_name">{{ storename }}</h3>
-                        <div class="flex justify-between py-1" v-if="visibility.show_product_name">
-                            <span>{{ __( 'Product' ) }}</span>
+                        <div :class="layout.centered_content ? 'flex justify-center py-1 text-center' : 'flex justify-between py-1'" v-if="visibility.show_product_name">
+                            <span v-if="!layout.centered_content">{{ __( 'Product' ) }}</span>
                             <span>{{ item.name }}</span>
                         </div>
-                        <div class="flex justify-between py-1" v-if="visibility.show_product_name">
-                            <span>{{ __( 'Unit' ) }}</span>
+                        <div :class="layout.centered_content ? 'flex justify-center py-1 text-center' : 'flex justify-between py-1'" v-if="visibility.show_product_unit">
+                            <span v-if="!layout.centered_content">{{ __( 'Unit' ) }}</span>
                             <span>{{ item.selectedUnitQuantity.unit.name }}</span>
                         </div>
-                        <div class="flex justify-between py-1" v-if="visibility.show_barcode_text">
-                            <span>{{ __( 'Barcode' ) }}</span>
-                            <span>{{ item.selectedUnitQuantity.barcode }}</span>
+                        <div :class="layout.centered_content ? 'flex justify-center py-1 text-center' : 'flex justify-between py-1'" v-if="visibility.show_barcode_text">
+                            <span v-if="!layout.centered_content">{{ __( 'Barcode' ) }}</span>
+                            <span>{{ getItemBarcode( item ) }}</span>
                         </div>
-                        <div class="flex justify-between py-1" v-if="visibility.show_product_price">
-                            <span>{{ __( 'Price' ) }}</span>
+                        <div :class="layout.centered_content ? 'flex justify-center py-1 text-center' : 'flex justify-between py-1'" v-if="visibility.show_product_price">
+                            <span v-if="!layout.centered_content">{{ __( 'Price' ) }}</span>
                             <span>{{ nsCurrency( item.selectedUnitQuantity.sale_price ) }}</span>
                         </div>
                         <div class="flex justify-center flex-col py-1">
-                            <img :style="{ height: form.barcode_height + 'px' }" :src="barcodeurl + '/' + item.selectedUnitQuantity.barcode + '.png'" :alt="item.selectedUnitQuantity.barcode">
+                            <img :style="{ height: form.barcode_height + 'px' }" :src="barcodeurl + '/' + getItemBarcode( item ) + '.png'" :alt="getItemBarcode( item )">
                             <div class="flex justify-center w-full">
-                                <span class="-mt-4 bg-white inline-block p-1">{{ item.selectedUnitQuantity.barcode }}</span>
+                                <span class="-mt-4 bg-white inline-block p-1">{{ getItemBarcode( item ) }}</span>
                             </div>
                         </div>
                     </div>
@@ -94,6 +94,35 @@
                         <ns-field :field="field" v-for="(field, index) of visibilityFields" class="mb-2" :key="index"></ns-field>
                     </div>
                 </div>
+                <div class="shadow ns-box mb-4">
+                    <div class="header border-b ns-box-header p-2">
+                        <h3 class="font-semibold">{{ __( 'Layout Settings' ) }}</h3>
+                    </div>
+                    <div class="body p-2 ns-box-body">
+                        <ns-field :field="field" v-for="(field, index) of layoutFields" class="mb-2" :key="index"></ns-field>
+                    </div>
+                </div>
+                <div class="shadow ns-box mb-4">
+                    <div class="header border-b ns-box-header p-2 flex justify-between items-center">
+                        <h3 class="font-semibold">{{ __( 'Presets' ) }}</h3>
+                    </div>
+                    <div class="body p-2 ns-box-body">
+                        <div class="mb-2" v-if="presets.length > 0">
+                            <select v-model="selectedPreset" class="w-full border border-box-edge bg-input-background text-fontcolor rounded p-2 text-sm">
+                                <option value="">{{ __( 'Load a preset...' ) }}</option>
+                                <option v-for="preset in presets" :key="preset.name" :value="preset.name">{{ preset.name }}</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-2 mb-2">
+                            <input v-model="presetName" :placeholder="__( 'Preset name...' )" class="flex-auto border border-box-edge bg-input-background text-fontcolor rounded p-2 text-sm"/>
+                            <ns-button @click="savePreset()" type="info" class="text-sm"><i class="las la-save"></i></ns-button>
+                        </div>
+                        <div class="flex gap-2" v-if="presets.length > 0">
+                            <ns-button @click="loadPreset()" type="success" class="text-sm flex-auto" :disabled="!selectedPreset">{{ __( 'Load' ) }}</ns-button>
+                            <ns-button @click="deletePreset()" type="error" class="text-sm flex-auto" :disabled="!selectedPreset">{{ __( 'Delete' ) }}</ns-button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -125,6 +154,9 @@ export default defineComponent({
         visibility() {
             return ( new FormValidation ).extractFields( this.visibilityFields );
         },
+        layout() {
+            return ( new FormValidation ).extractFields( this.layoutFields );
+        },
         itemsStyle() {
             return {
                 padding: `${this.form.veritcal_padding || 0}px ${this.form.horizontal_padding || 0}px`,
@@ -147,7 +179,11 @@ export default defineComponent({
             products: [],
             itemsToPrint: [],
             visibilityFields: [],
+            layoutFields: [],
             printingPopup: null,
+            presetName: '',
+            selectedPreset: '',
+            presets: [],
         }
     },
     watch: {
@@ -220,12 +256,35 @@ export default defineComponent({
                 label: 'Show Product Name',
                 name: 'show_product_name',
                 value: true,
-            }, 
-        ]
+            }, {
+                type: 'checkbox',
+                label: 'Show Product Unit',
+                name: 'show_product_unit',
+                value: true,
+            },
+        ];
+
+        this.layoutFields     =   [
+            {
+                type: 'checkbox',
+                label: 'Centered Content',
+                name: 'centered_content',
+                value: false,
+            },
+        ];
+
+        this.loadPresets();
     },
     methods: {
         __,
         nsCurrency,
+        getItemBarcode( item ) {
+            const uqBarcode = item.selectedUnitQuantity?.barcode;
+            if ( ! uqBarcode || uqBarcode === '0' || uqBarcode === 0 ) {
+                return item.barcode || '';
+            }
+            return uqBarcode;
+        },
         removeProduct( product ) {
             const index     =   this.products.indexOf( product );
             this.products.splice( index, 1 );
@@ -309,7 +368,113 @@ export default defineComponent({
                     .map( _ => product );
                 this.itemsToPrint.push( ...reference );
             });
-        }
+        },
+
+        getSettingsSnapshot(): object {
+            return {
+                basic: ( new FormValidation ).extractFields( this.fields ),
+                visibility: ( new FormValidation ).extractFields( this.visibilityFields ),
+                layout: ( new FormValidation ).extractFields( this.layoutFields ),
+            };
+        },
+
+        savePreset() {
+            const name = this.presetName.trim();
+            if ( ! name ) {
+                return nsSnackBar.error( __( 'Please provide a preset name.' ) );
+            }
+
+            const presets = this.getPresetsFromStorage();
+            const existing = presets.findIndex( ( p: any ) => p.name === name );
+            const snapshot = this.getSettingsSnapshot();
+
+            if ( existing >= 0 ) {
+                presets[ existing ] = { name, settings: snapshot };
+            } else {
+                presets.push( { name, settings: snapshot } );
+            }
+
+            this.savePresetsToStorage( presets );
+            this.presets = presets;
+            this.presetName = '';
+            this.selectedPreset = name;
+
+            nsSnackBar.success( __( 'Preset saved successfully.' ) );
+        },
+
+        loadPreset() {
+            if ( ! this.selectedPreset ) {
+                return nsSnackBar.error( __( 'Please select a preset to load.' ) );
+            }
+
+            const preset = this.presets.find( ( p: any ) => p.name === this.selectedPreset );
+            if ( ! preset ) {
+                return nsSnackBar.error( __( 'Preset not found.' ) );
+            }
+
+            this.applySettingsFromSnapshot( preset.settings );
+            nsSnackBar.success( __( 'Preset loaded successfully.' ) );
+        },
+
+        deletePreset() {
+            if ( ! this.selectedPreset ) {
+                return nsSnackBar.error( __( 'Please select a preset to delete.' ) );
+            }
+
+            const presets = this.getPresetsFromStorage();
+            const updated = presets.filter( ( p: any ) => p.name !== this.selectedPreset );
+
+            this.savePresetsToStorage( updated );
+            this.presets = updated;
+            this.selectedPreset = '';
+
+            nsSnackBar.success( __( 'Preset deleted successfully.' ) );
+        },
+
+        loadPresets() {
+            this.presets = this.getPresetsFromStorage();
+        },
+
+        getPresetsFromStorage(): any[] {
+            try {
+                const raw = localStorage.getItem( 'nexopos_print_label_presets' );
+                return raw ? JSON.parse( raw ) : [];
+            } catch ( e ) {
+                return [];
+            }
+        },
+
+        savePresetsToStorage( presets: any[] ) {
+            localStorage.setItem( 'nexopos_print_label_presets', JSON.stringify( presets ) );
+        },
+
+        applySettingsFromSnapshot( snapshot: any ) {
+            if ( snapshot.basic ) {
+                this.fields.forEach( ( field: any ) => {
+                    if ( snapshot.basic[ field.name ] !== undefined ) {
+                        field.value = snapshot.basic[ field.name ];
+                    }
+                });
+            }
+
+            if ( snapshot.visibility ) {
+                this.visibilityFields.forEach( ( field: any ) => {
+                    if ( snapshot.visibility[ field.name ] !== undefined ) {
+                        field.value = snapshot.visibility[ field.name ];
+                    }
+                });
+            }
+
+            if ( snapshot.layout ) {
+                this.layoutFields.forEach( ( field: any ) => {
+                    if ( snapshot.layout[ field.name ] !== undefined ) {
+                        field.value = snapshot.layout[ field.name ];
+                    }
+                });
+            }
+
+            this.$forceUpdate();
+        },
     }
 })
 
