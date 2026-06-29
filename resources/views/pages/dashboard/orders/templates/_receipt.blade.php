@@ -58,10 +58,12 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                         </tr>
                         @endif
                     @endif
+                    @if ( ns()->option->get( 'ns_invoice_show_subtotal', 'yes' ) !== 'no' )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->subtotal ) }}</td>
                     </tr>
+                    @endif
                     @if ( $order->discount > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
@@ -118,12 +120,14 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total ) }}</td>
                     </tr>
+                    @if ( ns()->option->get( 'ns_invoice_show_payment_rows', 'yes' ) !== 'no' )
                     @foreach( $order->payments as $payment )
                     <tr>
                         <td class="p-2 border-b border-gray-800 text-sm font-semibold" colspan="2">{{ $paymentTypes[ $payment[ 'identifier' ] ] ?? __( 'Unknown Payment' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $payment[ 'value' ] ) }}</td>
                     </tr>
                     @endforeach
+                    @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Paid' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tendered ) }}</td>
@@ -136,6 +140,7 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                         </tr>
                         @endforeach
                     @endif
+                    @if ( ns()->option->get( 'ns_invoice_show_change_due', 'yes' ) !== 'no' )
                     @switch( $order->payment_status )
                         @case( Order::PAYMENT_PAID )
                         <tr>
@@ -150,6 +155,7 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                         </tr>
                         @break
                     @endswitch
+                    @endif
                 </tbody>
             </table>
             @if( $order->note_visibility === 'visible' )
