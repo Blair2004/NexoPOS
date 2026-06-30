@@ -2627,6 +2627,8 @@ class OrdersService
             'order_code' => $order->code,
             'order_type' => $this->getTypeLabel( $order->type ),
             'order_date' => ns()->date->getFormatted( $order->created_at ),
+            'order_date_only' => ns()->date->getFormatted( $order->created_at, 'date' ),
+            'order_time' => ns()->date->getFormatted( $order->created_at, 'time' ),
             'customer_first_name' => $order->customer->first_name,
             'customer_last_name' => $order->customer->last_name,
             'customer_email' => $order->customer->email,

@@ -36,8 +36,10 @@ $ordersService  =   app()->make( OrdersService::class );
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-700">
                             <span class="">{{ $product->product->name }} (x{{ $product->quantity }})</span>
+                            @if ( ns()->option->get( 'ns_invoice_show_product_unit', 'yes' ) === 'yes' )
                             <br>
-                            <span class="text-xs text-gray-600">{{ $product->unit->name }}</span> — <span class="text-xs text-gray-600">{{ __( 'Condition:' ) }} {{ $ordersService->getRefundedOrderProductLabel( $product->condition ) }}
+                            <span class="text-xs text-gray-600">{{ $product->unit->name }}</span>
+                            @endif — <span class="text-xs text-gray-600">{{ __( 'Condition:' ) }} {{ $ordersService->getRefundedOrderProductLabel( $product->condition ) }}
                         </td>
                         <td class="p-2 border-b border-gray-800 text-right">{{ Currency::raw( $product->total_price - $product->tax_value ) }}</td>
                     </tr>
