@@ -58,7 +58,7 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                         </tr>
                         @endif
                     @endif
-                    @if ( ns()->option->get( 'ns_invoice_show_subtotal', 'yes' ) !== 'no' )
+                    @if ( ns()->option->get( 'ns_invoice_show_subtotal', 'yes' ) === 'yes' )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->subtotal ) }}</td>
@@ -120,7 +120,7 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total ) }}</td>
                     </tr>
-                    @if ( ns()->option->get( 'ns_invoice_show_payment_rows', 'yes' ) !== 'no' )
+                    @if ( ns()->option->get( 'ns_invoice_show_payment_rows', 'yes' ) === 'yes' )
                     @foreach( $order->payments as $payment )
                     <tr>
                         <td class="p-2 border-b border-gray-800 text-sm font-semibold" colspan="2">{{ $paymentTypes[ $payment[ 'identifier' ] ] ?? __( 'Unknown Payment' ) }}</td>
