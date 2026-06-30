@@ -215,6 +215,13 @@ class ProductCrud extends CrudService
                 description: __( 'Define the regular selling price.' ),
                 validation: 'required',
             ),
+            FormInput::number(
+                errors: [],
+                label: __( 'Initial Quantity' ),
+                name: 'quantity',
+                value: 0,
+                description: __( 'Set the initial stock quantity for this unit. Leave 0 to adjust later via Stock Adjustment.' ),
+            ),
             FormInput::text(
                 errors: [],
                 label: __( 'Barcode' ),
@@ -287,12 +294,12 @@ class ProductCrud extends CrudService
                 label: '',
                 name: 'id',
             ),
-            FormInput::hidden(
-                errors: [],
-                label: '',
-                name: 'quantity',
-            ),
         ) );
+
+        // Remove the Initial Quantity field when editing an existing product
+        if ( $entry !== null ) {
+            $fields = array_values( array_filter( $fields, fn( $field ) => ( $field[ 'name' ] ?? '' ) !== 'quantity' ) );
+        }
 
         return Hook::filter( 'ns-products-crud-form', [
             'main' => [

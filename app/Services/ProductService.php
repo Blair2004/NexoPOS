@@ -739,7 +739,10 @@ class ProductService
                     $unitQuantity = new ProductUnitQuantity;
                     $unitQuantity->unit_id = $group[ 'unit_id' ];
                     $unitQuantity->product_id = $product->id;
-                    $unitQuantity->quantity = 0;
+                    $unitQuantity->quantity = floatval( $group[ 'quantity' ] ?? 0 );
+                    $isNewUnitQuantity = true;
+                } else {
+                    $isNewUnitQuantity = false;
                 }
 
                 /**
@@ -786,6 +789,24 @@ class ProductService
                  */
                 $unitQuantity->barcode = $group[ 'barcode' ] ?? $product->barcode . '-' . $unitQuantity->id;
                 $unitQuantity->save();
+
+                /**
+                 * If this is a new product with initial quantity > 0,
+                 * record a stock history entry for the audit trail.
+                 */
+                if ( $isNewUnitQuantity && floatval( $unitQuantity->quantity ) > 0 ) {
+                    $this->recordStockHistory(
+                        product_id: $product->id,
+                        action: ProductHistory::ACTION_ADDED,
+                        unit_id: $unitQuantity->unit_id,
+                        unit_price: $unitQuantity->sale_price,
+                        quantity: $unitQuantity->quantity,
+                        total_price: 0,
+                        author: $product->author_id,
+                        old_quantity: 0,
+                        new_quantity: $unitQuantity->quantity,
+                    );
+                }
 
                 /**
                  * Auto-generate PLU for weighable products without a PLU
