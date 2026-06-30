@@ -634,6 +634,7 @@ class ProductsController extends DashboardController
              * and the sales are disallowed.
              */
             if (
+                $procurementProduct->expiration_date !== null &&
                 $this->dateService->copy()->greaterThan( $procurementProduct->expiration_date ) &&
                 $product->expires &&
                 $product->on_expiration === Product::EXPIRES_PREVENT_SALES ) {
@@ -646,6 +647,10 @@ class ProductsController extends DashboardController
              * Will also be helpful to track how products are sold.
              */
             $product->procurement_product_id = $procurementProduct->id;
+            $product->selectedUnitQuantity = ProductUnitQuantity::where( 'product_id', $procurementProduct->product_id )
+                ->where( 'unit_id', $procurementProduct->unit_id )
+                ->first();
+                
         } elseif ( $productUnitQuantity instanceof ProductUnitQuantity ) {
             /**
              * if a product unit quantity is loaded. Then we make sure to return the parent
