@@ -53,7 +53,7 @@
                     @apply border-success-secondary bg-success-primary text-white;
                 }
                 &.warning {
-                    @apply border-warning-secondary bg-warning-primary text-white;
+                    @apply border-warning-secondary bg-warning-primary/50 text-white;
                 }
             }
         }
@@ -63,19 +63,19 @@
         }
 
         tr.info {
-            @apply bg-[#1e74e4af] text-white;
+            @apply bg-info-tertiary/30 text-white;
         }
     
         tr.error {
-            @apply bg-error-primary text-white;
+            @apply bg-error-primary/30 text-white;
         }
     
         tr.success {
-            @apply bg-[#34cc4894] text-white;
+            @apply bg-success-tertiary/30 text-white;
         }
     
         tr.warning {
-            @apply bg-warning-primary text-white;
+            @apply bg-warning-tertiary/30 text-white;
         }
         
         .ns-inset-button {
@@ -84,25 +84,5 @@
                 @apply border-transparent;
             }
         }
-    }
-
-    td {
-        @apply border-table-th-edge text-fontcolor;
-    }
-
-    tr.info {
-        @apply bg-info-secondary text-white;
-    }
-
-    tr.error {
-        @apply bg-error-secondary text-white;
-    }
-
-    tr.success {
-        @apply bg-success-secondary text-white;
-    }
-
-    tr.warning {
-        @apply bg-warning-secondary text-white;
     }
 }

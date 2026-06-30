@@ -27,7 +27,7 @@ export default {
     data() {
         return {
             childrens: [],
-            tabState: new Subject,
+            tabState: new Subject(),
         }
     },
     props: [ 'active' ],

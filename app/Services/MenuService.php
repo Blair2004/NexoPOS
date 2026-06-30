@@ -528,6 +528,11 @@ class MenuService
                         href: ns()->url( '/dashboard/settings/general' )
                     ),
                     AsideMenu::subMenu(
+                        label: __( 'Medias' ),
+                        identifier: 'media',
+                        href: ns()->url( '/dashboard/settings/media' )
+                    ),
+                    AsideMenu::subMenu(
                         label: __( 'POS' ),
                         identifier: 'pos',
                         href: ns()->url( '/dashboard/settings/pos' )

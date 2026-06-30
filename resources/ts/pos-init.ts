@@ -429,13 +429,26 @@ export class POS {
                                 this.startWirelessBarcodeChannel();
                             }, 1000 );
                         }
+                    } 
+
+                    if ( request.status === 422 ) {
+                        this.wirelessBarcodeState.update({
+                            http_status: 'error'
+                        });
+                    }
+
+                    if ( request.status >= 500 ) {
+                        this.wirelessBarcodeState.update({
+                            http_status: 'error'
+                        });
                     }
                 }
 
                 request.setRequestHeader( 'Authorization', `Bearer ${  options.mynexopos_access_token }` );
                 request.setRequestHeader( 'Accept', 'application/json' );
 
-                request.onerror = () => {
+                request.onerror = (e) => {
+                    console.log(e)
                     this.wirelessBarcodeState.update({
                         http_status: 'error'
                     });

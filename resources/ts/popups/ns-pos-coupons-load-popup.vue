@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="p-1 ns-box-body">
-            <ns-tabs @active="setActiveTab( $event )" :active="activeTab">
+            <ns-tabs @changeTab="setActiveTab( $event )" :active="activeTab">
                 <ns-tabs-item 
                     :label="__( 'Apply A Coupon' )" 
                     padding="p-2"

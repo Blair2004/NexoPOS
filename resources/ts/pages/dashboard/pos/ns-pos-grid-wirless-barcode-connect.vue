@@ -1,7 +1,7 @@
 <template>
     <div class="shadow-lg w-[75.71vw] md:w-[51.43vw] lg:w-[40.14vw] ns-box flex flex-col">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
-            <h3 class="text-fontcolor-hard">{{ __('Connect Wireless Barcode Scanner') }}</h3>
+            <h3 class="text-fontcolor">{{ __('Connect Wireless Barcode Scanner') }}</h3>
             <div class="flex items-center">
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
@@ -48,7 +48,7 @@
                         </p>
 
                         <section class="flex flex-col gap-3">
-                            <h4 class="text-fontcolor-hard font-semibold text-sm uppercase tracking-wide">
+                            <h4 class="text-fontcolor font-semibold text-sm uppercase tracking-wide">
                                 {{ __('Host') }}
                             </h4>
                             <div v-for="client in state.clients.filter( client => client.role === 'host' )" class="p-4 rounded-lg border border-box-edge bg-input-background flex items-center justify-between gap-4">
@@ -71,7 +71,7 @@
                         </section>
 
                         <section class="flex flex-col gap-3">
-                            <h4 class="text-fontcolor-hard font-semibold text-sm uppercase tracking-wide">
+                            <h4 class="text-fontcolor font-semibold text-sm uppercase tracking-wide">
                                 {{ __('Connected Clients') }}
                             </h4>
 

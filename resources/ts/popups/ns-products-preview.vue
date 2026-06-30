@@ -10,7 +10,7 @@
         </div>
         <div class="flex-auto overflow-y-auto ns-box-body">
             <div class="p-2">
-                <ns-tabs :active="active" @active="changeActiveTab( $event )">
+                <ns-tabs :active="active" @changeTab="changeActiveTab( $event )">
                     <ns-tabs-item :label="__( 'Units & Quantities' )" identifier="units-quantities">
                         <table class="table ns-table w-full" v-if="hasLoadedUnitQuantities">
                             <thead>

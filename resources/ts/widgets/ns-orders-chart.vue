@@ -46,6 +46,8 @@ import { Bar } from 'vue-chartjs';
 
 Chart.register( ...registerables );
 
+console.log(ns.theme)
+
 export default {
     name: 'ns-orders-chart',
     components: {
@@ -77,16 +79,39 @@ export default {
                 xaxis: {
                     categories: []
                 },
-                colors: [
-                    '#5f83f3', '#AAA'
-                ],
+                // colors: ns.theme === 'dark' ? [ '#fff', '#ff' ] : [ '#16a34a', '#ca8a04' ],
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: window.ns.theme === 'dark' ? '#e5e7eb' : '#1f2937', // legend text color
+                        font: {
+                            size: 13,
+                            weight: '500'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: window.ns.theme === 'dark' ? '#1f2937' : '#ffffff',
+                    titleColor: window.ns.theme === 'dark' ? '#e5e7eb' : '#111827',
+                    bodyColor: window.ns.theme === 'dark' ? '#e5e7eb' : '#111827',
+                    borderColor: window.ns.theme === 'dark' ? '#374151' : '#e5e7eb',
+                    borderWidth: 1
+                }
             },
             series: [{
                 label: __( 'Current Week' ),
-                data: []
-            },{
+                data: [],
+                backgroundColor: window.ns.theme === 'dark' ? '#4ade80' : '#16a34a',
+                borderColor: window.ns.theme === 'dark' ? '#22c55e' : '#15803d',
+                borderWidth: 1
+            }, {
                 label: __( 'Previous Week' ),
-                data: []
+                data: [],
+                backgroundColor: window.ns.theme === 'dark' ? '#fcd34d' : '#ca8a04',
+                borderColor: window.ns.theme === 'dark' ? '#fbbf24' : '#b45309',
+                borderWidth: 1
             }],
             reportSubscription: null,
             report: null

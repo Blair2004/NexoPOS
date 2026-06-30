@@ -162,7 +162,7 @@ export default {
             </div>
         </div>
         <div class="p-2 ns-box-body overflow-hidden flex flex-auto">
-            <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
+            <ns-tabs v-if="order.id" :active="active" @changeTab="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item :label="__( 'Details' )" identifier="details" class="overflow-y-auto">
                     <ns-order-details v-if="order" :order="order"></ns-order-details>

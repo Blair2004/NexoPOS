@@ -212,6 +212,39 @@ class Options
     }
 
     /**
+     * Delete every option whose expiration date has passed.
+     */
+    public function deleteExpired(): int
+    {
+        $expiredOptions = Option::whereNotNull( 'expire_on' )
+            ->where( 'expire_on', '<=', now() )
+            ->get( [ 'id', 'key', 'user_id' ] );
+
+        if ( $expiredOptions->isEmpty() ) {
+            return 0;
+        }
+
+        Option::whereKey( $expiredOptions->pluck( 'id' ) )->delete();
+
+        $expiredGeneralOptionKeys = $expiredOptions
+            ->whereNull( 'user_id' )
+            ->pluck( 'key' )
+            ->all();
+
+        if ( ! empty( $expiredGeneralOptionKeys ) ) {
+            $this->rawOptions = collect( $this->rawOptions )
+                ->reject( fn( Option $option ) => in_array( $option->key, $expiredGeneralOptionKeys ) );
+        }
+
+        return $expiredOptions->count();
+    }
+
+    public function deleteExpiredOptions(): int
+    {
+        return $this->deleteExpired();
+    }
+
+    /**
      * Delete an option using a specific key.
      **/
     public function delete( string $key ): void

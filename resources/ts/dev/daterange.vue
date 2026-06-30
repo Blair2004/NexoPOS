@@ -24,7 +24,7 @@ export default {
         <template #title>Date Range Picker</template>
         <template #description>selects a range as a date.</template>
     </ns-page-title>
-    <ns-tabs :active="active" @active="active = $event">
+    <ns-tabs :active="active" @changeTab="active = $event">
         <ns-tabs-item identifier="general" label="General">
             
         </ns-tabs-item>

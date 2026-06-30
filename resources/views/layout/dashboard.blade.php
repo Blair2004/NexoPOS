@@ -49,7 +49,7 @@ if ( Auth::check() ) {
                             <h1 class="font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-200 to-indigo-400 text-3xl">NexoPOS</h1>
                             @endif
                         </div>
-                        <ul id="aside-menu">
+                        <ul id="aside-menu" class="mr-2">
                             @foreach( $menus->getMenus() as $identifier => $menu )
                                 <ns-menu identifier="{{ $identifier }}" toggled="{{ $menu[ 'toggled' ] ?? '' }}" label="{{ @$menu[ 'label' ] }}" icon="{{ @$menu[ 'icon' ] }}" href="{{ @$menu[ 'href' ] }}" notification="{{ isset( $menu[ 'notification' ] ) ? $menu[ 'notification' ] : 0 }}" id="menu-{{ $identifier }}">
                                     @if ( isset( $menu[ 'childrens' ] ) )

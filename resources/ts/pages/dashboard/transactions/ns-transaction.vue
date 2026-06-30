@@ -19,7 +19,7 @@
         </ns-notice>
     </div>
     <div v-if="tabs.length > 0 && ! isLoading">
-        <ns-tabs :active="activeTab" @active="setActiveTab( $event )">
+        <ns-tabs :active="activeTab" @changeTab="setActiveTab( $event )">
             <template #extra>
                 <div class="md:flex hidden flex-col md:flex-row -mx-2">
                     <div class="px-2">

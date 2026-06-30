@@ -26,7 +26,7 @@
             @apply text-fontcolor;
         }
         .paid-order {
-            @apply bg-success-primary text-fontcolor;
+            @apply bg-success-tertiary/50 border-box-edge text-fontcolor;
         }
         .other-order {
             @apply bg-box-background border-box-edge text-fontcolor;

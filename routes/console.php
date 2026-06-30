@@ -3,13 +3,13 @@
 use App\Jobs\CheckForUpdatesJob;
 use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ClearModuleTempJob;
+use App\Jobs\DeleteExpiredOptionsJob;
 use App\Jobs\DetectLowStockProductsJob;
 use App\Jobs\DetectScheduledTransactionsJob;
 use App\Jobs\EnsureCombinedProductHistoryExistsJob;
 use App\Jobs\PurgeOrderStorageJob;
 use App\Jobs\StockProcurementJob;
 use App\Jobs\TrackLaidAwayOrdersJob;
-use App\Jobs\TriggerRecurringTransactionJob;
 use App\Models\Transaction;
 use App\Services\Helper;
 use Illuminate\Support\Facades\Artisan;
@@ -99,6 +99,10 @@ if ( Helper::installed() ) {
      * hasn't been deleted after a module installation.
      */
     Schedule::job( new ClearModuleTempJob )->weekly();
+
+    if ( ! in_array( env( 'QUEUE_CONNECTION' ), [ 'sync' ] ) ) {
+        Schedule::job( new DeleteExpiredOptionsJob )->daily()->withoutOverlapping();
+    }
 
     /**
      * Will check daily if a new NexoPOS version is available

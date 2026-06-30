@@ -243,6 +243,7 @@ class SetupService
         $this->options = app()->make( Options::class );
         $this->options->setDefault();
         $this->options->set( 'ns_store_language', $configuredLanguage );
+        $this->options->set( 'ns_media_library_layout', 'modern' );
 
         return [
             'status' => 'success',

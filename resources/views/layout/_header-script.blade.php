@@ -61,6 +61,7 @@ $dateService    =   app()->make( DateService::class );
          */
         window.ns.medias            =   {
             mimes:  <?php echo json_encode( ns()->mediaService->getMimes() )?>,
-            imageMimes: <?php echo json_encode( ns()->mediaService->getImageMimes() );?>
+            imageMimes: <?php echo json_encode( ns()->mediaService->getImageMimes() );?>,
+            mediaLayout: '<?php echo ns()->option->get( 'ns_media_library_layout', 'modern' ) === 'modern' ? 'modern' : 'classic'; ?>'  
         }
     </script>

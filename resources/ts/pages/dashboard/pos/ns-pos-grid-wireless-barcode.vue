@@ -17,12 +17,12 @@
             </div>
         </template>
         <template v-else-if="httpStatus === 'error'">
-            <div aria-label="foobar" @click="retryConnexion()" class="px-2 h-10 flex text-red-400 bg-red-100 items-center justify-center ">                                
+            <div aria-label="foobar" @click="retryConnexion()" class="px-2 h-10 flex text-error-tertiary bg-error-primary/10 items-center justify-center ">                                
                 <i class="las la-exclamation-triangle"></i>
             </div>
         </template>
         <template v-else-if="httpStatus === 'stopped'">
-            <div aria-label="foobar" @click="retryConnexion()" class="px-2 h-10 flex text-blue-400 bg-blue-100 items-center justify-center ">                                
+            <div aria-label="foobar" @click="retryConnexion()" class="px-2 h-10 flex text-info-tertiary bg-info-primary/10 items-center justify-center ">                                
                 <i class="las la-stop"></i>
             </div>
         </template>

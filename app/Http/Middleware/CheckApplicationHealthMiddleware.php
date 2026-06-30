@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Events\AfterAppHealthCheckedEvent;
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Closure;
 use Illuminate\Http\Request;
@@ -32,6 +33,10 @@ class CheckApplicationHealthMiddleware
              * correctly set for NexoPOS
              */
             ns()->checkCronConfiguration();
+
+            if ( Helper::installed() ) {
+                ns()->options->deleteExpired();
+            }
         }
 
         /**

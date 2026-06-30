@@ -1,7 +1,7 @@
 <template>
     <li>
         <template v-if="to && ! hasChildren">
-            <a @click="goTo( to, $event )" :href="to" :class="defaultToggledState ? 'toggled' : 'normal'" class="flex justify-between py-2 border-l-8 px-3 font-bold ns-aside-menu">
+            <a @click="goTo( to, $event )" :href="to" :class="defaultToggledState ? 'toggled' : 'normal'" class="flex rounded-r-lg justify-between py-2 border-l-8 px-3 font-bold ns-aside-menu">
                 <span class="flex items-center">
                 <i class="text-lg mr-2" :class="iconClass"></i>
                 {{ label }}
@@ -10,7 +10,7 @@
             </a>
         </template>
         <template v-else>
-            <a @click="toggleEmit()" :href="href || 'javascript:void(0)'" :class="defaultToggledState ? 'toggled' : 'normal'" class="flex justify-between py-2 border-l-8 px-3 font-bold  ns-aside-menu">
+            <a @click="toggleEmit()" :href="href || 'javascript:void(0)'" :class="defaultToggledState ? 'toggled' : 'normal'" class="flex rounded-r-lg justify-between py-2 border-l-8 px-3 font-bold  ns-aside-menu">
                 <span class="flex items-center">
                 <i class="text-lg mr-2" :class="iconClass"></i>
                 {{ label }}
@@ -19,7 +19,7 @@
                 <span v-if="hasChildren" class="flex items-center"><i v-if="! defaultToggledState" class="las la-angle-down"></i><i v-if="defaultToggledState" class="las la-angle-up"></i></span>
             </a>
         </template>
-        <ul :class="defaultToggledState ? '' : 'hidden'" class="submenu-wrapper">
+        <ul :class="defaultToggledState ? '' : 'hidden'" class="mr-2 submenu-wrapper">
             <slot></slot>                  
         </ul>
     </li>

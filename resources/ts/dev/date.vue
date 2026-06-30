@@ -36,7 +36,7 @@ export default {
         <template #title>Date Picker</template>
         <template #description>A simple date picker</template>
     </ns-page-title>
-    <ns-tabs :active="active" @active="active = $event">
+    <ns-tabs :active="active" @changeTab="active = $event">
         <ns-tabs-item identifier="general" label="General">
         </ns-tabs-item>
         <ns-tabs-item identifier="demo" label="Demo">
