@@ -426,7 +426,6 @@ export default {
                                     result.unitQuantity = result.product.unit_quantities.find( uq => uq.id === unitQuantityId );
                                     result.unit = result.unitQuantity.unit;
                                 } catch ( error ) {
-                                    console.log({ error})
                                     return nsSnackBar.error( __( 'An unexpected error occurred while fetching the unit quantity for this product.' ) );
                                 }
                             }
