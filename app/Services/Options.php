@@ -239,11 +239,6 @@ class Options
         return $expiredOptions->count();
     }
 
-    public function deleteExpiredOptions(): int
-    {
-        return $this->deleteExpired();
-    }
-
     /**
      * Delete an option using a specific key.
      **/

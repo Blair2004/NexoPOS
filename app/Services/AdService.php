@@ -79,6 +79,11 @@ class AdService
                 'url' => ns()->route( 'ns.dashboard.modules-marketplace' ),
                 'routes' => [],
                 'strict' => false,
+            ], [
+                'title' => __( 'Secure Sensitive Operations' ),
+                'message' => __( 'Not every actions should be granted to cashiers.' ),
+                'url' => 'https://my.nexopos.com/en/marketplace/item/nexopos-authorizer',
+                'strict' => false,
             ],
         ];
 

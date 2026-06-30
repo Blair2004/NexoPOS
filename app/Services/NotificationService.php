@@ -12,26 +12,23 @@ use Illuminate\support\Str;
 
 class NotificationService
 {
-    private $title;
+    private string $title;
 
-    private $description;
+    private string $description;
 
-    private $dismissable;
+    private bool $dismissable;
 
-    private $url;
+    private string $url;
 
-    private $identifier;
+    private ?string $identifier;
 
-    private $source;
+    private string $source;
 
-    private $notification;
+    private ?Notification $notification;
 
     private array $actions;
 
-    /**
-     * @param array $config [ 'title', 'url', 'identifier', 'source', 'dismissable', 'description' ]
-     */
-    public function create( string $title, string $description = '', string $url = '#', ?string $identifier = null, string $source = 'system', bool $dismissable = true, array $actions = [] )
+    public function create( string $title, string $description = '', string $url = '#', ?string $identifier = null, string $source = 'system', bool $dismissable = true, array $actions = [] ): self
     {
         if ( $description && $title ) {
             $this->title = $title;
@@ -70,11 +67,8 @@ class NotificationService
     /**
      * Dispatch notification for a specific
      * users which belong to a user group
-     *
-     * @param  Role $role
-     * @return void
      */
-    public function dispatchForGroup( $role )
+    public function dispatchForGroup( Role|array|string $role ): void
     {
         if ( is_array( $role ) ) {
             collect( $role )->each( function ( $role ) {
@@ -98,12 +92,12 @@ class NotificationService
      * Dispatch notification for specific
      * groups using array of group namespace provided
      */
-    public function dispatchForGroupNamespaces( array $namespaces )
+    public function dispatchForGroupNamespaces( array $namespaces ): void
     {
         $this->dispatchForGroup( Role::in( $namespaces )->get() );
     }
 
-    private function __makeNotificationFor( $user )
+    private function __makeNotificationFor( User $user ): void
     {
         $this->notification = Notification::identifiedBy( $this->identifier )
             ->for( $user->id )
@@ -136,7 +130,7 @@ class NotificationService
         }
     }
 
-    public function dispatchForUsers( Collection $users )
+    public function dispatchForUsers( Collection $users ): void
     {
         $users->map( function ( $user ) {
             $this->__makeNotificationFor( $user );
@@ -154,7 +148,7 @@ class NotificationService
         return 'notification-' . Str::random( 10 ) . '-' . $date->format( 'd-m-y' );
     }
 
-    public function deleteHavingIdentifier( $identifier )
+    public function deleteHavingIdentifier( string $identifier ): void
     {
         Notification::identifiedBy( $identifier )
             ->get()
@@ -163,7 +157,7 @@ class NotificationService
             } );
     }
 
-    public function deleteSingleNotification( $id )
+    public function deleteSingleNotification( int $id ): void
     {
         $notification = Notification::find( $id );
 
@@ -174,7 +168,7 @@ class NotificationService
         $notification->delete();
     }
 
-    public function deleteNotificationsFor( User $user )
+    public function deleteNotificationsFor( User $user ): void
     {
         Notification::for( $user->id )
             ->get()
