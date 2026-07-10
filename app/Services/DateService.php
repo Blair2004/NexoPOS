@@ -49,6 +49,7 @@ class DateService extends Carbon
             'pt' => 'pt_PT',
             'tr' => 'tr_TR',
             'vi' => 'vi_VN',
+            'ko' => 'ko_KR',
             default => 'en_US',
         };
     }
