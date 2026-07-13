@@ -128,13 +128,13 @@ return [
             name: 'ns_pos_default_barcode_type',
             options: Helper::kvToJsOptions( [
                 'code128' => __( 'Code 128' ),
-                'ean8'    => __( 'EAN 8' ),
-                'ean13'   => __( 'EAN 13' ),
-                'code39'  => __( 'Code 39' ),
-                'code11'  => __( 'Code 11' ),
+                'ean8' => __( 'EAN 8' ),
+                'ean13' => __( 'EAN 13' ),
+                'code39' => __( 'Code 39' ),
+                'code11' => __( 'Code 11' ),
                 'codabar' => __( 'Codabar' ),
-                'upca'    => __( 'UPC A' ),
-                'upce'    => __( 'UPC E' ),
+                'upca' => __( 'UPC A' ),
+                'upce' => __( 'UPC E' ),
             ] ),
             value: ns()->option->get( 'ns_pos_default_barcode_type', 'code128' ),
             description: __( 'Choose the default barcode type pre-selected when creating a new product. Defaults to Code 128 if not set.' )
@@ -225,6 +225,24 @@ return [
                 'wireless' => __( 'Wireless' ),
             ] ),
             value: ns()->option->get( 'ns_pos_barcode_reader_type', 'regular' ),
-        )
+        ),
+
+        FormInput::switch(
+            label: __( 'Show COGS' ),
+            name: 'ns_pos_show_cogs',
+            options: [
+                ['label' => __( 'Yes' ), 'value' => 'yes'],
+                ['label' => __( 'No' ), 'value' => 'no'],
+            ],
+            value: ns()->option->get( 'ns_pos_show_cogs' ),
+            description: __( 'Display the Cost of Goods Sold (COGS) for each product in the POS cart.' )
+        ),
+
+        FormInput::number(
+            label: __( 'COGS Markup Percentage' ),
+            name: 'ns_pos_cogs_markup_percentage',
+            value: ns()->option->get( 'ns_pos_cogs_markup_percentage', 0 ),
+            description: __( 'Percentage markup applied to the COGS displayed on the POS. Default is 0%.' )
+        ),
     ],
 ];

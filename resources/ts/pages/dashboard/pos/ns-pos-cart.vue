@@ -35,7 +35,7 @@
                         </div>
                     </div>
 
-                    <div :product-index="index" :key="product.barcode" class="product-item flex" v-for="(product, index) of products">
+                    <div :product-index="index" :key="product.barcode" class="product-item flex group" v-for="(product, index) of products">
                         <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0">
                             <div class="flex justify-between product-details mb-1">
                                 <h3 class="font-semibold">
@@ -52,6 +52,11 @@
                                             <i class="las la-award text-xl"></i>
                                         </a>
                                     </div>
+                                    <div class="px-1" v-if="options.ns_pos_show_cogs"> 
+                                        <a class="cursor-pointer outline-hidden border-dashed py-1 border-b border-info-secondary text-sm">
+                                            <i class="las la-coins text-xl"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                             <div class="flex justify-between product-controls">
@@ -65,6 +70,9 @@
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1"> 
                                         <a v-if="allowQuantityModification( product )" @click="openDiscountPopup( product, 'product', index )" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ nsCurrency( product.discount ) }}</a>
+                                    </div>
+                                    <div class="px-1 w-1/2 md:w-auto mb-1" v-if="options.ns_pos_show_cogs"> 
+                                        <span class="hidden group-hover:inline outline-hidden border-dashed py-1 border-b border-info-secondary text-sm text-info-tertiary">{{ __( 'COGS' ) }} : {{ nsCurrency( getProductCogs( product ) ) }}</span>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
                                         <a v-if="allowQuantityModification( product )" @click="changeQuantity( product, index )" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Quantity' ) }}: {{ displayProductQuantity( product ) }}</a>
@@ -771,6 +779,21 @@ export default {
 
         allowQuantityModification( product ) {
             return product.product_type === 'product';
+        },
+
+        /**
+         * Calculate COGS for a product considering the markup percentage.
+         */
+        getProductCogs( product ) {
+            const quantities = product.$quantities ? product.$quantities() : null;
+            const unitCogs = quantities?.cogs || 0;
+            const quantity = product.quantity || 0;
+            const markupPercentage = this.options.ns_pos_cogs_markup_percentage || 0;
+            
+            const baseCogs = unitCogs * quantity;
+            const markupMultiplier = 1 + ( markupPercentage / 100 );
+            
+            return baseCogs * markupMultiplier;
         },
 
         /**
