@@ -35,9 +35,8 @@ Try a demo right now in our [Demo Instance](https://demo.nexopos.com).
 ### Deployment
 NexoPOS is partnering with InstaPods to offer you a smooth deployment experience with NexoPOS.
 
-[![Deploy On Nexo Cloud](https://my.nexopos.com/deploy-on-nexo-cloud-button.svg)](https://nexopos.cloud?utm_channel=github.com&utm_campaign=readme)
+[![Deploy On Nexo Cloud]([https://my.nexopos.com/deploy-on-nexo-cloud-button.svg](https://my.nexopos.com/deploy-on-nexo-cloud-button-light.svg))](https://nexopos.cloud?utm_channel=github.com&utm_campaign=readme)
 [![Deploy On InstaPods](https://instapods.com/deploy-button.svg)](https://app.instapods.com/dashboard/pods/create?app=nexopos&ref=nexopos) 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS/tree/v5.0.x&refcode=ebdb80cb0ec7)
 
 ### Recommended Modules
 
