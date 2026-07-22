@@ -68,6 +68,18 @@ declare const nsHttpClient: {
 };
 ```
 
+**Example Usage**:
+```typescript
+nsHttpClient.get('/api/products').subscribe({
+    next: (products) => {
+        console.log('Total products:', products.length);
+    },
+    error: (err) => {
+        console.error('Error fetching products:', err);
+    }
+});
+```
+
 ### window.nsSnackBar
 
 **Type**: Notification service  
