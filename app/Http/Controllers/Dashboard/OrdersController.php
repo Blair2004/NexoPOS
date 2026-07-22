@@ -159,13 +159,14 @@ class OrdersController extends DashboardController
         $marketplaceConnected = false;
 
         /**
-         * if the barcode reader type is set to wireless, we'll check if the system is
-         * connected to my.nexopos.com as the wireless barcode relies
+         * if the barcode reader type is set to wireless, we'll check if the system is 
+         * connected to my.nexopos.com as the wireless barcode relies 
          * on the socket feature provided by the platform.
          */
         if ( ns()->option->get( 'ns_pos_barcode_reader_type' ) === 'wireless' ) {
             $marketplaceConnected = $this->marketplaceService->testConnection();
         }
+
 
         /**
          * let's inject the necessary dependency
@@ -217,8 +218,6 @@ class OrdersController extends DashboardController
                 'ns_pos_show_preview_pinned_products' => ns()->option->get( 'ns_pos_show_preview_pinned_products', 'no' ) === 'yes' ? true : false,
                 'ns_pos_enable_pinned_products' => ns()->option->get( 'ns_pos_enable_pinned_products', 'no' ) === 'yes' ? true : false,
                 'ns_pos_barcode_reader_type' => ns()->option->get( 'ns_pos_barcode_reader_type' ),
-                'ns_pos_show_cogs' => ns()->option->get( 'ns_pos_show_cogs', 'no' ) === 'yes' ? true : false,
-                'ns_pos_cogs_markup_percentage' => (float) ns()->option->get( 'ns_pos_cogs_markup_percentage', 0 ),
                 'mynexopos_access_token' => ns()->option->get( 'mynexopos_access_token' ),
             ] ),
             'urls' => [
