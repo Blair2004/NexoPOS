@@ -559,7 +559,6 @@ export class POS {
     }
 
     public stopWirelessBarcodeChannel() {
-        console.log( this.wirelessSocket )
         if ( this.wirelessSocket ) {
             this.wirelessSocket.removeAllListeners();
             this.wirelessSocket.disconnect();
