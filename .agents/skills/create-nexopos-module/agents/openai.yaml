@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create NexoPOS Module"
+  short_description: "Build production-ready NexoPOS modules"
+  default_prompt: "Use $create-nexopos-module to create a NexoPOS module for the requested feature."
