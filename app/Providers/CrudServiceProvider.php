@@ -23,7 +23,7 @@ class CrudServiceProvider extends ServiceProvider
          */
         Hook::addFilter( 'ns-crud-resource', function ( $identifier ) {
             /**
-             * We'll attempt autoloading crud that explicitely
+             * We'll attempt autoloading crud that explicitly
              * defined they want to be autoloaded. We expect classes to have 2
              * constant: AUTOLOAD=true, IDENTIFIER=<string>.
              */

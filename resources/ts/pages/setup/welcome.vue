@@ -1,7 +1,7 @@
 <template>
     <div class="w-full md:w-3/5 lg:w-3/5 self-center">
         <div class="bg-white rounded shadow my-2 overflow-hidden">
-            <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
+            <div class="welcome-box p-3 text-gray-700">
                 <p class="text-gray-600 text-sm">{{ __( 'Thank you for using NexoPOS to manage your store. This installation wizard will help you running NexoPOS in no time.' ) }}</p>
                 <br>
                 <p class="text-gray-600 text-sm">{{ __( 'Choose your language to get started.' ) }}</p>
@@ -14,7 +14,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="bg-gray-200 p-3 flex justify-end">
+            <div class="border-box-edge border-t p-3 flex justify-end">
                 <router-link to="/database" class="ns-button info">
                     <button type="button" class="rounded cursor-pointer py-2 px-3 font-semibold">
                         <i class="las la-database"></i> {{ __( 'Database Configuration' ) }}

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Modules\NsMultiStore\Services\StoresService;
 
 class CoreService
 {
@@ -32,8 +33,10 @@ class CoreService
 
     public Options $rootOption;
 
+    public Options $options;
+
     /**
-     * @var \Modules\NsMultiStore\Services\StoresService
+     * @var StoresService
      */
     public $store;
 
@@ -49,7 +52,7 @@ class CoreService
         public EnvEditor $envEditor,
         public MediaService $mediaService,
     ) {
-        // ...
+        $this->options = $option;
     }
 
     /**

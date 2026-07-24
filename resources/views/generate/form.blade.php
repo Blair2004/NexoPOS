@@ -32,8 +32,8 @@ class {{ $className }} extends SettingsPage
     public function __construct()
     {
         $this->form = [
-            'title' =>  __( 'Unamed Settings Page' ),
-            'description'   =>  __( 'Description of unamed setting page' ),
+            'title' =>  __( 'Unnamed Settings Page' ),
+            'description'   =>  __( 'Description of unnamed setting page' ),
             'tabs' => [
                 'general' => [
                     'label' =>  __( 'General' ),

@@ -12,6 +12,8 @@ $tags = [
     __( '{cashier_id}: displays the cashier id.' ),
     __( '{order_code}: displays the order code.' ),
     __( '{order_date}: displays the order date.' ),
+    __( '{order_date_only}: displays the order date without time.' ),
+    __( '{order_time}: displays the order time.' ),
     __( '{order_type}: displays the order type.' ),
     __( '{customer_first_name}: displays the customer first name.' ),
     __( '{customer_last_name}: displays the customer last name.' ),
@@ -76,6 +78,46 @@ return [
             'name' => 'ns_invoice_display_tax_breakdown',
             'value' => ns()->option->get( 'ns_invoice_display_tax_breakdown' ),
             'description' => __( 'Will display the tax breakdown on the receipt/invoice.' ),
+        ], [
+            'label' => __( 'Show Product Unit' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions( [
+                'yes' => __( 'Yes' ),
+                'no' => __( 'No' ),
+            ] ),
+            'name' => 'ns_invoice_show_product_unit',
+            'value' => ns()->option->get( 'ns_invoice_show_product_unit', 'yes' ),
+            'description' => __( 'Will display the unit name next to each product.' ),
+        ], [
+            'label' => __( 'Show Sub Total' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions( [
+                'yes' => __( 'Yes' ),
+                'no' => __( 'No' ),
+            ] ),
+            'name' => 'ns_invoice_show_subtotal',
+            'value' => ns()->option->get( 'ns_invoice_show_subtotal', 'yes' ),
+            'description' => __( 'Will display the subtotal row on receipts.' ),
+        ], [
+            'label' => __( 'Show Payment Rows' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions( [
+                'yes' => __( 'Yes' ),
+                'no' => __( 'No' ),
+            ] ),
+            'name' => 'ns_invoice_show_payment_rows',
+            'value' => ns()->option->get( 'ns_invoice_show_payment_rows', 'yes' ),
+            'description' => __( 'Will display per-payment type rows (Cash, Bank, etc.) on receipts.' ),
+        ], [
+            'label' => __( 'Show Change / Due' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions( [
+                'yes' => __( 'Yes' ),
+                'no' => __( 'No' ),
+            ] ),
+            'name' => 'ns_invoice_show_change_due',
+            'value' => ns()->option->get( 'ns_invoice_show_change_due', 'yes' ),
+            'description' => __( 'Will display the Change or Due row on receipts.' ),
         ], [
             'label' => __( 'Receipt Footer' ),
             'type' => 'textarea',

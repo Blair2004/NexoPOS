@@ -66,7 +66,7 @@ export default class Print {
         result.promise().then( result => {
             nsSnackBar.success( result.message );
         }).catch( exception => {
-            nsSnackBar.error( exception.message || __( `An error unexpected occured while printing.` ) );
+            nsSnackBar.error( exception.message || __( `An error unexpected occurred while printing.` ) );
         })    
     }
 }

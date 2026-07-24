@@ -3,7 +3,7 @@
         <template #title>Labels</template>
         <template #description>creates a label selector fields.</template>
     </ns-page-title>
-    <ns-tabs :active="active" @active="active = $event">
+    <ns-tabs :active="active" @changeTab="active = $event">
         <ns-tabs-item identifier="general" label="General">
             
         </ns-tabs-item>

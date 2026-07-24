@@ -6,7 +6,7 @@
                     <i class="las la-shield-alt text-2xl"></i>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-2xl font-bold text-fontcolor-hard leading-tight">{{ __( 'My NexoPOS' ) }}</h1>
+                    <h1 class="text-2xl font-bold text-fontcolor leading-tight">{{ __( 'My NexoPOS' ) }}</h1>
                     <p class="text-sm text-fontcolor-soft mt-1">{{ __( 'Authenticate to install modules' ) }}</p>
                 </div>
             </div>
@@ -18,7 +18,7 @@
                     <i class="las la-store-alt text-xl"></i>
                 </div>
                 <div class="space-y-1">
-                    <h2 class="font-semibold text-fontcolor-hard">{{ __( 'Connect your marketplace account' ) }}</h2>
+                    <h2 class="font-semibold text-fontcolor">{{ __( 'Connect your marketplace account' ) }}</h2>
                     <p class="text-sm text-fontcolor-soft leading-6">
                         {{ __( 'A new browser window will open so you can sign in securely, then return here to continue installing modules.' ) }}
                     </p>
@@ -28,7 +28,7 @@
             <div class="mt-5 rounded-lg border border-box-edge bg-background p-4">
                 <div class="flex items-center justify-between gap-3">
                     <div>
-                        <h3 class="text-sm font-semibold text-fontcolor-hard">{{ __( 'Why connect your account?' ) }}</h3>
+                        <h3 class="text-sm font-semibold text-fontcolor">{{ __( 'Why connect your account?' ) }}</h3>
                         <p class="mt-1 text-xs text-fontcolor-soft">{{ __( 'Unlock marketplace access and keep module installation smooth.' ) }}</p>
                     </div>
                     <div class="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
@@ -42,7 +42,7 @@
                             <i class="las la-check text-lg"></i>
                         </span>
                         <div>
-                            <h4 class="text-sm font-medium text-fontcolor-hard">{{ __( 'One-click module installation' ) }}</h4>
+                            <h4 class="text-sm font-medium text-fontcolor">{{ __( 'One-click module installation' ) }}</h4>
                             <p class="mt-1 text-xs leading-5 text-fontcolor-soft">
                                 {{ __( 'Authenticate once and keep moving without repeating setup steps for every extension.' ) }}
                             </p>
@@ -54,7 +54,7 @@
                             <i class="las la-plug text-lg"></i>
                         </span>
                         <div>
-                            <h4 class="text-sm font-medium text-fontcolor-hard">{{ __( 'Socket Features' ) }}</h4>
+                            <h4 class="text-sm font-medium text-fontcolor">{{ __( 'Socket Features' ) }}</h4>
                             <p class="mt-1 text-xs leading-5 text-fontcolor-soft">
                                 {{ __( 'These are useful to use the Barcode Scanner Utility on NexoPOS.' ) }}
                             </p>
@@ -66,7 +66,7 @@
                             <i class="las la-bolt text-lg"></i>
                         </span>
                         <div>
-                            <h4 class="text-sm font-medium text-fontcolor-hard">{{ __( 'Faster updates and upgrades' ) }}</h4>
+                            <h4 class="text-sm font-medium text-fontcolor">{{ __( 'Faster updates and upgrades' ) }}</h4>
                             <p class="mt-1 text-xs leading-5 text-fontcolor-soft">
                                 {{ __( 'Get access to the latest extensions, fixes, and improvements as they ship.' ) }}
                             </p>

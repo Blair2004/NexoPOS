@@ -91,7 +91,7 @@ export default {
             const validation  = this.formValidation.validateForm( this.form );
 
             if ( validation.length > 0 ) {
-                return nsSnackBar.error( __( 'The form is not valid. Double check it or refer to the error dislayed above.' ), __( 'Close' ) );
+                return nsSnackBar.error( __( 'The form is not valid. Double check it or refer to the error displayed above.' ), __( 'Close' ) );
             }
 
             this.formValidation.disableForm( this.form );

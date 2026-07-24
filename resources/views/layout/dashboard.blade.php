@@ -24,7 +24,7 @@ if ( Auth::check() ) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ App\Services\Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) }}</title>
+    <title>{{ App\Services\Helper::pageTitle( $title ?? __( 'Unnamed Page' ) ) }}</title>
     @include( 'layout._header-injection')
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
@@ -34,6 +34,7 @@ if ( Auth::check() ) {
     ])
     @yield( 'layout.dashboard.header' )
     @include( 'layout._header-script' )
+    @vite([ 'resources/ts/vue-runtime.ts' ])
     @vite([ 'resources/ts/lang-loader.ts' ])
 </head>
 <body <?php echo in_array( app()->getLocale(), config( 'nexopos.rtl-languages' ) ) ? 'dir="rtl"' : "";?>>
@@ -49,7 +50,7 @@ if ( Auth::check() ) {
                             <h1 class="font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-200 to-indigo-400 text-3xl">NexoPOS</h1>
                             @endif
                         </div>
-                        <ul id="aside-menu">
+                        <ul id="aside-menu" class="mr-2">
                             @foreach( $menus->getMenus() as $identifier => $menu )
                                 <ns-menu identifier="{{ $identifier }}" toggled="{{ $menu[ 'toggled' ] ?? '' }}" label="{{ @$menu[ 'label' ] }}" icon="{{ @$menu[ 'icon' ] }}" href="{{ @$menu[ 'href' ] }}" notification="{{ isset( $menu[ 'notification' ] ) ? $menu[ 'notification' ] : 0 }}" id="menu-{{ $identifier }}">
                                     @if ( isset( $menu[ 'childrens' ] ) )

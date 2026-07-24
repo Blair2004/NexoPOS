@@ -56,7 +56,7 @@ export default {
                                 }
                             },
                             error: error => {
-                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) );
+                                nsSnackBar.error( error.message || __( 'An error occurred while preloading the procurement.' ) );
                             }
                         })
                 }
@@ -208,7 +208,7 @@ export default {
 
                 if ( product.procurement.unit_id === undefined ) {
                     return nsNotice.error( 
-                        __( 'An error has occured' ),
+                        __( 'An error has occurred' ),
                         __( 'Select the procured unit first before selecting the conversion unit.' ), {
                             actions: {
                                 learnMore: {
@@ -241,7 +241,7 @@ export default {
             } catch( exception ) {
                 if ( exception !== false ) {
                     return nsSnackBar
-                        .error( exception.message || __( 'An unexpected error has occured' ) );
+                        .error( exception.message || __( 'An unexpected error has occurred' ) );
                 }
             }
         },
@@ -605,7 +605,7 @@ export default {
                                     resolve( result.name );
                                 },
                                 error: result => {
-                                    resolve( __( 'Unkown Unit' ) );
+                                    resolve( __( 'Unknown Unit' ) );
                                 }
                             })
                     } else {

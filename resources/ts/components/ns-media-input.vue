@@ -43,7 +43,10 @@
 
 import { Popup } from '~/libraries/popup';
 import { default as nsMedia } from "~/pages/dashboard/ns-media.vue";
+import { default as nsMediaLibrary } from "~/pages/dashboard/ns-media-library.vue";
 import { fileIcons } from '~/shared/file-icons';
+
+declare const ns;
 
 export default {
     computed: {
@@ -84,7 +87,21 @@ export default {
 
         toggleMedia() {
             const promise   =   new Promise( ( resolve, reject ) => {
-                Popup.show( nsMedia, { resolve, reject, ...( this.field.data || {} )});
+                let currentLibrary = nsMedia;
+
+                /**
+                 * This will conditionnaly display the correct media library based on the configuration of the application.
+                 * The configuration is stored in the window.ns.medias object, which is set in the header resources/views/layout/_header-script.blade.php
+                 */
+                if ( ns && ns.medias ) {
+                    if (ns.medias.mediaLayout === 'modern' ) {
+                        currentLibrary = nsMediaLibrary;
+                    } else {
+                        currentLibrary = nsMedia;
+                    }
+                }
+
+                Popup.show( currentLibrary, { resolve, reject, ...( this.field.data || {} )});
             });
 
             promise.then( ( action: { event: string, value: any[] } ) => {

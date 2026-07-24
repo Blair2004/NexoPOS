@@ -316,7 +316,7 @@ class UsersController extends DashboardController
 
     public function approveAccess( Request $request, $id )
     {
-        $access = PermissionAccess::with( 'permission' )->find( $id );
+        $access = PermissionAccess::with( 'perm' )->find( $id );
 
         /**
          * We'll proceed only if the permission is valid.
@@ -333,6 +333,16 @@ class UsersController extends DashboardController
                 throw new NotFoundException( __( 'The requested permission access has expired.' ) );
             }
 
+            /**
+             * The requested access doesn't match the requested permission.
+             */
+            if ( $access->permission !== $request->input( 'permission' ) ) {
+                throw new NotAllowedException( __( 'The requested permission access is not valid.' ) );
+            }
+
+            /**
+             * The user is not allowed to access this permission.
+             */
             if ( ns()->allowedTo( $access->permission ) ) {
                 $access->status = PermissionAccess::GRANTED;
                 $access->granter_id = Auth::id();

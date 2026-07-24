@@ -58,7 +58,8 @@ export default {
                 name: widget.name, 
                 'component-name': widget[ 'component-name' ], 
                 'class-name' : widget[ 'class-name' ],
-                component: shallowRef( window[ widget[ 'component-name' ] ])
+                component: shallowRef( window[ widget[ 'component-name' ] ]),
+                data: widget.data || {}
             };
         });
 
@@ -67,6 +68,7 @@ export default {
                 widget.component            =   shallowRef( window[ widget.identifier ] );
                 widget[ 'class-name' ]      =   widget.class_name;
                 widget[ 'component-name' ]  =   widget.identifier;
+                widget.data                  =   this.resolveWidgetData( widget.identifier );
             });
 
             return column;
@@ -264,13 +266,18 @@ export default {
             }
         },
 
+        resolveWidgetData( identifier ) {
+            const widget = this.widgets.filter( widget => widget[ 'component-name' ] === identifier )[0];
+
+            return widget ? widget.data || {} : {};
+        },
         handleChange( column, event ) {
             setTimeout( () => {
                 nsHttpClient.post( '/api/users/widgets', { column })
                     .subscribe( result => {
                         // ...
                     }, error => {
-                        return nsSnackBar.error( error.message || __( 'An unpexpected error occured while using the widget.' ) );
+                        return nsSnackBar.error( error.message || __( 'An unexpected error occurred while using the widget.' ) );
                     })
             }, 100 );
         },

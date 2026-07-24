@@ -50,7 +50,7 @@ class MediasController extends DashboardController
         ] );
 
         if ( $validation->fails() ) {
-            throw new NotAllowedException( 'An error occured while updating the media file.' );
+            throw new NotAllowedException( 'An error occurred while updating the media file.' );
         }
 
         $media->name = $request->input( 'name' );

@@ -8,6 +8,6 @@ class CoreException extends Exception
 {
     public function __construct( $message = null )
     {
-        $this->message = $message ?: __( 'A critical error has occured.' );
+        $this->message = $message ?: __( 'A critical error has occurred.' );
     }
 }

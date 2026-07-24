@@ -304,7 +304,7 @@ export default {
                 this.selectedPaymentGatewayLabel   =   this.paymentField[0].options
                     .filter( option => option.value === this.selectedPaymentGateway )[0].label;
             } catch( exception ) {
-                nsSnackBar.error( __( 'An error has occured while seleting the payment gateway.' ) );
+                nsSnackBar.error( __( 'An error has occurred while selecting the payment gateway.' ) );
             }
         },
 

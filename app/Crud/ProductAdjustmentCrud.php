@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Casts\DateCast;
+use App\Casts\ProductAdjustmentCast;
 use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductAdjustment;
@@ -63,6 +64,7 @@ class ProductAdjustmentCrud extends CrudService
 
     protected $casts = [
         'created_at' => DateCast::class,
+        'status' => ProductAdjustmentCast::class,
     ];
 
     /**
@@ -113,7 +115,7 @@ class ProductAdjustmentCrud extends CrudService
     public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->{ '$cssClass' } = match ( $entry->getOriginalValue( 'status' ) ) {
-            ProductAdjustment::STATUS_DRAFT => 'warning border text-sm',
+            ProductAdjustment::STATUS_DRAFT => 'info border text-sm',
             ProductAdjustment::STATUS_PERFORMED => 'success border text-sm',
             default => '',
         };
@@ -167,7 +169,7 @@ class ProductAdjustmentCrud extends CrudService
     /**
      * Before Delete
      */
-    public function beforeDelete( $namespace, $id, $model )
+    public function beforeDelete( string $namespace, $id, ProductAdjustment $model )
     {
         if ( $namespace === self::IDENTIFIER ) {
             if ( $model->status === ProductAdjustment::STATUS_PERFORMED ) {

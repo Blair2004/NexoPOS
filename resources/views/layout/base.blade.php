@@ -16,7 +16,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{!! $title ?? __( 'Unamed Page' ) !!}</title>
+    <title>{!! $title ?? __( 'Unnamed Page' ) !!}</title>
     @include( 'layout._header-injection' )
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
@@ -27,6 +27,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     ])
     @yield( 'layout.base.header' )
     @include( 'layout._header-script' )
+    @vite([ 'resources/ts/vue-runtime.ts' ])
     @vite([ 'resources/ts/lang-loader.ts' ])
 </head>
 <body>

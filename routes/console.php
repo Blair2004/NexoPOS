@@ -3,6 +3,7 @@
 use App\Jobs\CheckForUpdatesJob;
 use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ClearModuleTempJob;
+use App\Jobs\DeleteExpiredOptionsJob;
 use App\Jobs\DetectLowStockProductsJob;
 use App\Jobs\DetectScheduledTransactionsJob;
 use App\Jobs\EnsureCombinedProductHistoryExistsJob;
@@ -63,12 +64,12 @@ if ( Helper::installed() ) {
      * Will check procurement awaiting automatic
      * stocking to update their status.
      */
-    Schedule::job( new StockProcurementJob )->daily( '00:05' );
+    Schedule::job( new StockProcurementJob )->dailyAt( '00:05' );
 
     /**
      * Will purge stoarge orders daily.
      */
-    Schedule::job( new PurgeOrderStorageJob )->daily( '15:00' );
+    Schedule::job( new PurgeOrderStorageJob )->dailyAt( '15:00' );
 
     /**
      * Will clear hold orders that has expired.
@@ -98,6 +99,10 @@ if ( Helper::installed() ) {
      * hasn't been deleted after a module installation.
      */
     Schedule::job( new ClearModuleTempJob )->weekly();
+
+    if ( ! in_array( env( 'QUEUE_CONNECTION' ), [ 'sync' ] ) ) {
+        Schedule::job( new DeleteExpiredOptionsJob )->daily()->withoutOverlapping();
+    }
 
     /**
      * Will check daily if a new NexoPOS version is available

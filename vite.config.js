@@ -38,6 +38,7 @@ export default ({ mode }) => {
             tailwindcss(),
             laravel({
                 input: [
+                    'resources/ts/vue-runtime.ts',
                     'resources/ts/bootstrap.ts',
                     'resources/ts/app-init.ts',
                     'resources/ts/app.ts',

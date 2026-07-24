@@ -19,7 +19,7 @@
         </ns-notice>
     </div>
     <div v-if="tabs.length > 0 && ! isLoading">
-        <ns-tabs :active="activeTab" @active="setActiveTab( $event )">
+        <ns-tabs :active="activeTab" @changeTab="setActiveTab( $event )">
             <template #extra>
                 <div class="md:flex hidden flex-col md:flex-row -mx-2">
                     <div class="px-2">
@@ -119,7 +119,7 @@ export default {
              * on save button before choosing the configuration.
              */
             if ( correctConfig.length !== 1 ) {
-                return nsSnackBar.error( __( 'No configuration were choosen. Unable to proceed.' ) );
+                return nsSnackBar.error( __( 'No configuration was chosen. Unable to proceed.' ) );
             }
 
             /**
@@ -157,7 +157,7 @@ export default {
                     },
                     error: error => {
                         this.validation.enableFields( correctConfig[0].fields );
-                        nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) );
+                        nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ) );
                     }
                 });
         },

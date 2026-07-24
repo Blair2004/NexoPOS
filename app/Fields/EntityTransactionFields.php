@@ -63,7 +63,7 @@ class EntityTransactionFields extends FieldsService
             ),
             FormInput::searchSelect(
                 label: __( 'User Group' ),
-                description: __( 'The transaction will be multipled by the number of user having that role.' ),
+                description: __( 'The transaction will be multiplied by the number of user having that role.' ),
                 validation: 'required',
                 name: 'group_id',
                 props: RolesCrud::getFormConfig(),

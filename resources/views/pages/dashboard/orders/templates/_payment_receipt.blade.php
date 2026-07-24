@@ -34,18 +34,22 @@ use App\Classes\Hook;
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-700">
                             <span class="">{{ $product->name }} (x{{ $product->quantity }})</span>
+                            @if ( ns()->option->get( 'ns_invoice_show_product_unit', 'yes' ) === 'yes' )
                             <br>
                             <span class="text-xs text-gray-600">{{ $product->unit->name }}</span>
+                            @endif
                         </td>
                         <td class="p-2 border-b border-gray-800 text-right">{{ ns()->currency->define( $product->total_price ) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tbody>
+                    @if ( ns()->option->get( 'ns_invoice_show_subtotal', 'yes' ) === 'yes' )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->subtotal ) }}</td>
                     </tr>
+                    @endif
                     @if ( $order->discount > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
@@ -99,6 +103,7 @@ use App\Classes\Hook;
                         </tr>
                         @endforeach
                     @endif
+                    @if ( ns()->option->get( 'ns_invoice_show_change_due', 'yes' ) === 'yes' )
                     @switch( $order->payment_status )
                         @case( Order::PAYMENT_PAID )
                         <tr>
@@ -113,6 +118,7 @@ use App\Classes\Hook;
                         </tr>
                         @break
                     @endswitch
+                    @endif
                 </tbody>
             </table>
             @if( $order->note_visibility === 'visible' )

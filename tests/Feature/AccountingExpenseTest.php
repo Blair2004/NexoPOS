@@ -260,14 +260,14 @@ class AccountingExpenseTest extends TestCase
                     if ( (int) $currentDay->day === (int) $transaction->occurrence_value ) {
                         $this->assertTrue(
                             $result[ 'data' ][0][ 'status' ] === 'success',
-                            'The transction hasn\'t been triggered at a specific day of the month.'
+                            'The transaction hasn\'t been triggered at a specific day of the month.'
                         );
 
                         $resultTransactionId = (int) $result[ 'data' ][0][ 'data' ][ 'histories' ]->first()->transaction_id ?? 0;
 
                         $this->assertTrue(
                             $resultTransactionId === (int) $transaction->id,
-                            'The transction id is not matching the one that executed.'
+                            'The transaction id is not matching the one that executed.'
                         );
                     }
                     break;

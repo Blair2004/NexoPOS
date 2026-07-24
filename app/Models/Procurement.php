@@ -46,7 +46,7 @@ class Procurement extends NsModel
     /**
      * this status state when the procurement has
      * moved from the "draft" status to pending. Which
-     * means it's ready to be processed or it's being proceesed.
+     * means it's ready to be processed or it's being processed.
      *
      * @param string
      */

@@ -3,7 +3,7 @@
         <template #title>Date Time Picker</template>
         <template #description>A date time picker.</template>
     </ns-page-title>
-    <ns-tabs :active="active" @active="active = $event">
+    <ns-tabs :active="active" @changeTab="active = $event">
         <ns-tabs-item identifier="general" label="General">
             
         </ns-tabs-item>

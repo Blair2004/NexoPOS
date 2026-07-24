@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use App\Events\WebRoutesLoadedEvent;
 use App\Http\Controllers\Dashboard\CrudController;
 use App\Http\Controllers\Dashboard\HomeController;
@@ -16,7 +17,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware( [ 'web' ] )->group( function () {
-    Route::get( '/', [ HomeController::class, 'welcome' ] )->name( 'ns.welcome' );
+    Route::get( '/', Hook::filter( 'ns.welcome', [ HomeController::class, 'welcome' ] ) )->name( 'ns.welcome' );
 } );
 
 require dirname( __FILE__ ) . '/intermediate.php';

@@ -28,7 +28,7 @@
                     <h3 class="text-lg font-semibold">{{ __( 'Order' ) }} : {{ order.code }}</h3>
                     <div class="flex -mx-2">
                         <div class="px-1">
-                            <h4 class="text-semibold text-xs">
+                            <h4 class="text-semibold text-fontcolor text-xs">
                                 <i class="lar la-user-circle"></i>
                                 <span>{{ order.user.username }}</span>
                             </h4>

@@ -7,6 +7,7 @@ export class ProductUnitPromise {
     run() {
         return new Promise( ( resolve, reject ) => {
             const product   =   this.product;
+            console.log({ product })
             Popup.show( nsProductUnitPopup, { resolve, reject, product });
         });
     }

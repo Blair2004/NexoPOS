@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -31,7 +32,7 @@ class AdService
     /**
      * Determine which ad to show for the given user on the current route.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      */
     public function getAdToDisplay( $user, ?string $routeName ): ?array
     {
@@ -75,8 +76,13 @@ class AdService
                 'title' => __( 'Need Something Specific?' ),
                 'message' => __( 'Check out our store for exclusive NexoPOS modules.' ),
                 'icon' => 'la-store',
-                'url' => ns()->route( 'ns.dashboard.modules-list' ),
+                'url' => ns()->route( 'ns.dashboard.modules-marketplace' ),
                 'routes' => [],
+                'strict' => false,
+            ], [
+                'title' => __( 'Secure Sensitive Operations' ),
+                'message' => __( 'Not every actions should be granted to cashiers.' ),
+                'url' => 'https://my.nexopos.com/en/marketplace/item/nexopos-authorizer',
                 'strict' => false,
             ],
         ];
@@ -88,7 +94,7 @@ class AdService
                 'title' => __( 'New to NexoPOS?' ),
                 'message' => __( 'Connect your store to our marketplace and discover new modules.' ),
                 'icon' => 'la-plug',
-                'url' => ns()->route( 'ns.dashboard.modules-list' ),
+                'url' => ns()->route( 'ns.dashboard.modules-marketplace' ),
                 'routes' => [],
                 'strict' => true,
             ];

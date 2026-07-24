@@ -752,7 +752,7 @@ class ProcurementService
          */
         if ( $procurement->delivery_status === 'stocked' ) {
             /**
-             * if the product was'nt convered into a different unit
+             * if the product wasn't convered into a different unit
              * then we'll directly perform a stock adjustment on that product.
              */
             if ( ! empty( $procurementProduct->convert_unit_id ) ) {
@@ -1047,7 +1047,7 @@ class ProcurementService
 
         /**
          * We'll pull the last purchase
-         * price for the item retreived
+         * price for the item retrieved
          */
         $product->unit_quantities->each( function ( $unitQuantity ) use ( $product ) {
             $unitQuantity->load( 'unit' );

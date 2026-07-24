@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Classes\Currency;
+use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
 use App\Events\CustomerRewardAfterCreatedEvent;
@@ -17,6 +18,8 @@ use App\Models\CustomerGroup;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\RewardSystem;
+use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -185,6 +188,27 @@ class CustomerService
                 }
             }
         }
+
+        /**
+         * Assign the "Store Customer" role to the newly created customer.
+         * This ensures the customer is visible in the application
+         * due to the Customer model's global scope filtering.
+         */
+        $storeCustomerRole = Role::namespace( Role::STORECUSTOMER );
+
+        if ( $storeCustomerRole ) {
+            $usersService = app()->make( UsersService::class );
+            $user = User::find( $customer->id );
+
+            if ( $user ) {
+                $usersService->setUserRole( $user, [ $storeCustomerRole->id ] );
+            }
+        }
+
+        /**
+         * Dispatch the customer created event
+         */
+        CustomerAfterCreatedEvent::dispatch( $customer );
 
         $customer = $customer->fresh();
         $customer->addresses;
@@ -743,7 +767,7 @@ class CustomerService
         /**
          * we'll check if the coupon is still valid.
          */
-        if ( $coupon->valid_until !== null && ns()->date->lessThan( Carbon::parse( $coupon->valid_until ) ) ) {
+        if ( $coupon->valid_until !== null && ns()->date->isAfter( Carbon::parse( $coupon->valid_until ) ) ) {
             throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s as it has expired.' ), $coupon->name ) );
         }
 
@@ -759,19 +783,19 @@ class CustomerService
          * @todo Well we're doing this because we don't yet have a proper time picker. As we're using a date time picker
          * we're extracting the hours from it :(.
          */
-        $hourStarts = ! empty( $coupon->valid_hours_start ) ? Carbon::parse( $coupon->valid_hours_start )->format( 'H:i' ) : null;
-        $hoursEnds = ! empty( $coupon->valid_hours_end ) ? Carbon::parse( $coupon->valid_hours_end )->format( 'H:i' ) : null;
+        $hourStarts = ! empty( $coupon->valid_hours_start ) ? Carbon::parse( $coupon->valid_hours_start ) : null;
+        $hoursEnds = ! empty( $coupon->valid_hours_end ) ? Carbon::parse( $coupon->valid_hours_end ) : null;
 
         if (
             $hourStarts !== null &&
             $hoursEnds !== null ) {
-            $todayStartDate = ns()->date->format( 'Y-m-d' ) . ' ' . $hourStarts;
-            $todayEndDate = ns()->date->format( 'Y-m-d' ) . ' ' . $hoursEnds;
+            $todayStartDate = ns()->date->setTimeFrom( $hourStarts );
+            $todayEndDate = ns()->date->setTimeFrom( $hoursEnds );
 
             if (
                 ns()->date->between(
-                    date1: Carbon::parse( $todayStartDate ),
-                    date2: Carbon::parse( $todayEndDate )
+                    date1: $todayStartDate,
+                    date2: $todayEndDate
                 )
             ) {
                 throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s at this moment.' ), $coupon->name ) );

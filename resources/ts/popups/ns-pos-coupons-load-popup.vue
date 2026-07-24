@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="p-1 ns-box-body">
-            <ns-tabs @active="setActiveTab( $event )" :active="activeTab">
+            <ns-tabs @changeTab="setActiveTab( $event )" :active="activeTab">
                 <ns-tabs-item 
                     :label="__( 'Apply A Coupon' )" 
                     padding="p-2"
@@ -268,7 +268,7 @@ export default {
         getDiscountValue( coupon ) {
             switch( coupon.type ) {
                 case 'percentage_discount': return coupon.discount_value + '%';
-                case 'flat_discount': return this.$options.filters.currency( coupon.discount_value );
+                case 'flat_discount': return nsCurrency( coupon.discount_value );
             }
         },
 

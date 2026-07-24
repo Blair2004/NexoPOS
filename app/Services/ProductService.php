@@ -184,7 +184,7 @@ class ProductService
         } elseif ( $data[ 'product_type' ] === 'variable' ) {
             return $this->createVariableProduct( $data );
         } else {
-            throw new NotAllowedException( sprintf( __( 'Unable to create a product with an unknow type : %s' ), $data[ 'product_type' ] ) );
+            throw new NotAllowedException( sprintf( __( 'Unable to create a product with an unknown type : %s' ), $data[ 'product_type' ] ) );
         }
     }
 
@@ -255,7 +255,7 @@ class ProductService
         }
 
         if ( empty( $data[ 'barcode_type' ] ) ) {
-            $data[ 'barcode_type' ] = 'ean8';
+            $data[ 'barcode_type' ] = ns()->option->get( 'ns_pos_default_barcode_type', 'code128' );
         }
 
         if ( empty( $data[ 'barcode' ] ) ) {
@@ -768,7 +768,7 @@ class ProductService
                 );
 
                 /**
-                 * if some other fields should be retreived from the $group variable
+                 * if some other fields should be retrieved from the $group variable
                  * we can defined that on the array below
                  */
                 foreach ( Hook::filter( 'ns-products-units-quantities-fields-names', [] ) as $field ) {
@@ -795,7 +795,7 @@ class ProductService
                         $plu = $this->generateScalePLU( $product->id, $unitQuantity->id );
                         $unitQuantity->scale_plu = $plu;
                         $unitQuantity->save();
-                    } catch ( \Exception $e ) {
+                    } catch ( Exception $e ) {
                         // PLU generation failed - product category may not have a range assigned
                         // This is not a critical error, so we'll just skip it
                         ns()->notification->create(
@@ -824,7 +824,7 @@ class ProductService
         $productHistory->load( 'product', 'unit' );
 
         /**
-         * if the value is explicitely defined
+         * if the value is explicitly defined
          * then we'll skip the automatic detection
          */
         if ( $productHistory->product instanceof Product && $productHistory->product->auto_cogs ) {
@@ -2315,22 +2315,22 @@ class ProductService
      *
      * @return string The generated PLU code
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function generateScalePLU( int $productId, int $unitQuantityId ): string
     {
         $product = Product::with( 'category.scaleRange' )->find( $productId );
 
         if ( ! $product ) {
-            throw new \Exception( __( 'Product not found.' ) );
+            throw new Exception( __( 'Product not found.' ) );
         }
 
         if ( ! $product->category ) {
-            throw new \Exception( __( 'Product must have a category to generate PLU code.' ) );
+            throw new Exception( __( 'Product must have a category to generate PLU code.' ) );
         }
 
         if ( ! $product->category->scaleRange ) {
-            throw new \Exception(
+            throw new Exception(
                 sprintf(
                     __( 'Category "%s" does not have a PLU range assigned.' ),
                     $product->category->name
@@ -2367,7 +2367,7 @@ class ProductService
      * @param  int|null $productLength Override product code length
      * @return string   Formatted PLU code
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function validateAndFormatPLU( string $plu, ?int $productLength = null ): string
     {
@@ -2380,12 +2380,12 @@ class ProductService
         $plu = preg_replace( '/[^0-9]/', '', $plu );
 
         if ( empty( $plu ) ) {
-            throw new \Exception( __( 'PLU code cannot be empty.' ) );
+            throw new Exception( __( 'PLU code cannot be empty.' ) );
         }
 
         // Check if PLU is numeric
         if ( ! ctype_digit( $plu ) ) {
-            throw new \Exception( __( 'PLU code must contain only digits.' ) );
+            throw new Exception( __( 'PLU code must contain only digits.' ) );
         }
 
         // Pad with zeros to match the configured length
@@ -2393,7 +2393,7 @@ class ProductService
 
         // Check if PLU length matches configured length
         if ( strlen( $plu ) > $productLength ) {
-            throw new \Exception(
+            throw new Exception(
                 sprintf(
                     __( 'PLU code is too long. Maximum length is %d digits.' ),
                     $productLength
@@ -2445,11 +2445,11 @@ class ProductService
      * Create a draft stock adjustment batch with its line items.
      * No stock quantities are modified at this stage.
      */
-    public function createAdjustmentDraft( array $products, string $title = '', string $description = '' ): ProductAdjustment
+    public function createAdjustmentDraft( array $products, ?string $title = '', string $description = '' ): ProductAdjustment
     {
         $adjustment = ProductAdjustment::create( [
             'author_id' => Auth::id(),
-            'title' => $title,
+            'title' => $title ?: $this->generateAdjustmentTitle(),
             'status' => ProductAdjustment::STATUS_DRAFT,
             'description' => $description,
         ] );
@@ -2465,13 +2465,25 @@ class ProductService
         return $adjustment->load( 'items' );
     }
 
+    public function generateAdjustmentTitle( ?ProductAdjustment $adjustment = null ): string
+    {
+        if ( $adjustment instanceof ProductAdjustment && $adjustment->title ) {
+            return sprintf( __( 'Stock Adjustment #%s' ), $adjustment->id );
+        } else {
+            $latestAdjustment = ProductAdjustment::latest()->first();
+            $nextNumber = $latestAdjustment ? $latestAdjustment->id + 1 : 1;
+
+            return sprintf( __( 'Stock Adjustment #%s' ), $nextNumber );
+        }
+    }
+
     /**
      * Replace all items of an existing draft adjustment.
      */
-    public function updateAdjustmentDraft( ProductAdjustment $adjustment, array $products, string $title = '', string $description = '' ): ProductAdjustment
+    public function updateAdjustmentDraft( ProductAdjustment $adjustment, array $products, ?string $title = '', string $description = '' ): ProductAdjustment
     {
         $adjustment->update( [
-            'title' => $title,
+            'title' => $title ?: $this->generateAdjustmentTitle( $adjustment ),
             'description' => $description,
         ] );
 
@@ -2514,5 +2526,14 @@ class ProductService
         $adjustment->update( [ 'status' => ProductAdjustment::STATUS_PERFORMED ] );
 
         return $results;
+    }
+
+    public function getAdjustmentLabel( string $label ): string
+    {
+        return match ( $label ) {
+            ProductAdjustment::STATUS_DRAFT => __( 'Draft' ),
+            ProductAdjustment::STATUS_PERFORMED => __( 'Performed' ),
+            default => __( 'Unknown' ),
+        };
     }
 }

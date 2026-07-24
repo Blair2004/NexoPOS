@@ -317,7 +317,7 @@ export class POS {
                         error: (error) => {
                             nsNotice
                                 .error( 
-                                    __( 'An error has occured' ),
+                                    __( 'An error has occurred' ),
                                     __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ),
                                     {
                                         actions: {
@@ -429,13 +429,26 @@ export class POS {
                                 this.startWirelessBarcodeChannel();
                             }, 1000 );
                         }
+                    } 
+
+                    if ( request.status === 422 ) {
+                        this.wirelessBarcodeState.update({
+                            http_status: 'error'
+                        });
+                    }
+
+                    if ( request.status >= 500 ) {
+                        this.wirelessBarcodeState.update({
+                            http_status: 'error'
+                        });
                     }
                 }
 
                 request.setRequestHeader( 'Authorization', `Bearer ${  options.mynexopos_access_token }` );
                 request.setRequestHeader( 'Accept', 'application/json' );
 
-                request.onerror = () => {
+                request.onerror = (e) => {
+                    console.log(e)
                     this.wirelessBarcodeState.update({
                         http_status: 'error'
                     });
@@ -546,7 +559,6 @@ export class POS {
     }
 
     public stopWirelessBarcodeChannel() {
-        console.log( this.wirelessSocket )
         if ( this.wirelessSocket ) {
             this.wirelessSocket.removeAllListeners();
             this.wirelessSocket.disconnect();
@@ -1591,7 +1603,7 @@ export class POS {
             order = response['data'].order;
         } catch (exception) {
             if (exception !== false && exception.message !== undefined) {
-                nsSnackBar.error(exception.message || __('An unexpected error has occurred while fecthing taxes.'), __('OKAY'), { duration: 0 });
+                nsSnackBar.error(exception.message || __('An unexpected error has occurred while fetching taxes.'), __('OKAY'), { duration: 0 });
             }
         }
 

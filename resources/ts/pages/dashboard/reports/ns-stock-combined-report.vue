@@ -192,7 +192,7 @@ export default {
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
-                    return nsSnackBar.error( __( 'An error has occured while loading the categories' ) );
+                    return nsSnackBar.error( __( 'An error has occurred while loading the categories' ) );
                 }
             }
         },
@@ -204,7 +204,7 @@ export default {
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
-                    return nsSnackBar.error( __( 'An error has occured while loading the units' ) );
+                    return nsSnackBar.error( __( 'An error has occurred while loading the units' ) );
                 }
             }
         },

@@ -38,6 +38,6 @@ trait WithCombinedProductTest
         $json = json_decode( $response->getContent() );
         $orderId = $json->data->order->id;
 
-        $this->assertEquals( 1, Order::find( $orderId )->combinedProducts->count(), __( 'The product were\'nt combined.' ) );
+        $this->assertEquals( 1, Order::find( $orderId )->combinedProducts->count(), __( 'The product weren\'t combined.' ) );
     }
 }

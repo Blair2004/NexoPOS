@@ -50,7 +50,7 @@ class TransactionOccurrenceCast implements CastsAttributes
             Transaction::OCCURRENCE_EVERY_X_DAYS => $model->occurrence_value <= 1 ? sprintf( __( 'Every %s day' ), $model->occurrence_value ) : sprintf( __( 'Every %s days' ), $model->occurrence_value ),
             Transaction::OCCURRENCE_EVERY_X_HOURS => $model->occurrence_value <= 1 ? sprintf( __( 'Every %s hour' ), $model->occurrence_value ) : sprintf( __( 'Every %s hours' ), $model->occurrence_value ),
             Transaction::OCCURRENCE_EVERY_X_MINUTES => $model->occurrence_value <= 1 ? sprintf( __( 'Every %s minute' ), $model->occurrence_value ) : sprintf( __( 'Every %s minutes' ), $model->occurrence_value ),
-            default => sprintf( __( 'Unknown Occurance: %s' ), $value )
+            default => sprintf( __( 'Unknown Occurrence: %s' ), $value )
         };
     }
 

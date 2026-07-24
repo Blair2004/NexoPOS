@@ -9,6 +9,7 @@ use App\Widgets\BestCashiersWidget;
 use App\Widgets\BestCustomersWidget;
 use App\Widgets\ExpenseCardWidget;
 use App\Widgets\IncompleteSaleCardWidget;
+use App\Widgets\MyNexoPosWidget;
 use App\Widgets\OrdersChartWidget;
 use App\Widgets\OrdersSummaryWidget;
 use App\Widgets\ProfileWidget;
@@ -60,6 +61,7 @@ class WidgetService
             IncompleteSaleCardWidget::class,
             ExpenseCardWidget::class,
             SaleCardWidget::class,
+            MyNexoPosWidget::class,
             BestCustomersWidget::class,
             ProfileWidget::class,
             OrdersChartWidget::class,
@@ -111,6 +113,7 @@ class WidgetService
                 'name' => $widgetInstance->getName(),
                 'component-name' => $widgetInstance->getVueComponent(),
                 'canAccess' => $widgetInstance->canAccess(),
+                'data' => $widgetInstance->getData(),
             ];
         } );
     }
@@ -131,6 +134,11 @@ class WidgetService
      * Returns only the declared perimssion. If
      * not defined, will return false.
      */
+    public function getData(): array
+    {
+        return [];
+    }
+
     public function getPermission(): string|bool
     {
         return $this->permission;

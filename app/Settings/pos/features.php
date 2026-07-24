@@ -123,6 +123,23 @@ return [
             description: __( 'Will permanently enable barcode autofocus to ease using a barcode reader.' )
         ),
 
+        FormInput::select(
+            label: __( 'Default Barcode Type' ),
+            name: 'ns_pos_default_barcode_type',
+            options: Helper::kvToJsOptions( [
+                'code128' => __( 'Code 128' ),
+                'ean8'    => __( 'EAN 8' ),
+                'ean13'   => __( 'EAN 13' ),
+                'code39'  => __( 'Code 39' ),
+                'code11'  => __( 'Code 11' ),
+                'codabar' => __( 'Codabar' ),
+                'upca'    => __( 'UPC A' ),
+                'upce'    => __( 'UPC E' ),
+            ] ),
+            value: ns()->option->get( 'ns_pos_default_barcode_type', 'code128' ),
+            description: __( 'Choose the default barcode type pre-selected when creating a new product. Defaults to Code 128 if not set.' )
+        ),
+
         FormInput::switch(
             label: __( 'Hide Exhausted Products' ),
             name: 'ns_pos_hide_exhausted_products',
@@ -147,7 +164,7 @@ return [
 
         FormInput::switch(
             label: __( 'Enable Action Permission' ),
-            description: __( 'Will allow restrict certains feature behind a permission request.' ),
+            description: __( 'Will allow restrict certain feature behind a permission request.' ),
             name: 'ns_pos_action_permission_enabled',
             options: [
                 ['label' => __( 'Yes' ), 'value' => 'yes'],

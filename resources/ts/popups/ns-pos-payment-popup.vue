@@ -165,7 +165,7 @@ export default {
                                 this.popup.close();
                             } catch ( exception ) {
                                 loadingPopup.close();
-                                nsSnackBar.error( exception.message || __( 'An error occured while saving the order as unpaid.' ) );
+                                nsSnackBar.error( exception.message || __( 'An error occurred while saving the order as unpaid.' ) );
                             }
                         }
                     }
@@ -209,7 +209,7 @@ export default {
                 popup.close();
     
                 // show error message
-                nsSnackBar.error( exception.message || __( 'An unexpected error occured while submitting the order.' ) );
+                nsSnackBar.error( exception.message || __( 'An unexpected error occurred while submitting the order.' ) );
                 console.log( exception );
             }
         }

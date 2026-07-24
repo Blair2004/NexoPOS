@@ -95,7 +95,7 @@ export default {
                             this.validation.triggerFieldsErrors( this.fields, error.data );
                         }
 
-                    nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) );
+                    nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ) );
                     }
                 })
             }

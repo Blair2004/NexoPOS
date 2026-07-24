@@ -50,7 +50,7 @@ class ValidationException extends MainValidationException
                     switch ( $message ) {
                         case 'validation.unique' :  return __( 'This value is already in use on the database.' );
                         case 'validation.required' :  return __( 'This field is required.' );
-                        case 'validation.array' :  return __( 'This field does\'nt have a valid value.' );
+                        case 'validation.array' :  return __( 'This field doesn\'t have a valid value.' );
                         case 'validation.accepted' :  return __( 'This field should be checked.' );
                         case 'validation.active_url' :  return __( 'This field must be a valid URL.' );
                         case 'validation.email' :  return __( 'This field is not a valid email.' );

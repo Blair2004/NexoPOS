@@ -367,7 +367,7 @@ Below is a complete list of menu and submenu identifiers available in NexoPOS co
 |------------|-------|
 | `order-list` | Orders List |
 | `payment-type` | Payment Types |
-| `assignated-orders` | Assignated Orders |
+| `assignated-orders` | Assigned Orders |
 
 #### Customers (`customers`)
 | Identifier | Label |
@@ -456,7 +456,7 @@ Below is a complete list of menu and submenu identifiers available in NexoPOS co
 | `low-stock` | Stock Report |
 | `stock-history` | Stock History |
 | `sold-stock` | Sold Stock |
-| `profit` | Incomes & Loosses |
+| `profit` | Incomes & Losses |
 | `transactions` | Transactions |
 | `annulal-sales` | Annual Report |
 | `payment-types` | Sales By Payments |

@@ -52,7 +52,7 @@ $exceptions->render( function ( NotFoundHttpException $exception, Request $reque
 } );
 
 $exceptions->render( function ( Exception $exception, Request $request ) {
-    $title = __( 'An Error Occured' );
+    $title = __( 'An Error Occurred' );
     $back = Helper::getValidPreviousUrl( $request );
     $message = $exception->getMessage() ?: sprintf( __( 'Class: %s' ), get_class( $exception ) );
     $exploded = explode( '(View', $message );

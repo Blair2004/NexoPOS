@@ -49,6 +49,7 @@ class DateService extends Carbon
             'pt' => 'pt_PT',
             'tr' => 'tr_TR',
             'vi' => 'vi_VN',
+            'ko' => 'ko_KR',
             default => 'en_US',
         };
     }
@@ -69,6 +70,12 @@ class DateService extends Carbon
                 break;
             case 'full':
                 return $this->parse( $date )->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
+                break;
+            case 'date':
+                return $this->parse( $date )->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
+                break;
+            case 'time':
+                return $this->parse( $date )->format( 'h:i:s A' );
                 break;
         }
     }

@@ -187,7 +187,7 @@ class Options
     public function decodeOptionValue( $option )
     {
         /**
-         * We should'nt run this everytime we
+         * We shouldn't run this everytime we
          * try to pull an option from the database or from the array
          */
         if ( ! empty( $option->value ) && $option->isClean() ) {
@@ -209,6 +209,34 @@ class Options
                 }
             }
         }
+    }
+
+    /**
+     * Delete every option whose expiration date has passed.
+     */
+    public function deleteExpired(): int
+    {
+        $expiredOptions = Option::whereNotNull( 'expire_on' )
+            ->where( 'expire_on', '<=', now() )
+            ->get( [ 'id', 'key', 'user_id' ] );
+
+        if ( $expiredOptions->isEmpty() ) {
+            return 0;
+        }
+
+        Option::whereKey( $expiredOptions->pluck( 'id' ) )->delete();
+
+        $expiredGeneralOptionKeys = $expiredOptions
+            ->whereNull( 'user_id' )
+            ->pluck( 'key' )
+            ->all();
+
+        if ( ! empty( $expiredGeneralOptionKeys ) ) {
+            $this->rawOptions = collect( $this->rawOptions )
+                ->reject( fn( Option $option ) => in_array( $option->key, $expiredGeneralOptionKeys ) );
+        }
+
+        return $expiredOptions->count();
     }
 
     /**

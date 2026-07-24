@@ -175,7 +175,7 @@ export default {
                 this.categoryField.value    =   response.values;
                 this.loadReport();
             } catch( exception ) {
-                nsSnackBar.error( __( 'An error has occured while loading the categories' ) );
+                nsSnackBar.error( __( 'An error has occurred while loading the categories' ) );
             }
         },
         async selectUnits() {
@@ -185,7 +185,7 @@ export default {
                 this.unitField.value    =   response.values;
                 this.loadReport();
             } catch( exception ) {
-                nsSnackBar.error( __( 'An error has occured while loading the units' ) );
+                nsSnackBar.error( __( 'An error has occurred while loading the units' ) );
             }
         },
         printSaleReport() {

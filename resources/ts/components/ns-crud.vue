@@ -237,8 +237,8 @@ export default {
             return '';
         },
         resultInfo() {
-            return __( 'displaying {perPage} on {items} items' )
-                .replace( '{perPage}', this.result.per_page || 0 )
+            return __( 'displaying {perPage} of {items} items' )
+                .replace( '{perPage}', this.result.data.length || 0 )
                 .replace( '{items}', this.result.total || 0 )
         },
         headerButtonsComponents() {
@@ -400,7 +400,7 @@ export default {
         },
         sort( identifier ) {
             if ( this.columns[ identifier ].$sort === false ) {
-                return nsSnackBar.error( __( 'Sorting is explicitely disabled on this column' ) );
+                return nsSnackBar.error( __( 'Sorting is explicitly disabled on this column' ) );
             }
 
             for ( let key in this.columns ) {

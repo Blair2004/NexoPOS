@@ -155,6 +155,7 @@ import nsPosSearchProductVue from '~/popups/ns-pos-search-product.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 import NsPosGridWirelessBarcode from './ns-pos-grid-wireless-barcode.vue';
+import { ProductUnitPromise } from './queues/products/product-unit';
 
 declare const nsNotice;
 
@@ -403,9 +404,31 @@ export default {
 
                 nsHttpClient.get( url )
                     .subscribe({
-                        next: result => {
-                            this.barcode     =   '';
-                            const product    =   {};
+                        next: async (result: any) => {
+                            this.barcode    =   '';
+                            const product   =   {};
+
+                            /**
+                             * it might happen, but in case the unit is not defined,
+                             * if we have enough information, we can display a popup for showing
+                             * the user to select a unit quantity. This is the case for products with multiple unit quantities.
+                             */
+                            if ( result.unit === null && result.product.id ) {
+                                const fetchUnitPromise = new ProductUnitPromise({
+                                    $original: () => {
+                                        return result.product;
+                                    }, 
+                                });
+
+                                try {
+                                    const fetchResult = <{ unit_quantity_id: number, unit_name: string, $quantities: () => any }>(await fetchUnitPromise.run());
+                                    const unitQuantityId = fetchResult.unit_quantity_id;
+                                    result.unitQuantity = result.product.unit_quantities.find( uq => uq.id === unitQuantityId );
+                                    result.unit = result.unitQuantity.unit;
+                                } catch ( error ) {
+                                    return nsSnackBar.error( __( 'An unexpected error occurred while fetching the unit quantity for this product.' ) );
+                                }
+                            }
 
                             product.name                    =   result.product.name;
                             product.id                      =   result.product.id;

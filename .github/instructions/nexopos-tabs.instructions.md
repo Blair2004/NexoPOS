@@ -15,7 +15,7 @@ The `ns-tabs-item` component represents individual tab content that is shown/hid
 ### Simple Tab Structure
 ```vue
 <template>
-  <ns-tabs :active="activeTab" @active="handleTabChange">
+  <ns-tabs :active="activeTab" @changeTab="handleTabChange">
     <ns-tabs-item 
       :label="__('First Tab')" 
       identifier="tab1">
@@ -142,7 +142,7 @@ export default {
 
 ### 3. Conditional Tab Visibility
 ```vue
-<ns-tabs :active="activeTab" @active="setActiveTab">
+<ns-tabs :active="activeTab" @changeTab="setActiveTab">
   <ns-tabs-item 
     :label="__('Basic Info')" 
     identifier="basic"
@@ -168,7 +168,7 @@ export default {
 
 ### 4. Tabs with Extra Header Content
 ```vue
-<ns-tabs :active="activeTab" @active="setActiveTab">
+<ns-tabs :active="activeTab" @changeTab="setActiveTab">
   <template #extra>
     <div class="flex items-center space-x-2">
       <ns-button size="sm" type="info" @click="refreshData">
@@ -197,7 +197,7 @@ export default {
 ### 5. Dynamic Tabs
 ```vue
 <template>
-  <ns-tabs :active="activeTab" @active="setActiveTab" @close="closeTab">
+  <ns-tabs :active="activeTab" @changeTab="setActiveTab" @close="closeTab">
     <ns-tabs-item 
       v-for="tab in dynamicTabs"
       :key="tab.id"
@@ -255,7 +255,7 @@ export default {
 
 ### Product Preview Popup
 ```vue
-<ns-tabs :active="active" @active="changeActiveTab($event)">
+<ns-tabs :active="active" @changeTab="changeActiveTab($event)">
   <ns-tabs-item :label="__('Units & Quantities')" identifier="units-quantities">
     <table class="table ns-table w-full" v-if="hasLoadedUnitQuantities">
       <thead>
@@ -351,7 +351,7 @@ export default {
 
 ### Form Tabs with Validation
 ```vue
-<ns-tabs :active="activeTab" @active="setActiveTab">
+<ns-tabs :active="activeTab" @changeTab="setActiveTab">
   <ns-tabs-item :label="getTabLabel('basic')" identifier="basic">
     <ns-field v-for="field in basicFields" :field="field" :key="field.name"></ns-field>
   </ns-tabs-item>

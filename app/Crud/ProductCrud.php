@@ -5,6 +5,7 @@ namespace App\Crud;
 use App\BulkEditor\ProductCrudBulkConfig;
 use App\Casts\ProductTypeCast;
 use App\Classes\CrudForm;
+use App\Classes\CrudTable;
 use App\Classes\FormInput;
 use App\Exceptions\NotAllowedException;
 use App\Models\Product;
@@ -349,7 +350,7 @@ class ProductCrud extends CrudService
                                     'name' => 'barcode_type',
                                     'label' => __( 'Barcode Type' ),
                                     'validation' => 'required',
-                                    'value' => $entry->barcode_type ?? 'code128',
+                                    'value' => $entry->barcode_type ?? ns()->option->get( 'ns_pos_default_barcode_type', 'code128' ),
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
@@ -486,7 +487,7 @@ class ProductCrud extends CrudService
                                                 return $field;
                                             } );
 
-                                            $optionLabel = __( 'Unammed Section' );
+                                            $optionLabel = __( 'Unnamed Section' );
 
                                             if ( $field->isNotEmpty() ) {
                                                 $option = collect( $field[0][ 'options' ] )->filter( fn( $option ) => $option[ 'value' ] == $field[0][ 'value' ] );
@@ -716,47 +717,40 @@ class ProductCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-                'width' => '300px',
-            ],
-            'type' => [
-                'label' => __( 'Type' ),
-                '$direction' => '',
-                'width' => '150px',
-                '$sort' => false,
-            ],
-            'sku' => [
-                'label' => __( 'Sku' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'category_name' => [
-                'label' => __( 'Category' ),
-                'width' => '150px',
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'status' => [
-                'label' => __( 'Status' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'user_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Date' ),
-                'width' => '150px',
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column(
+                label: __( 'Name' ),
+                identifier: 'name',
+                width: '300px',
+            ),
+            CrudTable::column(
+                label: __( 'Type' ),
+                identifier: 'type',
+                width: '150px',
+            ),
+            CrudTable::column(
+                label: __( 'Sku' ),
+                identifier: 'sku',
+            ),
+            CrudTable::column(
+                label: __( 'Category' ),
+                identifier: 'category_name',
+                width: '150px',
+            ),
+            CrudTable::column(
+                label: __( 'Status' ),
+                identifier: 'status',
+            ),
+            CrudTable::column(
+                label: __( 'Author' ),
+                identifier: 'user_username',
+            ),
+            CrudTable::column(
+                label: __( 'Date' ),
+                identifier: 'created_at',
+                width: '150px',
+            ),
+        );
     }
 
     /**

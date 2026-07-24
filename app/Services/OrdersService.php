@@ -50,6 +50,8 @@ use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache as FacadesCache;
@@ -325,7 +327,7 @@ class OrdersService
                 if ( $minimal > Currency::raw( $fields[ 'tendered' ] ) && ns()->option->get( 'ns_orders_allow_unpaid' ) === 'no' ) {
                     throw new NotAllowedException(
                         sprintf(
-                            __( 'The minimal payment of %s has\'nt been provided.' ),
+                            __( 'The minimal payment of %s hasn\'t been provided.' ),
                             (string) Currency::define( $minimal )
                         )
                     );
@@ -601,7 +603,7 @@ class OrdersService
 
             /**
              * Every product that is missing when the order is being
-             * proceesed another time should be removed. If the order has
+             * processed another time should be removed. If the order has
              * already affected the stock, we should make some adjustments.
              */
             $order->products->each( function ( $orderProduct ) use ( $ids, $order ) {
@@ -933,7 +935,7 @@ class OrdersService
                      * when that payment is provided
                      */
                     if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'value' ] ) ) {
-                        throw new NotAllowedException( __( 'The customer account funds are\'nt enough to process the payment.' ) );
+                        throw new NotAllowedException( __( 'The customer account funds aren\'t enough to process the payment.' ) );
                     }
 
                     $totalPayments = $this->currencyService->define( $totalPayments )
@@ -1009,10 +1011,8 @@ class OrdersService
     /**
      * Compute an order total based
      * on provided data
-     *
-     * @param array $data
      */
-    protected function __computeOrderTotal( $order, $products )
+    protected function __computeOrderTotal( Order $order, SupportCollection $products ): Order
     {
         /**
          * increase the total with the
@@ -1361,7 +1361,7 @@ class OrdersService
         return $orderProduct;
     }
 
-    public function checkQuantityAvailability( $product, $productUnitQuantity, $orderProduct, $session_identifier )
+    public function checkQuantityAvailability( Product $product, ?ProductUnitQuantity $productUnitQuantity, array $orderProduct, string $session_identifier ): void
     {
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
             /**
@@ -1426,7 +1426,7 @@ class OrdersService
             } catch ( NotFoundException $exception ) {
                 throw new \Exception(
                     sprintf(
-                        __( 'Unable to proceed, the product "%s" has a unit which cannot be retreived. It might have been deleted.' ),
+                        __( 'Unable to proceed, the product "%s" has a unit which cannot be retrieved. It might have been deleted.' ),
                         $product->name
                     )
                 );
@@ -1517,7 +1517,7 @@ class OrdersService
      * @todo we need to be able to
      * change the code format
      */
-    public function generateOrderCode( $order )
+    public function generateOrderCode( Order $order ): string
     {
         $now = Carbon::parse( $order->created_at );
         $today = $now->toDateString();
@@ -1541,7 +1541,7 @@ class OrdersService
         return $now->format( 'y' ) . $now->format( 'm' ) . $now->format( 'd' ) . '-' . str_pad( $count, 3, 0, STR_PAD_LEFT );
     }
 
-    protected function __initOrder( $fields, $paymentStatus, $order, $payments )
+    protected function __initOrder( array $fields, string $paymentStatus, ?Order $order, array $payments ): Order
     {
         /**
          * if the order is not provided as a parameter
@@ -1629,10 +1629,8 @@ class OrdersService
 
     /**
      * Will update the prodcess status of an order
-     *
-     * @return void
      */
-    public function updateProcessStatus( Order $order )
+    public function updateProcessStatus( Order $order ): void
     {
         if ( in_array( $order->type, [ 'delivery', 'takeaway' ] ) ) {
             if ( $order->type === 'delivery' ) {
@@ -1645,10 +1643,8 @@ class OrdersService
 
     /**
      * Will order the delivery status of an order
-     *
-     * @return void
      */
-    public function updateDeliveryStatus( Order $order )
+    public function updateDeliveryStatus( Order $order ): void
     {
         if ( in_array( $order->type, [ 'delivery', 'takeaway' ] ) ) {
             if ( $order->type === 'delivery' ) {
@@ -1660,12 +1656,9 @@ class OrdersService
     }
 
     /**
-     * Compute the discount data
-     *
-     * @param  array $fields
-     * @return int   $discount
+     * Compute the discount data.
      */
-    public function computeOrderDiscount( $order, $fields = [] )
+    public function computeOrderDiscount( Order $order, array $fields = [] ): float
     {
         $fields[ 'discount_type' ] = $fields[ 'discount_type' ] ?? $order->discount_type;
         $fields[ 'discount_percentage' ] = $fields[ 'discount_percentage' ] ?? $order->discount_percentage;
@@ -1747,12 +1740,8 @@ class OrdersService
 
     /**
      * return the tax value for the products
-     *
-     * @param  array $fields
-     * @param  Order $order
-     * @return float
      */
-    public function getOrderProductsTaxes( $order )
+    public function getOrderProductsTaxes( Order $order ): float
     {
         return $this->currencyService->define( $order
             ->products
@@ -1760,7 +1749,7 @@ class OrdersService
         )->toFloat();
     }
 
-    public function computeTotal( $fields, $order )
+    public function computeTotal( array $fields, Order $order ): float
     {
         return $this->currencyService->define( $order->subtotal )
             ->subtractBy( $order->discount )
@@ -1768,7 +1757,7 @@ class OrdersService
             ->toFloat();
     }
 
-    public function computeSubTotal( $fields, $order )
+    public function computeSubTotal( array $fields, Order $order ): float
     {
         return $this->currencyService->define(
             collect( $fields[ 'products' ] )
@@ -1778,7 +1767,7 @@ class OrdersService
             ->toFloat();
     }
 
-    private function __customerIsDefined( $fields )
+    private function __customerIsDefined( array $fields ): Customer
     {
         try {
             return $this->customerService->get( $fields['customer_id'] );
@@ -1787,7 +1776,7 @@ class OrdersService
         }
     }
 
-    public function refundOrder( Order $order, $fields )
+    public function refundOrder( Order $order, array $fields ): array
     {
         if ( ! in_array( $order->payment_status, [
             Order::PAYMENT_PARTIALLY,
@@ -2060,9 +2049,8 @@ class OrdersService
      * Return a single order product
      *
      * @param int product id
-     * @return OrderProduct
      */
-    public function getOrderProduct( $product_id )
+    public function getOrderProduct( int $product_id ): OrderProduct
     {
         $product = OrderProduct::find( $product_id );
 
@@ -2076,11 +2064,10 @@ class OrdersService
     /**
      * Get order products
      *
-     * @param mixed identifier
-     * @param string pivot
+     * @param  mixed      $identifier
      * @return Collection
      */
-    public function getOrderProducts( $identifier, $pivot = 'id' )
+    public function getOrderProducts( string $identifier, string $pivot = 'id' )
     {
         return $this->getOrder( $identifier, $pivot )
             ->products()
@@ -2093,11 +2080,9 @@ class OrdersService
      * return a specific
      * order using a provided identifier and pivot
      *
-     * @param mixed identifier
-     * @param string pivot
      * @return Order
      */
-    public function getOrder( $identifier, $as = 'id' )
+    public function getOrder( string $identifier, string $as = 'id' )
     {
         if ( in_array( $as, ['id', 'code'] ) ) {
             $order = Order::where( $as, $identifier )
@@ -2134,11 +2119,8 @@ class OrdersService
     /**
      * Get all the order that has been
      * already created
-     *
-     * @param void
-     * @return array of orders
      */
-    public function getOrders( $filter = 'mixed' )
+    public function getOrders( string $filter = 'mixed' ): Collection
     {
         if ( in_array( $filter, ['paid', 'unpaid', 'refunded'] ) ) {
             return Order::where( 'payment_status', $filter )
@@ -2150,12 +2132,8 @@ class OrdersService
 
     /**
      * Adding a product to an order
-     *
-     * @param Order order
-     * @param array product
-     * @return array response
      */
-    public function addProducts( Order $order, $products )
+    public function addProducts( Order $order, array $products ): array
     {
         $products = $this->__checkProductStock( collect( $products ), $order );
 
@@ -2203,8 +2181,7 @@ class OrdersService
      * all the product total, taxes and
      * shipping all together.
      *
-     * @param Order
-     * @return array repsonse
+     * @return array
      *
      * @todo test required
      */
@@ -2377,11 +2354,10 @@ class OrdersService
      * Delete a product that is included
      * within a specific order and refresh the order
      *
-     * @param Order order instance
-     * @param int product id
+     * @param  Order $order instance
      * @return array response
      */
-    public function deleteOrderProduct( Order $order, $product_id )
+    public function deleteOrderProduct( Order $order, int $product_id ): array
     {
         $hasDeleted = false;
 
@@ -2415,7 +2391,7 @@ class OrdersService
      * @param int order id
      * @return array of payments
      */
-    public function getOrderPayments( $orderID )
+    public function getOrderPayments( int $orderID )
     {
         $order = $this->getOrder( $orderID );
 
@@ -2443,11 +2419,8 @@ class OrdersService
     /**
      * It only returns what is the type of
      * the orders
-     *
-     * @param string
-     * @return string
      */
-    public function getTypeLabel( $type )
+    public function getTypeLabel( string $type ): string
     {
         $types = $this->getTypeLabels();
 
@@ -2457,11 +2430,8 @@ class OrdersService
     /**
      * It only returns what is the type of
      * the orders
-     *
-     * @param string
-     * @return string
      */
-    public function getPaymentLabel( $type )
+    public function getPaymentLabel( string $type ): string
     {
         $payments = config( 'nexopos.orders.statuses' );
 
@@ -2470,15 +2440,16 @@ class OrdersService
 
     /**
      * Returns the order payment labels
-     *
-     * @return array $labels
      */
-    public function getPaymentLabels()
+    public function getPaymentLabels(): array
     {
         return config( 'nexopos.orders.statuses' );
     }
 
-    public function getRefundedOrderProductLabel( $label )
+    /**
+     * Return the label for the refunded products.
+     */
+    public function getRefundedOrderProductLabel( string $label ): string
     {
         return config( 'nexopos.orders.products.refunds' )[ $label ] ?? __( 'Unknown Product Status' );
     }
@@ -2486,11 +2457,8 @@ class OrdersService
     /**
      * It only returns what is the type of
      * the orders
-     *
-     * @param string
-     * @return string
      */
-    public function getShippingLabel( $type )
+    public function getShippingLabel( string $type ): string
     {
         $shipping = $this->getDeliveryStatuses();
 
@@ -2499,11 +2467,8 @@ class OrdersService
 
     /**
      * It only returns the order process status
-     *
-     * @param string
-     * @return string
      */
-    public function getProcessStatus( $type )
+    public function getProcessStatus( string $type ): string
     {
         $process = $this->getProcessStatuses();
 
@@ -2512,11 +2477,8 @@ class OrdersService
 
     /**
      * It only returns the order process status
-     *
-     * @param string
-     * @return string
      */
-    public function getTypeLabels()
+    public function getTypeLabels(): array
     {
         $types = Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function ( $option ) {
             return [
@@ -2527,7 +2489,10 @@ class OrdersService
         return $types;
     }
 
-    public function getTypeOptions()
+    /**
+     * It only returns the order types
+     */
+    public function getTypeOptions(): array
     {
         return Hook::filter( 'ns-orders-types', [
             'takeaway' => [
@@ -2592,10 +2557,7 @@ class OrdersService
 
     /**
      * parse and render options template
-     * based on the provided values
-     *
-     * @param array options
-     * @return string
+     * based on the provided values.
      */
     public function orderTemplateMapping( $option, Order $order )
     {
@@ -2609,6 +2571,8 @@ class OrdersService
             'order_code' => $order->code,
             'order_type' => $this->getTypeLabel( $order->type ),
             'order_date' => ns()->date->getFormatted( $order->created_at ),
+            'order_date_only' => ns()->date->getFormatted( $order->created_at, 'date' ),
+            'order_time' => ns()->date->getFormatted( $order->created_at, 'time' ),
             'customer_first_name' => $order->customer->first_name,
             'customer_last_name' => $order->customer->last_name,
             'customer_email' => $order->customer->email,
@@ -2711,12 +2675,8 @@ class OrdersService
     /**
      * Void a specific order
      * by keeping a trace of what has happened.
-     *
-     * @param Order
-     * @param  string $reason
-     * @return array
      */
-    public function void( Order $order, $reason )
+    public function void( Order $order, string $reason ): array
     {
         $order->payment_status = Order::PAYMENT_VOID;
         $order->voidance_reason = $reason;
@@ -2867,13 +2827,9 @@ class OrdersService
     }
 
     /**
-     * Will update an existing instalment
-     *
-     * @param  OrderInstalment $orderInstalement
-     * @param  array           $fields
-     * @return array
+     * Will update an existing instalment.
      */
-    public function updateInstalment( Order $order, OrderInstalment $instalment, $fields )
+    public function updateInstalment( Order $order, OrderInstalment $instalment, array $fields ): array
     {
         if ( $instalment->paid ) {
             throw new NotAllowedException( __( 'Unable to edit an already paid instalment.' ) );
@@ -2896,10 +2852,8 @@ class OrdersService
 
     /**
      * Will make an instalment as paid
-     *
-     * @return array
      */
-    public function markInstalmentAsPaid( Order $order, OrderInstalment $instalment, $paymentType = OrderPayment::PAYMENT_CASH )
+    public function markInstalmentAsPaid( Order $order, OrderInstalment $instalment, string $paymentType = OrderPayment::PAYMENT_CASH ): array
     {
         if ( $instalment->paid ) {
             throw new NotAllowedException( __( 'Unable to edit an already paid instalment.' ) );
@@ -2930,11 +2884,8 @@ class OrdersService
 
     /**
      * Will delete an instalment.
-     *
-     * @param  OrderInstlament $instalment
-     * @return array
      */
-    public function deleteInstalment( Order $order, OrderInstalment $instalment )
+    public function deleteInstalment( Order $order, OrderInstalment $instalment ): array
     {
         $instalment->delete();
 
@@ -2946,19 +2897,19 @@ class OrdersService
         ];
     }
 
-    public function refreshInstalmentCount( Order $order )
+    /**
+     * Will refresh the total instalments count for an order.
+     */
+    public function refreshInstalmentCount( Order $order ): void
     {
         $order->total_instalments = $order->instalments()->count();
         $order->save();
     }
 
     /**
-     * Creates an instalments
-     *
-     * @param  array $fields
-     * @return array
+     * Creates an instalment
      */
-    public function createInstalment( Order $order, $fields )
+    public function createInstalment( Order $order, array $fields ): array
     {
         $totalInstalment = $order->instalments->map( fn( $instalment ) => $instalment->amount )->sum();
 
@@ -2970,15 +2921,13 @@ class OrdersService
             throw new NotAllowedException( __( 'No further instalments is allowed for this order. The total instalment already covers the order total.' ) );
         }
 
-        if ( $fields[ 'amount' ] ) {
-            $orderInstalment = new OrderInstalment;
-            $orderInstalment->order_id = $order->id;
-            $orderInstalment->amount = $fields[ 'amount' ];
-            $orderInstalment->date = $fields[ 'date' ];
-            $orderInstalment->save();
+        $orderInstalment = new OrderInstalment;
+        $orderInstalment->order_id = $order->id;
+        $orderInstalment->amount = $fields[ 'amount' ];
+        $orderInstalment->date = $fields[ 'date' ];
+        $orderInstalment->save();
 
-            $this->refreshInstalmentCount( $order );
-        }
+        $this->refreshInstalmentCount( $order );
 
         return [
             'status' => 'success',
@@ -2991,11 +2940,8 @@ class OrdersService
 
     /**
      * Changes the order processing status
-     *
-     * @param  string $status
-     * @return array
      */
-    public function changeProcessingStatus( Order $order, $status )
+    public function changeProcessingStatus( Order $order, string $status ): array
     {
         if ( ! in_array( $status, [
             Order::PROCESSING_PENDING,
@@ -3018,12 +2964,9 @@ class OrdersService
     }
 
     /**
-     * Changes the order processing status
-     *
-     * @param  string $status
-     * @return array
+     * Changes the order delivery status
      */
-    public function changeDeliveryStatus( Order $order, $status )
+    public function changeDeliveryStatus( Order $order, string $status ): array
     {
         if ( ! in_array( $status, [
             Order::DELIVERY_DELIVERED,
@@ -3045,7 +2988,7 @@ class OrdersService
         ];
     }
 
-    public function getPaymentTypesReport( $startRange, $endRange )
+    public function getPaymentTypesReport( string $startRange, string $endRange ): array
     {
         $paymentTypes = PaymentType::active()->get();
         $paymentsIdentifier = $paymentTypes->map( fn( $paymentType ) => $paymentType->identifier )->toArray();
@@ -3078,8 +3021,6 @@ class OrdersService
     /**
      * Will return the product that
      * that has been refunded
-     *
-     * @return array
      */
     public function getOrderRefundedProducts( Order $order )
     {
@@ -3099,7 +3040,7 @@ class OrdersService
         return $order;
     }
 
-    public function handlePOSRoute( $bool, $request, $next )
+    public function handlePOSRoute( bool $bool, Request $request, $next ): bool|RedirectResponse
     {
         if ( $request->routeIs( ns()->routeName( 'ns.dashboard.pos' ) ) ) {
             if ( PaymentType::count() === 0 ) {
@@ -3114,12 +3055,9 @@ class OrdersService
     }
 
     /**
-     * This will delete the order settings attached to the order
-     *
-     * @param  Order $order
-     * @return array
+     * This will delete the order settings attached to the order.
      */
-    public function deleteOrderSettings( stdClass $order )
+    public function deleteOrderSettings( stdClass $order ): array
     {
         OrderSetting::where( 'order_id', $order->id )->delete();
 

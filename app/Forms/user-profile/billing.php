@@ -10,6 +10,6 @@ use Illuminate\Support\Facades\Auth;
 $customerService = app()->make( CustomerService::class );
 
 return [
-    'label' => __( 'Biling' ),
+    'label' => __( 'Billing' ),
     'fields' => $customerService->getAddressFields( CustomerAddress::from( Auth::id(), 'billing' )->first() ),
 ];
