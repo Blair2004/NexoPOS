@@ -1,1 +1,0 @@
-import{_ as e}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as o,o as t}from"./runtime-core.esm-bundler-CF9jxWpW.js";const s={name:"NsWireLessBarcodeSettingsTab",mounted(){this.initialize()},methods:{initialize(){}}};function r(n,a,i,c,l,d){return t(),o("h1",null,"Hello World")}const _=e(s,[["render",r]]);export{_ as default};

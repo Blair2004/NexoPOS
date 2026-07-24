@@ -34,6 +34,7 @@ if ( Auth::check() ) {
     ])
     @yield( 'layout.dashboard.header' )
     @include( 'layout._header-script' )
+    @vite([ 'resources/ts/vue-runtime.ts' ])
     @vite([ 'resources/ts/lang-loader.ts' ])
 </head>
 <body <?php echo in_array( app()->getLocale(), config( 'nexopos.rtl-languages' ) ) ? 'dir="rtl"' : "";?>>

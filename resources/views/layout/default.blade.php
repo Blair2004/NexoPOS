@@ -16,6 +16,7 @@ $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.base.header' )
+    @vite([ 'resources/ts/vue-runtime.ts' ])
 </head>
 <body>
     @yield( 'layout.default.body' )

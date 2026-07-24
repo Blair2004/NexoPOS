@@ -27,6 +27,8 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 This project has domain-specific skills available in `**/skills/**`. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
+For any work touching NexoPOS modules, especially files under `modules/`, module routes, providers, listeners, settings, CRUD, permissions, migrations, POS integrations, frontend assets, Vue/TypeScript module code, menus, widgets, view injection, or module tests, you MUST load and apply the `create-nexopos-module` skill before reading or editing implementation files. Treat this as mandatory even for small fixes and convention questions.
+
 ## Conventions
 
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
