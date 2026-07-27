@@ -1,0 +1,4 @@
+interface:
+  display_name: "NexoPOS Theming"
+  short_description: "Build theme-aware NexoPOS UI components"
+  default_prompt: "Use $nexopos-theming to build a NexoPOS component that follows every supported theme."
