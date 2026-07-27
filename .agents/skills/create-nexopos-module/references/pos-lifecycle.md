@@ -152,6 +152,27 @@ Prefer `nsHttpClient` when matching existing module code. Ensure every observabl
 
 A complete custom order type has a server definition and, when it needs extra data, a frontend selection processor.
 
+In the live POS order, `order.type` is the selected order-type object, not its identifier string:
+
+```ts
+type PosOrderType = {
+    icon: string;
+    identifier: string;
+    label: string;
+    selected: boolean;
+};
+```
+
+Compare `order.type.identifier` with an identifier string in product, payment, and submission queues. Guard a missing selection when necessary:
+
+```ts
+if (order.type?.identifier !== 'curbside') {
+    return true;
+}
+```
+
+Do not compare `order.type === 'curbside'`, and do not return `{ type: selectedType.identifier }` from an order-type selection processor. Core updates `order.type` with the selected object; processors should return only their additional order fields.
+
 Register the server type through the PHP `ns-orders-types` filter so the POS controller can include it:
 
 ```php

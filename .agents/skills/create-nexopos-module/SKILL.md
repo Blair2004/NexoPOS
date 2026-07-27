@@ -64,6 +64,7 @@ Keep business logic out of controllers and listeners when it warrants a service.
 - Use PascalCase for the module namespace and a module-specific lowercase prefix for tables, routes, option keys, and permissions.
 - Use named routes for generated links.
 - Use `__m('Text', 'ModuleNamespace')` for module-owned translations when that is the surrounding convention.
+- Treat the live POS `order.type` value as an order-type object. Compare `order.type.identifier`, not `order.type` itself, with an identifier string.
 - Let NexoPOS discover module routes, migrations, listeners, commands, and providers where current code does so. Do not duplicate registration.
 - Do not register console commands or schedules from a module service provider.
 - Make migrations repeat-safe and rollback-safe. Inspect the schema and comparable migrations before choosing columns or constraints.

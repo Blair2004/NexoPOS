@@ -9,7 +9,7 @@ use App\Models\OrderProduct;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Modules\NsAppointments\Listeners\ValidateReservationOrderAvailability;
+use Modules\NsAppointments\Listeners\ValidateBookingOrderAvailability;
 use Modules\NsAppointments\Models\Appointment;
 use Modules\NsAppointments\Models\AppointmentItem;
 use Modules\NsAppointments\Services\AppointmentAvailabilityService;
@@ -17,7 +17,7 @@ use Modules\NsAppointments\Services\AppointmentOrderService;
 use Modules\NsAppointments\Services\AppointmentSchedulingService;
 use Tests\TestCase;
 
-class AppointmentReservationOrderTest extends TestCase
+class AppointmentBookingOrderTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
@@ -75,17 +75,19 @@ class AppointmentReservationOrderTest extends TestCase
         $this->assertTrue( $service->isAvailable( '2026-07-23 10:30:00', '2026-07-23 11:30:00', 11, 21 ) );
     }
 
-    public function test_reservation_order_creates_one_appointment_record(): void
+    public function test_booking_order_creates_one_appointment_record(): void
     {
         $orderId = DB::table( 'nexopos_orders' )->insertGetId( [
-            'type' => AppointmentOrderService::ORDER_TYPE,
+            'code' => 'ORD-BOOKING-TEST-001',
+            'type' => AppointmentOrderService::ORDER_BOOKING,
             'customer_id' => 15,
+            'author_id' => 1,
             'payment_status' => Order::PAYMENT_UNPAID,
             'ns_appointment_starts_at' => '2026-07-23 14:00:00',
             'ns_appointment_ends_at' => '2026-07-23 15:00:00',
             'ns_appointment_worker_id' => 10,
             'ns_appointment_resource_id' => 20,
-            'ns_appointment_notes' => 'Front desk reservation',
+            'ns_appointment_notes' => 'Front desk booking',
         ] );
 
         $order = Order::findOrFail( $orderId );
@@ -116,6 +118,7 @@ class AppointmentReservationOrderTest extends TestCase
                             'product_id' => 99,
                             'worker_id' => 10,
                             'resource_id' => 20,
+                            'room_id' => null,
                             'starts_at' => Carbon::parse( '2026-07-23 14:00:00' ),
                             'ends_at' => Carbon::parse( '2026-07-23 14:30:00' ),
                             'duration_minutes' => 30,
@@ -127,6 +130,7 @@ class AppointmentReservationOrderTest extends TestCase
                             'product_id' => 99,
                             'worker_id' => 11,
                             'resource_id' => 20,
+                            'room_id' => null,
                             'starts_at' => Carbon::parse( '2026-07-23 14:30:00' ),
                             'ends_at' => Carbon::parse( '2026-07-23 15:00:00' ),
                             'duration_minutes' => 30,
@@ -148,8 +152,8 @@ class AppointmentReservationOrderTest extends TestCase
 
         $service = app( AppointmentOrderService::class );
 
-        $appointment = $service->createFromReservationOrder( $order );
-        $sameAppointment = $service->createFromReservationOrder( $order );
+        $appointment = $service->createFromBookingOrder( $order );
+        $sameAppointment = $service->createFromBookingOrder( $order );
 
         $this->assertInstanceOf( Appointment::class, $appointment );
         $this->assertSame( $appointment->id, $sameAppointment->id );
@@ -187,8 +191,8 @@ class AppointmentReservationOrderTest extends TestCase
                 ] );
         } );
 
-        app( ValidateReservationOrderAvailability::class )->handle( new OrderAfterCheckPerformedEvent( [
-            'type' => AppointmentOrderService::ORDER_TYPE,
+        app( ValidateBookingOrderAvailability::class )->handle( new OrderAfterCheckPerformedEvent( [
+            'type' => AppointmentOrderService::ORDER_BOOKING,
             'ns_appointment_starts_at' => '2026-07-23 14:00:00',
             'ns_appointment_ends_at' => '2026-07-23 15:00:00',
             'ns_appointment_resource_id' => 20,

@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\GlobalProductHistoryCrud;
 use App\Crud\ProductCategoryCrud;
+use App\Events\ApplyHideCategoriesEvent;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Models\Product;
@@ -17,7 +18,9 @@ use App\Models\ProductCategory;
 use App\Services\DateService;
 use App\Services\ProductCategoryService;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends DashboardController
@@ -83,7 +86,7 @@ class CategoryController extends DashboardController
      * create a category using the provided
      * form data
      *
-     * @param request
+     * @param Request
      * @return json
      */
     public function post( Request $request ) // must be a specific form request with a validation
@@ -200,8 +203,8 @@ class CategoryController extends DashboardController
     /**
      * get a specific category variations
      *
-     * @param number category id
-     * @return json
+     * @param  int                           $id
+     * @return Collection|ProductVariation[]
      */
     public function getCategoriesVariations( $id )
     {
@@ -385,7 +388,7 @@ class CategoryController extends DashboardController
         }
     }
 
-    private function applyHideCategories( $query )
+    private function applyHideCategories( Builder $query )
     {
         $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
 
@@ -402,6 +405,12 @@ class CategoryController extends DashboardController
                 } );
             } );
         }
+
+        /**
+         * We need to allow modules to filter the categories displayed on the POS.
+         * This is useful for modules that want to hide certain categories based on specific conditions or criteria.
+         */
+        ApplyHideCategoriesEvent::dispatch( $query );
     }
 
     /**
