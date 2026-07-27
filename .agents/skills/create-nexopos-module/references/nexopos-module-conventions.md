@@ -53,9 +53,11 @@ Prefer current event classes and listener discovery visible in comparable module
 | Inputs | `nexopos-forminput.instructions.md` | Existing input descriptors and conditional behavior |
 | Frontend globals/localization | [frontend-apis.md](frontend-apis.md), then `nexopos-frontend-api.instructions.md` if needed | Globals, module localization, safe declarations |
 | HTTP requests | [frontend-apis.md](frontend-apis.md), then `nexopos-httpclient.instructions.md` if needed | Observable API, current config limitations, errors |
+| Vue + Tailwind module assets | [module-frontend.md](module-frontend.md) | Shared Vue runtime, **required Tailwind prefix**, UI conventions |
+| **Dashboard Vue mount** | [dashboard-vue-mounting.md](dashboard-vue-mounting.md) | **No nested `createApp` in `#dashboard-content`** — use `nsExtraComponents` + tag |
 | Popups | `nexopos-popup.instructions.md` | Built-ins, promise resolution, cancellation, cleanup |
 | Tabs | `nexopos-tabs.instructions.md` | Identifiers, dynamic state, validation, accessibility |
-| Theme colors | `nexopos-colors.instructions.md` | Semantic classes, theme parity, contrast |
+| Theme colors | `nexopos-theming` skill + `nexopos-colors.instructions.md` | Semantic classes, theme parity, contrast |
 
 `.github/instructions/nexopos-localization.instructions.md` currently contains only a heading. Use the localization guidance in [frontend-apis.md](frontend-apis.md) and verify real `Lang/` files and `__m()` usage in a maintained module.
 
@@ -70,7 +72,9 @@ Module asset rules:
 - Do not use `@vite` for module entries.
 - Do not add a leading slash or `modules/{Namespace}` to the asset path.
 - Keep Vite output under `Public/build` and verify its manifest after building.
-- Use Tailwind CSS v4 and NexoPOS semantic theme tokens; avoid legacy SCSS `@apply` patterns and hard-coded palette values.
+- Use Tailwind CSS v4 with a **module-specific prefix** on the module CSS entry (`@import "tailwindcss" prefix(foo);`) and prefix every module utility in markup (`foo:flex`, `foo:md:p-4`). Prefix comes first, then variants, then the utility: `foo:dark:sm:flex`.
+- Prefer NexoPOS semantic theme tokens (`foo:bg-box-background`) over palette colors and over `dark:` as a theme strategy.
+- **Dashboard Vue pages:** register with `nsExtraComponents['name'] = Component` and render `<name>` inside `#dashboard-content`. Never nest `createApp().mount()` under that node (reactivity dies when `nsDashboardContent` mounts). Details: [dashboard-vue-mounting.md](dashboard-vue-mounting.md).
 
 ## Choosing examples
 

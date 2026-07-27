@@ -114,79 +114,75 @@ The `manifest.json` file controls which files are included or excluded when the 
 Both properties support glob patterns for flexible file matching.
 
 ## Vite Configuration
-NexoPOS is built on top of Vite, Vue and Tailwind. If module can use their own frontend framework, it's recommended to stick to this stack. Therefore, we'll create a default vite.config.js. We'll make use of the following packages:
+NexoPOS is built on top of Vite, Vue and Tailwind. Modules should stick to this stack. Core already ships a **shared Vue runtime** (`resources/ts/vue-runtime.ts` → `window.ns.vue` / `window.NexoPOSVue`). Module builds must not bundle a second copy of Vue.
 
-- laravel-vite-plugin
-- @vitejs/plugin-vue
-- @tailwindcss/vite
-- vite-plugin-mkcert (for HTTPS in development)
-
-As Vue is already included on NexoPOS, it's not required to use it on our module. In fact, we want our component to work seamlessly with NexoPOS, we'll then use it's API. Typically here is how a vite.config.js looks like:
+Use the shared factory so `import … from 'vue'` is rewritten to that runtime (and real `.vue` SFCs work):
 
 ```js
-import { defineConfig, loadEnv } from 'vite';
-
-import { fileURLToPath } from 'node:url';
-import laravel from 'laravel-vite-plugin';
-import mkcert from 'vite-plugin-mkcert';
 import path from 'node:path';
-import vuePlugin from '@vitejs/plugin-vue';
-import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath } from 'node:url';
+import { defineNexoPOSModuleConfig } from '../../resources/vite-nexopos-module.js';
 
-const Vue = fileURLToPath(
-	new URL(
-		'vue',
-		import.meta.url
-	)
-);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default ({ mode }) => {
-    return defineConfig({
-        base: '/',
-        plugins: [
-            mkcert(),
-            vuePlugin(),
-            laravel({
-                hotFile: 'Public/hot',
-                input: [
-                    'Resources/css/style.css',
-                    'Resources/ts/main.ts',
-                ],
-                refresh: [ 
-                    'Resources/**', 
-                ]
-            }),
-            tailwindcss(),
-        ],
-        resolve: {
-            alias: {
-                '@': path.resolve(__dirname, 'Resources/ts'),
-            }
-        },
-        // Server configuration for HMR (Hot Module Replacement)
-        // See modules/OpusBackup/vite.config.js for reference
-        server: {
-            port: 3344,              // Custom port (optional, adjust per module)
-            host: '127.0.0.1',       // Bind to localhost
-            cors: true,              // Enable CORS
-            hmr: {
-                protocol: 'wss',     // WebSocket Secure for HMR
-                host: 'localhost',   // HMR host
-            },
-            https: true,             // Enable HTTPS with mkcert
-        },
-        build: {
-            outDir: 'Public/build',
-            manifest: true,
-            rollupOptions: {
-                input: [
-                    './Resources/css/style.css',
-                    './Resources/ts/main.ts',
-                ],
-            }
-        }        
-    });
-}
+export default defineNexoPOSModuleConfig({
+    dirname: __dirname,
+    inputs: [
+        'Resources/css/style.css',
+        'Resources/ts/main.ts',
+    ],
+    port: 3344, // pick a free port per module for HMR
+});
+```
+
+The factory enables `nexoposVueRuntime()`, `@vitejs/plugin-vue`, Tailwind v4, mkcert HTTPS, and Laravel Vite (`Public/build` + manifest).
+
+### Module Tailwind prefix (required)
+
+Modules that generate Tailwind must namespace utilities so they do not clash with core’s unprefixed theme CSS:
+
+```css
+@import "tailwindcss" prefix(foo);
+```
+
+Use a short stable token from the module name (`cd`, `go`, `nsapp`, …). In markup the order is always:
+
+```text
+{prefix}:{variants…}:{utility}
+```
+
+Examples: `foo:flex`, `foo:md:grid-cols-2`, `foo:hover:underline`, `foo:dark:sm:bg-box-background`.  
+Incorrect: unprefixed `flex` in module-owned UI, or variants before the module prefix (`md:foo:flex`).  
+Do not prefix core hooks (`ns-button`, `ns-box`). Prefer semantic tokens over palette/`dark:` for multi-theme support.
+
+### Dashboard Vue mount (required)
+
+Core mounts `createApp({})` on `#dashboard-content` and uses its innerHTML as the template. **Never** nest `createApp()` / `nsCreateApp().mount()` inside that node (UI paints, reactivity dies).
+
+**Dashboard page** (footer inject before `app-init`):
+
+```ts
+import Page from './components/Page.vue';
+declare const nsExtraComponents: Record<string, unknown>;
+nsExtraComponents['example-module-page'] = Page;
+```
+
+```blade
+<div id="dashboard-content">
+    <example-module-page></example-module-page>
+</div>
+```
+
+**Standalone only** (public/blank layout without dashboard content root):
+
+```ts
+import { nsCreateApp } from 'vue';
+import Page from './components/Page.vue';
+nsCreateApp(Page).mount('#example-module-app');
+```
+
+Reference modules: `modules/CloudDeployer` (prefix `cd`), `modules/NsGastro` (prefix `go`), `modules/NsAppointments` (dashboard `nsExtraComponents` registration + shared Vue).  
+Agent docs: `.agents/skills/create-nexopos-module/references/dashboard-vue-mounting.md`, `module-frontend.md`.
 ```
 
 **Package.json Dependencies:**

@@ -8,6 +8,7 @@ Use this reference for module TypeScript, Vue components, Blade-injected scripts
 - [Observable and promise usage](#observable-and-promise-usage)
 - [Errors and request state](#errors-and-request-state)
 - [Frontend globals](#frontend-globals)
+- [Shared Vue runtime for modules](#shared-vue-runtime-for-modules)
 - [Localization](#localization)
 - [Module declarations](#module-declarations)
 
@@ -153,11 +154,128 @@ Core globals include:
 | `Popup` | Popup component manager |
 | `nsEvent` | NexoPOS event emitter |
 | `RxJS` | RxJS exports for legacy/global code |
-| `nsExtraComponents` | Extra Vue component registry where available |
+| `ns.vue` / `NexoPOSVue` | Shared Vue runtime (single instance for core + modules) |
+| `nsCreateApp` | Create a module app on the shared runtime with core components registered |
+| `nsRegisterComponent` | Register a component on `nsExtraComponents` and live dashboard apps |
+| `nsExtraComponents` | Extra Vue component registry (merged into dashboard apps in app-init) |
+| `nsComponents` | Core Vue components map after app-init |
 | `ns.insertAfterKey`, `ns.insertBeforeKey` | Ordered object insertion |
 | `nsCurrency`, `nsRawCurrency` | Currency formatting and raw numeric conversion |
 
 Prefer explicit imports available through the module build when existing module code uses them. Use global declarations when integrating with globals injected by the core bundle.
+
+## Shared Vue runtime for modules
+
+For the full Vue + Tailwind module checklist (including the **required Tailwind prefix** and class order), see [module-frontend.md](module-frontend.md).
+
+### Why this exists
+
+NexoPOS core and every module must share **one** Vue object. If a module Vite build bundles its own `vue`, components and apps created from that copy are a different runtime than core (`nsDashboardContent`, popups, POS). Symptoms include missing core components, broken plugins, and subtle state bugs.
+
+### Required module Vite setup
+
+Use the shared factory (preferred) or the plugin alone:
+
+```js
+// modules/ExampleModule/vite.config.js
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { defineNexoPOSModuleConfig } from '../../resources/vite-nexopos-module.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export default defineNexoPOSModuleConfig({
+    dirname: __dirname,
+    inputs: [
+        'Resources/ts/main.ts',
+        'Resources/css/style.css',
+    ],
+    port: 3335,
+});
+```
+
+That factory enables `nexoposVueRuntime()`, which rewrites `import … from 'vue'` to `window.ns.vue` / `window.NexoPOSVue` (loaded by host layouts via `resources/ts/vue-runtime.ts`).
+
+Host layouts already load the runtime in `<head>` before module scripts.
+
+### Prefer real `.vue` SFCs
+
+With the shared runtime plugin, modules can use normal Vue SFCs and Composition API helpers:
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
+const count = ref(0);
+onMounted(() => { count.value = 1; });
+</script>
+
+<template>
+    <ns-button @click="count++">{{ count }}</ns-button>
+</template>
+```
+
+Avoid the legacy pattern of `.ts` files with `template: \`...\`` and `declare const createApp` unless you are maintaining old code.
+
+### Standalone page: `nsCreateApp`
+
+When the module owns a mount point (calendar page, public booking, custom full page):
+
+```ts
+import { nsCreateApp } from 'vue';
+import Page from './components/Page.vue';
+
+nsCreateApp(Page, { title: 'Example' }).mount('#example-module-app');
+```
+
+`nsCreateApp`:
+
+1. Calls the shared runtime’s `createApp`
+2. Registers `window.nsComponents` and `window.nsExtraComponents` by default so `<ns-field>`, `<ns-button>`, etc. resolve
+
+Load the entry from a footer inject section (or after `app-init`) when you need core components already registered on `nsComponents`.
+
+To skip auto-registration:
+
+```ts
+nsCreateApp(Page, null, {
+    registerCoreComponents: false,
+    registerExtraComponents: false,
+});
+```
+
+Plain `createApp` from `'vue'` still uses the shared runtime when the plugin is enabled; it does **not** auto-register core components.
+
+### Dashboard injection: `nsRegisterComponent`
+
+When the UI lives inside `#dashboard-content` (or other core-mounted roots), register into the core app rather than creating a second root:
+
+```ts
+import { nsRegisterComponent } from 'vue';
+import MyPanel from './components/MyPanel.vue';
+
+nsRegisterComponent('example-module-panel', MyPanel);
+```
+
+Equivalent legacy form (still supported if assets load before `app-init`):
+
+```ts
+nsExtraComponents['example-module-panel'] = MyPanel;
+```
+
+Asset load order on the dashboard footer:
+
+1. `bootstrap.ts`
+2. Footer injections / `@moduleViteAssets` in `layout.dashboard.footer.inject`
+3. `app-init.ts` (merges `nsExtraComponents` into dashboard apps)
+4. `app.ts` (`ns-before-mount`, then mount)
+
+So module registration scripts should load in step 2 for the simplest path. `nsRegisterComponent` also updates live app instances if they already exist.
+
+### Widgets and POS
+
+- Dashboard widgets: assign `window['WidgetComponentName'] = Component` (or async component) from a footer-injected entry, using `import { defineAsyncComponent } from 'vue'` with the shared plugin.
+- POS: inject via POS queues/hooks; still import from `'vue'` only through the shared runtime plugin.
 
 ## Localization
 
