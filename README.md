@@ -9,6 +9,11 @@ NexoPOS is more than a standalone Point of Sale application. It is part of a gro
 
 The ecosystem includes the free NexoPOS core, official modules, mobile companion applications, desktop utilities, developer tools, documentation, and services available through [My NexoPOS](https://my.nexopos.com/en?utm_source=github.com&utm_campaign=readme).
 
+<p align="center">
+  <a href="https://my.nexopos.com/en/marketplace/item/nexo-saas-build-and-manage-a-nexopos-hosting-business?utm_source=github.com&utm_campaign=readme"><img src="https://my.nexopos.com/storage/2026/07/nexosaas147657.jpg" alt="nexosaas"/>
+  </a>
+</p>
+
 ### Core Application
 
 This repository contains the base version of NexoPOS. It provides the main POS foundation, including:
