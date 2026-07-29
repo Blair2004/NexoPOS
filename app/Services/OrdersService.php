@@ -1145,7 +1145,7 @@ class OrdersService
             }
 
             /**
-             * store the product that as it can be used while
+             * store the product data as it can be used while
              * listening to create and update events.
              */
             $orderProduct->setData( $product );

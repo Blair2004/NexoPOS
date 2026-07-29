@@ -1,6 +1,6 @@
 <template>
     <div id="module-wrapper" class="flex-auto flex flex-col pb-4">
-        <div v-if="! noModules" class="flex flex-col lg:flex-row md:justify-between md:items-center">
+        <div class="flex flex-col lg:flex-row md:justify-between md:items-center">
             <div class="flex flex-col md:flex-row md:justify-between md:items-center -mx-2">
                 <span class="px-2">
                     <div class="ns-button mb-2">

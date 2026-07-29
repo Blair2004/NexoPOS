@@ -14,6 +14,11 @@ export interface OrderProduct extends Product {
     total_price_gross: number;
     total_price_net: number;
     total_tax_value?: number;
+    /**
+     * Once-per-line amount (not multiplied by quantity), from
+     * `ns-pos-product-line-extra`. Included in total_price and tax base.
+     */
+    line_extra?: number;
     product_type: 'product' | 'dynamic';
     rate?: number;
     quantity: number;

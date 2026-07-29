@@ -2058,6 +2058,18 @@ export class POS {
          */
         this.computeDiscount( product );
 
+        let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
+
+        /**
+         * Once-per-line extra (not multiplied by quantity). Modules use this for
+         * surcharges such as an appointment room fee attached to a service line.
+         * The amount is stored on the product, included in the tax base, and
+         * added to total_price after unit × qty − discount.
+         */
+        const rawLineExtra = nsHooks.applyFilters( 'ns-pos-product-line-extra', 0, product );
+        const lineExtra = Number( rawLineExtra );
+        product.line_extra = Number.isFinite( lineExtra ) ? Math.max( 0, lineExtra ) : 0;
+
         /**
          * The price with and without tax
          * needs to be updated as tax is by default computed
@@ -2065,9 +2077,11 @@ export class POS {
          */
         this.computeProductTaxValue( product );
 
-        let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
-        
-        product.total_price =   math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done();
+        product.total_price = math.chain( unitPrice )
+            .multiply( product.quantity )
+            .subtract( product.discount )
+            .add( product.line_extra || 0 )
+            .done();
         
         // Ensure total_tax_value is set (fallback for old computation paths)
         if ( product.total_tax_value === undefined ) {
@@ -2118,10 +2132,19 @@ export class POS {
         
         // Calculate line total after discount
         const lineAfterDiscount = math.chain( lineSubtotal ).subtract( product.discount ).done();
+
+        /**
+         * Include once-per-line extras (ns-pos-product-line-extra) in the tax base
+         * so surcharges such as room fees are taxed with the line.
+         */
+        const lineExtra = Number( product.line_extra || 0 );
+        const taxableLineTotal = math.chain( lineAfterDiscount )
+            .add( Number.isFinite( lineExtra ) ? Math.max( 0, lineExtra ) : 0 )
+            .done();
         
-        // Compute tax on the discounted line total
+        // Compute tax on the discounted line total (+ line extra)
         let result = this.computeTaxForGroup( 
-            lineAfterDiscount, 
+            taxableLineTotal, 
             tax_group, 
             product.tax_type
         );
