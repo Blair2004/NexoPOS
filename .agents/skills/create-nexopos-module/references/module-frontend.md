@@ -43,7 +43,7 @@ See **[dashboard-vue-mounting.md](dashboard-vue-mounting.md)** for the full deci
 | --- | --- |
 | `#dashboard-content` | `nsExtraComponents['page'] = Page` + `<page>` tag. **No** nested `createApp`. |
 | Public / blank layout (no dashboard content root) | `nsCreateApp(Page).mount('#root')` OK |
-| Widgets / POS / popups | Register into existing hosts; do not nest a new root under a managed tree |
+| Widgets / POS / popups | Register into existing hosts; do not nest a new root under a managed tree. Cart line meta: `ns-pos-product-row-components` ([pos-lifecycle.md](pos-lifecycle.md#product-row-components)) |
 
 Footer inject must run **before** `app-init` so registrations are merged into `nsDashboardContent`.
 
@@ -337,6 +337,16 @@ Same rule for `error`, `warning`, and `success`.
 ### Panels and surfaces
 
 Reuse semantic surfaces: `foo:bg-box-background`, `foo:border-box-edge`, `foo:bg-surface`, status families for feedback. Prefer `ns-box` when it fits. See the `nexopos-theming` skill.
+
+### Localization (`__m` only)
+
+Module UI strings must use **`__m('Literal text', 'ModuleNamespace')`** so NexoPOS language scanning finds them.
+
+- **Do not** introduce `t()`, `translate()`, or similar wrappers around module copy.
+- Core provides **`window.__m`**, but Vue templates **cannot** see bare globals. Import a runtime bridge (e.g. `import { __m } from '../i18n'`) that forwards to `window.__m`, and for Options API put **`__m` on `methods`**. `declare const __m` alone is **not** enough (TypeScript-only).
+- Keep the second argument equal to the module namespace (e.g. `'NsAppointments'`).
+
+See [frontend-apis.md § Localization](frontend-apis.md#localization).
 
 ### HTTP from module Vue
 

@@ -275,13 +275,53 @@ So module registration scripts should load in step 2 for the simplest path. `nsR
 ### Widgets and POS
 
 - Dashboard widgets: assign `window['WidgetComponentName'] = Component` (or async component) from a footer-injected entry, using `import { defineAsyncComponent } from 'vue'` with the shared plugin.
-- POS: inject via POS queues/hooks; still import from `'vue'` only through the shared runtime plugin.
+- POS: inject via POS queues/hooks; still import from `'vue'` only through the shared runtime plugin. Full mastery guide: [pos-lifecycle.md](pos-lifecycle.md).
+- **Cart product-row meta:** filter `ns-pos-product-row-components` + `markRaw(Component)` + `POS.updateProduct` — not raw HTML. Prefer Options API + string `template` for POS-injected components.
+- **Once-per-line fees:** `ns-pos-product-line-extra` (not unit price). See [pos-lifecycle.md § Unit price vs once-per-line extra](pos-lifecycle.md#unit-price-vs-once-per-line-extra).
 
 ## Localization
 
-- Use `__('Text')` for core-owned strings.
-- Use `__m('Text', 'ExampleModule')` for module-owned strings.
-- Keep the module namespace identical to `config.xml` and existing `Lang/` usage.
+- Use `__('Text')` for **core-owned** strings only.
+- Use **`__m('Text', 'ModuleNamespace')`** for **all module-owned** strings on **backend and frontend** (Vue/TS, Blade, PHP).
+- NexoPOS **scans module source for `__m(...)`** to collect translatable text. Wrappers like `t()`, `translate()`, or `localization()` hide strings from that scanner — **do not use them for user-facing copy**.
+- Keep the module namespace identical to `config.xml` / module directory (e.g. `'NsAppointments'`).
+- On the dashboard and POS, core installs **`window.__m`** after bootstrap. That is **not** enough for Vue templates: Vue only sees component bindings. A TypeScript `declare const __m` is **erased** and does **not** create a runtime value.
+- **Always create a real binding** the template can use:
+
+```ts
+// Preferred: module helper that forwards to window.__m (scanners still see __m('…', 'Ns…') call sites)
+import { __m } from '../i18n';
+```
+
+```vue
+<template>
+  <!-- Call sites keep __m('Literal', 'ModuleNamespace') for the language scanner -->
+  <h1>{{ __m('Appointments Calendar', 'NsAppointments') }}</h1>
+</template>
+
+<script setup lang="ts">
+import { __m } from '../i18n'; // real binding → available in template
+</script>
+```
+
+```ts
+// Options API (including POS string-template components)
+import { __m } from '../i18n';
+
+export default {
+  methods: {
+    __m, // required so template {{ __m('Save', 'NsAppointments') }} resolves
+  },
+};
+```
+
+Do **not** rely on bare globals in templates without `methods` / `setup` exposure.
+
+```php
+// PHP
+__m( 'Service started.', 'NsAppointments' );
+```
+
 - Treat API fields as localized objects only when their contract or comparable code shows that shape; do not assume every name or description is localized.
 - When consuming a localized object, use `window.ns?.language`, then an English or first-value fallback.
 

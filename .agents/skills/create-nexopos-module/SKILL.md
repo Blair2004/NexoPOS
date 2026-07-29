@@ -1,6 +1,14 @@
 ---
 name: create-nexopos-module
-description: Create, extend, or repair modules for the NexoPOS Laravel application. Use when a request involves scaffolding a module under modules/, implementing module routes, controllers, models, migrations, permissions, settings, CRUD classes, menus, widgets, events, view injections, Blade views, Vue components, module Vite assets, dashboard Vue mounting (nsExtraComponents vs createApp), Tailwind module prefixes, or tests while following NexoPOS module conventions.
+description: >
+  Create, extend, or repair modules for the NexoPOS Laravel application.
+  Use when a request involves scaffolding a module under modules/, module routes,
+  controllers, models, migrations, permissions, settings, CRUD, menus, widgets,
+  events, view injections, Blade/Vue, module Vite assets, dashboard Vue mounting
+  (nsExtraComponents vs createApp), Tailwind module prefixes, POS cart
+  (product-row meta, line-extra, unit price, order types, pay queue, cart buttons),
+  or tests while following NexoPOS module conventions.
+  Also use whenever the task is about mastering or extending the live POS cart.
 ---
 
 # Create NexoPOS Modules
@@ -14,17 +22,69 @@ Build modules that match the current repository rather than relying on generic L
 3. Determine whether to create a module or extend an existing one. Never overwrite an existing module unless the user explicitly requests it.
 4. Search version-specific Laravel documentation before changing Laravel code, as required by the repository instructions.
 5. Read [references/nexopos-module-conventions.md](references/nexopos-module-conventions.md). Load only the linked `.github/instructions` files relevant to the feature.
-6. For POS cart buttons, order types, payment gates, submission hooks, or cart scripts, read [references/pos-lifecycle.md](references/pos-lifecycle.md).
+6. **POS work (mandatory):** if the feature touches cart, products on POS, order types, payments, product-row UI, unit price, or once-per-line fees, read the full POS mastery guide: [references/pos-lifecycle.md](references/pos-lifecycle.md).
 7. For `nsHttpClient`, frontend globals, notifications, localization, or module TypeScript declarations, read [references/frontend-apis.md](references/frontend-apis.md).
 8. For module Vue + Tailwind (shared runtime, Tailwind prefix, UI conventions), read [references/module-frontend.md](references/module-frontend.md).
 9. **Any dashboard Vue page or UI under `#dashboard-content`:** read [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md) first. Nested `createApp()` there breaks reactivity.
+10. **Custom fields under a cart product line:** `ns-pos-product-row-components` — not raw HTML.
+11. **Once-per-line money (room, setup fee):** `ns-pos-product-line-extra` — not unit price × qty.
+
+## Master POS extensions
+
+There is no separate skill for POS: **this skill + [pos-lifecycle.md](references/pos-lifecycle.md)** are authoritative for module POS work.
+
+### Load order for POS tasks
+
+1. [pos-lifecycle.md](references/pos-lifecycle.md) — decision matrix, hooks, pricing, product-row, queues  
+2. Source of truth: `resources/ts/pos-init.ts`, `ns-pos-cart.vue`  
+3. Reference modules: `modules/NsAppointments` (row meta + line-extra + order types), `modules/NsGastro` (cart buttons)
+
+### Pricing (do not get this wrong)
+
+```text
+line_total = (unit_price × quantity − discount) + line_extra
+```
+
+| Kind of amount | Filter / path | Multiplied by qty? |
+| --- | --- | --- |
+| Service / product unit | `ns-pos-product-*-price`, `ns-pos-product-unit-price` | **Yes** |
+| Room / setup / cover fee on the same line | `ns-pos-product-line-extra` | **No** (once per line) |
+
+Never bake a once-fee into unit price: quantity 2 would charge the fee twice.
+
+### Cart line UI
+
+- Register with `nsHooks.addFilter('ns-pos-product-row-components', …)` + `markRaw()`.
+- Prefer **Options API + string `template`** for components injected into POS cart (dual-Vue: POS app ≠ `NexoPOSVue` SFCs).
+- Update lines with `POS.updateProduct(product, patch, index)`.
+- Gate on flags set in `addToCartQueue` (merge **`productData`**, not only `this.product` — unit `$quantities` live there).
+
+### Boot checklist (every POS module)
+
+| Step | Mechanism |
+| --- | --- |
+| Load assets only on POS | `RenderFooterEvent` → `@moduleViteAssets('Resources/ts/pos.ts', …)` |
+| Init context | `POS.initialQueue` |
+| Enrich products | `POS.addToCartQueue` |
+| Product-row UI | `ns-pos-product-row-components` |
+| Once-per-line fees | `ns-pos-product-line-extra` |
+| Cart buttons | `ns-after-cart-reset` (priority ≥ 20) → `POS.cartButtons` / `cartHeaderButtons` |
+| POS header buttons | `ns-pos-header` → `header.buttons.MyButton` (Options API + string `template` preferred) |
+| Order types | PHP `ns-orders-types` + enabled in `ns_pos_order_types` + optional `orderTypeQueue` |
+| Before Pay | `ns-pay-queue` classes |
+| On submit | `ns-order-before-submit` (sync only) |
+| Module i18n | Always `__m('Text', 'ModuleNamespace')` in PHP and Vue/TS (no `t()` wrappers) |
+
+Compare `order.type.identifier`, never `order.type === 'booking'`.
+
+Full detail, complete examples, and debugging: [references/pos-lifecycle.md](references/pos-lifecycle.md).
 
 ## Prefer repository evidence
 
 Use this priority when examples conflict:
 
 1. Working code in a maintained, comparable module
-2. Current framework and NexoPOS APIs in `app/`
+2. Current framework and NexoPOS APIs in `app/` / `resources/ts/pos-init.ts`
 3. Relevant `.github/instructions/*.instructions.md` guidance
 4. Generic Laravel conventions
 
@@ -65,8 +125,12 @@ Keep business logic out of controllers and listeners when it warrants a service.
 - Keep `config.xml`, the module directory, the main module class, PHP namespaces, view namespace, translation namespace, and asset namespace consistent.
 - Use PascalCase for the module namespace and a module-specific lowercase prefix for tables, routes, option keys, and permissions.
 - Use named routes for generated links.
-- Use `__m('Text', 'ModuleNamespace')` for module-owned translations when that is the surrounding convention.
+- Use **`__m('Text', 'ModuleNamespace')` for all module-owned strings** (PHP and Vue/TS). Do not wrap copy in `t()` / `translate()` — NexoPOS scans `__m(...)` for translations. Frontend: global `__m` / `window.__m` on dashboard and POS.
 - Treat the live POS `order.type` value as an order-type object. Compare `order.type.identifier`, not `order.type` itself, with an identifier string.
+- **POS product-row meta:** `ns-pos-product-row-components` + `markRaw()` + gate on product flags + `POS.updateProduct`. Prefer Options API string templates for POS-injected components. Reference: `modules/NsAppointments` (`AppointmentsCartMeta.ts` + `pos.ts`).
+- **POS once-per-line fees:** `ns-pos-product-line-extra` (e.g. room). Unit price stays service-only. See [pos-lifecycle.md](references/pos-lifecycle.md#unit-price-vs-once-per-line-extra).
+- **POS cart fields that must reload:** name cart keys like **order product DB columns**; migrate columns; copy from `getData()` in BeforeCreated/BeforeUpdated. Flash `getData()` alone is not durable. See [pos-lifecycle.md § Persist cart fields](references/pos-lifecycle.md#persist-cart-fields-on-order-products-round-trip).
+- **POS add-to-cart:** queue results merge via `productData`; always merge `$quantities` from `productData` when reading sale price.
 - Let NexoPOS discover module routes, migrations, listeners, commands, and providers where current code does so. Do not duplicate registration.
 - Do not register console commands or schedules from a module service provider.
 - Make migrations repeat-safe and rollback-safe. Inspect the schema and comparable migrations before choosing columns or constraints.
@@ -89,13 +153,14 @@ Do not use `@vite` for module assets. Keep Vite inputs and output aligned with `
 ### Vue + Tailwind modules (required pattern)
 
 Full detail: [references/module-frontend.md](references/module-frontend.md).  
-**Dashboard mount (read this):** [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md).
+**Dashboard mount (read this):** [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md).  
+**POS mount / hooks:** [references/pos-lifecycle.md](references/pos-lifecycle.md).
 
 1. **Dashboard vs standalone mount**
    - **Inside `#dashboard-content`:** only `nsExtraComponents['my-page'] = MyPage` + `<my-page>` in Blade. Script in footer inject before `app-init`. **No** nested `createApp`.
    - **Standalone** (no dashboard content root): `nsCreateApp(Page).mount('#root')` is OK.
    - Symptom of the wrong approach: UI visible, clicks/`ref` dead after page load.
-2. **Shared Vue** — `defineNexoPOSModuleConfig` (or `nexoposVueRuntime()`). Prefer `.vue` SFCs. Never bundle a second Vue.
+2. **Shared Vue** — `defineNexoPOSModuleConfig` (or `nexoposVueRuntime()`). Prefer `.vue` SFCs for dashboard; for **POS cart injection**, prefer Options API + string `template` (see pos-lifecycle dual-Vue note). Never bundle a second Vue.
 3. **Tailwind prefix** — every module CSS entry that imports Tailwind **must** use a short module prefix:
 
 ```css
@@ -148,7 +213,8 @@ export default defineNexoPOSModuleConfig({
 1. Run the smallest relevant PHPUnit file or filter with `php artisan test --compact`.
 2. Run `vendor/bin/pint --dirty --format agent` after modifying PHP.
 3. Run the module frontend build when frontend assets changed.
-4. Inspect routes, migration status, or built manifests only when relevant.
-5. Review the final diff for accidental core changes, inconsistent namespace strings, missing permission checks, and generated placeholder code.
+4. If core POS sources changed (`pos-init.ts`, `ns-pos-cart.vue`), rebuild core (`npm run build`) or confirm Vite HMR; stale `public/build` omits hooks.
+5. Inspect routes, migration status, or built manifests only when relevant.
+6. Review the final diff for accidental core changes, inconsistent namespace strings, missing permission checks, and generated placeholder code.
 
 Report what was implemented, the verification performed, and any setup the user must still perform. Ask whether to run the full test suite after focused tests pass.

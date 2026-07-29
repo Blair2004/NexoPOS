@@ -127,6 +127,7 @@ Same principle: **extend existing apps/registries**, do not nest a new root unde
 
 - **Dashboard widgets:** assign `window['WidgetName']` / component name expected by the widget system; load assets in footer inject on the home route.
 - **POS:** inject via POS queues, `nsExtraComponents`, header button maps, `Popup.show(Component)` — POS has its own app; do not mount a third app inside POS DOM nodes Vue already owns.
+- **Custom UI under a cart product line:** use filter `ns-pos-product-row-components` (`markRaw` + `POS.updateProduct`; prefer Options API string `template` for POS host). Full POS mastery guide: [pos-lifecycle.md](pos-lifecycle.md).
 - **Popups:** pass a component definition into `Popup.show`; popup host creates the instance.
 
 ## Decision checklist

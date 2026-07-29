@@ -41,7 +41,7 @@ Never rely solely on a hidden menu or button for authorization. Enforce access o
 | Sidebar menus | `nexopos-asidemenu.instructions.md` | Stable identifiers, placement, permissions, translation |
 | Render injection | `nexopos-view-injection.instructions.md` | Current render events and route/instance scoping |
 | Widgets | `nexopos-widgets.instructions.md` | Widget registration, Vue injection, closure behavior |
-| POS lifecycle | [pos-lifecycle.md](pos-lifecycle.md) | Cart buttons, initialization, order types, payment and submission hooks |
+| **POS mastery (full guide)** | [pos-lifecycle.md](pos-lifecycle.md) | Decision matrix, hooks, product-row, **unit price vs `ns-pos-product-line-extra`**, addToCart `productData`, order types, pay/submit, NsAppointments/NsGastro references |
 
 Prefer current event classes and listener discovery visible in comparable modules. The old string-hook view injection mechanism is removed; do not reintroduce it. Avoid broad footer injection without checking the route or target instance.
 
