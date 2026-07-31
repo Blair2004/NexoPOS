@@ -1722,6 +1722,8 @@ export class POS {
                      * that means for some reason the Promise has
                      * been broken, therefore we need to stop the queue.
                      */
+                    console.log('broken promise', brokenPromise);
+                    
                     if (brokenPromise === false) {
                         this._processingAddQueue = false;
                         return false;
