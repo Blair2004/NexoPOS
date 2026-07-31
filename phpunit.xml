@@ -39,6 +39,7 @@
       <directory suffix="TestCogsPrices.php">./tests/Feature</directory>
       <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>
+      <directory suffix="CouponEligibilityTest.php">./tests/Feature</directory>
       <directory suffix="CreateRewardSystemTest.php">./tests/Feature</directory>
       <directory suffix="TestRewardSystem.php">./tests/Feature</directory>
       <directory suffix="PerformStockAdjustmentTest.php">./tests/Feature</directory>

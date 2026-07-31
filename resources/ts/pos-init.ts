@@ -32,6 +32,7 @@ import delivery from "./pages/dashboard/pos/queues/order-type/delivery";
 import axios from "axios";
 import { io, Socket } from "socket.io-client";
 import { ReactiveObject } from "./libraries/reactive-objects";
+import { cartSatisfiesCouponRestrictions } from "./libraries/coupon-eligibility";
 
 /**
  * these are dynamic component
@@ -1454,48 +1455,8 @@ export class POS {
      */
     checkCart() {
         const order = this.order.getValue();
-        const unmatchedConditions = [];
-
-        order.coupons.forEach(coupon => {
-            /**
-             * by default we'll bypass
-             * the product if it's not available
-             */
-            let isProductValid = true;
-
-            /**
-             * if the coupon includes products
-             * we make sure the products are included on the cart
-             */
-            if (coupon.products.length > 0) {
-                isProductValid = order.products.filter(product => {
-                    return coupon.products.map(p => p.product_id).includes(product.product_id);
-                }).length > 0;
-
-                if (!isProductValid && unmatchedConditions.indexOf(coupon) === -1) {
-                    unmatchedConditions.push(coupon);
-                }
-            }
-
-            /**
-             * by default we'll bypass
-             * the product if it's not available
-             */
-            let isCategoryValid = true;
-
-            /**
-             * if the coupon includes products
-             * we make sure the products are included on the cart
-             */
-            if (coupon.categories.length > 0) {
-                isCategoryValid = order.products.filter(product => {
-                    return coupon.categories.map(p => p.category_id).includes(product.$original().category_id);
-                }).length > 0;
-
-                if (!isCategoryValid && unmatchedConditions.indexOf(coupon) === -1) {
-                    unmatchedConditions.push(coupon);
-                }
-            }
+        const unmatchedConditions = order.coupons.filter(coupon => {
+            return ! cartSatisfiesCouponRestrictions(coupon, order.products);
         });
 
         unmatchedConditions.forEach(coupon => {
