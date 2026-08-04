@@ -87,6 +87,8 @@ class YourModuleServiceProvider extends ServiceProvider
 }
 ```
 
+Do not manually register module event listeners in the service provider. NexoPOS discovers listener classes under `Listeners/` when `handle()` type-hints the event; verify with `php artisan event:list`.
+
 ## Blade View Template
 
 ```blade
@@ -150,43 +152,61 @@ declare const nsPromptPopup: any;
 ## vite.config.js Template
 
 ```javascript
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import mkcert from 'vite-plugin-mkcert';
 import vuePlugin from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 
-export default defineConfig({
-    base: '/',
-    plugins: [
-        vuePlugin(),
-        laravel({
-            hotFile: 'Public/hot',
-            input: [
-                'Resources/css/style.css',
-                'Resources/ts/main.ts',
-            ],
-            refresh: ['Resources/**']
-        }),
-        tailwindcss(),
-    ],
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, 'Resources/ts'),
+export default ({ mode }) => {
+    process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+
+    return defineConfig({
+        base: '/',
+        server: {
+            port: 3344,
+            host: '127.0.0.1',
+            cors: true,
+            hmr: {
+                protocol: 'wss',
+                host: 'localhost',
+            },
+            https: true,
+        },
+        plugins: [
+            vuePlugin(),
+            laravel({
+                hotFile: 'Public/hot',
+                input: [
+                    'Resources/css/style.css',
+                    'Resources/ts/main.ts',
+                ],
+                refresh: ['Resources/**']
+            }),
+            mkcert(),
+            tailwindcss(),
+        ],
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, 'Resources/ts'),
+            }
+        },
+        build: {
+            outDir: 'Public/build',
+            manifest: true,
+            rollupOptions: {
+                input: [
+                    './Resources/css/style.css',
+                    './Resources/ts/main.ts',
+                ],
+            }
         }
-    },
-    build: {
-        outDir: 'Public/build',
-        manifest: true,
-        rollupOptions: {
-            input: [
-                './Resources/css/style.css',
-                './Resources/ts/main.ts',
-            ],
-        }
-    }
-});
+    });
+};
 ```
+
+For Vue modules, treat this as the default baseline pattern. If a module like `modules/NsGastro/vite.config.js` exists, use it as an optional example when adding multiple entry points.
 
 ## API Controller Template
 

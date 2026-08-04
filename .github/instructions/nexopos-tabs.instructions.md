@@ -58,6 +58,28 @@ export default {
 - `closable` (Boolean, optional): Whether the tab can be closed with an X button
 - `padding` (String, optional): Custom padding class (default: 'p-4')
 
+## Settings Form Validation
+
+When a `SettingsPage` field is inside a tab, its submitted payload is relative to the tab identifier. Validation rules must use the full dot path:
+
+```php
+SettingForm::tab(
+  identifier: 'booking',
+  fields: [
+    FormInput::switch(name: 'ns_appointments_public_booking_enabled')
+  ]
+);
+
+public function validateForm(Request $request): array
+{
+  return [
+    'booking.ns_appointments_public_booking_enabled' => ['required', 'in:yes,no'],
+  ];
+}
+```
+
+Do not validate tabbed settings fields by bare option key such as `ns_appointments_public_booking_enabled`; Laravel will not see the nested field at that path. Keep the field `name` unchanged so the settings page can flatten and save the option key.
+
 ### ns-tabs Attributes
 - `visible` (String): Set to 'true' or 'false' to control tab visibility
 - All props can also be passed as HTML attributes

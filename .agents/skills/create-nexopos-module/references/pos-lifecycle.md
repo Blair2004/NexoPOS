@@ -9,6 +9,7 @@ Use this reference when a module changes the live POS cart. Verify every extensi
 - [Lifecycle sequence](#lifecycle-sequence)
 - [Cart buttons](#cart-buttons)
 - [Initial queue](#initial-queue)
+- [Product add-to-cart queue](#product-add-to-cart-queue)
 - [Custom order types](#custom-order-types)
 - [Payment and submission](#payment-and-submission)
 - [Complete cart script example](#complete-cart-script-example)
@@ -125,18 +126,15 @@ To position a button relative to a core key, use the existing object helpers suc
 Register before the first reset, normally from the module entry's `DOMContentLoaded` handler:
 
 ```ts
+import { firstValueFrom } from 'rxjs';
+
 document.addEventListener('DOMContentLoaded', () => {
     POS.initialQueue.push(async () => {
-        const response = await fetch('/api/example-module/pos-context', {
-            headers: { Accept: 'application/json' },
-            credentials: 'same-origin',
-        });
+        const context = await firstValueFrom(
+            nsHttpClient.get('/api/example-module/pos-context')
+        );
 
-        if (!response.ok) {
-            throw new Error('Unable to initialize Example Module on the POS.');
-        }
-
-        POS.set('exampleModule', await response.json());
+        POS.set('exampleModule', context);
 
         return {
             status: 'success',
@@ -147,6 +145,56 @@ document.addEventListener('DOMContentLoaded', () => {
 ```
 
 Prefer `nsHttpClient` when matching existing module code. Ensure every observable path resolves or rejects the wrapping promise. Keep the task idempotent, avoid registering the same queue twice, and do not use the initial queue for one-time irreversible work.
+
+## Product add-to-cart queue
+
+`POS.addToCartQueue` contains queue constructors that run sequentially before a product is inserted into the cart. Core creates each queue with the reduced cart product and calls `await queue.run(accumulatedData)`. Return an object whose properties should be merged into the cart product, or return `{}` when the product does not concern the module.
+
+The reduced cart product contains `product_id` and delegates `$original()` to the source POS product. Use `$original()` only for presentation or an optimization; use a protected server endpoint keyed by `product_id` for authoritative classification, permissions, and related records.
+
+Register a module queue once as an actual array element. Guard with `includes()` to prevent duplicate registration when a module boot method runs more than once:
+
+```ts
+import { firstValueFrom } from "rxjs";
+
+declare const POS: any;
+declare const nsHttpClient: any;
+declare const nsSnackBar: any;
+
+class ExampleProductQueue {
+    constructor(private product: any) {}
+
+    async run(): Promise<Record<string, unknown>> {
+        try {
+            const context = await firstValueFrom(
+                nsHttpClient.get(`/api/example-module/pos/products/${this.product.product_id}/context`)
+            );
+
+            if (!context.applies) {
+                return {};
+            }
+
+            return {
+                example_context: context,
+            };
+        } catch (error: any) {
+            nsSnackBar.error(error?.message ?? "Unable to load product context.");
+
+            return Promise.reject(false);
+        }
+    }
+}
+
+if (!POS.addToCartQueue.includes(ExampleProductQueue)) {
+    POS.addToCartQueue.push(ExampleProductQueue);
+}
+```
+
+The current core loop catches every rejection but only cancels insertion when the rejection value is exactly `false`; other errors are swallowed and cart processing continues. Surface the error before rejecting `false` when failure must block insertion. Do not reject for an irrelevant product; resolve with `{}`.
+
+Queues run in array order, so a module queue appended after the built-in unit and quantity queues receives their accumulated data through `run(accumulatedData)`. Do not assign a named property on the array: named properties are skipped by normal array methods and do not participate in `length`. Verify ordering against `resources/ts/pos-init.ts` before relying on it.
+
+When `ns_pos_items_merge` is enabled, core decides equivalence from product, tax, unit, and unit-quantity identifiers. Custom queue metadata is not part of that comparison. Keep merged metadata deterministic for identical products, or add a deliberate tested core extension point before using per-addition metadata such as a different staff member or reservation slot.
 
 ## Custom order types
 
@@ -192,6 +240,20 @@ POS.orderTypeQueue.push({
 ```
 
 `triggerOrderTypeSelection()` awaits each processor, merges every returned key into the order, and then emits the updated order. Resolve with an object; reject to cancel selection. Ensure custom attributes are accepted, validated, stored, and returned by the backend as well.
+
+### Reset-time scheduling and product-time selection
+
+When product eligibility depends on order-level scheduling data, collect the order type and scheduling context before product selection:
+
+1. Register the custom order-type processor before the first POS reset.
+2. Open an order-type popup from `ns-after-cart-reset`; do not put interactive popup work in `POS.initialQueue`. Hook actions are synchronous, so `POS.reset()` does not await the popup.
+3. Let the custom order-type processor store the selected type plus order-level fields such as appointment start, resource, and notes. It must support an empty cart.
+4. In the service product queue, verify that the required order-level fields exist. Reopen the order-type flow if they do not.
+5. Query a protected server endpoint for staff availability using the product, service start, quantity, and selected resource. Category or role membership defines eligibility, but it does not prove time availability.
+6. Open a promise-driven staff popup with only the available workers. Reject with exactly `false` when selection is cancelled so the service is not inserted.
+7. Attach the selected worker and scheduling metadata to the reduced cart product, then revalidate the complete reservation before payment or submission to cover concurrent bookings.
+
+For sequential services, derive the next service start from the order appointment start plus the duration and buffers of existing service lines. Keep this calculation consistent with the authoritative server scheduler. Reset-time selection improves the workflow but is not a security or consistency boundary; the product queue and server validation must still reject missing or stale context.
 
 ## Payment and submission
 

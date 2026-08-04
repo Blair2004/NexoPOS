@@ -807,6 +807,34 @@ public function updateTheme(Request $request)
 }
 ```
 
+For `SettingsPage` forms, validation rule keys must match the posted tab structure. Fields declared inside a tab are submitted under that tab identifier, while their `name` remains the option key that will be flattened for storage:
+
+```php
+// ✅ Good - field `name` is still `ns_module_enabled`, but validation is tab-scoped
+SettingForm::tab(
+    identifier: 'general',
+    fields: [
+        FormInput::switch(
+            name: 'ns_module_enabled',
+            validation: 'required',
+            // ...
+        ),
+    ]
+);
+
+public function validateForm(Request $request): array
+{
+    return [
+        'general.ns_module_enabled' => ['required', 'in:yes,no'],
+        'general.ns_module_category_ids' => ['nullable', 'array'],
+        'general.ns_module_category_ids.*' => ['integer', 'exists:nexopos_products_categories,id'],
+    ];
+}
+
+// ❌ Bad - this misses the nested tab payload
+'ns_module_enabled' => ['required', 'in:yes,no'];
+```
+
 ### 8. Group Related Settings
 
 ```php

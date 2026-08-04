@@ -251,6 +251,52 @@ Hook::addFilter('ns-dashboard-menus', function ($menus) {
 });
 ```
 
+### Critical Rule: Avoid Double-Nesting Menu Identifiers
+
+`AsideMenu::menu()` and `AsideMenu::subMenu()` already return keyed arrays in this format:
+
+```php
+[
+    'your-identifier' => [
+        'label' => '...',
+        // ...other config
+    ]
+]
+```
+
+Do not wrap that return value again under the same identifier, or you will create a double-nested structure like:
+
+```php
+// Wrong: creates $menus['nexo-appointments']['nexo-appointments']
+$menus['nexo-appointments'] = AsideMenu::menu(
+    label: __m('Appointments', 'NexoAppointments'),
+    identifier: 'nexo-appointments',
+    icon: 'la-calendar-check'
+);
+```
+
+Use merge/insert helpers directly with the return value:
+
+```php
+// Correct: merge keyed menu as-is
+$appointmentsMenu = AsideMenu::menu(
+    label: __m('Appointments', 'NexoAppointments'),
+    identifier: 'nexo-appointments',
+    icon: 'la-calendar-check',
+    childrens: AsideMenu::childrens(
+        AsideMenu::subMenu(
+            label: __m('All Appointments', 'NexoAppointments'),
+            identifier: 'appointments-list',
+            href: ns()->url('/dashboard/appointments')
+        )
+    )
+);
+
+$menus = array_insert_after($menus, 'orders', $appointmentsMenu);
+```
+
+This same rule applies to submenus. Merge the result of `AsideMenu::subMenu()` into `childrens` directly, without wrapping it again.
+
 ### Method 2: Adding Menu Before Existing Menu
 
 Use `array_insert_before()` helper function to add a menu before a specific menu identifier:
@@ -319,6 +365,8 @@ Hook::addFilter('ns-dashboard-menus', function ($menus) {
     return $menus;
 });
 ```
+
+When appending, you can also use `array_merge(...)` instead of spread syntax if preferred. Both approaches must merge the keyed output of `AsideMenu::subMenu()` directly.
 
 ### Hook Priority
 

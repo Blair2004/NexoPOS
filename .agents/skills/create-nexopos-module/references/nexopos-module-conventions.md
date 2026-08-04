@@ -43,7 +43,7 @@ Never rely solely on a hidden menu or button for authorization. Enforce access o
 | Widgets | `nexopos-widgets.instructions.md` | Widget registration, Vue injection, closure behavior |
 | POS lifecycle | [pos-lifecycle.md](pos-lifecycle.md) | Cart buttons, initialization, order types, payment and submission hooks |
 
-Prefer current event classes and listener discovery visible in comparable modules. The old string-hook view injection mechanism is removed; do not reintroduce it. Avoid broad footer injection without checking the route or target instance.
+Rely on NexoPOS/Laravel listener discovery for module listeners: place listener classes under the module Listeners directory and type-hint the event on handle(). Do not register these listeners manually with Event::listen() inside module service providers; use php artisan event:list to verify discovery. The old string-hook view injection mechanism is removed; do not reintroduce it. Avoid broad footer injection without checking the route or target instance.
 
 ## Frontend capabilities
 

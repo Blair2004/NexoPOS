@@ -8,6 +8,8 @@ Use this reference for module TypeScript, Vue components, Blade-injected scripts
 - [Observable and promise usage](#observable-and-promise-usage)
 - [Errors and request state](#errors-and-request-state)
 - [Frontend globals](#frontend-globals)
+- [Shared Vue runtime and module SFCs](#shared-vue-runtime-and-module-sfcs)
+- [`Popup.show()` and custom popups](#popupshow-and-custom-popups)
 - [Localization](#localization)
 - [Module declarations](#module-declarations)
 
@@ -150,7 +152,10 @@ Core globals include:
 | `nsSnackBar` | Success, error, and informational toasts |
 | `nsNotice` | Floating notices |
 | `nsHooks` | WordPress-style frontend actions and filters |
+| `NexoPOSVue`, `ns.vue` | Canonical Vue runtime for core and bridged module SFCs |
 | `Popup` | Popup component manager |
+| `popupCloser` | Bind focused-popup Escape cancellation |
+| `popupResolver` | Settle a promise-driven popup and close it |
 | `nsEvent` | NexoPOS event emitter |
 | `RxJS` | RxJS exports for legacy/global code |
 | `nsExtraComponents` | Extra Vue component registry where available |
@@ -158,6 +163,104 @@ Core globals include:
 | `nsCurrency`, `nsRawCurrency` | Currency formatting and raw numeric conversion |
 
 Prefer explicit imports available through the module build when existing module code uses them. Use global declarations when integrating with globals injected by the core bundle.
+
+## Shared Vue runtime and module SFCs
+
+NexoPOS loads `resources/ts/vue-runtime.ts` from `layout.base` and exposes the canonical runtime as `window.NexoPOSVue` and `window.ns.vue`. Module Vite builds that contain Vue SFCs must use the core bridge before `vuePlugin()`:
+
+```js
+import { nexoposVueRuntime } from "../../resources/vite-plugin-nexopos-vue.js";
+import vuePlugin from "@vitejs/plugin-vue";
+
+plugins: [
+    nexoposVueRuntime(),
+    vuePlugin(),
+    // ...
+]
+```
+
+The bridge also supplies a development-only `__VUE_HMR_RUNTIME__` fallback when the page loaded the production NexoPOS runtime alongside a module Vite dev server. The fallback reloads the page after an SFC update. Never replace or overwrite Vue's native HMR runtime when it already exists.
+
+The bridge rewrites module imports from `vue` to the already-loaded NexoPOS runtime. After a production build, the module manifest should import a small `_virtual_nexopos-vue-runtime` bridge and must not contain its own `runtime-dom`, `runtime-core`, or `vue.esm-bundler` chunk. Keep the runtime asset before module assets in the page layout.
+
+For dashboard, POS, popup, CRUD, settings, and field integrations, export or register the `.vue` component and let the appropriate NexoPOS application render it. Do not call `createApp()` for a component that must inherit NexoPOS global components, plugins, directives, or providers. A component rendered through `Popup.show()` is instantiated by the popup host and may use host-registered components such as `<ns-button>` without importing them.
+
+A genuinely standalone frontend may call `createApp()`. When it extends `layout.base` and uses the bridge, it still consumes the canonical runtime; an external page that does not load the NexoPOS base layout must bundle its own Vue runtime and must not assume access to NexoPOS host components.
+
+Exposing `defineComponent` or `defineAsyncComponent` alone is insufficient for SFC compatibility because compiled templates import additional Vue runtime helpers. Use the bridge rather than copying a hand-maintained subset of helpers.
+
+## `Popup.show()` and custom popups
+
+`Popup` is globally available after the dashboard popup application is mounted. Open a statically imported Vue component with:
+
+```ts
+const popup = Popup.show(Component, params, config);
+```
+
+The returned popup handle exposes `hash`, `params`, `props`, `config`, and `close(callback?)`. The popup renderer always injects that handle as the component `popup` prop. It also passes entries from `params` as direct Vue props, but only when the component explicitly declares those prop names. All parameters remain available through `popup.params`, including parameters not declared as direct props.
+
+Use a promise when the caller must wait for a user decision:
+
+```ts
+declare const Popup: any;
+
+const worker = await new Promise<Worker>((resolve, reject) => {
+    Popup.show(StaffSelectionPopup, {
+        workers,
+        selectedWorkerId,
+        resolve,
+        reject,
+    }, {
+        closeOnOverlayClick: false,
+    });
+});
+```
+
+The custom popup must declare the injected `popup` prop. It owns its visible panel markup and should use existing NexoPOS components and semantic classes:
+
+```vue
+<script lang="ts">
+declare const popupCloser: any;
+declare const popupResolver: any;
+
+export default {
+    props: ["popup"],
+
+    mounted() {
+        this.popupCloser();
+    },
+
+    methods: {
+        popupCloser,
+        popupResolver,
+
+        select(worker) {
+            this.popupResolver(worker);
+        },
+
+        cancel() {
+            this.popupResolver(false);
+        },
+    },
+};
+</script>
+
+<template>
+    <div class="ns-box flex max-h-[80vh] w-[90vw] flex-col overflow-hidden md:w-[42rem]">
+        <!-- Popup content -->
+    </div>
+</template>
+```
+
+Follow these lifecycle rules:
+
+- Pass both `resolve` and `reject` for a promise-driven popup. `popupResolver(value)` resolves when `value !== false`, rejects when it is exactly `false`, and closes the popup.
+- Call `popupCloser()` from `mounted()` when Escape should cancel the active popup. It rejects with `false` when a `reject` callback exists.
+- Overlay clicks close by default and reject promise-driven popups with `false`. Set `{ closeOnOverlayClick: false }` when an overlay click must not dismiss the interaction.
+- Use `popup.close()` for display-only or externally controlled popups. Closing directly does not settle the caller promise; settle it first when `resolve` or `reject` was provided.
+- Keep cancellation handling explicit in the caller with `try/catch`. Treat rejection with `false` as user cancellation, not an application error.
+- Import popup components statically. The current popup manager rejects Vue async components.
+- Nested calls are stacked automatically. Only the focused top popup handles Escape.
 
 ## Localization
 
@@ -188,6 +291,8 @@ declare const nsHttpClient: any;
 declare const nsSnackBar: any;
 declare const nsHooks: any;
 declare const Popup: any;
+declare const popupCloser: any;
+declare const popupResolver: any;
 declare const __: (text: string) => string;
 declare const __m: (text: string, namespace: string) => string;
 

@@ -114,37 +114,42 @@ The `manifest.json` file controls which files are included or excluded when the 
 Both properties support glob patterns for flexible file matching.
 
 ## Vite Configuration
-NexoPOS is built on top of Vite, Vue and Tailwind. If module can use their own frontend framework, it's recommended to stick to this stack. Therefore, we'll create a default vite.config.js. We'll make use of the following packages:
+NexoPOS is built on top of Vue, Vite, and Tailwind. For module frontend projects using Vue, Vue must be coupled with Vite by default.
+
+Default module frontend stack:
 
 - laravel-vite-plugin
 - @vitejs/plugin-vue
 - @tailwindcss/vite
 - vite-plugin-mkcert (for HTTPS in development)
 
-As Vue is already included on NexoPOS, it's not required to use it on our module. In fact, we want our component to work seamlessly with NexoPOS, we'll then use it's API. Typically here is how a vite.config.js looks like:
+Even when modules reuse NexoPOS globals and components, keep a module-local Vite build pipeline for module assets. Typically, a module `vite.config.js` should look like this:
 
 ```js
 import { defineConfig, loadEnv } from 'vite';
 
-import { fileURLToPath } from 'node:url';
 import laravel from 'laravel-vite-plugin';
 import mkcert from 'vite-plugin-mkcert';
 import path from 'node:path';
 import vuePlugin from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 
-const Vue = fileURLToPath(
-	new URL(
-		'vue',
-		import.meta.url
-	)
-);
-
 export default ({ mode }) => {
+    process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+
     return defineConfig({
         base: '/',
+        server: {
+            port: 3344,
+            host: '127.0.0.1',
+            cors: true,
+            hmr: {
+                protocol: 'wss',
+                host: 'localhost',
+            },
+            https: true,
+        },
         plugins: [
-            mkcert(),
             vuePlugin(),
             laravel({
                 hotFile: 'Public/hot',
@@ -156,24 +161,13 @@ export default ({ mode }) => {
                     'Resources/**', 
                 ]
             }),
+            mkcert(),
             tailwindcss(),
         ],
         resolve: {
             alias: {
                 '@': path.resolve(__dirname, 'Resources/ts'),
             }
-        },
-        // Server configuration for HMR (Hot Module Replacement)
-        // See modules/OpusBackup/vite.config.js for reference
-        server: {
-            port: 3344,              // Custom port (optional, adjust per module)
-            host: '127.0.0.1',       // Bind to localhost
-            cors: true,              // Enable CORS
-            hmr: {
-                protocol: 'wss',     // WebSocket Secure for HMR
-                host: 'localhost',   // HMR host
-            },
-            https: true,             // Enable HTTPS with mkcert
         },
         build: {
             outDir: 'Public/build',
@@ -188,6 +182,18 @@ export default ({ mode }) => {
     });
 }
 ```
+
+Required Vue+Vite pattern (use this even if no reference module exists):
+
+- Use `defineConfig` + `loadEnv` and merge env values into `process.env`.
+- Include plugins in this order: `vuePlugin()`, `laravel(...)`, `mkcert()`, `tailwindcss()`.
+- Configure dev server with local HTTPS HMR (`host`, `port`, `cors`, `hmr.protocol`, `hmr.host`, `https`).
+- Set `hotFile` to `Public/hot`.
+- Keep module entry points under `Resources/...`.
+- Build to `Public/build` with `manifest: true`.
+- Keep alias `@` pointing to `Resources/ts`.
+
+If a module like `modules/NsGastro/vite.config.js` exists, use it as an optional example only.
 
 **Package.json Dependencies:**
 
@@ -436,7 +442,7 @@ class ProductCreatedListener
 }
 ```
 
-Note that Listeners are automatically discovered if an event class is provided on the handle method.
+Listeners are automatically discovered when an event class is type-hinted on the handle method. Do not manually bind discovered module listeners with Event::listen() in a module service provider; that can duplicate listener execution. Verify bindings with php artisan event:list.
 
 ### Migrations/
 
@@ -637,6 +643,11 @@ With conditional loading:
 @vite(['modules/FooBar/Resources/ts/main.ts'])
 ```
 
+❌ **Wrong - Linking module scripts directly from Public:**
+```blade
+<script src="{{ ns()->url('/modules/foobarmodule/js/app.js') }}"></script>
+```
+
 ❌ **Wrong - Including leading slash:**
 ```blade
 @moduleViteAssets('/Resources/ts/main.ts', 'FooBar')
@@ -651,6 +662,8 @@ With conditional loading:
 ```blade
 @moduleViteAssets('Resources/ts/main.ts', 'FooBar')
 ```
+
+All module frontend assets must be declared under `Resources/...` and loaded with `@moduleViteAssets(...)`.
 
 **How It Works:**
 
@@ -998,41 +1011,7 @@ if (typeof nsExtraComponents !== 'undefined') {
 }
 ```
 
-**Alternative: Using .vue Files with Popup**
-
-If you prefer using `.vue` files, you can still use them with the Popup system (which creates its own Vue instance):
-
-```typescript
-// Resources/ts/main.ts
-import { Popup } from '@/libraries/popup';
-import MyPopupComponent from './components/MyPopupComponent.vue';
-
-// Export function to show popup from Blade templates
-const showMyPopup = (data?: any) => {
-    return new Promise((resolve, reject) => {
-        Popup.show(MyPopupComponent, {
-            resolve,
-            reject,
-            data
-        });
-    });
-};
-
-// Make available globally
-(window as any).myModuleName = {
-    showMyPopup
-};
-
-export { showMyPopup };
-```
-
-Then call from Blade:
-
-```blade
-<button onclick="myModuleName.showMyPopup({ id: 123 }).then(result => console.log(result))">
-    Open Popup
-</button>
-```
+Do not use `.vue` single-file components in modules. Use TypeScript component files and register them with `nsExtraComponents` (Options API) when Vue components are needed.
 
 #### CSS with Tailwind CSS v4
 
@@ -1478,18 +1457,38 @@ Examples:
 
 #### Permissions
 
-Create module-specific permissions:
+Create module-specific permissions. Always check whether the permission or role exists by namespace, and verify the intended name is not already used by another record, before creating or assigning:
 
 ```php
 // In module migration or provider
 use App\Models\Permission;
+use App\Models\Role;
 
-$permission = Permission::firstOrNew(['namespace' => 'create.foobar.products']);
-$permission->name = __m( 'Create products', 'FooBar' );
-$permission->namespace = 'create.foobar.products';
-$permission->description = 'Allow creating FooBar products';
-$permission->save();
+$permissionNamespace = 'create.foobar.products';
+$permissionName = __m( 'Create products', 'FooBar' );
+$permission = Permission::namespace( $permissionNamespace );
+
+if ( ! $permission instanceof Permission ) {
+    if ( Permission::where( 'name', $permissionName )->exists() ) {
+        $permissionName = $permissionName . ' [' . $permissionNamespace . ']';
+    }
+
+    $permission = new Permission;
+    $permission->name = $permissionName;
+    $permission->namespace = $permissionNamespace;
+    $permission->description = 'Allow creating FooBar products';
+    $permission->save();
+}
+
+// Default assignment policy: grant new permissions to admin role first.
+$admin = Role::namespace( Role::ADMIN );
+
+if ( $admin instanceof Role && $permission instanceof Permission ) {
+    $admin->addPermissions( $permission->namespace );
+}
 ```
+
+Do not suggest assigning new module permissions to the `user` role by default. Assign to additional roles only when explicitly required by the feature.
 
 #### Hooks and Events
 
@@ -1500,7 +1499,7 @@ use App\Classes\AsideMenu;
 // ...
 // In module service provider
 Hook::addFilter('ns-dashboard-menus', function($menus) {
-    $newMenus = AsideMenu::menu(
+    $newMenu = AsideMenu::menu(
         label: __m( 'Foobar', 'FooBar' ),
         icon: 'la-box',
         href: route( 'foobar.products.index' ),
@@ -1509,7 +1508,9 @@ Hook::addFilter('ns-dashboard-menus', function($menus) {
         ]
     );
 
-    $menus = array_insert_after($menus, 'inventory', $newMenus);
+    // AsideMenu::menu() already returns [identifier => config].
+    // Insert or merge it directly, without wrapping it again under the same key.
+    $menus = array_insert_after($menus, 'inventory', $newMenu);
 
     return $menus;
 });
@@ -1521,7 +1522,7 @@ Or we add define submenus
 use App\Classes\AsideMenu;
 // ...
 Hook::addFilter('ns-dashboard-menus', function($menus) {
-    $menus = array_insert_after($menu, 'inventory', AsideMenu::menu(
+    $menus = array_insert_after($menus, 'inventory', AsideMenu::menu(
         label: __m( 'Products', 'FooBar' ),
         icon: 'la-box',
         href: route( 'foobar.products.index' ),
@@ -1784,6 +1785,18 @@ After generation, you should add additional directories as needed (e.g., `Listen
 3. **Create types.d.ts** for NexoPOS API declarations
 
 4. **Restart IDE/editor** to reload TypeScript language server
+
+### PHP Code Formatting (Pint)
+
+Use Laravel Pint for PHP formatting.
+
+1. **Default (recommended):** Use the core NexoPOS Pint binary with the root `pint.json`.
+    ```bash
+    vendor/bin/pint --dirty --format agent
+    ```
+2. If working from inside `modules/YourModule`, run Pint from the project root or explicitly target the root binary/config.
+3. Install `laravel/pint` inside a module only when that module is intentionally maintained as a standalone/distributed package.
+4. Do not introduce a conflicting module-local formatting style when the module is part of the main NexoPOS repository.
 
 ### Debugging Tips
 

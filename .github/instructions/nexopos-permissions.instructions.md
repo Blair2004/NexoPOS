@@ -93,6 +93,12 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
 
 ## Assigning Permissions to Roles
 
+### Default Assignment Policy
+
+When new permissions are created, assign them to the `admin` role by default (or another explicitly required operational role such as cashier/store admin when the feature requires it).
+
+Do not suggest or apply automatic permission assignment to the `user` role by default. The `user` role must only receive explicitly justified permissions.
+
 ### 1. Role Files
 
 Roles and their permission assignments are defined in files like `database/permissions/admin-role.php`:
@@ -190,6 +196,13 @@ computed: {
 
 ## Best Practices
 
+### 0. Creation Safety
+
+- Always check whether a permission exists by `namespace` before creating it, then verify the intended `name` is not already used by another permission before inserting it.
+- Always check whether a role exists by `namespace` before creating it, then verify the intended `name` is not already used by another role before inserting it.
+- Reuse existing permissions and roles instead of overwriting them, unless the migration is explicitly intended to update their metadata. If the namespace is missing but the name already exists on another record, choose a unique module-scoped name or stop with a clear migration error.
+- Before assigning permissions to a role, make sure the role exists.
+
 ### 1. Permission Naming Conventions
 
 - Use lowercase with dots as separators
@@ -207,6 +220,8 @@ computed: {
 ### 3. Role Management
 
 - Keep core roles (admin, user, etc.) locked
+- Grant newly created permissions to `admin` by default, then add other feature-specific roles only when required
+- Never recommend assigning new permissions to `user` by default
 - Create specific roles for different user types
 - Use pattern-based permission assignment for maintainability
 - Document role purposes and capabilities

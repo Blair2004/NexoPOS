@@ -66,12 +66,16 @@ $permission->removeFromRoles(): void
 #### Usage Examples
 
 ```php
-// Create a permission
-$permission = new Permission();
-$permission->name = 'Create Products';
-$permission->namespace = 'create.products';
-$permission->description = 'Allow creating new products';
-$permission->save();
+// Find existing permission before creating it.
+$permission = Permission::namespace( 'create.products' );
+
+if ( ! $permission instanceof Permission ) {
+    $permission = new Permission;
+    $permission->name = 'Create Products';
+    $permission->namespace = 'create.products';
+    $permission->description = 'Allow creating new products';
+    $permission->save();
+}
 
 // Find by namespace
 $permission = Permission::namespace('create.products');
@@ -94,7 +98,7 @@ const ADMIN = 'admin';                      // Main admin role
 const STOREADMIN = 'nexopos.store.administrator';  // Store manager
 const STORECASHIER = 'nexopos.store.cashier';      // Store cashier
 const STORECUSTOMER = 'nexopos.store.customer';    // Store customer
-const USER = 'user';                        // Base user role
+const USER = 'user';                        // Base user role (do not auto-grant new permissions by default)
 ```
 
 #### Properties
@@ -364,21 +368,36 @@ $permission->save();
 
 ### 3. Role Assignment Patterns
 
+Default policy: when introducing new permissions, assign them to `admin` first. Add other roles only when there is a clear business need. Do not assign new permissions to the `user` role by default.
+
 #### Assign All CRUD Permissions
 ```php
-$role = Role::namespace('admin');
-$productPermissions = Permission::includes('.products')->get();
-$role->addPermissions($productPermissions->pluck('namespace'));
+$role = Role::namespace( 'admin' );
+
+if ( $role instanceof Role ) {
+    $productPermissions = Permission::includes( '.products' )->get();
+    $role->addPermissions( $productPermissions->pluck( 'namespace' ) );
+}
 ```
 
 #### Assign Specific Module Permissions
 ```php
-$role = Role::namespace('cashier');
-$posPermissions = Permission::includes('nexopos.pos.')->get();
-$role->addPermissions($posPermissions->pluck('namespace'));
+$role = Role::namespace( 'cashier' );
+
+if ( $role instanceof Role ) {
+    $posPermissions = Permission::includes( 'nexopos.pos.' )->get();
+    $role->addPermissions( $posPermissions->pluck( 'namespace' ) );
+}
 ```
 
 ## Best Practices
+
+### 0. Creation Safety
+
+- Always check whether a permission exists by `namespace` before creating it, then verify the intended `name` is not already used by another permission before inserting it.
+- Always check whether a role exists by `namespace` before creating it, then verify the intended `name` is not already used by another role before inserting it.
+- Do not use `new Permission` or `new Role` until the namespace lookup has confirmed the record is missing and the name lookup has confirmed no other record already uses the intended name.
+- Before assigning permissions, make sure the target role exists.
 
 ### 1. Permission Naming
 
@@ -406,12 +425,16 @@ multistore.settings.manage
 ### 2. Role Management
 
 ```php
-// Create role with permissions
-$role = new Role();
-$role->namespace = 'store.manager';
-$role->name = 'Store Manager';
-$role->description = 'Manages store operations';
-$role->save();
+// Find existing role before creating it.
+$role = Role::namespace( 'store.manager' );
+
+if ( ! $role instanceof Role ) {
+    $role = new Role;
+    $role->namespace = 'store.manager';
+    $role->name = 'Store Manager';
+    $role->description = 'Manages store operations';
+    $role->save();
+}
 
 // Assign comprehensive permissions
 $role->addPermissions([
