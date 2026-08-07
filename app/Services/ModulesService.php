@@ -177,7 +177,7 @@ class ModulesService
                 ) );
             }
 
-            $xmlElement = new \SimpleXMLElement( $xmlContent );
+            $xmlElement = new SimpleXMLElement( $xmlContent );
 
             if ( $xmlElement->core[0] instanceof SimpleXMLElement ) {
                 $attributes = $xmlElement->core[0]->attributes();
@@ -205,7 +205,7 @@ class ModulesService
             } else {
                 // Fallback: if there is a <description> element without <locale> children, treat its text as English.
                 $descriptionNode = $xmlElement->children()->description ?? null;
-                if ( $descriptionNode instanceof \SimpleXMLElement ) {
+                if ( $descriptionNode instanceof SimpleXMLElement ) {
                     $rawDescription = trim( (string) $descriptionNode );
                     if ( $rawDescription !== '' ) {
                         // Ensure description is an array and assign to 'en'.
@@ -800,6 +800,20 @@ class ModulesService
     {
         $this->checkManagementStatus();
 
+        return $this->installUploadedModule( $file );
+    }
+
+    /**
+     * Installs a module downloaded through the authenticated marketplace service.
+     */
+    public function installFromMarketplace( UploadedFile $file ): array
+    {
+        return $this->installUploadedModule( $file );
+    }
+
+    private function installUploadedModule( UploadedFile $file ): array
+    {
+
         $path = $file->store( '', [ 'disk' => 'ns-modules-temp' ] );
 
         $fullPath = Storage::disk( 'ns-modules-temp' )->path( $path );
@@ -836,7 +850,7 @@ class ModulesService
 
         if ( in_array( 'config.xml', $files ) ) {
             $file = $extractionFolderName . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR . 'config.xml';
-            $xml = new \SimpleXMLElement(
+            $xml = new SimpleXMLElement(
                 Storage::disk( 'ns-modules-temp' )->get( $file )
             );
 
@@ -932,7 +946,7 @@ class ModulesService
              */
             $this->runAllMigration( $moduleNamespace );
 
-            $this->createSymLink( $moduleNamespace );
+            $this->createModuleSymlink( $moduleNamespace );
 
             $module = $this->get( $moduleNamespace );
 
@@ -999,6 +1013,11 @@ class ModulesService
     {
         $this->checkManagementStatus();
 
+        $this->createModuleSymlink( $moduleNamespace );
+    }
+
+    private function createModuleSymlink( string $moduleNamespace ): void
+    {
         if ( ! is_dir( base_path( 'public/modules' ) ) ) {
             mkdir( base_path( 'public/modules' ), 0755, true );
         }

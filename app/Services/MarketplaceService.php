@@ -414,7 +414,6 @@ class MarketplaceService
         );
 
         $response = $request->accept( 'application/json' )
-            ->withoutVerifying()
             ->withBody( json_encode( $payload, JSON_UNESCAPED_SLASHES ), 'application/json' )
             ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/download', $payload );
 
@@ -436,7 +435,7 @@ class MarketplaceService
             true
         );
 
-        return $this->moduleService->upload( $uploadFile );
+        return $this->moduleService->installFromMarketplace( $uploadFile );
     }
 
     public function testConnection()

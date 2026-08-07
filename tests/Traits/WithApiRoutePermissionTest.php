@@ -119,6 +119,12 @@ trait WithApiRoutePermissionTest
             'reports: payment-types' => ['POST', 'api/reports/payment-types'],
             'reports: cashier-report' => ['GET',  'api/reports/cashier-report'],
 
+            // ── Marketplace ─────────────────────────────────────
+            'marketplace: modules' => ['GET', 'api/marketplace/modules'],
+            'marketplace: licenses' => ['GET', "api/marketplace/licenses/{$fakeId}"],
+            'marketplace: add-to-cart' => ['POST', 'api/marketplace/add-to-cart', ['item_id' => $fakeId]],
+            'marketplace: download' => ['POST', 'api/marketplace/download', ['item_id' => $fakeId, 'license_id' => 'test-license']],
+
             // ── Reset ────────────────────────────────────────────
             'reset: truncate' => ['POST', 'api/reset', ['mode' => 'wipe_plus_simple']],
 
