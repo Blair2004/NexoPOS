@@ -26,8 +26,9 @@ Build modules that match the current repository rather than relying on generic L
 7. For `nsHttpClient`, frontend globals, notifications, localization, or module TypeScript declarations, read [references/frontend-apis.md](references/frontend-apis.md).
 8. For module Vue + Tailwind (shared runtime, Tailwind prefix, UI conventions), read [references/module-frontend.md](references/module-frontend.md).
 9. **Any dashboard Vue page or UI under `#dashboard-content`:** read [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md) first. Nested `createApp()` there breaks reactivity.
-10. **Custom fields under a cart product line:** `ns-pos-product-row-components` — not raw HTML.
-11. **Once-per-line money (room, setup fee):** `ns-pos-product-line-extra` — not unit price × qty.
+10. For a settings-managed external font or reusable asset registry, read [references/module-font-registries.md](references/module-font-registries.md).
+11. **Custom fields under a cart product line:** `ns-pos-product-row-components` — not raw HTML.
+12. **Once-per-line money (room, setup fee):** `ns-pos-product-line-extra` — not unit price × qty.
 
 ## Master POS extensions
 
