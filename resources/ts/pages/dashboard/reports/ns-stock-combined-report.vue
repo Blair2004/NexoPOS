@@ -65,44 +65,26 @@
                 </div>
             </div>
             <div class="box bg-box-background">
-                <div class="box-body text-fontcolor">
+                <div class="box-body overflow-x-auto text-fontcolor">
                     <table class="min-w-fit ns-table w-full table-auto">
                         <thead class="text-sm">
                             <tr class="font-bold">
                                 <th class="border p-2 w-1/3">{{ __( 'Name' ) }}</th>
-                                <th class="border p-2">
-                                    <span class="hidden md:inline-block">{{ __( 'Initial Quantity' ) }}</span>
-                                    <span class="inline-block md:hidden">{{ __( 'Ini. Qty' ) }}</span>
-                                </th>
-                                <th class="border p-2">
-                                    <span class="hidden md:inline-block">{{ __( 'Added Quantity' ) }}</span>
-                                    <span class="inline-block md:hidden">{{ __( 'Add. Qty' ) }}</span>
-                                </th>
-                                <th class="border p-2">
-                                    <span class="hidden md:inline-block">{{ __( 'Sold Quantity' ) }}</span>
-                                    <span class="inline-block md:hidden">{{ __( 'Sold Qty' ) }}</span>
-                                </th>
-                                <th class="border p-2">
-                                    <span class="hidden md:inline-block">{{ __( 'Defective Quantity' ) }}</span>
-                                    <span class="inline-block md:hidden">{{ __( 'Defec. Qty' ) }}</span>
-                                </th>
-                                <th class="border p-2">
-                                    <span class="hidden md:inline-block">{{ __( 'Final Quantity' ) }}</span>
-                                    <span class="inline-block md:hidden">{{ __( 'Final Qty' ) }}</span>
+                                <th v-for="column in reportColumns" :key="column.identifier" class="border p-2">
+                                    <span class="hidden md:inline-block">{{ column.label }}</span>
+                                    <span class="inline-block md:hidden">{{ column.shortLabel }}</span>
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="text-xs">
                             <tr v-for="product in products" :key="product.id">
                                 <td class="border p-2">{{ product.history_name }} ({{ product.unit_name }})</td>
-                                <td class="border p-2">{{ product.history_initial_quantity }}</td>
-                                <td class="border p-2">{{ product.history_procured_quantity }}</td>
-                                <td class="border p-2">{{ product.history_sold_quantity }}</td>
-                                <td class="border p-2">{{ product.history_defective_quantity }}</td>
-                                <td class="border p-2">{{ product.history_final_quantity }}</td>
+                                <td v-for="column in reportColumns" :key="column.identifier" class="border p-2">
+                                    {{ product[column.field] }}
+                                </td>
                             </tr>
                             <tr v-if="products.length === 0">
-                                <td colspan="6" class="border p-2 text-center">{{ __( 'No data available' ) }}</td>
+                                <td :colspan="reportColumns.length + 1" class="border p-2 text-center">{{ __( 'No data available' ) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -116,11 +98,19 @@ import moment from 'moment';
 import { __ } from '~/libraries/lang';
 import { selectApiEntities } from "~/libraries/select-api-entities";
 
-declare const ns, nsSnackBar, nsHttpClient;
+declare const ns, nsSnackBar, nsHttpClient, nsHooks;
 
 export default {
     props: [ 'storeLogo', 'storeName' ],
     data() {
+        const reportColumns = nsHooks.applyFilters( 'ns-stock-combined-report-columns', [
+            { identifier: 'initial', label: __( 'Initial Quantity' ), shortLabel: __( 'Ini. Qty' ), field: 'history_initial_quantity' },
+            { identifier: 'procured', label: __( 'Added Quantity' ), shortLabel: __( 'Add. Qty' ), field: 'history_procured_quantity' },
+            { identifier: 'sold', label: __( 'Sold Quantity' ), shortLabel: __( 'Sold Qty' ), field: 'history_sold_quantity' },
+            { identifier: 'defective', label: __( 'Defective Quantity' ), shortLabel: __( 'Defec. Qty' ), field: 'history_defective_quantity' },
+            { identifier: 'final', label: __( 'Final Quantity' ), shortLabel: __( 'Final Qty' ), field: 'history_final_quantity' },
+        ] );
+
         return {
             __,
             ns,
@@ -129,6 +119,7 @@ export default {
             unitsNames: '',
             categories: [],
             products: [],
+            reportColumns,
             units: [],
             selectedCategories: [],
             selectedUnits: [],

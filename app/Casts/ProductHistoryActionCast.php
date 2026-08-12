@@ -32,6 +32,8 @@ class ProductHistoryActionCast implements CastsAttributes
                 break;
         }
 
+        $model->{ '$cssClass' } = Hook::filter( 'ns-products-history-css-class', $model->{ '$cssClass' }, $value );
+
         return match ( $value ) {
             ProductHistory::ACTION_SET => __( 'Assignation' ),
             ProductHistory::ACTION_STOCKED => __( 'Stocked' ),

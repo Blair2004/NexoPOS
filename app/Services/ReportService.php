@@ -1124,7 +1124,16 @@ class ReportService
             ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
             ->sum( 'quantity' );
 
-        $finalQuantity = $initialQuantity + $addedQuantity - $defectiveQuantity - $soldQuantity;
+        $finalQuantity = Hook::filter(
+            'ns-products-history-combined-final-quantity',
+            $initialQuantity + $addedQuantity - $defectiveQuantity - $soldQuantity,
+            $productHistory,
+            [
+                'mode' => 'whole-day',
+                'start' => $startOfDay,
+                'end' => $endOfDay,
+            ]
+        );
 
         $productHistoryCombined = ProductHistoryCombined::where( 'date', $startOfDay->format( 'Y-m-d' ) )
             ->where( 'product_id', $productHistory->product_id )
@@ -1207,11 +1216,21 @@ class ReportService
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
         }
 
-        $currentDetailedHistory->final_quantity = ns()->currency->define( $currentDetailedHistory->initial_quantity )
+        $finalQuantity = ns()->currency->define( $currentDetailedHistory->initial_quantity )
             ->additionateBy( $currentDetailedHistory->procured_quantity )
             ->subtractBy( $currentDetailedHistory->sold_quantity )
             ->subtractBy( $currentDetailedHistory->defective_quantity )
             ->toFloat();
+
+        $currentDetailedHistory->final_quantity = Hook::filter(
+            'ns-products-history-combined-final-quantity',
+            $finalQuantity,
+            $productHistory,
+            [
+                'mode' => 'incremental',
+                'combined' => $currentDetailedHistory,
+            ]
+        );
 
         return $currentDetailedHistory;
     }
@@ -1251,7 +1270,16 @@ class ReportService
             $request->whereIn( 'nexopos_products.category_id', $categories );
         }
 
-        $request->where( 'nexopos_products_histories_combined.date', Carbon::parse( $date )->format( 'Y-m-d' ) );
+        $formattedDate = Carbon::parse( $date )->format( 'Y-m-d' );
+        $request->where( 'nexopos_products_histories_combined.date', $formattedDate );
+
+        $request = Hook::filter(
+            'ns-products-history-combined-query',
+            $request,
+            $formattedDate,
+            $categories,
+            $units
+        );
 
         return $request->get();
     }
