@@ -317,14 +317,14 @@
     
     &.hover-default:hover, &.default {
         button, a {
-            @apply bg-white text-fontcolor-hard;
+            @apply bg-box-elevation-background text-white;
 
             span.ns-label {
                 @apply bg-surface text-fontcolor-hard;
             }
 
             &:disabled {
-                @apply bg-gray-200 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
             }
         }
     }

@@ -6,7 +6,14 @@ use Illuminate\Support\Facades\Route;
 
 // Current-user routes — accessible to any authenticated user
 Route::get( '/user', [ UsersController::class, 'getUser' ] );
-Route::get( '/user/permissions', [ UsersController::class, 'getUserPermissions' ] );
+
+/**
+ * This should not be restricted by a "read.users" permission, as it is used to return
+ * all the available permissions for the logged user.
+ */
+Route::get( '/user/permissions', [ UsersController::class, 'getUserPermissions' ] )
+    ->withoutMiddleware( NsRestrictMiddleware::arguments( 'read.users' ) );
+
 Route::post( '/user/access/{id}', [ UsersController::class, 'approveAccess' ] );
 Route::get( '/user/access/{id}', [ UsersController::class, 'getAccess' ] );
 Route::get( '/user/access/{access}/use', [ UsersController::class, 'markAccessAsUsed' ] );

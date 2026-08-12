@@ -201,9 +201,12 @@ export default {
                 }, ( error ) => {
                     // close loading popup
                     popup.close();
+
+                    if ( error !== false ) {
+                        // show error message
+                        nsSnackBar.error( error.message );
+                    }
     
-                    // show error message
-                    nsSnackBar.error( error.message );
                 });
             } catch( exception ) {
                 popup.close();
@@ -218,7 +221,7 @@ export default {
 </script>
 <template>
     <div id="ns-payment-popup" class="w-screen h-screen p-8 flex overflow-hidden" v-if="order">
-        <div class="flex flex-col flex-auto lg:flex-row shadow-xl">
+        <div class="flex flex-col flex-auto lg:flex-row shadow-xl rounded-lg">
             <div class="w-full lg:w-56 lg:h-full flex justify-between px-2 lg:px-0 lg:block items-center lg:items-start">
                 <h3 class="lg:hidden text-xl text-center my-4 font-bold lg:my-8">{{ __( 'Gateway' ) }} <span v-if="activePayment">: {{ activePayment.label }}</span></h3>
                 <div class="h-16 hidden lg:block"></div>

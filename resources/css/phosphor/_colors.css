@@ -1,8 +1,8 @@
 @theme {
     /** Typography */
     --color-typography: var( --color-gray-800 );
-    --color-fontcolor: var( --color-gray-300 );
-    --color-fontcolor-soft: var( --color-gray-400 );
+    --color-fontcolor: var( --color-gray-200 );
+    --color-fontcolor-soft: var( --color-gray-300 );
     --color-fontcolor-hard: rgb( 107 114 128 );
 
     /** Surfaces */

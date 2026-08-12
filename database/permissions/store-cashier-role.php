@@ -19,6 +19,8 @@ $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
     'nexopos.void.orders',
     'nexopos.refund.orders',
     'nexopos.make-payment.orders',
+    'nexopos.read.categories',
+    'nexopos.read.registers',
     'nexopos.create.orders-instaments',
     'nexopos.update.orders-instaments',
     'nexopos.read.orders-instaments',

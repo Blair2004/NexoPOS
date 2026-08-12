@@ -2,15 +2,15 @@
     <div id="notificaton-wrapper">
         <div id="notification-button" @click="visible = !visible" :class="visible ? 'panel-visible border-0 shadow-lg' : 'border panel-hidden'" class="hover:shadow-lg hover:border-opacity-0 rounded-full h-12 w-12 cursor-pointer font-bold text-2xl justify-center items-center flex">
             <div class="relative float-right" v-if="notifications.length > 0">
-                <div class="absolute -ml-6 -mt-8">
-                    <div class="counter w-8 h-8 rounded-full text-xs flex items-center justify-center">{{ nsNumberAbbreviate( notifications.length, 'abbreviate' ) }}</div>
+                <div class="absolute -ml-[20px] -mt-[28px]">
+                    <div class="counter w-6 h-6 rounded-full text-xs flex items-center justify-center">{{ nsNumberAbbreviate( notifications.length, 'abbreviate' ) }}</div>
                 </div>
             </div>
             <i class="las la-bell"></i>
         </div>
         <div class="h-0 w-0" v-if="visible" id="notification-center">
             <div class="absolute left-0 top-0 sm:relative w-screen zoom-out-entrance anim-duration-300 h-[80vh] sm:w-[17.5em] sm:h-108 flex flex-row-reverse">
-                <div class="z-50 sm:rounded-lg shadow-lg h-full w-full md:mt-2 overflow-y-hidden flex flex-col">
+                <div class="z-50 sm:rounded-lg shadow-xl h-full w-full md:mt-2 overflow-y-hidden flex flex-col">
                     <div @click="visible = false" class="sm:hidden p-2 cursor-pointer flex items-center justify-center border-b border-gray-200">
                         <h3 class="font-semibold hover:text-info-primary">Close</h3>
                     </div>
@@ -36,7 +36,7 @@
                         </div>
                         <div v-if="notifications.length === 0" class="h-full w-full flex items-center justify-center">
                             <div class="flex flex-col items-center">
-                                <i class="las la-laugh-wink text-5xl text-font"></i>
+                                <i class="las la-laugh-wink text-5xl text-fontcolor"></i>
                                 <p class="text-fontcolor-soft text-sm">{{ __( 'Nothing to care about !' ) }}</p>
                             </div>
                         </div>
@@ -167,8 +167,14 @@ export default {
                 onAction: ( action ) => {
                     if ( action ) {
                         nsHttpClient.delete( `/api/notifications/all` )
-                            .subscribe( ( result: StatusResponse ) => {
-                                nsSnackBar.success( result.message );
+                            .subscribe({
+                                next: (result: StatusResponse ) => {
+                                    nsSnackBar.success( result.message );
+                                    this.loadNotifications();
+                                },
+                                error: (error) => {
+                                    nsSnackBar.error( error.message );
+                                }
                             })
                     }
                 }

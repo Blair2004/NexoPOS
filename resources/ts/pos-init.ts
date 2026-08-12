@@ -72,6 +72,7 @@ export class POS {
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
     private _holdPopupEnabled = true;
+    private _bootGuards: (() => Promise<unknown>)[] = [];
     private _initialQueue: (() => Promise<StatusResponse>)[] = [];
     private _options: BehaviorSubject<{ [key: string]: any }>;
     private _responsive = new Responsive;
@@ -186,6 +187,10 @@ export class POS {
         return this._initialQueue;
     }
 
+    get bootGuards() {
+        return this._bootGuards;
+    }
+
     get responsive() {
         return this._responsive;
     }
@@ -222,6 +227,7 @@ export class POS {
                 nsHooks.doAction( 'ns-before-cart-reset' );
 
                 
+                await this.processBootGuards();
                 await this.processInitialQueue();
 
                 nsHooks.doAction( 'ns-after-cart-changed' );
@@ -264,7 +270,7 @@ export class POS {
         });
 
         this.initialQueue.push(() => new Promise((resolve, reject) => {
-            nsHttpClient.get(`/api/users/permissions/` ).subscribe({
+            nsHttpClient.get(`/api/user/permissions/` ).subscribe({
                 next: (response: any) => {
                     this._userPermissions.next(response);
                     resolve( response );
@@ -657,6 +663,18 @@ export class POS {
 
             resolve( true );
         });
+    }
+
+    /**
+     * Run blocking operator and security checks before regular initialization.
+     * These guards intentionally have no timeout because they can require input.
+     */
+    async processBootGuards() {
+        for ( const guard of this._bootGuards ) {
+            await guard();
+        }
+
+        return true;
     }
 
     /**

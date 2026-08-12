@@ -197,7 +197,6 @@ class OrdersController extends DashboardController
                 'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no' ),
                 'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_orders' ),
                 'ns_pos_registers_enabled' => ns()->option->get( 'ns_pos_registers_enabled', 'no' ),
-                'ns_pos_idle_counter' => ns()->option->get( 'ns_pos_idle_counter', 0 ),
                 'ns_pos_disbursement' => ns()->option->get( 'ns_pos_disbursement', 'no' ),
                 'ns_customers_default' => ns()->option->get( 'ns_customers_default', false ),
                 'ns_pos_vat' => ns()->option->get( 'ns_pos_vat', 'disabled' ),

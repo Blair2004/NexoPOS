@@ -408,8 +408,5 @@
         .ns-payment-list {
             @apply border-t-tab-active;
         }
-        .ns-payment-footer {
-            @apply bg-tab-active-border;
-        }
     }
 }

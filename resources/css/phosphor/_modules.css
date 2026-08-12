@@ -1,0 +1,6 @@
+.ns-module-search {
+    @apply bg-box-background text-white ring-inset text-xs rounded ring-box-background ring-2 has-[:focus]:ring-primary;
+    input {
+        @apply outline-none;
+    }
+}

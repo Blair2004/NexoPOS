@@ -1,16 +1,13 @@
 <template>
-    <div class="shadow-lg h-95vh md:h-[60vh] lg:h-[60vh] w-95vw md:w-[66.67vw] lg:w-[50vw] ns-box flex flex-col">
+    <div class="shadow-lg h-95vh md:h-[60vh] lg:h-[80vh] w-[95vw] md:w-[66.67vw] lg:w-[50vw] ns-box flex flex-col">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="font-semibold">{{ __( 'Layaway Parameters' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 flex-auto flex flex-col relative overflow-y-auto">
-            <div v-if="fields.length === 0" class="absolute h-full w-full flex items-center justify-center">
-                <ns-spinner></ns-spinner>
-            </div>
-            <div class="p-2 elevation-surface info mb-2 text-center text-2xl font-bold flex justify-between">
+        <div v-if="order" class="p-2 flex-auto flex flex-col relative overflow-y-auto">
+            <div class="p-2 rounded elevation-surface info mb-2 text-center text-xl font-bold flex justify-between">
                 <span>{{ __( 'Minimum Payment' ) }}</span>
                 <span>{{ nsCurrency( expectedPayment ) }}</span>
             </div>
@@ -28,12 +25,12 @@
                             </span>
                         </p>
                     </h3>
-                    <p class="p-2 mb-2 text-center bg-green-200 text-green-700">
+                    <p class="p-2 rounded mb-2 text-center bg-success-secondary text-white">
                         {{ __( 'The final payment date must be the last within the instalments.' ) }}
                     </p>
                 </div>
                 <div class="flex-auto overflow-y-auto">
-                    <div class="flex w-full -mx-1 py-2" :key="key" v-for="(instalment, key) of order.instalments">
+                    <div class="flex gap-2 w-full -mx-1 py-2" :key="key" v-for="(instalment, key) of order.instalments">
                         <div class="flex flex-auto">
                             <div class="px-1 w-full md:w-1/2">
                                 <ns-field @change="refreshTotalPayments()" :field="instalment.date"></ns-field>
@@ -42,14 +39,17 @@
                                 <ns-field @change="refreshTotalPayments()" :field="instalment.amount"></ns-field>
                             </div>
                         </div>
-                        <div class="flex items-center">
-                            <button @click="removeInstalment( instalment )" class="items-center flex justify-center h-8 w-8 rounded border text-fontcolor ns-inset-button error">
+                        <div class="flex items-center gap-2">
+                            <ns-button :disabled="instalment.amount.value > 0" @click="completePayment( instalment )">
+                                {{ __( 'Complete' )}}
+                            </ns-button>
+                            <ns-button @click="removeInstalment( instalment )" class="h-10">
                                 <i class="las la-times"></i>
-                            </button>
+                            </ns-button>
                         </div>
                     </div>
                     <div class="my-2" v-if="order.instalments.length === 0">
-                        <p class="p-2 elevation-surface border text-fontcolor text-center">{{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
+                        <p class="p-2 elevation-surface rounded border text-fontcolor text-center">{{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
                     </div>
                 </div>
             </div>
@@ -82,6 +82,7 @@ export default {
     props: [ 'popup' ],
     data() {
         return {
+            order: null,
             fields: [],
             instalments: [],
             formValidation: new FormValidation,
@@ -89,69 +90,27 @@ export default {
             totalPayments: 0
         }
     },
-    mounted() {
-        this.loadFields();
+    watch: {
+        fields: {
+            handler() {
+                const instalmentFields = this.fields.filter( field => field.name === 'total_instalments' );
+
+                if ( instalmentFields.length > 0 && instalmentFields[0].value > 0 ) {
+                    const totalInstalments    =   this.formValidation.extractFields( this.fields ).total_instalments;
+                    this.generatePaymentFields( totalInstalments );
+                }
+            },
+            deep: true
+        }
     },
-    updated() {
-        setTimeout( () => {
-            document.querySelector( '.is-popup #total_instalments' ).addEventListener( 'change', () => {
-                const totalInstalments    =   this.formValidation.extractFields( this.fields ).total_instalments;
-                this.generatePaymentFields( totalInstalments );
-            });
-            document.querySelector( '.is-popup #total_instalments' ).addEventListener( 'focus', () => {
-                document.querySelector( '.is-popup #total_instalments' ).select();
-            });
-        }, 200 );
+    mounted() {
+        this.order = Object.assign( {}, this.popup.params.order );
+        this.loadFields();
     },
     computed: {
         expectedPayment() {
             const minimalPaymentPercent     =   this.order.customer.group.minimal_credit_payment;
             return nsRawCurrency( ( this.order.total * minimalPaymentPercent ) / 100 );
-        },
-        order() {
-            this.popup.params.order.instalments     =   this.popup.params.order.instalments.map( instalment => {
-                for( let name in instalment ) {
-                    /**
-                     * to avoid performing
-                     * this operation multiple time
-                     */
-                    if ( typeof instalment[ name ] !== 'object' ) {
-                        if ( name === 'date' ) {
-                            const field    =   {
-                                type: 'date',
-                                name,
-                                label: __( 'Date' ),
-                                disabled: instalment.paid === 1 ? true : false,
-                                value: moment( instalment.date ).format( 'YYYY-MM-DD' )
-                            };
-
-                            instalment[ name ]    =   field;
-                        } else if ( name === 'amount' ) {
-                            const field    =   {
-                                type: 'number',
-                                name,
-                                label: __( 'Amount' ),
-                                disabled: instalment.paid === 1 ? true : false,
-                                value: instalment.amount
-                            };
-
-                            instalment[ name ]    =   field;
-                        } else if ( ! [ 'paid', 'id' ].includes( name ) ) {
-                            const field    =   {
-                                type: 'hidden',
-                                name,
-                                value: instalment[ name ]
-                            };
-
-                            instalment[ name ]    =   field;
-                        }
-                    }
-                }
-
-                return instalment;
-            });
-
-            return this.popup.params.order;
         },
     },
     unmounted() {
@@ -160,6 +119,14 @@ export default {
     methods: {
         __,
         nsCurrency,
+        completePayment( instalment ) {
+            const index = this.order.instalments.indexOf( instalment );
+            const actualInstalment = this.order.instalments[ index ];
+
+            if ( actualInstalment ) {
+                actualInstalment.amount.value = nsRawCurrency( this.totalPayments );
+            }
+        },
         refreshTotalPayments() {
             if ( this.order.instalments.length > 0 ) {
                 const totalInstalments      =   nsRawCurrency( this.order.instalments
@@ -175,7 +142,6 @@ export default {
         removeInstalment( instament ) {
             const index     =   this.order.instalments.indexOf( instament );
             this.order.instalments.splice( index, 1 );
-            this.$forceUpdate();
         },
         generatePaymentFields( totalInstalments ) {
             this.order.instalments    =   ( new Array( parseInt( totalInstalments ) ) )
@@ -202,7 +168,6 @@ export default {
                     }
                 });
 
-            this.$forceUpdate();
             this.refreshTotalPayments();
         },
         close() {
@@ -252,8 +217,6 @@ export default {
             if ( ! this.formValidation.fieldsValid( this.fields ) ) {
                 return nsSnackBar.error( __( 'Unable to process, the form is not valid' ) );
             }
-
-            this.$forceUpdate();
 
             const instalments           =   this.order.instalments.map( instalment => {
                 return {

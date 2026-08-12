@@ -21,22 +21,6 @@ $cashRegisters = [
 
 if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
     $cashRegisters[] = [
-        'label' => __( 'Cashier Idle Counter' ),
-        'name' => 'ns_pos_idle_counter',
-        'type' => 'select',
-        'value' => ns()->option->get( 'ns_pos_idle_counter' ),
-        'options' => Helper::kvToJsOptions( [
-            'disabled' => __( 'Disabled' ),
-            '5min' => __( '5 Minutes' ),
-            '10min' => __( '10 Minutes' ),
-            '15min' => __( '15 Minutes' ),
-            '20min' => __( '20 Minutes' ),
-            '30min' => __( '30 Minutes' ),
-        ] ),
-        'description' => __( 'Selected after how many minutes the system will set the cashier as idle.' ),
-    ];
-
-    $cashRegisters[] = [
         'label' => __( 'Cash Disbursement' ),
         'name' => 'ns_pos_disbursement',
         'type' => 'select',
