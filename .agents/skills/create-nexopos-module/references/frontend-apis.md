@@ -108,6 +108,10 @@ const result = await new Promise((resolve, reject) => {
 
 The error callback receives `error.response.data` when Axios provides it; otherwise it receives the Axios response or thrown error. Do not assume every error has the same shape.
 
+Use `nsSnackBar.error(message)` for most asynchronous failures: page loads, refreshes, submissions, and operational actions. A transient/global failure must not insert a full-width message block into the document flow because that shifts the surrounding UI. Preserve already-rendered content where possible; for an initial load, settle the spinner and keep a stable reserved content region instead of rendering a new error panel.
+
+Inline error content is appropriate only when it is spatially actionable (for example, validation attached to a field or one failed table/cart row) or when the page has a persistent fatal state with retry controls. Do not show the same error both inline and in a snackbar.
+
 ```ts
 function messageFrom(error: any): string {
     if (typeof error?.message === 'string') {
@@ -120,6 +124,9 @@ function messageFrom(error: any): string {
 
     return 'An unexpected request error occurred.';
 }
+
+const message = messageFrom(error);
+nsSnackBar.error(message);
 ```
 
 `nsHttpClient.response` exposes the last successful full Axios response globally. Do not use it to correlate concurrent requests.
@@ -163,6 +170,29 @@ Core globals include:
 | `nsCurrency`, `nsRawCurrency` | Currency formatting and raw numeric conversion |
 
 Prefer explicit imports available through the module build when existing module code uses them. Use global declarations when integrating with globals injected by the core bundle.
+
+### Confirmation popups
+
+Consequential actions must ask for confirmation through the native popup host. The current core confirmation component is `nsConfirmPopup`; do not refer to it as `nsConfirmDialog`, and do not use the browser-native `window.confirm()` dialog.
+
+```ts
+declare const Popup: any;
+declare const nsConfirmPopup: any;
+
+function confirmDelete(entry: Entry): void {
+    Popup.show(nsConfirmPopup, {
+        title: __m('Delete Entry', 'ExampleModule'),
+        message: __m('This action cannot be undone. Would you like to proceed?', 'ExampleModule'),
+        onAction: (action: boolean) => {
+            if (action) {
+                deleteEntry(entry);
+            }
+        },
+    });
+}
+```
+
+Use this two-step handler for delete, cancel, close, refund, reset, stock-return, and similar operations: the click opens the popup, and only an affirmative `onAction` starts the request. A cancellation must not mutate state or call the API. Keep the title and message specific about the operational consequence. `nsConfirmPopup` closes itself after invoking `onAction`.
 
 ## Shared Vue runtime for modules
 
@@ -346,6 +376,7 @@ declare const nsHttpClient: any;
 declare const nsSnackBar: any;
 declare const nsHooks: any;
 declare const Popup: any;
+declare const nsConfirmPopup: any;
 declare const __: (text: string) => string;
 declare const __m: (text: string, namespace: string) => string;
 

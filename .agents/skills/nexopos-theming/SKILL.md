@@ -56,9 +56,9 @@ In markup, the prefix is always first, then variants, then the utility:
 
 **Buttons:** theme colors come from `.ns-button` / type class on a **wrapper** (or the `<ns-button>` component). Module utilities supply padding/radius only — never `<a class="ns-button info">`.
 
-**Active/status fills:** use `bg-info-secondary` (or success/warning/error **secondary**) with `text-white`. Never `bg-*-primary` as a solid active background.
+**Semantic status scale:** `primary` is lighter than `secondary`, and `secondary` is lighter than `tertiary`. Filled backgrounds may use the primary or secondary step with `text-white`. Never use a tertiary step as a background, including hover states. This rule applies to info, success, warning, and error.
 
-**Loading:** sized `ns-spinner`; text below if needed; errors replace spinner. Do not leave loading stuck — settle HTTP with `subscribe` promises, not fragile dual-RxJS `firstValueFrom`.
+**Loading and failures:** use a sized `ns-spinner` with optional text below it. Settle loading on failure and report most request/action errors with `nsSnackBar.error`; do not inject a full-width error block that shifts the page. Keep inline errors for field/row context or persistent fatal states with retry controls, and reserve stable content height for an initial failure.
 
 Core hooks (`ns-button`, `ns-box`, …) stay **unprefixed** as hook names. Full rules: `create-nexopos-module` → [module-frontend.md](../create-nexopos-module/references/module-frontend.md).
 

@@ -51,7 +51,6 @@ Dashboard footer order (simplified):
 ```ts
 // modules/ExampleModule/Resources/ts/page.ts
 import Page from './components/Page.vue';
-import '../css/style.css';
 
 declare const nsExtraComponents: Record<string, unknown>;
 
@@ -72,6 +71,11 @@ nsCreateApp(Page).mount('#example-module-app');
 ```blade
 @extends('layout.dashboard')
 
+@section('layout.dashboard.header')
+@parent
+@moduleViteAssets('Resources/css/style.css', 'ExampleModule')
+@endsection
+
 @section('layout.dashboard.body')
 <div class="h-full overflow-hidden flex flex-col">
     @include(Hook::filter('ns-dashboard-header', '../common/dashboard-header'))
@@ -88,6 +92,8 @@ nsCreateApp(Page).mount('#example-module-app');
 ```
 
 Props/config: prefer `window.ExampleModulePage = { … }` set in the same inject section and read inside the component, or pass static attributes if the in-DOM template supports them. Keep the registration key and tag name aligned (`example-module-page`).
+
+Keep `Resources/css/style.css` as a standalone Vite input and load it explicitly in the header. This is required when it generates the module's prefixed Tailwind utilities; loading only the TypeScript entry leaves those utilities unavailable.
 
 ### 3. What `app-init` does with your registration
 
@@ -133,9 +139,10 @@ Same principle: **extend existing apps/registries**, do not nest a new root unde
 ## Decision checklist
 
 1. Is the UI rendered under `#dashboard-content`? → **Yes:** `nsExtraComponents` + tag. **No nested `createApp`.**
-2. Is the script loaded in footer inject before `app-init`? → Required for registration.
-3. Is this a public/standalone layout without dashboard content? → `nsCreateApp` is fine.
-4. UI shows but nothing is clickable? → Suspect nested mount first, not Tailwind or `ref`.
+2. Is the CSS entry loaded in the layout header and declared as a Vite input? → Required for module-prefixed Tailwind utilities.
+3. Is the script loaded in footer inject before `app-init`? → Required for registration.
+4. Is this a public/standalone layout without dashboard content? → `nsCreateApp` is fine.
+5. UI shows but nothing is clickable? → Suspect nested mount first, not Tailwind or `ref`.
 
 ## Related
 

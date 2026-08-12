@@ -64,7 +64,7 @@ Never bake a once-fee into unit price: quantity 2 would charge the fee twice.
 
 | Step | Mechanism |
 | --- | --- |
-| Load assets only on POS | `RenderFooterEvent` → `@moduleViteAssets('Resources/ts/pos.ts', …)` |
+| Load assets only on POS | `RenderHeaderEvent` → standalone CSS; `RenderFooterEvent` → TypeScript |
 | Init context | `POS.initialQueue` |
 | Enrich products | `POS.addToCartQueue` |
 | Product-row UI | `ns-pos-product-row-components` |
@@ -119,6 +119,8 @@ Build the smallest complete path through the module:
 5. Add Blade or Vue UI only when required. Reuse existing NexoPOS components, semantic theme classes, localization helpers, and frontend globals.
 6. Add focused PHPUnit coverage for happy paths, authorization or validation failures, and relevant edge cases.
 
+Every visible field created through a NexoPOS form descriptor, `FormInput`, settings page, or CRUD form must include a concise localized `description`. Explain the field's operational effect, units, scope, or consequences instead of merely repeating its label. Use the module localization helper for module-owned descriptions.
+
 Keep business logic out of controllers and listeners when it warrants a service. Use explicit PHP types, Laravel 12 conventions, factories in tests, and existing module namespaces: `Modules\{Namespace}\...`.
 
 ## Observe module invariants
@@ -134,7 +136,8 @@ Keep business logic out of controllers and listeners when it warrants a service.
 - **POS add-to-cart:** queue results merge via `productData`; always merge `$quantities` from `productData` when reading sale price.
 - Let NexoPOS discover module routes, migrations, listeners, commands, and providers where current code does so. Do not duplicate registration.
 - Do not register console commands or schedules from a module service provider.
-- Make migrations repeat-safe and rollback-safe. Inspect the schema and comparable migrations before choosing columns or constraints.
+- Make migrations repeat-safe and rollback-safe. Inspect the live schema and comparable migrations before choosing columns or constraints.
+- **Before every migration schema operation, check existence:** use `Schema::hasTable()` before altering or dropping a table, `Schema::hasColumn()` before adding or dropping each column, and `Schema::hasIndex()` before adding or dropping each index. Use `Schema::createIfMissing()` for module tables. Guard columns individually so a migration can recover safely after a previous partial DDL failure; never assume that because one new column exists, the remaining columns or indexes also exist.
 - Avoid cascade deletion where NexoPOS conventions require application-managed cleanup.
 - Use model events only for model-local state. Put broader side effects in listeners, services, or jobs.
 - Do not introduce dependencies or new top-level directories without approval.
@@ -142,14 +145,23 @@ Keep business logic out of controllers and listeners when it warrants a service.
 
 ## Handle frontend assets correctly
 
-Load module assets from Blade with paths relative to the module root and no leading slash:
+Load module assets from Blade with paths relative to the module root and no leading slash. On dashboard pages, load the standalone CSS entry in the header and load the Vue registration script in the footer inject before `app-init`:
 
 ```blade
-@moduleViteAssets('Resources/ts/main.ts', 'ExampleModule')
+@section('layout.dashboard.header')
+@parent
 @moduleViteAssets('Resources/css/style.css', 'ExampleModule')
+@endsection
+
+@section('layout.dashboard.footer.inject')
+@parent
+@moduleViteAssets('Resources/ts/page.ts', 'ExampleModule')
+@endsection
 ```
 
-Do not use `@vite` for module assets. Keep Vite inputs and output aligned with `Resources/...` and `Public/build`, and use Tailwind CSS v4 semantic/theme-aware classes rather than hard-coded colors. Build module assets when frontend files change.
+Treat this placement as required when `style.css` supplies prefixed Tailwind utilities: declaring or importing the TypeScript entry does not replace explicitly loading the CSS entry in the layout header. Include both files as Vite inputs, and do not rely on a TypeScript-side CSS import for dashboard page styles. Do not use `@vite` for module assets. Keep Vite inputs and output aligned with `Resources/...` and `Public/build`, and use Tailwind CSS v4 semantic/theme-aware classes rather than hard-coded colors. Build module assets when frontend files change.
+
+For POS-only module UI, scope two listeners to the POS route: add the standalone prefixed CSS view through `RenderHeaderEvent`, and add the TypeScript view through `RenderFooterEvent`. A footer TypeScript directive or a TypeScript-side CSS import is not a substitute for loading the stylesheet in the document header.
 
 ### Vue + Tailwind modules (required pattern)
 
@@ -176,8 +188,10 @@ Do **not** prefix core hooks (`ns-button`, `ns-box`, …). Prefer semantic color
 
 - Buttons: `<ns-button>` or `.ns-button` **wrapper** + inner `button`/`a` with module padding — never `class="ns-button"` on the control alone.
 - Type: `text-fontcolor` for titles/body; `text-fontcolor-soft` for sublines/descriptions.
-- Loading: sized `ns-spinner`; optional label under spinner; errors replace spinner (no infinite spin).
-- Active fills: `bg-*-secondary` + `text-white` — never `bg-*-primary` as a solid active background.
+- Loading: sized `ns-spinner`; optional label under spinner; failures settle the spinner (no infinite spin).
+- Failure feedback: use `nsSnackBar.error(...)` for transient request, submit, refresh, and action failures. Do not insert a new full-width error block after an async failure; it causes cumulative layout shift. Keep inline errors only when they are anchored to a specific field/row or when a persistent fatal state needs retry controls. Preserve the previous content when possible, and reserve a stable minimum-height content region for an initial load failure.
+- Confirm consequential actions with the native popup manager: `Popup.show(nsConfirmPopup, { title, message, onAction })`. Run the mutation only when `onAction` receives `true`; cancellation must have no side effect. Use this for actions such as delete, cancel, close, refund, reset, or returning stock (including “End Block”). Do not use `window.confirm()` or execute the request directly from the first click. The current core component is named `nsConfirmPopup` (not `nsConfirmDialog`).
+- Semantic status steps darken in this order: `primary` (lighter), `secondary`, `tertiary` (darkest). Filled backgrounds may use `bg-*-primary` or `bg-*-secondary` with `text-white`; never use `bg-*-tertiary`, including hover states. Apply this to info, success, warning, and error.
 
 **Dashboard page entry (copy-paste):**
 
@@ -204,7 +218,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineNexoPOSModuleConfig({
     dirname: __dirname,
-    inputs: ['Resources/ts/main.ts', 'Resources/css/style.css'],
+    inputs: ['Resources/ts/page.ts', 'Resources/css/style.css'],
     port: 3335,
 });
 ```

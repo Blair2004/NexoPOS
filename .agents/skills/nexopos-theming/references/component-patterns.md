@@ -12,8 +12,8 @@
 | Field button | `bg-input-button hover:bg-input-button-hover active:bg-input-button-active` |
 | Floating results | `bg-floating-menu border-floating-menu-edge hover:bg-floating-menu-hover` |
 | Brand action | `bg-primary hover:bg-secondary text-white` |
-| Status (solid active fill) | `bg-*-secondary text-white` only — **never** `bg-*-primary` as a filled background |
-| Status (soft tint) | `bg-*-tertiary` with `text-*-primary` or `text-fontcolor` |
+| Status (solid active fill) | `bg-*-primary text-white` or `bg-*-secondary text-white` |
+| Status foreground emphasis | `text-*-tertiary` or `border-*-tertiary` on a neutral surface; **never** `bg-*-tertiary` |
 | Status text / icons / borders | `text-*-primary`, `border-*-primary` / `border-*-secondary` |
 
 Use component-specific tokens inside tabs, tables, POS, CRUD, or numpad UI.
@@ -73,9 +73,9 @@ For standalone color maps when the hook is inappropriate, use a literal class ma
 ```ts
 const variantClasses = {
     primary: 'bg-primary text-white hover:bg-secondary',
-    success: 'bg-success-secondary text-white hover:bg-success-tertiary',
-    warning: 'bg-warning-secondary text-white hover:bg-warning-tertiary',
-    error: 'bg-error-secondary text-white hover:bg-error-tertiary',
+    success: 'bg-success-primary text-white hover:bg-success-secondary',
+    warning: 'bg-warning-primary text-white hover:bg-warning-secondary',
+    error: 'bg-error-primary text-white hover:bg-error-secondary',
 } as const;
 ```
 
