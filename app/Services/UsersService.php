@@ -16,6 +16,7 @@ use App\Models\UserWidget;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -314,6 +315,36 @@ class UsersService
         return [
             'status' => 'success',
             'message' => __( 'The widgets was successfully updated.' ),
+        ];
+    }
+
+    /**
+     * Persist the complete widget layout for a user.
+     *
+     * @param array<int, array{component-name: string, class-name: class-string, layout: ?string}> $widgets
+     */
+    public function storeWidgetLayout( array $widgets, User $user ): array
+    {
+        DB::transaction( function () use ( $user, $widgets ): void {
+            User::whereKey( $user->getKey() )->lockForUpdate()->firstOrFail();
+
+            UserWidget::where( 'user_id', $user->id )->delete();
+
+            foreach ( $widgets as $position => $widgetConfig ) {
+                UserWidget::create( [
+                    'identifier' => $widgetConfig['component-name'],
+                    'class_name' => $widgetConfig['class-name'],
+                    'column' => 'dashboard',
+                    'position' => $position,
+                    'user_id' => $user->id,
+                    'layout' => $widgetConfig['layout'],
+                ] );
+            }
+        }, attempts: 3 );
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The widgets were successfully updated.' ),
         ];
     }
 

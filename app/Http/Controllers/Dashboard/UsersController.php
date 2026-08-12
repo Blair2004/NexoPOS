@@ -12,6 +12,7 @@ use App\Crud\RolesCrud;
 use App\Crud\UserCrud;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Http\Requests\UpdateWidgetLayoutRequest;
 use App\Models\Permission;
 use App\Models\PermissionAccess;
 use App\Models\Role;
@@ -19,7 +20,9 @@ use App\Models\User;
 use App\Services\DateService;
 use App\Services\UserOptions;
 use App\Services\UsersService;
+use App\Services\WidgetService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +32,8 @@ class UsersController extends DashboardController
 {
     public function __construct(
         protected UsersService $usersService,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected WidgetService $widgetService
     ) {
         // ...
     }
@@ -105,7 +109,7 @@ class UsersController extends DashboardController
     /**
      * displays the user profile
      *
-     * @return view
+     * @return View
      */
     public function getProfile()
     {
@@ -218,12 +222,24 @@ class UsersController extends DashboardController
 
     /**
      * Configure widgets on areas
-     *
-     * @return array
      */
-    public function configureWidgets( Request $request )
+    public function configureWidgets( UpdateWidgetLayoutRequest $request ): array
     {
-        return $this->usersService->storeWidgetsOnAreas( $request->only( [ 'column' ] ) );
+        $widgetRegistry = $this->widgetService->getWidgets()->keyBy( 'component-name' );
+        $widgets = collect( $request->validated( 'widgets' ) )
+            ->map( function ( array $widgetConfig ) use ( $widgetRegistry ): array {
+                $widget = $widgetRegistry->get( $widgetConfig['identifier'] );
+                $selectedLayout = $widgetConfig['layout'] ?? null;
+
+                return [
+                    'component-name' => $widgetConfig['identifier'],
+                    'class-name' => $widget->{'class-name'},
+                    'layout' => $selectedLayout === $widget->layout['name'] ? null : $selectedLayout,
+                ];
+            } )
+            ->all();
+
+        return $this->usersService->storeWidgetLayout( $widgets, $request->user() );
     }
 
     /**
@@ -270,7 +286,7 @@ class UsersController extends DashboardController
     /**
      * Check if the user has a specific permission
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function checkPermission( Request $request )
     {

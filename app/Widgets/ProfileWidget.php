@@ -8,6 +8,12 @@ class ProfileWidget extends WidgetService
 {
     protected $vueComponent = 'nsProfileWidget';
 
+    protected string $layout = '1x2';
+
+    protected string $layoutPolicy = 'restricted';
+
+    protected array $supportedLayouts = [ '1x3', '1x2' ];
+
     public function __construct()
     {
         $this->name = __( 'Profile' );

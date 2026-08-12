@@ -3,7 +3,10 @@
         <div class="flex-auto">
             <div class="ns-box-header text-center flex justify-between items-center border-b w-full p-2">
                 <h5>{{ __( 'Best Customers' ) }}</h5>
-                <div class="flex justify-between">
+                <div class="flex items-center justify-between">
+                    <div class="px-1">
+                        <ns-widget-layout-selector :widget="widget"></ns-widget-layout-selector>
+                    </div>
                     <div class="px-1">
                         <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
                     </div>
@@ -48,6 +51,7 @@ import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 
 export default {
+    props: [ 'widget' ],
     mounted() {
         this.hasLoaded      =   false;
         this.loadReport();

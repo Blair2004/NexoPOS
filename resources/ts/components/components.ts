@@ -44,6 +44,7 @@ import nsTabs               from  './ns-tabs.vue';
 import nsTabsItem           from  './ns-tabs-item.vue';
 import nsTextarea           from  './ns-textarea.vue';
 import nsReorderButton      from  './ns-reorder-button.vue';
+import nsWidgetLayoutSelector from './ns-widget-layout-selector.vue';
 
 export { 
     nsMenu, 
@@ -92,4 +93,5 @@ export {
     nsDefaultAccounting,
     nsAvatarImage,
     nsNumpadPopup,
+    nsWidgetLayoutSelector,
 };

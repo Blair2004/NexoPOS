@@ -2,7 +2,10 @@
     <div id="ns-orders-chart" class="flex flex-auto flex-col shadow ns-box rounded-lg overflow-hidden">
         <div class="p-2 flex ns-box-header items-center justify-between border-b">
             <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
-            <div class="flex justify-between">
+            <div class="flex items-center justify-between">
+                <div class="px-1">
+                    <ns-widget-layout-selector :widget="widget"></ns-widget-layout-selector>
+                </div>
                 <div class="px-1">
                     <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
                 </div>
@@ -11,11 +14,11 @@
                 </div>
             </div>
         </div>
-        <div class="p-2 ns-box-body border-b">
+        <div class="p-2 flex-auto ns-box-body border-b">
             <Bar v-if="report" id="chart" :options="chartOptions" :data="chartData"/>
         </div>
         <div class="foot -mx-4 flex flex-wrap">
-            <div class="flex w-full lg:w-full py-1 border-b ns-box-body">
+            <div class="flex py-2 w-full lg:w-full border-b ns-box-body">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Weekly Sales' ) }}</span>
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeeklySales, 'abbreviate' ) }}</h2>
@@ -25,7 +28,7 @@
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekTaxes, 'abbreviate' ) }}</h2>
                 </div>
             </div>
-            <div class="flex w-full lg:w-full py-1">
+            <div class="flex py-2 w-full lg:w-full ">
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Net Income' ) }}</span>
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekIncome, 'abbreviate' ) }}</h2>
@@ -46,10 +49,9 @@ import { Bar } from 'vue-chartjs';
 
 Chart.register( ...registerables );
 
-console.log(ns.theme)
-
 export default {
     name: 'ns-orders-chart',
+    props: [ 'widget' ],
     components: {
         Bar
     },

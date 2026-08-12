@@ -12,6 +12,9 @@
             </div>
             <div class="flex -mx-1">
                 <div class="px-1">
+                    <ns-widget-layout-selector :widget="widget"></ns-widget-layout-selector>
+                </div>
+                <div class="px-1">
                     <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
                 </div>
                 <div class="px-1">

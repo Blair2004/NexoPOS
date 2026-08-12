@@ -8,6 +8,10 @@ class OrdersChartWidget extends WidgetService
 {
     protected $vueComponent = 'nsOrdersChart';
 
+    protected string $layout = '2x2';
+
+    protected string $layoutPolicy = 'unrestricted';
+
     public function __construct()
     {
         $this->name = __( 'Orders Chart' );
