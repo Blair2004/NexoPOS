@@ -22,13 +22,15 @@ Build modules that match the current repository rather than relying on generic L
 3. Determine whether to create a module or extend an existing one. Never overwrite an existing module unless the user explicitly requests it.
 4. Search version-specific Laravel documentation before changing Laravel code, as required by the repository instructions.
 5. Read [references/nexopos-module-conventions.md](references/nexopos-module-conventions.md). Load only the linked `.github/instructions` files relevant to the feature.
-6. **POS work (mandatory):** if the feature touches cart, products on POS, order types, payments, product-row UI, unit price, or once-per-line fees, read the full POS mastery guide: [references/pos-lifecycle.md](references/pos-lifecycle.md).
-7. For `nsHttpClient`, frontend globals, notifications, localization, or module TypeScript declarations, read [references/frontend-apis.md](references/frontend-apis.md).
-8. For module Vue + Tailwind (shared runtime, Tailwind prefix, UI conventions), read [references/module-frontend.md](references/module-frontend.md).
-9. **Any dashboard Vue page or UI under `#dashboard-content`:** read [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md) first. Nested `createApp()` there breaks reactivity.
-10. For a settings-managed external font or reusable asset registry, read [references/module-font-registries.md](references/module-font-registries.md).
-11. **Custom fields under a cart product line:** `ns-pos-product-row-components` — not raw HTML.
-12. **Once-per-line money (room, setup fee):** `ns-pos-product-line-extra` — not unit price × qty.
+6. **Widget work (mandatory):** read `.github/instructions/nexopos-widgets.instructions.md` completely before reading or editing widget PHP, Vue, registration, layout policy, default order, or tests. Inspect `WidgetService`, `ns-dragzone.vue`, and one current widget.
+7. **POS work (mandatory):** if the feature touches cart, products on POS, order types, payments, product-row UI, unit price, or once-per-line fees, read the full POS mastery guide: [references/pos-lifecycle.md](references/pos-lifecycle.md).
+8. For `nsHttpClient`, frontend globals, notifications, localization, or module TypeScript declarations, read [references/frontend-apis.md](references/frontend-apis.md).
+9. For module Vue + Tailwind (shared runtime, Tailwind prefix, UI conventions), read [references/module-frontend.md](references/module-frontend.md).
+10. **Any dashboard Vue page or UI under `#dashboard-content`:** read [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md) first. Nested `createApp()` there breaks reactivity.
+11. For a settings-managed external font or reusable asset registry, read [references/module-font-registries.md](references/module-font-registries.md).
+12. For module tests or module PHPUnit configuration, read [references/module-testing.md](references/module-testing.md).
+13. **Custom fields under a cart product line:** `ns-pos-product-row-components` — not raw HTML.
+14. **Once-per-line money (room, setup fee):** `ns-pos-product-line-extra` — not unit price × qty.
 
 ## Master POS extensions
 
@@ -65,6 +67,7 @@ Never bake a once-fee into unit price: quantity 2 would charge the fee twice.
 | Step | Mechanism |
 | --- | --- |
 | Load assets only on POS | `RenderFooterEvent` → `@moduleViteAssets('Resources/ts/pos.ts', …)` |
+| Blocking boot requirement | `POS.bootGuards` (no timeout; operator/security input) |
 | Init context | `POS.initialQueue` |
 | Enrich products | `POS.addToCartQueue` |
 | Product-row UI | `ns-pos-product-row-components` |
@@ -139,6 +142,7 @@ Keep business logic out of controllers and listeners when it warrants a service.
 - Use model events only for model-local state. Put broader side effects in listeners, services, or jobs.
 - Do not introduce dependencies or new top-level directories without approval.
 - **Dashboard Vue:** never `createApp()` / `nsCreateApp().mount()` inside `#dashboard-content`. Register on `nsExtraComponents` and use a component tag so the UI is a child of `nsDashboardContent`. See [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md).
+- **Dashboard widgets:** declare the suggested `1x1`–`3x5` footprint and an intentional strict/restricted/unrestricted policy; pass the `widget` prop; provide `widget-handle` and `onRemove`; and place `ns-widget-layout-selector` inside the widget template only when sizing should be exposed. Preserve `WidgetService::DEFAULT_WIDGET_ORDER` packing when core footprints change.
 
 ## Handle frontend assets correctly
 
@@ -211,11 +215,12 @@ export default defineNexoPOSModuleConfig({
 
 ## Verify the result
 
-1. Run the smallest relevant PHPUnit file or filter with `php artisan test --compact`.
+1. Run the smallest relevant PHPUnit file or filter with `php artisan test --compact`. Module tests live under `modules/{Namespace}/Tests` and use the host runner and shared bootstrap described in [references/module-testing.md](references/module-testing.md); never run a module `vendor/bin/phpunit`.
 2. Run `vendor/bin/pint --dirty --format agent` after modifying PHP.
 3. Run the module frontend build when frontend assets changed.
 4. If core POS sources changed (`pos-init.ts`, `ns-pos-cart.vue`), rebuild core (`npm run build`) or confirm Vite HMR; stale `public/build` omits hooks.
-5. Inspect routes, migration status, or built manifests only when relevant.
-6. Review the final diff for accidental core changes, inconsistent namespace strings, missing permission checks, and generated placeholder code.
+5. For widget work, run the layout-policy/default-order tests and build the core or module widget entry. Verify the PHP and Vue component identifiers match.
+6. Inspect routes, migration status, or built manifests only when relevant.
+7. Review the final diff for accidental core changes, inconsistent namespace strings, missing permission checks, and generated placeholder code.
 
 Report what was implemented, the verification performed, and any setup the user must still perform. Ask whether to run the full test suite after focused tests pass.

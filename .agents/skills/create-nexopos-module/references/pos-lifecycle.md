@@ -18,6 +18,7 @@ This file is the POS chapter of the `create-nexopos-module` skill. Load it whene
 - [Unit price vs once-per-line extra](#unit-price-vs-once-per-line-extra)
 - [addToCartQueue and productData](#addtocartqueue-and-productdata)
 - [Initial queue](#initial-queue)
+- [Boot guards and runtime locks](#boot-guards-and-runtime-locks)
 - [Custom order types](#custom-order-types)
 - [Payment and submission](#payment-and-submission)
 - [Complete cart script example](#complete-cart-script-example)
@@ -138,7 +139,7 @@ The relevant flow is:
 1. `pos-init.ts` creates `window.POS` and its BehaviorSubjects and default queues.
 2. The POS Blade page defines types, options, settings, and payment types on `DOMContentLoaded`.
 3. `<ns-pos>` mounts, waits 500 ms, then calls `POS.reset()`.
-4. `reset()` emits `ns-before-cart-reset`, runs `processInitialQueue()` sequentially, then emits `ns-after-cart-changed` and `ns-after-cart-reset`.
+4. `reset()` emits `ns-before-cart-reset`, runs `processBootGuards()` and `processInitialQueue()` sequentially, then emits `ns-after-cart-changed` and `ns-after-cart-reset`.
 5. Product/cart mutations emit `ns-after-cart-changed`; the core listener calls `refreshCart()`, which eventually emits `ns-cart-after-refreshed`.
 6. The Pay button calls `POS.runPaymentQueue()`.
 7. The payment UI eventually calls `POS.submitOrder()` and `proceedSubmitting()`.
@@ -416,6 +417,28 @@ document.addEventListener('DOMContentLoaded', () => {
 ```
 
 Prefer `nsHttpClient` when matching existing module code. Ensure every observable path resolves or rejects the wrapping promise. Keep the task idempotent, avoid registering the same queue twice, and do not use the initial queue for one-time irreversible work.
+
+## Boot guards and runtime locks
+
+Use `POS.bootGuards` for a blocking security or operator requirement that must finish before normal POS initialization, such as a PIN unlock. Guards run sequentially before `POS.initialQueue` on every `POS.reset()` and intentionally have no timeout. Do not put indefinite operator prompts in `initialQueue`, whose entries time out after 60 seconds.
+
+```ts
+document.addEventListener('DOMContentLoaded', () => {
+    POS.bootGuards.push(() => lockCoordinator.guardBoot());
+});
+```
+
+An inactivity lock occurs after boot, so a boot guard alone is insufficient. Use one module-owned coordinator for both phases:
+
+1. `ensureUnlocked()` returns immediately while unlocked and the same pending promise to every caller while locked.
+2. The inactivity timer marks the client locked synchronously, broadcasts cross-tab state, opens one non-dismissible `Popup.show(...)`, then notifies the server.
+3. The popup resolves the shared promise only after the server verifies the PIN. Disable overlay close, omit a close button, and do not install `popupCloser`; logout is the escape path.
+4. Add an async Axios request interceptor that awaits `ensureUnlocked()` before ordinary NexoPOS requests. Exempt only exact lock/status/unlock endpoints and explicitly required system endpoints. Do not patch `nsHttpClient._request()`.
+5. Handle backend `423` / `PIN_SESSION_LOCKED` responses by activating the same coordinator and popup. Keep backend middleware as the authoritative security boundary.
+
+The popup host and the POS app may use different Vue runtimes. Prefer an Options API component with a literal string `template` for a module PIN popup, reuse core components such as `<ns-numpad>`, and style module utilities with the module Tailwind prefix and semantic token bridge.
+
+Requests already in flight cannot be recalled. The coordinator prevents new Axios/`nsHttpClient` requests after the local locked state is set, while backend middleware rejects any request that bypasses the frontend gate. Do not wait for all background requests to become idle before locking; recurring polling could postpone the lock indefinitely.
 
 ## Custom order types
 
