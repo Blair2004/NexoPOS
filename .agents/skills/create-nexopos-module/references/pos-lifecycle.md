@@ -85,7 +85,7 @@ PHP (server): `Hook::addFilter('ns-orders-types', …)` for order type catalog.
 
 ## Loading a module script on the POS
 
-Inject a module view only on the POS route with `RenderFooterEvent`:
+Inject module views only on the POS route: use `RenderHeaderEvent` for the standalone prefixed stylesheet and `RenderFooterEvent` for the TypeScript entry.
 
 ```php
 use App\Events\RenderFooterEvent;
@@ -106,6 +106,14 @@ Load the module entry from `Resources/Views/pos/footer.blade.php`:
 ```blade
 @moduleViteAssets('Resources/ts/pos.ts', 'ExampleModule')
 ```
+
+Load the module stylesheet from `Resources/Views/pos/header.blade.php`:
+
+```blade
+@moduleViteAssets('Resources/css/style.css', 'ExampleModule')
+```
+
+Register a route-scoped `RenderHeaderEvent` listener matching the footer listener. Keep CSS and TypeScript as separate Vite inputs; do not rely on importing the CSS from the TypeScript entry because prefixed Tailwind utilities must be present from the document header.
 
 Do not use the removed dashboard-footer string hook. Follow the repository's listener discovery convention and use `@moduleViteAssets`, not `@vite`, for module assets.
 

@@ -270,7 +270,7 @@ Types: `default`, `info`, `success`, `warning`, `error`, `primary` (and `hover-*
 
 For pure navigation that is not a primary action, a plain `foo:text-info-primary foo:hover:underline` link is fine. Do not fake a button with only unthemed borders.
 
-### Loading and empty/error states
+### Loading, empty, and failure states
 
 `ns-spinner` uses a `size` prop that maps to width/height utilities (default is large). **Always pass an explicit size** for module UI (core auth/setup commonly use `6`–`16`).
 
@@ -283,8 +283,10 @@ For pure navigation that is not a primary action, a plain `foo:text-info-primary
 
 1. Size the spinner; never leave a full-page unbounded spinner.
 2. Optional “Loading…” **text goes below** the spinner (column layout), not beside it, when both are shown.
-3. A **failed** load must replace the spinner with a clear error (message + optional retry). Never leave an infinite spinner after failure.
-4. Prefer structured states: `loading` → content | empty | `error`.
+3. A **failed** request must settle the spinner and call `nsSnackBar.error(...)`. Never leave an infinite spinner after failure.
+4. Do not insert a full-width error block after an asynchronous failure; changing document flow causes cumulative layout shift. Preserve existing content, or keep a stable reserved region when the initial load has no content yet.
+5. Use inline errors only for a specific field/row or a persistent fatal state that needs visible retry controls. Do not duplicate one failure inline and in a snackbar.
+6. Prefer structured states: `loading` → content | empty; failures notify without replacing previously loaded content.
 
 ```html
 <!-- Loading -->
@@ -293,43 +295,42 @@ For pure navigation that is not a primary action, a plain `foo:text-info-primary
     <span class="foo:text-sm foo:text-fontcolor-soft">Loading…</span>
 </div>
 
-<!-- Error (spinner is gone) -->
-<div
-    v-else-if="error"
-    class="foo:border foo:border-error-secondary foo:bg-error-tertiary foo:p-4 foo:text-sm foo:text-error-primary"
->
-    {{ error }}
-    <div class="foo:mt-3">
-        <div class="ns-button default">
-            <button type="button" class="foo:rounded-lg foo:px-3 foo:py-2" @click="reload">
-                Retry
-            </button>
-        </div>
-    </div>
-</div>
+<!-- Initial failure: spinner settles, snackbar reports it, height stays reserved -->
+<div v-else-if="!initialized" class="foo:min-h-32" aria-hidden="true"></div>
+```
+
+```ts
+try {
+    items.value = await loadItems();
+    initialized.value = true;
+} catch (error) {
+    nsSnackBar.error(messageFrom(error));
+} finally {
+    loading.value = false;
+}
 ```
 
 Inline button busy state may keep a small spinner **inside** the button (core pattern); that is not a page-level load.
 
 ### Status and active fills (info / success / warning / error)
 
-NexoPOS status tokens come in three steps: `primary`, `secondary`, `tertiary`.
+NexoPOS status tokens darken as their suffix increases: `primary` is lighter than `secondary`, and `secondary` is lighter than `tertiary`.
 
 | Use | Token step | Text |
 | --- | --- | --- |
-| Solid **active / selected / filled** background | **`*-secondary` only** | **`text-white`** (safe contrast) |
-| Soft tint / subtle selected surface | `*-tertiary` | matching `text-*-primary` or `text-fontcolor` |
-| Borders, icons, emphasis text | `*-primary` or `border-*-secondary` | — |
+| Solid **active / selected / filled** background | `*-primary` or `*-secondary` | **`text-white`** |
+| Strong text, borders, and icons | `*-tertiary` | Use on a neutral/light surface |
+| Subtle text or border | `*-primary` or `*-secondary` | Use on a neutral surface |
 
-**Never** use `bg-info-primary`, `bg-success-primary`, `bg-warning-primary`, or `bg-error-primary` as a solid active background. Those steps are for text/icons/borders, not filled chips or selected tabs.
+**Never** use a `bg-*-tertiary` class, including hover states. Tertiary is the darkest step and is reserved for foreground emphasis such as text, borders, or icons. This applies equally to `info`, `success`, `warning`, and `error`.
 
 ```html
 <!-- Active toggle / filled chip -->
-<button class="foo:bg-info-secondary foo:text-white">Selected</button>
+<button class="foo:bg-info-primary foo:text-white foo:hover:bg-info-secondary">Selected</button>
 <span class="foo:bg-success-secondary foo:text-white">Confirmed</span>
 
-<!-- Soft selection (not a solid active fill) -->
-<button class="foo:border foo:border-info-primary foo:bg-info-tertiary foo:text-info-primary">Filter</button>
+<!-- Neutral surface with strong semantic emphasis -->
+<button class="foo:border foo:border-info-tertiary foo:bg-box-background foo:text-info-tertiary">Filter</button>
 ```
 
 Same rule for `error`, `warning`, and `success`.
@@ -355,13 +356,22 @@ Prefer a small Promise wrapper around `nsHttpClient.*.subscribe(...)` rather tha
 ## Blade loading
 
 ```blade
-@moduleViteAssets('Resources/ts/main.ts', 'ExampleModule')
+@section('layout.dashboard.header')
+@parent
 @moduleViteAssets('Resources/css/style.css', 'ExampleModule')
+@endsection
+
+@section('layout.dashboard.footer.inject')
+@parent
+@moduleViteAssets('Resources/ts/page.ts', 'ExampleModule')
+@endsection
 ```
 
 - No `@vite` for module assets
 - No leading slash on the path
-- Prefer footer inject for registration scripts that must run before `app-init`
+- Add both `Resources/css/style.css` and the TypeScript entry to the module Vite inputs
+- Load prefixed Tailwind CSS explicitly from the layout header; a TypeScript import or TypeScript asset directive is not a substitute
+- Load dashboard component registration scripts from footer inject so they run before `app-init`
 
 ## Checklist before calling a module “frontend-complete”
 
@@ -374,9 +384,11 @@ Prefer a small Promise wrapper around `nsHttpClient.*.subscribe(...)` rather tha
 - [ ] **Every** module Tailwind utility in markup uses `shortname:…`
 - [ ] Semantic colors compile in the built CSS (`shortname:text-fontcolor`, `shortname:bg-box-background`, …)
 - [ ] Buttons use `<ns-button>`, or `.ns-button` **wrapper** + inner `button`/`a` (never `class="ns-button"` on the control alone)
-- [ ] Spinners have explicit `size` / `border`; loading text below spinner; errors replace spinner
+- [ ] Spinners have explicit `size` / `border`; loading text below spinner; failures settle loading and use `nsSnackBar.error`
+- [ ] Transient/global failures do not inject layout-shifting error blocks; inline errors are field/row-specific or persistent fatal states
 - [ ] Typography: `text-fontcolor` for titles/body; `text-fontcolor-soft` for sublines/descriptions
-- [ ] Active fills use `bg-*-secondary` + `text-white` (not `bg-*-primary`)
+- [ ] Semantic fills use `bg-*-primary` or `bg-*-secondary` + `text-white`; no `bg-*-tertiary` or `hover:bg-*-tertiary`
 - [ ] Core hooks (`ns-button`, `ns-box`, …) stay unprefixed as hook names
-- [ ] Module assets built and loaded via `@moduleViteAssets`
+- [ ] CSS is a standalone Vite input loaded via `@moduleViteAssets` in the layout header
+- [ ] Dashboard registration TypeScript is loaded via `@moduleViteAssets` in footer inject before `app-init`
 - [ ] Focused PHPUnit coverage for backend behavior
