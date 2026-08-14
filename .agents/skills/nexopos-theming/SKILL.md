@@ -33,6 +33,9 @@ Build UI against semantic visual roles so the same component works with the `lig
 - Do not edit only one theme's component stylesheet when the selector exists in all themes. Compare all three and preserve intentional differences.
 - Do not create a base component when an existing `ns-*` component can be extended safely.
 - Do not introduce a token in only one theme. Define it in every supported theme.
+- Never use a status token ending in `-tertiary` as a background. Status backgrounds use `*-secondary` with `text-white`; `*-primary` and `*-tertiary` remain non-background roles.
+- Apply `box-elevation-hover` only when the element is interactive, or when its complete container is clickable. A passive row, card, statistic, or information panel must not change to the elevation-hover surface.
+- Use the standard NexoPOS confirmation popup before destructive, revocation, reset, or irreversible actions. Inline confirmation content is not a substitute for `Popup.show(nsConfirmPopup, ...)`.
 
 ## Modules (Tailwind prefix + UI)
 

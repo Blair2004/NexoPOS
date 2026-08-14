@@ -137,3 +137,5 @@ Do not prefix core component hooks (`ns-button`, `ns-box`, …). Prefer semantic
 - Forgetting to add dark mode variants when the project uses dark mode
 - **Module CSS without `prefix(...)`**, or markup that omits the module prefix on utilities
 - Putting the module prefix after variants (`md:foo:flex`) — prefix is always first
+- In NexoPOS semantic status families, using `*-primary` or `*-tertiary` as a background; use `*-secondary` with `text-white`
+- Applying `box-elevation-hover` to passive rows or cards that are not clickable

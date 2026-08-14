@@ -6,7 +6,8 @@
 |---|---|
 | Normal/supporting text | `text-fontcolor`, `text-fontcolor-soft` |
 | Card/panel | `bg-box-background border-box-edge text-fontcolor` |
-| Nested/raised/hoverable panel | `bg-box-elevation-background border-box-elevation-edge hover:bg-box-elevation-hover` |
+| Nested/raised panel | `bg-box-elevation-background border-box-elevation-edge` |
+| Entirely clickable panel | `bg-box-elevation-background border-box-elevation-edge hover:bg-box-elevation-hover` |
 | Popup | `bg-popup-surface text-fontcolor` |
 | Field | `bg-input-background border-input-edge text-fontcolor` |
 | Field button | `bg-input-button hover:bg-input-button-hover active:bg-input-button-active` |
@@ -15,6 +16,8 @@
 | Status (solid active fill) | `bg-*-primary text-white` or `bg-*-secondary text-white` |
 | Status foreground emphasis | `text-*-tertiary` or `border-*-tertiary` on a neutral surface; **never** `bg-*-tertiary` |
 | Status text / icons / borders | `text-*-primary`, `border-*-primary` / `border-*-secondary` |
+
+Never use `*-tertiary` as a background color. Use `*-secondary` with `text-white` for status backgrounds. Use `box-elevation-hover` only when the element itself is interactive or its entire container is clickable.
 
 Use component-specific tokens inside tabs, tables, POS, CRUD, or numpad UI.
 
@@ -110,6 +113,25 @@ Keep classes statically discoverable:
 ```
 
 Avoid ``:class="`border-${color}-500 bg-${color}-100`"``. Prefer controlled variant props over arbitrary consumer classes that conflict with the component contract.
+
+## Destructive action confirmation
+
+Use the shared confirmation popup before deleting, revoking, resetting, replacing credentials, or performing another irreversible action:
+
+```ts
+declare const Popup: any;
+declare const nsConfirmPopup: any;
+
+Popup.show(nsConfirmPopup, {
+    title: 'Revoke this device?',
+    message: 'Its current access will stop immediately.',
+    onAction: (confirmed: boolean) => {
+        if (confirmed) revokeDevice();
+    },
+});
+```
+
+Keep the mutation inside the confirmed callback. Do not use `window.confirm()` or an inline card in place of the NexoPOS popup.
 
 ## Global hook pattern
 

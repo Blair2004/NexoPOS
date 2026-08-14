@@ -8,6 +8,7 @@ Use this reference for module TypeScript, Vue components, Blade-injected scripts
 - [Observable and promise usage](#observable-and-promise-usage)
 - [Errors and request state](#errors-and-request-state)
 - [Frontend globals](#frontend-globals)
+- [Confirmation popups](#confirmation-popups)
 - [Shared Vue runtime for modules](#shared-vue-runtime-for-modules)
 - [Localization](#localization)
 - [Module declarations](#module-declarations)
@@ -174,6 +175,8 @@ Prefer explicit imports available through the module build when existing module 
 ### Confirmation popups
 
 Consequential actions must ask for confirmation through the native popup host. The current core confirmation component is `nsConfirmPopup`; do not refer to it as `nsConfirmDialog`, and do not use the browser-native `window.confirm()` dialog.
+
+Use the NexoPOS confirmation popup before destructive, revocation, reset, credential-rotation, or irreversible actions. Dashboard layouts expose both `Popup` and `nsConfirmPopup` globally:
 
 ```ts
 declare const Popup: any;

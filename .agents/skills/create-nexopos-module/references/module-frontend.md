@@ -335,6 +335,10 @@ NexoPOS status tokens darken as their suffix increases: `primary` is lighter tha
 
 Same rule for `error`, `warning`, and `success`.
 
+Use `foo:hover:bg-box-elevation-hover` only on an interactive control or a container whose entire surface is clickable. Do not add it to passive rows, cards, metrics, or information panels.
+
+Before destructive or access-revoking actions, use the core `Popup.show(nsConfirmPopup, { title, message, onAction })` flow and execute the request only after confirmation. Do not substitute `window.confirm()` or an inline confirmation panel.
+
 ### Panels and surfaces
 
 Reuse semantic surfaces: `foo:bg-box-background`, `foo:border-box-edge`, `foo:bg-surface`, status families for feedback. Prefer `ns-box` when it fits. See the `nexopos-theming` skill.
@@ -354,6 +358,22 @@ See [frontend-apis.md § Localization](frontend-apis.md#localization).
 Prefer a small Promise wrapper around `nsHttpClient.*.subscribe(...)` rather than importing `firstValueFrom` from a module-bundled `rxjs`. Dual RxJS copies can leave loading promises pending forever (infinite spinner).
 
 ## Blade loading
+
+When exposing structured configuration to a module script, never put a multiline inline PHP array inside `@json`. Assign it first so Blade parses the directive reliably:
+
+```blade
+@php
+$pageConfig = [
+    'apiUrl' => $apiUrl,
+    'canCreate' => $canCreate,
+];
+@endphp
+<script>
+window.ExampleModuleConfig = @json( $pageConfig );
+</script>
+```
+
+Do not use `@json([ ... ])` with a multiline array.
 
 ```blade
 @section('layout.dashboard.header')

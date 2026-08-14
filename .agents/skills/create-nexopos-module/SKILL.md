@@ -131,6 +131,7 @@ Keep business logic out of controllers and listeners when it warrants a service.
 - Keep `config.xml`, the module directory, the main module class, PHP namespaces, view namespace, translation namespace, and asset namespace consistent.
 - Use PascalCase for the module namespace and a module-specific lowercase prefix for tables, routes, option keys, and permissions.
 - Use named routes for generated links.
+- **Blade JSON serialization:** never pass an inline multiline array directly to `@json`, such as `@json([ ... ])`; Blade may parse it incorrectly. Assign the array to a PHP variable in an `@php` block, then render `@json($config)`.
 - Use **`__m('Text', 'ModuleNamespace')` for all module-owned strings** (PHP and Vue/TS). Do not wrap copy in `t()` / `translate()` — NexoPOS scans `__m(...)` for translations. Frontend: global `__m` / `window.__m` on dashboard and POS.
 - Treat the live POS `order.type` value as an order-type object. Compare `order.type.identifier`, not `order.type` itself, with an identifier string.
 - **POS product-row meta:** `ns-pos-product-row-components` + `markRaw()` + gate on product flags + `POS.updateProduct`. Prefer Options API string templates for POS-injected components. Reference: `modules/NsAppointments` (`AppointmentsCartMeta.ts` + `pos.ts`).

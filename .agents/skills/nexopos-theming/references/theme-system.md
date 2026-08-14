@@ -36,7 +36,7 @@ Use each token as a generated utility without the `--color-` prefix.
 | Text | `typography`, `fontcolor`, `fontcolor-soft`, `fontcolor-hard` | Primary, supporting, and strong text |
 | Main surfaces | `surface`, `surface-soft`, `surface-hard`, `popup-surface` | Canvas, subdued/raised areas, popups |
 | Navigation | `aside-background`, `aside-color`, `aside-menu-background`, `aside-menu-background-hover`, `aside-submenu-background`, `aside-submenu-background-hover` | Dashboard aside and menus |
-| Boxes | `box-background`, `box-edge`, `box-elevation-background`, `box-elevation-edge`, `box-elevation-hover` | Cards, panels, nested and hoverable surfaces |
+| Boxes | `box-background`, `box-edge`, `box-elevation-background`, `box-elevation-edge`, `box-elevation-hover` | Cards, panels, nested surfaces, and clickable-surface hover |
 | Inputs | `input-background`, `input-disabled`, `input-button`, `input-button-hover`, `input-button-active`, `input-option-hover`, `input-edge` | Fields and field controls |
 | Generic controls | `button-hover`, `button-active`, `option-hover` | Generic interactions |
 | Accent | `primary`, `secondary`, `tertiary`, `soft-primary`, `soft-secondary`, `soft-tertiary` | Brand and muted accent hierarchy |
