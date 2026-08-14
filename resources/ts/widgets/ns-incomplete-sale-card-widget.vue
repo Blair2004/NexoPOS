@@ -6,7 +6,7 @@
                     <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Incomplete Orders' ) }}</h6>
                     <div class="flex gap-1">
                         <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
-                        <ns-close-button class="border-success-secondary" @click="$emit( 'onRemove' )"></ns-close-button>
+                        <ns-close-button class="border-error-secondary" @click="$emit( 'onRemove' )"></ns-close-button>
                     </div>
                 </div>
                 <h3 class="text-2xl font-black">
