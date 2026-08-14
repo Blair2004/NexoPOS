@@ -308,7 +308,7 @@ class CashRegistersService
 
         return [
             'status' => 'success',
-            'message' => _( 'The register has been successfully refreshed.' ),
+            'message' => __( 'The register has been successfully refreshed.' ),
         ];
     }
 
