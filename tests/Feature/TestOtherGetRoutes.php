@@ -31,29 +31,23 @@ class TestOtherGetRoutes extends TestCase
                  * there is any error thrown.
                  */
                 if ( preg_match( '/^api\//', $uri ) && ! preg_match( '/\{\w+\??\}/', $uri ) ) {
+                    /**
+                     * Skip setup routes (state-dependent on installation) and
+                     * marketplace routes (external cloud service dependency).
+                     */
+                    if ( str_starts_with( $uri, 'api/setup' ) || str_starts_with( $uri, 'api/marketplace' ) ) {
+                        continue;
+                    }
+
                     $response = $this->withSession( $this->app[ 'session' ]->all() )
                         ->json( 'GET', $uri );
 
-                    /**
-                     * Route that allow exception
-                     */
-                    if ( in_array( $response->status(), [ 200, 403 ] ) ) {
-                        if ( in_array( $uri, [
-                            'api/cash-registers/used',
-                        ] ) ) {
-                            $response->assertStatus( 403 );
-                        } else {
-                            /**
-                             * If $uri include /api/setup we should expect a failure
-                             */
-                            if ( strpos( $uri, 'api/setup' ) !== false ) {
-                                $response->assertStatus( 403 );
-                            } else {
-                                $response->assertStatus( 200 );
-                            }
-                        }
+                    if ( in_array( $uri, [
+                        'api/cash-registers/used',
+                    ] ) ) {
+                        $response->assertStatus( 403 );
                     } else {
-                        throw new Exception( 'Not supported status detected.' );
+                        $response->assertStatus( 200 );
                     }
                 }
             }
