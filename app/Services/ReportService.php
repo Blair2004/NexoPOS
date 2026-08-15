@@ -18,6 +18,7 @@ use App\Models\ProductHistoryCombined;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
@@ -220,12 +221,14 @@ class ReportService
     {
         $totalIncome = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( ActiveTransactionHistory::OPERATION_CREDIT )
+            ->operation( TransactionHistory::OPERATION_CREDIT )
+            ->whereHas( 'account', fn( $query ) => $query->where( 'category_identifier', 'revenues' ) )
             ->sum( 'value' );
 
         $totalExpenses = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( ActiveTransactionHistory::OPERATION_DEBIT )
+            ->operation( TransactionHistory::OPERATION_DEBIT )
+            ->whereHas( 'account', fn( $query ) => $query->where( 'category_identifier', 'expenses' ) )
             ->sum( 'value' );
 
         $todayReport->day_expenses = $totalExpenses;

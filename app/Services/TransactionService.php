@@ -689,7 +689,7 @@ class TransactionService
             ->where( 'created_at', '<=', $date->endOfDay()->toDateTimeString() )
             ->get();
 
-        return $history instanceof TransactionHistory;
+        return ! $history->isEmpty();
     }
 
     /**
@@ -1291,10 +1291,8 @@ class TransactionService
     /**
      * Creates all sub accounts
      * and creates accounting rules.
-     *
-     * @return void
      */
-    public function createAllSubAccounts()
+    public function createAllSubAccounts(): void
     {
         $fixedAssetResposne = $this->createAccount( [
             'name' => __( 'Fixed Assets' ),
@@ -1363,7 +1361,7 @@ class TransactionService
             'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id,
         ] );
 
-        $salesResponse = $this->createAccount( [
+        $salesCashResponse = $this->createAccount( [
             'name' => __( 'Sales' ),
             'category_identifier' => 'assets',
             'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id,
@@ -1430,14 +1428,6 @@ class TransactionService
         );
 
         $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_PROCUREMENT_PAID,
-            action: 'increase',
-            account_id: $expensesCash[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $procurementCashResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID,
             action: 'decrease',
             account_id: $procurementPayableResponse[ 'data' ][ 'account' ]->id,
@@ -1454,30 +1444,27 @@ class TransactionService
         );
 
         $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_UNPAID,
-            action: 'increase',
-            account_id: $expensesCash[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
-        );
-
-        /**
-         * @todo: test missing
-         */
-        $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID,
-            action: 'decrease',
-            account_id: $salesResponse[ 'data' ][ 'account' ]->id,
-            do: 'increase',
+            action: 'increase',
+            account_id: $salesCashResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
             offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_ORDER_PAID,
             action: 'increase',
-            account_id: $salesResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
+            account_id: $salesCashResponse[ 'data' ][ 'account' ]->id,
+            do: 'increase',
+            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_PARTIALLY_PAID,
+            action: 'increase',
+            account_id: $salesCashResponse[ 'data' ][ 'account' ]->id,
+            do: 'increase',
+            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
@@ -1485,7 +1472,15 @@ class TransactionService
             action: 'decrease',
             account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
-            offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
+            offset_account_id: $salesCashResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_PARTIALLY_REFUNDED,
+            action: 'decrease',
+            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $salesCashResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
@@ -1497,11 +1492,27 @@ class TransactionService
         );
 
         $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_PAID_VOIDED,
+            on: TransactionActionRule::RULE_PRODUCT_DAMAGED,
             action: 'increase',
-            account_id: $salesResponse[ 'data' ][ 'account' ]->id,
+            account_id: $cogsResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
-            offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
+            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_PRODUCT_RETURNED,
+            action: 'decrease',
+            account_id: $cogsResponse[ 'data' ][ 'account' ]->id,
+            do: 'increase',
+            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_PAID_VOIDED,
+            action: 'decrease',
+            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $salesCashResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
@@ -1520,12 +1531,12 @@ class TransactionService
 
     /**
      * Sets transaction rule
-     *
-     * @return array
      */
-    public function setTransactionActionRule( string $on, string $action, int $account_id, string $do, int $offset_account_id, ?TransactionActionRule $transactionActionRule = null )
+    public function setTransactionActionRule( string $on, string $action, int $account_id, string $do, int $offset_account_id, ?TransactionActionRule $transactionActionRule = null ): array
     {
-        $transactionActionRule = $transactionActionRule instanceof TransactionActionRule ? $transactionActionRule : new TransactionActionRule;
+        $transactionActionRule = $transactionActionRule instanceof TransactionActionRule
+            ? $transactionActionRule
+            : TransactionActionRule::firstOrNew( [ 'on' => $on ] );
         $transactionActionRule->on = $on;
         $transactionActionRule->action = $action;
         $transactionActionRule->account_id = $account_id;

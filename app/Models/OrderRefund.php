@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property int            $author_id
- * @property float          $shipping
- * @property string         $payment_method
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property int    $author_id
+ * @property float  $shipping
+ * @property string $payment_method
+ * @property Carbon $updated_at
  */
 class OrderRefund extends NsModel
 {

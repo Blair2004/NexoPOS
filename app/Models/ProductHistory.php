@@ -5,28 +5,29 @@ namespace App\Models;
 use App\Casts\FloatConvertCasting;
 use App\Events\ProductHistoryAfterCreatedEvent;
 use App\Events\ProductHistoryAfterUpdatedEvent;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property int            $product_id
- * @property int            $procurement_id
- * @property int            $procurement_product_id
- * @property int            $order_id
- * @property int            $order_product_id
- * @property mixed          $operation_type
- * @property int            $unit_id
- * @property float          $before_quantity
- * @property float          $quantity
- * @property float          $after_quantity
- * @property float          $unit_price
- * @property float          $total_price
- * @property string         $description
- * @property int            $author_id
- * @property mixed          $uuid
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property Product        $product
+ * @property int     $id
+ * @property int     $product_id
+ * @property int     $procurement_id
+ * @property int     $procurement_product_id
+ * @property int     $order_id
+ * @property int     $order_product_id
+ * @property mixed   $operation_type
+ * @property int     $unit_id
+ * @property float   $before_quantity
+ * @property float   $quantity
+ * @property float   $after_quantity
+ * @property float   $unit_price
+ * @property float   $total_price
+ * @property string  $description
+ * @property int     $author_id
+ * @property mixed   $uuid
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
+ * @property Product $product
  */
 class ProductHistory extends NsModel
 {

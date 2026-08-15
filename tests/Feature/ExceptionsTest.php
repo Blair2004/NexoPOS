@@ -2,6 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\CoreException;
+use App\Exceptions\CoreVersionMismatchException;
+use App\Exceptions\MethodNotAllowedHttpException;
+use App\Exceptions\MissingDependencyException;
+use App\Exceptions\ModuleVersionMismatchException;
+use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\QueryException;
+use App\Exceptions\ValidationException;
 use Tests\TestCase;
 
 class ExceptionsTest extends TestCase
@@ -14,15 +23,15 @@ class ExceptionsTest extends TestCase
     public function test_exceptions_output()
     {
         collect( [
-            \App\Exceptions\CoreException::class,
-            \App\Exceptions\CoreVersionMismatchException::class,
-            \App\Exceptions\MethodNotAllowedHttpException::class,
-            \App\Exceptions\MissingDependencyException::class,
-            \App\Exceptions\ModuleVersionMismatchException::class,
-            \App\Exceptions\NotAllowedException::class,
-            \App\Exceptions\NotFoundException::class,
-            \App\Exceptions\QueryException::class,
-            \App\Exceptions\ValidationException::class,
+            CoreException::class,
+            CoreVersionMismatchException::class,
+            MethodNotAllowedHttpException::class,
+            MissingDependencyException::class,
+            ModuleVersionMismatchException::class,
+            NotAllowedException::class,
+            NotFoundException::class,
+            QueryException::class,
+            ValidationException::class,
         ] )->each( function ( $class ) {
             $instance = new $class;
             $response = $this->get( 'exceptions?class=' . $class );

@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
+
 /**
  * PermissionAccess Model
  *
- * @property int                             $requester_id
- * @property int                             $granter_id
- * @property string                          $status
- * @property string                          $permission
- * @property string|null                     $url
- * @property \Illuminate\Support\Carbon|null $approved_at
- * @property \Illuminate\Support\Carbon|null $expired_at
+ * @property int         $requester_id
+ * @property int         $granter_id
+ * @property string      $status
+ * @property string      $permission
+ * @property string|null $url
+ * @property Carbon|null $approved_at
+ * @property Carbon|null $expired_at
  */
 class PermissionAccess extends NsModel
 {

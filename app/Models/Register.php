@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property mixed          $name
- * @property mixed          $status
- * @property string         $description
- * @property int            $used_by
- * @property int            $author_id
- * @property float          $balance
- * @property mixed          $uuid
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property mixed  $name
+ * @property mixed  $status
+ * @property string $description
+ * @property int    $used_by
+ * @property int    $author_id
+ * @property float  $balance
+ * @property mixed  $uuid
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Register extends NsModel
 {

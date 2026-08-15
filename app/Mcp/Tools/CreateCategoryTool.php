@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\ProductCategory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
@@ -31,7 +32,7 @@ class CreateCategoryTool extends Tool
         ];
     }
 
-    public function handle( \Laravel\Mcp\Request $request ): \Laravel\Mcp\Response
+    public function handle( Request $request ): Response
     {
         if ( empty( $request->get( 'name' ) ) ) {
             return Response::error( 'The name parameter is required.' );

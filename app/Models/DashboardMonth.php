@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Events\DashboardMonthAfterCreatedEvent;
 use App\Events\DashboardMonthAfterUpdatedEvent;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property float          $total_expenses
- * @property int            $month_of_year
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property float  $total_expenses
+ * @property int    $month_of_year
+ * @property Carbon $updated_at
  */
 class DashboardMonth extends NsModel
 {

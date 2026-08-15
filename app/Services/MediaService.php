@@ -220,7 +220,7 @@ class MediaService
     /**
      * Load Medias
      *
-     * @param media int
+     * @param Media int
      * @return void
      */
     public function loadAjax()

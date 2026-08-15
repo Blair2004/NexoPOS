@@ -327,7 +327,7 @@ class ProductsController extends DashboardController
     {
         ns()->restrict( [ 'nexopos.update.products' ] );
 
-        return view::make( 'pages.dashboard.products.create', [
+        return View::make( 'pages.dashboard.products.create', [
             'title' => __( 'Edit a product' ),
             'description' => __( 'Makes modifications to a product' ),
             'submitUrl' => ns()->url( '/api/products/' . $product->id ),
@@ -345,7 +345,7 @@ class ProductsController extends DashboardController
     {
         ns()->restrict( [ 'nexopos.create.products' ] );
 
-        return view::make( 'pages.dashboard.products.create', [
+        return View::make( 'pages.dashboard.products.create', [
             'title' => __( 'Create a product' ),
             'description' => __( 'Add a new product on the system' ),
             'submitUrl' => ns()->url( '/api/products' ),
@@ -650,7 +650,7 @@ class ProductsController extends DashboardController
             $product->selectedUnitQuantity = ProductUnitQuantity::where( 'product_id', $procurementProduct->product_id )
                 ->where( 'unit_id', $procurementProduct->unit_id )
                 ->first();
-                
+
         } elseif ( $productUnitQuantity instanceof ProductUnitQuantity ) {
             /**
              * if a product unit quantity is loaded. Then we make sure to return the parent
@@ -685,7 +685,7 @@ class ProductsController extends DashboardController
 
     public function printLabels()
     {
-        return view::make( 'pages.dashboard.products.print-labels', [
+        return View::make( 'pages.dashboard.products.print-labels', [
             'title' => __( 'Print Labels' ),
             'description' => __( 'Customize and print products labels.' ),
         ] );

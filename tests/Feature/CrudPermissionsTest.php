@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\ProductCategory;
 use App\Models\Role;
+use App\Models\User;
 use App\Services\UsersService;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
@@ -119,7 +120,7 @@ class CrudPermissionsTest extends TestCase
      *
      * The caller is responsible for deleting the returned User after the test.
      */
-    private function createUserRoleUser(): \App\Models\User
+    private function createUserRoleUser(): User
     {
         $userRole = Role::namespace( Role::USER );
 

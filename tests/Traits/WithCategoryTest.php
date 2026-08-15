@@ -5,6 +5,7 @@ namespace Tests\Traits;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Exception;
+use Faker\Factory;
 
 trait WithCategoryTest
 {
@@ -40,7 +41,7 @@ trait WithCategoryTest
     protected function attemptCreateSingleCategory()
     {
         // import faker and create a fake category name
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
         $categoryName = $faker->name;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -61,7 +62,7 @@ trait WithCategoryTest
     protected function attemptUpdateCategory( ProductCategory $category )
     {
         // import faker and create a fake category name
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
         $categoryName = $faker->name;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )

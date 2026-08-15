@@ -16,6 +16,9 @@ use App\Traits\NsForms;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\View\View as ContractView;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -625,7 +628,7 @@ class CrudService
                     isset( $relation[0] ) &&
                     is_string( $relation[0] ) &&
                     class_exists( $relation[0] ) &&
-                    is_subclass_of( $relation[0], \Illuminate\Database\Eloquent\Model::class )
+                    is_subclass_of( $relation[0], Model::class )
                 ) {
                     $junctionType = $relation[2] ?? 'leftJoin';
                     // Numeric outer key: no alias override, falls back to method name.
@@ -650,7 +653,7 @@ class CrudService
                         isset( $entry[0] ) &&
                         is_string( $entry[0] ) &&
                         class_exists( $entry[0] ) &&
-                        is_subclass_of( $entry[0], \Illuminate\Database\Eloquent\Model::class )
+                        is_subclass_of( $entry[0], Model::class )
                     ) {
                         /**
                          * Determine the SQL alias:
@@ -715,8 +718,8 @@ class CrudService
         $relation = $mainModel->$methodName();
 
         if (
-            ! ( $relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo ) &&
-            ! ( $relation instanceof \Illuminate\Database\Eloquent\Relations\HasOne )
+            ! ( $relation instanceof BelongsTo ) &&
+            ! ( $relation instanceof HasOne )
         ) {
             throw new Exception( sprintf(
                 __( 'The relationship "%s" on "%s" must be a BelongsTo or HasOne relation for use in CRUD joins.' ),
@@ -729,7 +732,7 @@ class CrudService
         $relatedTable = $this->hookTableName( $relatedModel->getTable() );
         $hidden = $relatedModel->getHidden();
 
-        if ( $relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo ) {
+        if ( $relation instanceof BelongsTo ) {
             // Foreign key sits on the main (owning) table.
             $fk = $this->hookTableName( $this->table ) . '.' . $relation->getForeignKeyName();
             $ownerKey = $alias . '.' . $relation->getOwnerKeyName();

@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+
 /**
- * @property int            $id
- * @property int            $adjustment_id
- * @property int            $product_id
- * @property string         $product_name
- * @property int            $unit_id
- * @property string         $unit_name
- * @property float          $unit_price
- * @property float          $quantity
- * @property string         $adjust_action
- * @property string|null    $description
- * @property int|null       $procurement_product_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int         $id
+ * @property int         $adjustment_id
+ * @property int         $product_id
+ * @property string      $product_name
+ * @property int         $unit_id
+ * @property string      $unit_name
+ * @property float       $unit_price
+ * @property float       $quantity
+ * @property string      $adjust_action
+ * @property string|null $description
+ * @property int|null    $procurement_product_id
+ * @property Carbon      $created_at
+ * @property Carbon      $updated_at
  */
 class ProductAdjustmentItem extends NsModel
 {

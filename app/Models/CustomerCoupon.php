@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Events\CustomerCouponAfterCreatedEvent;
 use App\Events\CustomerCouponAfterUpdatedEvent;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -12,11 +13,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * of this class which can there after be used by the customer.
  */
 /**
- * @property int            $id
- * @property string         $code
- * @property int            $author_id
- * @property \Carbon\Carbon $updated_at
- * @property bool           $active
+ * @property int    $id
+ * @property string $code
+ * @property int    $author_id
+ * @property Carbon $updated_at
+ * @property bool   $active
  */
 class CustomerCoupon extends NsModel
 {

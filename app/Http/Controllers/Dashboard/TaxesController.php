@@ -76,7 +76,7 @@ class TaxesController extends DashboardController
      * create a category using the provided
      * form data
      *
-     * @param request
+     * @param Request
      * @return json
      */
     public function post( Request $request ) // must be a specific form request with a validation
@@ -162,7 +162,7 @@ class TaxesController extends DashboardController
     /**
      * List all available taxes
      *
-     * @return view
+     * @return View
      */
     public function listTaxes()
     {
@@ -172,7 +172,7 @@ class TaxesController extends DashboardController
     /**
      * Create new taxes
      *
-     * @return view
+     * @return View
      */
     public function createTax()
     {
@@ -182,7 +182,7 @@ class TaxesController extends DashboardController
     /**
      * Edit existing taxes
      *
-     * @return view
+     * @return View
      */
     public function editTax( Tax $tax )
     {
@@ -192,7 +192,7 @@ class TaxesController extends DashboardController
     /**
      * Create tax groups
      *
-     * @return view
+     * @return View
      */
     public function taxesGroups()
     {
@@ -202,7 +202,7 @@ class TaxesController extends DashboardController
     /**
      * Create tax groups
      *
-     * @return view
+     * @return View
      */
     public function createTaxGroups()
     {
@@ -212,7 +212,7 @@ class TaxesController extends DashboardController
     /**
      * Edit tax groups
      *
-     * @return view
+     * @return View
      */
     public function editTaxGroup( TaxGroup $group )
     {

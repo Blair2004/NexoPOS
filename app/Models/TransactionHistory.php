@@ -6,26 +6,27 @@ use App\Events\TransactionsHistoryAfterCreatedEvent;
 use App\Events\TransactionsHistoryAfterDeletedEvent;
 use App\Events\TransactionsHistoryAfterUpdatedEvent;
 use App\Events\TransactionsHistoryBeforeDeleteEvent;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property int            $transaction_id
- * @property mixed          $operation
- * @property int            $transaction_account_id
- * @property int            $procurement_id
- * @property int            $order_refund_id
- * @property int            $order_id
- * @property int            $register_history_id
- * @property int            $customer_account_history_id
- * @property mixed          $name
- * @property mixed          $status
- * @property string         $type
- * @property \Carbo\Carbon  $trigger_date
- * @property float          $value
- * @property int            $author_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property int    $transaction_id
+ * @property mixed  $operation
+ * @property int    $transaction_account_id
+ * @property int    $procurement_id
+ * @property int    $order_refund_id
+ * @property int    $order_id
+ * @property int    $register_history_id
+ * @property int    $customer_account_history_id
+ * @property mixed  $name
+ * @property mixed  $status
+ * @property string $type
+ * @property Carbon $trigger_date
+ * @property float  $value
+ * @property int    $author_id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class TransactionHistory extends NsModel
 {
@@ -138,5 +139,10 @@ class TransactionHistory extends NsModel
     public function scopeTo( $query, $date )
     {
         return $query->where( 'created_at', '<=', $date );
+    }
+
+    public function account()
+    {
+        return $this->belongsTo( TransactionAccount::class, 'transaction_account_id' );
     }
 }

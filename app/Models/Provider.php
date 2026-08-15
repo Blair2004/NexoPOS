@@ -4,15 +4,16 @@ namespace App\Models;
 
 use App\Classes\Model;
 use App\Traits\NsDependable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property string         $uuid
- * @property int            $author_id
- * @property string         $description
- * @property float          $amount_paid
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property string $uuid
+ * @property int    $author_id
+ * @property string $description
+ * @property float  $amount_paid
+ * @property Carbon $updated_at
  */
 class Provider extends NsModel
 {

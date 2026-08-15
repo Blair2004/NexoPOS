@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Media;
 use App\Services\MediaService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
@@ -23,7 +24,7 @@ class DeleteMediaTool extends Tool
         ];
     }
 
-    public function handle( \Laravel\Mcp\Request $request ): \Laravel\Mcp\Response
+    public function handle( Request $request ): Response
     {
         $id = $request->get( 'id' );
         $media = Media::find( $id );

@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $user_id
- * @property string         $key
- * @property string         $value
- * @property \Carbon\Carbon $updated_at
- * @property bool           $array
+ * @property int    $user_id
+ * @property string $key
+ * @property string $value
+ * @property Carbon $updated_at
+ * @property bool   $array
  */
 class Option extends NsModel
 {

@@ -4,6 +4,7 @@ namespace Tests\Traits;
 
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
+use Laravel\Mcp\Server\Tool;
 
 trait TestsMcpTools
 {
@@ -14,7 +15,7 @@ trait TestsMcpTools
      */
     protected function runMcpTool( string $toolClass, array $args = [] )
     {
-        /** @var \Laravel\Mcp\Server\Tool $tool */
+        /** @var Tool $tool */
         $tool = app()->make( $toolClass );
 
         $request = new Request( $args );

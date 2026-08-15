@@ -4,14 +4,15 @@ namespace App\Models;
 
 use App\Events\OrderCouponAfterCreatedEvent;
 use App\Events\OrderCouponAfterUpdatedEvent;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property string         $uuid
- * @property int            $author_id
- * @property float          $value
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property string $uuid
+ * @property int    $author_id
+ * @property float  $value
+ * @property Carbon $updated_at
  */
 class OrderCoupon extends NsModel
 {

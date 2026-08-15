@@ -15,9 +15,13 @@
             </div>
             <div class=" border-box-edge border-t p-3 flex justify-between items-center">
                 <div>
-                    <ns-spinner v-if="processing" size="8" border="4"></ns-spinner>
                 </div>
-                <ns-button :disabled="processing" @click="saveConfiguration()" type="info">{{ __( 'Install' )}}</ns-button>
+                <ns-button :disabled="processing" @click="saveConfiguration()" type="default">
+                    <span class="mr-2" v-if="processing">
+                        <ns-spinner v-if="processing" size="6" border="2"></ns-spinner>
+                    </span>
+                    <span>{{ __( 'Install' )}}</span>
+                </ns-button>
             </div>
         </div>
     </div>

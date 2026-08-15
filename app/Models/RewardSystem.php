@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property int            $coupon_id
- * @property string         $uuid
- * @property float          $target
- * @property string         $description
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property int    $coupon_id
+ * @property string $uuid
+ * @property float  $target
+ * @property string $description
+ * @property Carbon $updated_at
  */
 class RewardSystem extends NsModel
 {

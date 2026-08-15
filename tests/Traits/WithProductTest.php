@@ -13,6 +13,7 @@ use App\Services\CurrencyService;
 use App\Services\ProductService;
 use App\Services\TaxService;
 use Exception;
+use Faker\Factory;
 use Illuminate\Support\Str;
 
 trait WithProductTest
@@ -30,7 +31,7 @@ trait WithProductTest
         $taxService = app()->make( TaxService::class );
 
         if ( empty( $form ) ) {
-            $faker = \Faker\Factory::create();
+            $faker = Factory::create();
 
             $taxType = $taxType ?: $faker->randomElement( [ 'exclusive', 'inclusive' ] );
             $unitGroup = $unitGroup ?: UnitGroup::first();
@@ -249,7 +250,7 @@ trait WithProductTest
          */
         $currency = app()->make( CurrencyService::class );
 
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
 
         /**
          * @var TaxService

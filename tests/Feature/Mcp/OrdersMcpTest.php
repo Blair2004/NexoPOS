@@ -4,6 +4,7 @@ namespace Tests\Feature\Mcp;
 
 use App\Mcp\Tools\GetOrderTool;
 use App\Mcp\Tools\SearchOrdersTool;
+use App\Mcp\Tools\SearchProductSalesTool;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\Traits\TestsMcpTools;
@@ -38,7 +39,7 @@ class OrdersMcpTest extends TestCase
 
     public function __skipped_test_search_product_sales()
     {
-        $response = $this->runMcpTool( \App\Mcp\Tools\SearchProductSalesTool::class, [
+        $response = $this->runMcpTool( SearchProductSalesTool::class, [
             'search' => 'Apple',
             'limit' => 5,
         ] );

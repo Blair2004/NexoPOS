@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Exceptions\NotAllowedException;
 use App\Services\Helper;
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
 class NotInstalledStateMiddleware
@@ -12,7 +13,7 @@ class NotInstalledStateMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  Request $request
      * @return mixed
      */
     public function handle( $request, Closure $next )

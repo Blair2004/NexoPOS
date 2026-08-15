@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
@@ -21,7 +22,7 @@ class UpdateSettingsTool extends Tool
         ];
     }
 
-    public function handle( \Laravel\Mcp\Request $request ): \Laravel\Mcp\Response
+    public function handle( Request $request ): Response
     {
         if ( empty( $request->get( 'settings' ) ) || ! is_array( $request->get( 'settings' ) ) ) {
             return Response::error( 'The settings parameter must be a non-empty object containing key-value pairs.' );

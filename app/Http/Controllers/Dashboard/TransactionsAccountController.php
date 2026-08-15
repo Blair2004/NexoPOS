@@ -18,7 +18,7 @@ class TransactionsAccountController extends DashboardController
     /**
      * List transactions accounts
      *
-     * @return view
+     * @return View
      */
     public function listTransactionsAccounts()
     {
@@ -28,7 +28,7 @@ class TransactionsAccountController extends DashboardController
     /**
      *  Show transactions account form.
      *
-     * @return view
+     * @return View
      */
     public function createTransactionsAccounts()
     {

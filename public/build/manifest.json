@@ -1223,7 +1223,7 @@
     ]
   },
   "resources/ts/pages/setup/setup-configuration.vue": {
-    "file": "assets/setup-configuration-DsKtHgGq.js",
+    "file": "assets/setup-configuration-DhF04_Ry.js",
     "name": "setup-configuration",
     "src": "resources/ts/pages/setup/setup-configuration.vue",
     "isDynamicEntry": true,
@@ -1325,7 +1325,7 @@
     ]
   },
   "resources/ts/setup.ts": {
-    "file": "assets/setup-x_Fozth2.js",
+    "file": "assets/setup-B6Vg6J2n.js",
     "name": "setup",
     "src": "resources/ts/setup.ts",
     "isEntry": true,
