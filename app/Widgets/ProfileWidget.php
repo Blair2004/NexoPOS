@@ -8,7 +8,7 @@ class ProfileWidget extends WidgetService
 {
     protected $vueComponent = 'nsProfileWidget';
 
-    protected string $layout = '1x2';
+    protected string $layout = '1x3';
 
     protected string $layoutPolicy = 'restricted';
 

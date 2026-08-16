@@ -3,31 +3,28 @@
 namespace App\Services;
 
 use App\Models\Option;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserOptions extends Options
 {
-    protected $user_id;
+    protected int $user_id;
 
-    public function __construct( $user_id )
+    public function __construct( int $user_id )
     {
         $this->user_id = $user_id;
+
         parent::__construct();
     }
 
-    public function option()
+    public function option(): Builder
     {
         return Option::where( 'user_id', $this->user_id );
     }
 
     /**
      * Set Option
-     *
-     * @param string key
-     * @param any value
-     * @param bool force set
-     * @return void
      **/
-    public function set( $key, $value, $expiration = null )
+    public function set( string $key, mixed $value, string | null $expiration = null )
     {
         if ( isset( $this->rawOptions[ $key ] ) ) {
             $this->rawOptions[ $key ]->value = $value;

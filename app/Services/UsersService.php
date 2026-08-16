@@ -352,7 +352,7 @@ class UsersService
      * Will generate a token for either the
      * logged user or for the provided user
      */
-    public function createToken( $name, ?User $user = null ): array
+    public function createToken( string $name, ?User $user = null ): array
     {
         if ( $user === null ) {
             /**
@@ -386,7 +386,7 @@ class UsersService
         return $user->tokens()->orderBy( 'created_at', 'desc' )->get();
     }
 
-    public function deleteToken( $tokenId, ?User $user = null )
+    public function deleteToken( string $tokenId, ?User $user = null )
     {
         if ( $user === null ) {
             /**
@@ -403,14 +403,14 @@ class UsersService
         ];
     }
 
-    public function checkPermission( $permission, ?User $user = null ): bool
+    public function checkPermission( string $permission, ?User $user = null ): bool
     {
         ns()->restrict( $permission );
 
         return true;
     }
 
-    public function requestAccess( $permission )
+    public function requestAccess( string $permission )
     {
         $approvedTemporaryPermission = PermissionAccess::where( 'requester_id', Auth::id() )
             ->where( 'permission', $permission )

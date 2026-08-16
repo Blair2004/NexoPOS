@@ -8,7 +8,7 @@ class MyNexoPosWidget extends WidgetService
 {
     protected $vueComponent = 'nsMyNexoPosWidget';
 
-    protected string $layout = '2x1';
+    protected string $layout = '1x3';
 
     protected string $layoutPolicy = 'restricted';
 
