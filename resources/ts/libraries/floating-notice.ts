@@ -68,6 +68,10 @@
             return this.show( title, description, {...options, ...{ type : 'warning' } } );
         }
 
+        default( title, description, options: FloatingNoticeOptions = { duration: 3000, type: 'default' }) {
+            return this.show( title, description, { ...options, ...{ type : 'default' } } );
+        }
+
         /**
          * 
          * @param {number} duration 
@@ -115,12 +119,16 @@
                     buttonThemeClass    =   '';
                     noticeThemeClass     =   'warning';
                 break;
+                case 'default': 
+                    buttonThemeClass    =   '';
+                    noticeThemeClass     =   'default';
+                break;
             }
 
             
             if ( document.getElementById( 'floating-notice-wrapper' ) === null ) {
                 const parsed    =   (new DOMParser).parseFromString(`
-                <div id="floating-notice-wrapper" class="absolute bottom-0 right-0 flex justify-between items-end p-2 flex-col">
+                <div id="floating-notice-wrapper" class="absolute bottom-0 right-0 flex justify-between items-end p-4 flex-col">
                 
                 </div>
                 `, 'text/html' );
@@ -149,7 +157,7 @@
                     const buttonsWrapper        =   floatingNotice.querySelector( '.buttons-wrapper' );
                     const buttonDom             =   ( new DOMParser ).parseFromString( `
                     <div class="ns-button ${options.actions[ key ].type || buttonThemeClass} ${options.actions[ key ].className || 'default' } ml-2">
-                        <button class="px-2 py-1 shadow rounded uppercase">${options.actions[ key ].label}</button>
+                        <button class="px-2 py-1 shadow rounded">${options.actions[ key ].label}</button>
                     </div>
                     `, 'text/html' ).firstElementChild;
 

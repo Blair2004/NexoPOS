@@ -1,0 +1,114 @@
+@layer components {
+	.ns-driver-popover {
+		/* Class assigned to popover wrapper */
+		&.driver-popover {
+			@apply flex bg-box-background border-box-edge border shadow-lg min-w-[200px] max-w-[400px] rounded-lg p-4 fixed z-[10001]
+		}
+
+		.driver-popover-arrow {
+			content: "";
+			position: absolute;
+			border: 5px solid #fff;
+		}
+
+		/* Rendered side and alignment of the popover. These reflect the actual
+		position after Driver.js flips the popover to fit it in the viewport,
+		so they may differ from the side/align you configured. */
+		&.driver-popover-side-top {
+		}
+		&.driver-popover-side-right {
+		}
+		&.driver-popover-side-bottom {
+		}
+		&.driver-popover-side-left {
+		}
+		&.driver-popover-align-start {
+		}
+		&.driver-popover-align-center {
+		}
+		&.driver-popover-align-end {
+		}
+
+		/* Title and description */
+		.driver-popover-title {
+			@apply text-lg font-semibold mb-2;
+		}
+		.driver-popover-description {
+			@apply text-sm mb-2;
+		}
+
+		/* Close button displayed on the top right corner */
+		.driver-popover-close-btn {
+			@apply rounded-full h-6 w-6 text-white bg-primary outline-none;
+		}
+
+		/* Footer of the popover displaying progress and navigation buttons */
+		.driver-popover-footer {
+			@apply flex justify-between items-center mt-4;
+		}
+		.driver-popover-progress-text {
+			@apply text-xs mr-2 text-fontcolor-soft;
+		}
+		.driver-popover-navigation-btns {
+			@apply flex gap-2;
+			button {
+				@apply px-3 py-1 rounded bg-input-background text-xs;
+				&.driver-popover-btn-disabled {
+					@apply bg-input-background text-xs text-fontcolor-soft cursor-not-allowed;
+				}
+				&:hover:not([class*="driver-popover-btn-disabled"]) {
+					@apply bg-primary text-white;
+				}
+			}
+		}
+
+		&.driver-popover-prev-btn {
+		}
+		&.driver-popover-next-btn {
+		}
+
+		/* Shared style for the footer buttons. The built-in prev/next buttons carry it,
+		and you can add it to custom buttons created in onPopoverRender to give them
+		the default button look (or leave it off to apply your own styles). */
+		&.driver-popover-footer-btn {
+		}
+
+		/* Added to the next button on the last step, when it acts as the "Done" button */
+		&.driver-popover-next-btn.driver-popover-done-btn {
+		}
+
+		.driver-popover-arrow-side-left {
+			left: 100%;
+			@apply top-[30px];
+			border-right-color: transparent;
+			border-bottom-color: transparent;
+			border-top-color: transparent;
+		}
+
+		.driver-popover-arrow-side-right {
+			right: 100%;
+			border-left-color: transparent;
+			border-bottom-color: transparent;
+			border-top-color: transparent;
+		}
+
+		.driver-popover-arrow-side-top {
+			top: 100%;
+			border-right-color: transparent;
+			border-bottom-color: transparent;
+			border-left-color: transparent;
+		}
+
+		.driver-popover-arrow-side-bottom {
+			bottom: 100%;
+			border-left-color: transparent;
+			border-top-color: transparent;
+			border-right-color: transparent;
+		}
+
+		&.driver-popover-arrow-none,
+		&.driver-popover-arrow-side-over {
+			display: none;
+		}
+	}
+}

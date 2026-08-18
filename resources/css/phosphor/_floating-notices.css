@@ -23,4 +23,10 @@
             @apply text-white;
         }
     }
+    &.default {
+        @apply border-box-edge bg-box-background border border-box-edge rounded-lg;
+        h2, p {
+            @apply text-fontcolor;
+        }
+    }
 }

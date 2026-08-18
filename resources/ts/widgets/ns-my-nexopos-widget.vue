@@ -25,7 +25,7 @@
 
         <div v-if="! isConnected" class="flex flex-auto flex-col gap-4 p-4">
             <div class="rounded border border-box-edge bg-box-elevation-background p-4">
-                <div class="mb-3 flex items-center gap-2 text-info-tertiary">
+                <div class="mb-3 flex items-center gap-2 text-info-secondary">
                     <i class="las la-cloud text-2xl"></i>
                     <span class="text-xs font-semibold uppercase tracking-wider">{{ __( 'Connected features' ) }}</span>
                 </div>

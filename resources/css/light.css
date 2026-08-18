@@ -4,9 +4,7 @@
 
 @import "./app.css";
 @import "./_shared/_spacing.css";
-/* @import "./light/_breakpoints.css"; */
 @import "./light/_colors.css";
-/* @import "./light/_width.css"; */
 
 @import "./light/_box.css";
 @import "./light/_notices.css";
@@ -21,10 +19,8 @@
 @import './light/_pos.css';
 @import './light/_ns-tab.css';
 @import './light/_product.css';
-/* @import './light/_typography.css'; */
 @import './light/_table.css';
-/* @import './light/_loader.css'; */
 @import './light/_numpad.css';
 @import './light/_media.css';
-/* @import './light/_link.css'; */
 @import './light/_permissions.css';
+@import './light/_hints.css';

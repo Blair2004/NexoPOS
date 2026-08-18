@@ -1,4 +1,5 @@
 .ns-floating-notice {
+    @apply rounded-lg;
     &.info {
         @apply border-info-tertiary bg-info-primary;
         h2, p {
@@ -19,6 +20,12 @@
     }
     &.success {
         @apply border-success-tertiary bg-success-primary;
+        h2, p {
+            @apply text-fontcolor;
+        }
+    }
+    &.default {
+        @apply border-box-edge bg-box-background;
         h2, p {
             @apply text-fontcolor;
         }

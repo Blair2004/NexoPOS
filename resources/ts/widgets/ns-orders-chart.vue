@@ -47,7 +47,7 @@
                         v-for="option in metricOptions"
                         :key="option.value"
                         type="button"
-                        class="rounded-md px-3 py-1 text-xs font-medium outline-none focus:ring-2 focus:ring-primary"
+                        class="rounded-md px-3 py-1 text-xs font-medium outline-none"
                         :class="metric === option.value ? 'bg-info-secondary text-white' : 'text-fontcolor-soft hover:bg-input-button-hover hover:text-fontcolor'"
                         :aria-pressed="metric === option.value"
                         @click="metric = option.value">

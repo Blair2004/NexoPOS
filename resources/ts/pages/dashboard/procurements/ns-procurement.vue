@@ -801,6 +801,7 @@ export default {
                 </div>
                 <div :class="form.main.disabled ? 'disabled' : ( form.main.errors.length > 0 ? 'error' : '' )" class="flex border-2 rounded input-group info overflow-hidden">
                     <input v-model="form.main.value" 
+                        :name="form.main.name"
                         @keypress="formValidation.checkField( form.main )"
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
@@ -816,7 +817,7 @@ export default {
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
-            <div v-if="showInfo" class="rounded border-2 bg-info-primary border-info-tertiary flex">
+            <div v-if="showInfo" class="rounded border-2 bg-info-secondary text-white border-info-tertiary flex">
                 <div class="icon w-16 flex py-4 justify-center">
                     <i class="las la-info-circle text-4xl"></i>
                 </div>
@@ -838,10 +839,10 @@ export default {
                 <div class="px-4 w-full">
                     <div id="tabbed-card" class="ns-tab">
                         <div id="card-header" class="flex flex-wrap">
-                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg flex rounded-tr-lg text-primary">
+                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg flex rounded-tr-lg text-fontcolor">
                                 {{ tab.label }}
                                 <template v-if="tab.identifier === 'products'">
-                                    <div class="ml-2 rounded-full bg-info-tertiary text-primary h-6 min-w-6 flex items-center justify-center">
+                                    <div class="ml-2 rounded-full bg-primary text-white h-6 min-w-6 flex items-center justify-center">
                                         {{ form.products.length }}
                                     </div>
                                 </template>

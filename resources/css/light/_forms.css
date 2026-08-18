@@ -257,7 +257,6 @@
             @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
         }
     }
-
     
     &.hover-primary:hover, &.primary {
         button, a {
@@ -423,7 +422,7 @@
     }
 }
 .ns-inset-button {
-    @apply border-input-edge text-fontcolor;
+    @apply border-gray-400 text-fontcolor;
     &:hover, &.active {
         @apply bg-secondary text-white border-transparent;
     }

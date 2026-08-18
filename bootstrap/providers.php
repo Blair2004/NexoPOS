@@ -6,6 +6,7 @@ use App\Providers\BroadcastServiceProvider;
 use App\Providers\CrudServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\FormsProvider;
+use App\Providers\GuideServiceProvider;
 use App\Providers\LocalizationServiceProvider;
 use App\Providers\ModulesServiceProvider;
 use App\Providers\RouteServiceProvider;
@@ -26,4 +27,5 @@ return [
     SettingsPageProvider::class,
     TelescopeServiceProvider::class,
     WidgetsServiceProvider::class,
+    GuideServiceProvider::class,
 ];

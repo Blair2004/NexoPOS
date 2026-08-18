@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col mb-2 flex-auto ns-media" :class="hasError ? 'has-error' : 'is-pristine'">
         <label :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
-        <div class="mt-1 relative border rounded-md focus:shadow-sm">
+        <div :name="field.name" class="mt-1 relative border rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="text-fontcolor sm:text-sm sm:leading-5">
                 {{ leading }}

@@ -18,12 +18,15 @@ use App\Models\PermissionAccess;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\DateService;
+use App\Services\GuideService;
 use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\WidgetService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -33,7 +36,8 @@ class UsersController extends DashboardController
     public function __construct(
         protected UsersService $usersService,
         protected DateService $dateService,
-        protected WidgetService $widgetService
+        protected WidgetService $widgetService,
+        protected GuideService $guideService
     ) {
         // ...
     }
@@ -441,5 +445,122 @@ class UsersController extends DashboardController
             'status' => 'success',
             'message' => __( 'Ads have been snoozed for 24 hours.' ),
         ] );
+    }
+
+    public function getGuides( Request $request )
+    {
+        $validated = $request->validate([
+            'route' => 'sometimes|string',
+            'path' => 'sometimes|string'
+        ]);
+        
+
+        return $this->guideService
+            ->initForUser( $request->user() )
+            ->pending( $validated['route'], $validated[ 'path' ] );
+    }
+
+    public function dismissGuide( Request $request )
+    {
+        $guideId = $request->input( 'identifier' );
+
+        if ( ! $guideId ) {
+            return response()->json( [
+                'status' => 'error',
+                'message' => __( 'The guide ID is required.' ),
+            ], 400 );
+        }
+
+        $this->guideService
+            ->initForUser( $request->user() )
+            ->dismiss( $guideId );
+
+        return response()->json( [
+            'status' => 'success',
+            'message' => __( 'The guide has been dismissed.' ),
+        ] );
+    }
+
+    public function completeGuide( Request $request )
+    {
+        $guideId = $request->input( 'identifier' );
+
+        if ( ! $guideId ) {
+            return response()->json( [
+                'status' => 'error',
+                'message' => __( 'The guide ID is required.' ),
+            ], 400 );
+        }
+
+        $this->guideService
+            ->initForUser( $request->user() )
+            ->complete( $guideId );
+
+        return response()->json( [
+            'status' => 'success',
+            'message' => __( 'The guide has been completed.' ),
+        ] );
+    }
+
+    public function getCompletedGuides( Request $request )
+    {
+        $completed = $this->guideService
+            ->initForUser( $request->user() )
+            ->completed();
+
+        $page = Paginator::resolveCurrentPage() ?: 1;
+
+        $collection = collect( $completed );
+
+        $currentPageItems = $collection->forPage( $page, 10 )->values();
+
+        return new LengthAwarePaginator(
+            $currentPageItems,
+            $collection->count(),
+            10,
+            $page,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+            ]
+        );
+    }
+
+    public function getDismissedGuides( Request $request )
+    {
+        $dismissed = $this->guideService
+            ->initForUser( $request->user() )
+            ->dismissed();
+
+        $page = Paginator::resolveCurrentPage() ?: 1;
+        
+        $collection = collect( $dismissed );
+
+        $currentPageItems = $collection->forPage( $page, 10 )->values();
+
+        return new LengthAwarePaginator(
+            $currentPageItems,
+            $collection->count(),
+            10,
+            $page,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+            ]
+        );
+    }
+
+    public function resetGuide( Request $request )
+    {
+        $validated = $request->validate([
+            'guide_id' => 'required|string',
+        ]);
+
+        $this->guideService
+            ->initForUser( $request->user() )
+            ->reset( $validated['guide_id'] );
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The guide has been reset.' ),
+        ];
     }
 }

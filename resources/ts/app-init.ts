@@ -13,9 +13,9 @@ import {
 
 import { NsHotPress }       from './libraries/ns-hotpress';
 import VueHtmlToPaper from './libraries/html-printer';
+import nsCreateCoupons from './pages/dashboard/create-coupons.vue';
 
 const nsRewardsSystem               =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
-const nsCreateCoupons               =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
 const nsSettings                    =   defineAsyncComponent( () => import( './pages/dashboard/ns-settings.vue' ) );
 const nsReset                       =   defineAsyncComponent( () => import( './pages/dashboard/reset.vue' ) );
 const nsModules                     =   defineAsyncComponent( () => import( './pages/dashboard/modules.vue' ) );
@@ -46,6 +46,7 @@ const nsScaleSettingsPreview        =   defineAsyncComponent( () => import( './c
 const nsWirelessBarcodeSettingsTab  =   defineAsyncComponent( () => import( './pages/dashboard/settings/ns-wireless-barcode-tab.vue' ) );
 const nsMarketplace                 =   defineAsyncComponent( () => import( './pages/dashboard/modules/ns-marketplace.vue' ) );
 
+
 declare const window;
 declare let nsExtraComponents;   
 declare const nsHooks;
@@ -54,6 +55,7 @@ const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 
 
 nsExtraComponents.nsToken       =   defineAsyncComponent( () => import( './pages/dashboard/profile/ns-token.vue' ) );
+nsExtraComponents.nsGuides      =   defineAsyncComponent( () => import( './pages/dashboard/profile/ns-guides.vue' ) );
 
 window.VueHtmlToPaper   =   VueHtmlToPaper;
 window.nsHotPress   =   new NsHotPress;

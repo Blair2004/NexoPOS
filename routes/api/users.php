@@ -32,3 +32,9 @@ Route::get( '/users/roles', [ UsersController::class, 'getRoles' ] )->middleware
 Route::put( '/users/roles', [ UsersController::class, 'updateRole' ] )->middleware( NsRestrictMiddleware::arguments( 'update.roles' ) );
 Route::get( '/users/roles/{role}/clone', [ UsersController::class, 'cloneRole' ] )->middleware( NsRestrictMiddleware::arguments( 'create.roles' ) );
 Route::post( '/user/snooze-ads', [ UsersController::class, 'snoozeAds' ] );
+Route::post( '/user/guides', [ UsersController::class, 'getGuides' ] );
+Route::post( '/user/guides/dismiss', [ UsersController::class, 'dismissGuide' ] );
+Route::post( '/user/guides/complete', [ UsersController::class, 'completeGuide' ] );
+Route::get( '/user/guides/completed', [ UsersController::class, 'getCompletedGuides' ] );
+Route::get( '/user/guides/dismissed', [ UsersController::class, 'getDismissedGuides' ] );
+Route::post( '/user/guides/reset', [ UsersController::class, 'resetGuide' ] );

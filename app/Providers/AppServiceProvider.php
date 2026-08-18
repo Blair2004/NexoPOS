@@ -17,6 +17,7 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\EnvEditor;
+use App\Services\GuideService;
 use App\Services\MarketplaceService;
 use App\Services\MathService;
 use App\Services\MediaService;
@@ -98,11 +99,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton( EnvEditor::class, function () {
             return new EnvEditor( base_path( '.env' ) );
-        } );
-
-        // save Singleton for options
-        $this->app->singleton( UserOptions::class, function () {
-            return new UserOptions( Auth::id() );
         } );
 
         $this->app->singleton( CashRegistersService::class, function () {
@@ -254,6 +250,10 @@ class AppServiceProvider extends ServiceProvider
             return new MarketplaceService(
                 app()->make( ModulesService::class )
             );
+        } );
+
+        $this->app->singleton( GuideService::class, function ( $app ) {
+            return new GuideService;
         } );
 
         /**
