@@ -1339,14 +1339,17 @@ class TransactionService
         // Procurement Accounts
         // -----------------------------------------------------------
 
-        $procurementCashResponse = $this->createAccount( [
-            'name' => __( 'Procurement Cash' ),
+        $cashResponse = $this->createAccount( [
+            'name' => __( 'Cash' ),
             'category_identifier' => 'assets',
             'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id,
         ] );
 
-        $procurementPayableResponse = $this->createAccount( [
-            'name' => __( 'Procurement Payable' ),
+        // -----------------------------------------------------------
+        // Account Payable
+        // -----------------------------------------------------------
+        $accountPayableResponse = $this->createAccount( [
+            'name' => __( 'Account Payable' ),
             'category_identifier' => 'liabilities',
             'sub_category_id' => $currentLiabilitiesResponse[ 'data' ][ 'account' ]->id,
         ] );
@@ -1416,7 +1419,7 @@ class TransactionService
             action: 'increase',
             account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
             do: 'increase',
-            offset_account_id: $procurementPayableResponse[ 'data' ][ 'account' ]->id
+            offset_account_id: $accountPayableResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
@@ -1424,15 +1427,15 @@ class TransactionService
             action: 'increase',
             account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
-            offset_account_id: $procurementCashResponse[ 'data' ][ 'account' ]->id
+            offset_account_id: $cashResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID,
             action: 'decrease',
-            account_id: $procurementPayableResponse[ 'data' ][ 'account' ]->id,
+            account_id: $accountPayableResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
-            offset_account_id: $procurementCashResponse[ 'data' ][ 'account' ]->id
+            offset_account_id: $cashResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(

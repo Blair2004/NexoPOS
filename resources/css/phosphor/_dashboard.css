@@ -119,7 +119,7 @@
             @apply bg-box-background;
         }
         &.panel-hidden {
-            @apply border-[#333];
+            @apply border-box-edge;
         }
 
         &:hover {

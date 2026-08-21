@@ -53,6 +53,7 @@ export default ({ mode }) => {
                     'resources/ts/popups.ts',
                     'resources/ts/widgets.ts',
                     'resources/ts/wizard.ts',
+                    'resources/ts/guide.ts',
     
                     'resources/css/app.css',
                     'resources/css/grid.css',
