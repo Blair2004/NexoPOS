@@ -188,8 +188,16 @@ for( let name in allComponents ) {
  * let's add the library
  * to the body dashboard content
  */
-window.nsDashboardContent.use( VueHtmlToPaper, {
-    styles: Object.values( window.ns.cssFiles )
+const appStyles = Object.values( window.ns.cssFiles ).filter( ( file ) => {
+    return file.includes( '/app' ) || file.includes( '/fonts' ) || file.includes( '/print' );
 });
+
+console.log({ appStyles })
+
+window.nsDashboardContent.use( VueHtmlToPaper, {
+    styles: appStyles
+});
+
+
 
 window.nsComponents          =   Object.assign( allComponents, baseComponents );

@@ -50,6 +50,7 @@ class TransactionHistory extends NsModel
         'transaction_account_id',
         'procurement_id',
         'order_refund_id',
+        'order_payment_id',
         'order_refund_product_id',
         'order_id',
         'order_product_id',
@@ -60,6 +61,10 @@ class TransactionHistory extends NsModel
         'status',
         'value',
         'trigger_date',
+        'rule_id',
+        'journal_id',
+        'author_id',
+        'is_reflection',
     ];
 
     protected $dispatchesEvents = [
@@ -72,6 +77,11 @@ class TransactionHistory extends NsModel
     public function order()
     {
         return $this->hasOne( Order::class, 'id', 'order_id' );
+    }
+
+    public function journal()
+    {
+        return $this->belongsTo( AccountingJournal::class, 'journal_id' );
     }
 
     public function rule()

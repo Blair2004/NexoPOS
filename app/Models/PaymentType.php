@@ -2,22 +2,23 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @property int    $id
- * @property string $identifier
- * @property int    $author_id
- * @property string $description
- * @property bool   $readonly
- * @property Carbon $updated_at
- */
 class PaymentType extends NsModel
 {
     use HasFactory;
 
-    protected $table = 'nexopos_' . 'payments_types';
+    protected $table = 'nexopos_payments_types';
+
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+            'readonly' => 'boolean',
+            'accounting_account_id' => 'integer',
+        ];
+    }
 
     public function scopeActive( $query )
     {
@@ -29,8 +30,13 @@ class PaymentType extends NsModel
         return $query->where( 'identifier', $identifier );
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo( User::class, 'author_id' );
+    }
+
+    public function accountingAccount(): BelongsTo
+    {
+        return $this->belongsTo( TransactionAccount::class, 'accounting_account_id' );
     }
 }

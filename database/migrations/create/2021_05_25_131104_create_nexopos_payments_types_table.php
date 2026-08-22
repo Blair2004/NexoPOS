@@ -22,6 +22,8 @@ return new class extends Migration
             $table->integer( 'author_id' );
             $table->boolean( 'active' )->default( true );
             $table->boolean( 'readonly' )->default( false );
+            $table->integer( 'accounting_account_id' )->nullable();
+            $table->enum( 'accounting_incoming_effect', [ 'increase', 'decrease' ] )->nullable();
             $table->timestamps();
         } );
     }

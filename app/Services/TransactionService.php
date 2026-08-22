@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Accounting\AccountingEventCatalog;
+use App\Accounting\AccountingRuleValidator;
 use App\Classes\Hook;
 use App\Classes\JsonResponse;
 use App\Events\ShouldRefreshReportEvent;
@@ -14,6 +16,7 @@ use App\Fields\EntityTransactionFields;
 use App\Fields\ReccurringTransactionFields;
 use App\Fields\ScheduledTransactionFields;
 use App\Models\Order;
+use App\Models\PaymentType;
 use App\Models\Procurement;
 use App\Models\Role;
 use App\Models\Transaction;
@@ -24,6 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class TransactionService
@@ -294,9 +298,18 @@ class TransactionService
         return $actions[ $action ] ?? __( 'Unknown' );
     }
 
-    public function getRules()
+    public function getRules(): array
     {
-        return TransactionActionRule::get();
+        $catalog = app( AccountingEventCatalog::class );
+
+        return [
+            'groups' => TransactionActionRule::query()
+                ->where( 'active', true )
+                ->with( 'lines.account' )
+                ->orderBy( 'on' )
+                ->get(),
+            'events' => $catalog->all(),
+        ];
     }
 
     /**
@@ -1242,12 +1255,11 @@ class TransactionService
      */
     public function createDefaultAccounts()
     {
-        $this->clearAllAccounts();
-        $this->createAllSubAccounts();
+        $this->upgradeAccountingFoundation();
 
         return [
             'status' => 'success',
-            'message' => __( 'The default accounts has been created.' ),
+            'message' => __( 'The default accounts have been verified.' ),
         ];
     }
 
@@ -1294,242 +1306,7 @@ class TransactionService
      */
     public function createAllSubAccounts(): void
     {
-        $fixedAssetResposne = $this->createAccount( [
-            'name' => __( 'Fixed Assets' ),
-            'category_identifier' => 'assets',
-        ] );
-
-        $currentAssetResponse = $this->createAccount( [
-            'name' => __( 'Current Assets' ),
-            'category_identifier' => 'assets',
-        ] );
-
-        $inventoryResponse = $this->createAccount( [
-            'name' => __( 'Inventory Account' ),
-            'category_identifier' => 'assets',
-        ] );
-
-        $currentLiabilitiesResponse = $this->createAccount( [
-            'name' => __( 'Current Liabilities' ),
-            'category_identifier' => 'liabilities',
-        ] );
-
-        $salesRevenuesResponse = $this->createAccount( [
-            'name' => __( 'Sales Revenues' ),
-            'category_identifier' => 'revenues',
-        ] );
-
-        $directExpenseResponse = $this->createAccount( [
-            'name' => __( 'Direct Expenses' ),
-            'category_identifier' => 'expenses',
-        ] );
-
-        /**
-         * -----------------------------------
-         * Assets Sub Accounts
-         * -----------------------------------
-         */
-        $expensesCash = $this->createAccount( [
-            'name' => __( 'Expenses Cash' ),
-            'category_identifier' => 'assets',
-            'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        // -----------------------------------------------------------
-        // Procurement Accounts
-        // -----------------------------------------------------------
-
-        $cashResponse = $this->createAccount( [
-            'name' => __( 'Cash' ),
-            'category_identifier' => 'assets',
-            'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        // -----------------------------------------------------------
-        // Account Payable
-        // -----------------------------------------------------------
-        $accountPayableResponse = $this->createAccount( [
-            'name' => __( 'Account Payable' ),
-            'category_identifier' => 'liabilities',
-            'sub_category_id' => $currentLiabilitiesResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        // -----------------------------------------------------------
-        // Sales Accounts
-        // -----------------------------------------------------------
-
-        $receivableResponse = $this->createAccount( [
-            'name' => __( 'Receivables' ),
-            'category_identifier' => 'assets',
-            'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        $salesCashResponse = $this->createAccount( [
-            'name' => __( 'Sales' ),
-            'category_identifier' => 'assets',
-            'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        $refundsResponse = $this->createAccount( [
-            'name' => __( 'Refunds' ),
-            'category_identifier' => 'revenues',
-            'sub_category_id' => $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        /**
-         * This is for configuring the COGS that is used during sales.
-         */
-        $cogsResponse = $this->createAccount( [
-            'name' => __( 'Sales COGS' ),
-            'category_identifier' => 'expenses',
-            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        $operatingExpenses = $this->createAccount( [
-            'name' => __( 'Operating Expenses' ),
-            'category_identifier' => 'expenses',
-            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        $RentExpenses = $this->createAccount( [
-            'name' => __( 'Rent Expenses' ),
-            'category_identifier' => 'expenses',
-            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        $OtherExpenses = $this->createAccount( [
-            'name' => __( 'Other Expenses' ),
-            'category_identifier' => 'expenses',
-            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        $salariesAndWages = $this->createAccount( [
-            'name' => __( 'Salaries And Wages' ),
-            'category_identifier' => 'expenses',
-            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
-        ] );
-
-        /**
-         * ---------------------------------------------
-         * Creating Rules
-         * ---------------------------------------------
-         */
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_PROCUREMENT_UNPAID,
-            action: 'increase',
-            account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
-            do: 'increase',
-            offset_account_id: $accountPayableResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_PROCUREMENT_PAID,
-            action: 'increase',
-            account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $cashResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID,
-            action: 'decrease',
-            account_id: $accountPayableResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $cashResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_UNPAID,
-            action: 'increase',
-            account_id: $receivableResponse[ 'data' ][ 'account' ]->id,
-            do: 'increase',
-            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID,
-            action: 'increase',
-            account_id: $salesCashResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_PAID,
-            action: 'increase',
-            account_id: $salesCashResponse[ 'data' ][ 'account' ]->id,
-            do: 'increase',
-            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_PARTIALLY_PAID,
-            action: 'increase',
-            account_id: $salesCashResponse[ 'data' ][ 'account' ]->id,
-            do: 'increase',
-            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_REFUNDED,
-            action: 'decrease',
-            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $salesCashResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_PARTIALLY_REFUNDED,
-            action: 'decrease',
-            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $salesCashResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_COGS,
-            action: 'increase',
-            account_id: $cogsResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_PRODUCT_DAMAGED,
-            action: 'increase',
-            account_id: $cogsResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_PRODUCT_RETURNED,
-            action: 'decrease',
-            account_id: $cogsResponse[ 'data' ][ 'account' ]->id,
-            do: 'increase',
-            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_PAID_VOIDED,
-            action: 'decrease',
-            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $salesCashResponse[ 'data' ][ 'account' ]->id
-        );
-
-        $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_UNPAID_VOIDED,
-            action: 'decrease',
-            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
-        );
-
-        /**
-         * We'll now assign the default offset account for paid expenses
-         */
-        ns()->option->set( 'ns_accounting_default_paid_expense_offset_account', $expensesCash[ 'data' ][ 'account' ]->id );
+        $this->upgradeAccountingFoundation();
     }
 
     /**
@@ -1555,26 +1332,82 @@ class TransactionService
 
     /**
      * Saves transactions rule.
-     *
-     * @param  array $rule
-     * @return array
      */
-    public function saveTransactionRule( $rule )
+    public function saveTransactionRule( array $rule ): array
     {
-        $transactionRule = TransactionActionRule::find( $rule[ 'id' ] ?? 0 );
+        app( AccountingRuleValidator::class )->validate( $rule );
 
-        if ( $transactionRule instanceof TransactionActionRule ) {
-            $transactionRule->update( $rule );
-        } else {
-            $transactionRule = TransactionActionRule::create( $rule );
-        }
+        $transactionRule = DB::transaction( function () use ( $rule ): TransactionActionRule {
+            $transactionRule = TransactionActionRule::query()->find( $rule['id'] ?? 0 ) ?? new TransactionActionRule;
+            $fallback = TransactionAccount::query()->where( 'system_identifier', 'payment_clearing' )->firstOrFail();
+            $first = $rule['lines'][0];
+            $second = $rule['lines'][1];
+
+            TransactionActionRule::query()
+                ->where( 'on', $rule['on'] )
+                ->when( $transactionRule->exists, fn( $query ) => $query->whereKeyNot( $transactionRule->id ) )
+                ->update( [ 'active' => false ] );
+
+            $transactionRule->fill( [
+                'on' => $rule['on'],
+                'action' => $first['effect'],
+                'account_id' => $first['account_id'] ?? $fallback->id,
+                'do' => $second['effect'],
+                'offset_account_id' => $second['account_id'] ?? $fallback->id,
+                'active' => $rule['active'] ?? true,
+            ] );
+            $transactionRule->save();
+            $retainedLineIds = [];
+
+            foreach ( $rule['lines'] as $index => $line ) {
+                $ruleLine = isset( $line['id'] )
+                    ? $transactionRule->lines()->whereKey( $line['id'] )->first()
+                    : null;
+                $ruleLine ??= $transactionRule->lines()->make();
+                $ruleLine->fill( [
+                    'account_id' => $line['account_id'] ?? null,
+                    'dynamic_account_role' => $line['dynamic_account_role'] ?? null,
+                    'effect' => $line['effect'],
+                    'amount_source' => $line['amount_source'],
+                    'display_order' => $index,
+                ] );
+                $ruleLine->save();
+                $retainedLineIds[] = $ruleLine->id;
+            }
+
+            $transactionRule->lines()->whereNotIn( 'id', $retainedLineIds )->delete();
+
+            return $transactionRule->load( 'lines.account' );
+        } );
 
         return [
             'status' => 'success',
-            'message' => __( 'The transaction rule has been saved' ),
-            'data' => [
-                'rule' => $transactionRule,
-            ],
+            'message' => __( 'The transaction rule has been saved.' ),
+            'data' => [ 'rule' => $transactionRule ],
+        ];
+    }
+
+    public function deleteTransactionRule( TransactionActionRule $rule ): array
+    {
+        if ( $rule->locked ) {
+            throw new NotAllowedException( __( 'This accounting rule cannot be deleted.' ) );
+        }
+
+        DB::transaction( function () use ( $rule ): void {
+            if ( $rule->journals()->exists() ) {
+                $rule->active = false;
+                $rule->save();
+
+                return;
+            }
+
+            $rule->lines()->delete();
+            $rule->delete();
+        } );
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The transaction rule has been deleted.' ),
         ];
     }
 
@@ -1596,5 +1429,316 @@ class TransactionService
         $accounts = $query->get();
 
         return Helper::toJsOptions( $accounts, [ 'id', 'name' ] );
+    }
+
+    /**
+     * Safely upgrades an existing installation and provisions fresh installations.
+     */
+    public function upgradeAccountingFoundation(): void
+    {
+        DB::transaction( function (): void {
+            $accounts = $this->provisionAccountingChart();
+            $this->migrateLegacyRulePairs();
+            $this->provisionLegacyCompatibilityRules( $accounts );
+            $this->provisionGroupedAccountingRules( $accounts );
+            $this->configureDefaultPaymentAccounts( $accounts );
+        } );
+
+        app( AccountingJournalService::class )->postOpeningBalance();
+    }
+
+    /**
+     * @return array<string, TransactionAccount>
+     */
+    private function provisionAccountingChart(): array
+    {
+        $chart = [
+            'fixed_assets' => [ '1001', 'Fixed Assets', 'assets', null ],
+            'current_assets' => [ '1002', 'Current Assets', 'assets', null ],
+            'inventory' => [ '1003', 'Inventory', 'assets', 'current_assets' ],
+            'cash' => [ '1004', 'Cash', 'assets', 'current_assets' ],
+            'bank' => [ '1005', 'Bank', 'assets', 'current_assets' ],
+            'accounts_receivable' => [ '1006', 'Accounts Receivable', 'assets', 'current_assets' ],
+            'payment_clearing' => [ '1007', 'Payment Clearing', 'assets', 'current_assets' ],
+            'current_liabilities' => [ '2001', 'Current Liabilities', 'liabilities', null ],
+            'accounts_payable' => [ '2002', 'Accounts Payable', 'liabilities', 'current_liabilities' ],
+            'sales_tax_payable' => [ '2003', 'Sales Tax Payable', 'liabilities', 'current_liabilities' ],
+            'customer_deposits' => [ '2004', 'Customer Deposits', 'liabilities', 'current_liabilities' ],
+            'owner_capital' => [ '3001', 'Owner Capital', 'equity', null ],
+            'owner_drawings' => [ '3002', 'Owner Drawings', 'equity', null ],
+            'retained_earnings' => [ '3003', 'Retained Earnings', 'equity', null ],
+            'sales_revenue' => [ '4001', 'Sales Revenue', 'revenues', null ],
+            'sales_returns' => [ '4002', 'Sales Returns / Refunds', 'revenues', null ],
+            'cogs' => [ '5001', 'Cost of Goods Sold', 'expenses', null ],
+            'operating_expenses' => [ '5100', 'Operating Expenses', 'expenses', null ],
+            'rent' => [ '5101', 'Rent', 'expenses', 'operating_expenses' ],
+            'salaries_wages' => [ '5102', 'Salaries & Wages', 'expenses', 'operating_expenses' ],
+            'utilities' => [ '5103', 'Utilities', 'expenses', 'operating_expenses' ],
+            'maintenance' => [ '5104', 'Maintenance', 'expenses', 'operating_expenses' ],
+            'other_expenses' => [ '5105', 'Other Expenses', 'expenses', 'operating_expenses' ],
+            'inventory_variance' => [ '5106', 'Inventory Variance', 'expenses', 'operating_expenses' ],
+        ];
+        $legacyNames = [
+            'inventory' => [ 'Inventory Account' ],
+            'cash' => [ 'Procurement Cash', 'Cash' ],
+            'accounts_payable' => [ 'Procurement Payable', 'Account Payable' ],
+            'accounts_receivable' => [ 'Receivables' ],
+            'payment_clearing' => [ 'Sales' ],
+            'sales_revenue' => [ 'Sales Revenues' ],
+            'sales_returns' => [ 'Refunds' ],
+            'cogs' => [ 'Sales COGS' ],
+        ];
+        $accounts = [];
+
+        foreach ( $chart as $identifier => [ $code, $name, $category ] ) {
+            $account = TransactionAccount::query()->where( 'system_identifier', $identifier )->first();
+
+            if ( ! $account instanceof TransactionAccount && isset( $legacyNames[ $identifier ] ) ) {
+                $account = TransactionAccount::query()
+                    ->whereNull( 'system_identifier' )
+                    ->whereIn( 'name', $legacyNames[ $identifier ] )
+                    ->where( 'category_identifier', $category )
+                    ->whereDoesntHave( 'histories' )
+                    ->get()
+                    ->first( fn( TransactionAccount $candidate ): bool => preg_match(
+                        '/^\\d+-' . preg_quote( $category, '/' ) . '-/',
+                        (string) $candidate->account
+                    ) === 1 );
+
+                if ( $account instanceof TransactionAccount ) {
+                    $account->system_identifier = $identifier;
+                    $account->account = $code;
+                    $account->name = __( $name );
+                    $account->save();
+                }
+            }
+
+            if ( ! $account instanceof TransactionAccount ) {
+                $account = new TransactionAccount;
+                $account->system_identifier = $identifier;
+                $account->account = $code;
+                $account->name = __( $name );
+                $account->category_identifier = $category;
+                $account->author_id = ns()->getValidAuthor();
+                $account->save();
+            }
+
+            $accounts[ $identifier ] = $account;
+        }
+
+        foreach ( $chart as $identifier => [ , , , $parentIdentifier ] ) {
+            if ( $parentIdentifier !== null && $accounts[ $identifier ]->sub_category_id !== $accounts[ $parentIdentifier ]->id ) {
+                $accounts[ $identifier ]->sub_category_id = $accounts[ $parentIdentifier ]->id;
+                $accounts[ $identifier ]->save();
+            }
+        }
+
+        return $accounts;
+    }
+
+    private function migrateLegacyRulePairs(): void
+    {
+        TransactionActionRule::query()->orderBy( 'id' )->get()->groupBy( 'on' )->each( function ( $rules ): void {
+            $keeper = $rules->first();
+            $nextOrder = $keeper->lines()->max( 'display_order' ) ?? -1;
+
+            foreach ( $rules as $rule ) {
+                if ( $rule->lines()->doesntExist() ) {
+                    foreach ( [
+                        [ 'account_id' => $rule->account_id, 'effect' => $rule->action ],
+                        [ 'account_id' => $rule->offset_account_id, 'effect' => $rule->do ],
+                    ] as $legacyLine ) {
+                        $keeper->lines()->create( array_merge( $legacyLine, [
+                            'amount_source' => 'total',
+                            'display_order' => ++$nextOrder,
+                        ] ) );
+                    }
+                } elseif ( $rule->id !== $keeper->id ) {
+                    foreach ( $rule->lines as $line ) {
+                        $keeper->lines()->create( [
+                            'account_id' => $line->account_id,
+                            'dynamic_account_role' => $line->dynamic_account_role,
+                            'effect' => $line->effect,
+                            'amount_source' => $line->amount_source,
+                            'display_order' => ++$nextOrder,
+                        ] );
+                    }
+                }
+
+                if ( $rule->id !== $keeper->id ) {
+                    $rule->active = false;
+                    $rule->save();
+                }
+            }
+
+            $keeper->active = true;
+            $keeper->save();
+        } );
+    }
+
+    /**
+     * @param array<string, TransactionAccount> $accounts
+     */
+    private function provisionLegacyCompatibilityRules( array $accounts ): void
+    {
+        $rules = [
+            self::legacyRule( TransactionActionRule::RULE_PROCUREMENT_UNPAID, $accounts['inventory'], 'increase', $accounts['accounts_payable'], 'increase' ),
+            self::legacyRule( TransactionActionRule::RULE_PROCUREMENT_PAID, $accounts['inventory'], 'increase', $accounts['payment_clearing'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID, $accounts['accounts_payable'], 'decrease', $accounts['payment_clearing'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_UNPAID, $accounts['accounts_receivable'], 'increase', $accounts['sales_revenue'], 'increase' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID, $accounts['payment_clearing'], 'increase', $accounts['accounts_receivable'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_PAID, $accounts['payment_clearing'], 'increase', $accounts['sales_revenue'], 'increase' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_PARTIALLY_PAID, $accounts['payment_clearing'], 'increase', $accounts['sales_revenue'], 'increase' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_REFUNDED, $accounts['sales_returns'], 'decrease', $accounts['payment_clearing'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_PARTIALLY_REFUNDED, $accounts['sales_returns'], 'decrease', $accounts['payment_clearing'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_COGS, $accounts['cogs'], 'increase', $accounts['inventory'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_PRODUCT_DAMAGED, $accounts['inventory_variance'], 'increase', $accounts['inventory'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_PRODUCT_RETURNED, $accounts['cogs'], 'decrease', $accounts['inventory'], 'increase' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_PAID_VOIDED, $accounts['sales_returns'], 'decrease', $accounts['payment_clearing'], 'decrease' ),
+            self::legacyRule( TransactionActionRule::RULE_ORDER_UNPAID_VOIDED, $accounts['sales_returns'], 'decrease', $accounts['accounts_receivable'], 'decrease' ),
+        ];
+
+        foreach ( $rules as $definition ) {
+            if ( TransactionActionRule::query()->where( 'on', $definition['on'] )->exists() ) {
+                continue;
+            }
+
+            $this->createRuleGroup( $definition['on'], $definition['lines'] );
+        }
+    }
+
+    /**
+     * @param array<string, TransactionAccount> $accounts
+     */
+    private function provisionGroupedAccountingRules( array $accounts ): void
+    {
+        $groups = [
+            AccountingEventCatalog::ORDER_FINALIZED => [
+                [ $accounts['accounts_receivable'], null, 'increase', 'total' ],
+                [ $accounts['sales_revenue'], null, 'increase', 'net_sale' ],
+                [ $accounts['sales_tax_payable'], null, 'increase', 'tax' ],
+                [ $accounts['cogs'], null, 'increase', 'cogs' ],
+                [ $accounts['inventory'], null, 'decrease', 'cogs' ],
+            ],
+            AccountingEventCatalog::ORDER_PAYMENT => [
+                [ null, 'payment_account', 'increase', 'payment_amount' ],
+                [ $accounts['accounts_receivable'], null, 'decrease', 'payment_amount' ],
+            ],
+            AccountingEventCatalog::ORDER_REFUND => [
+                [ $accounts['sales_returns'], null, 'decrease', 'net_refund' ],
+                [ $accounts['sales_tax_payable'], null, 'decrease', 'refunded_tax' ],
+                [ $accounts['accounts_receivable'], null, 'decrease', 'refund_unpaid' ],
+                [ null, 'refund_payment_account', 'decrease', 'refund_paid' ],
+            ],
+            AccountingEventCatalog::RETURN_GOOD => [
+                [ $accounts['inventory'], null, 'increase', 'refund_cost' ],
+                [ $accounts['cogs'], null, 'decrease', 'refund_cost' ],
+            ],
+            AccountingEventCatalog::RETURN_DAMAGED => [
+                [ $accounts['inventory_variance'], null, 'increase', 'refund_cost' ],
+                [ $accounts['cogs'], null, 'decrease', 'refund_cost' ],
+            ],
+            AccountingEventCatalog::PROCUREMENT_RECEIPT => [
+                [ $accounts['inventory'], null, 'increase', 'procurement_cost' ],
+                [ $accounts['accounts_payable'], null, 'increase', 'procurement_cost' ],
+            ],
+            AccountingEventCatalog::PROCUREMENT_PAYMENT => [
+                [ $accounts['accounts_payable'], null, 'decrease', 'payment_amount' ],
+                [ $accounts['payment_clearing'], null, 'decrease', 'payment_amount' ],
+            ],
+            AccountingEventCatalog::ADJUSTMENT_NEGATIVE => [
+                [ $accounts['inventory_variance'], null, 'increase', 'adjustment_cost' ],
+                [ $accounts['inventory'], null, 'decrease', 'adjustment_cost' ],
+            ],
+            AccountingEventCatalog::ADJUSTMENT_POSITIVE => [
+                [ $accounts['inventory'], null, 'increase', 'adjustment_cost' ],
+                [ $accounts['inventory_variance'], null, 'decrease', 'adjustment_cost' ],
+            ],
+            AccountingEventCatalog::WALLET_ADDITION => [
+                [ $accounts['payment_clearing'], null, 'increase', 'wallet_amount' ],
+                [ $accounts['customer_deposits'], null, 'increase', 'wallet_amount' ],
+            ],
+            AccountingEventCatalog::WALLET_DEDUCTION => [
+                [ $accounts['customer_deposits'], null, 'decrease', 'wallet_amount' ],
+                [ $accounts['payment_clearing'], null, 'decrease', 'wallet_amount' ],
+            ],
+        ];
+
+        foreach ( $groups as $event => $lines ) {
+            if ( TransactionActionRule::query()->where( 'on', $event )->exists() ) {
+                continue;
+            }
+
+            $this->createRuleGroup( $event, $lines );
+        }
+    }
+
+    /**
+     * @param array<int, array{0: TransactionAccount|null, 1: string|null, 2: string, 3: string}> $lines
+     */
+    private function createRuleGroup( string $event, array $lines ): TransactionActionRule
+    {
+        $fallback = TransactionAccount::query()->where( 'system_identifier', 'payment_clearing' )->firstOrFail();
+        $first = $lines[0];
+        $second = $lines[1];
+        $rule = TransactionActionRule::query()->create( [
+            'on' => $event,
+            'action' => $first[2],
+            'account_id' => ( $first[0] ?? $fallback )->id,
+            'do' => $second[2],
+            'offset_account_id' => ( $second[0] ?? $fallback )->id,
+            'locked' => false,
+            'active' => true,
+        ] );
+
+        foreach ( $lines as $index => [ $account, $role, $effect, $source ] ) {
+            $rule->lines()->create( [
+                'account_id' => $account?->id,
+                'dynamic_account_role' => $role,
+                'effect' => $effect,
+                'amount_source' => $source,
+                'display_order' => $index,
+            ] );
+        }
+
+        return $rule;
+    }
+
+    /**
+     * @return array{on: string, lines: array<int, array{0: TransactionAccount, 1: null, 2: string, 3: string}>}
+     */
+    private static function legacyRule( string $event, TransactionAccount $account, string $effect, TransactionAccount $offset, string $offsetEffect ): array
+    {
+        return [
+            'on' => $event,
+            'lines' => [
+                [ $account, null, $effect, 'total' ],
+                [ $offset, null, $offsetEffect, 'total' ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, TransactionAccount> $accounts
+     */
+    private function configureDefaultPaymentAccounts( array $accounts ): void
+    {
+        $defaults = [
+            'cash-payment' => [ $accounts['cash']->id, 'increase' ],
+            'bank-payment' => [ $accounts['bank']->id, 'increase' ],
+            'account-payment' => [ $accounts['customer_deposits']->id, 'decrease' ],
+        ];
+
+        foreach ( $defaults as $identifier => [ $accountId, $effect ] ) {
+            $paymentType = PaymentType::query()->where( 'identifier', $identifier )->first();
+
+            if ( $paymentType && $paymentType->accounting_account_id === null ) {
+                $paymentType->accounting_account_id = $accountId;
+                $paymentType->accounting_incoming_effect = $effect;
+                $paymentType->save();
+            }
+        }
+
+        ns()->option->set( 'ns_accounting_default_paid_expense_offset_account', $accounts['payment_clearing']->id );
     }
 }

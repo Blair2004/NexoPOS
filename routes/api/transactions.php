@@ -15,6 +15,7 @@ Route::get( 'transactions/history/{history}/create-reflection', [ TransactionCon
 
 Route::post( 'transactions', [ TransactionController::class, 'post' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.create.transactions' ) );
 Route::post( 'transactions/rules', [ TransactionController::class, 'saveRule' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.transactions' ) );
+Route::delete( 'transactions/rules/{rule}', [ TransactionController::class, 'deleteRule' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.transactions' ) );
 Route::put( 'transactions/{id}', [ TransactionController::class, 'put' ] )->where( 'id', '[0-9]+' )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.transactions' ) );
 Route::delete( 'transactions/{transaction}', [ TransactionController::class, 'delete' ] )->where( 'transaction', '[0-9]+' )->middleware( NsRestrictMiddleware::arguments( 'nexopos.delete.transactions' ) );
 

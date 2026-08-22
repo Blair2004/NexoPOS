@@ -12,6 +12,7 @@ use App\Services\DateService;
 use App\Traits\NsFlashData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * ns-generated-comments
@@ -303,5 +304,10 @@ class Order extends NsModel
         }
 
         return $this->products()->get();
+    }
+
+    public function accountingJournals(): MorphMany
+    {
+        return $this->morphMany( AccountingJournal::class, 'source', 'source_type', 'source_id' );
     }
 }

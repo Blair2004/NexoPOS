@@ -23,6 +23,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
         'resources/css/grid.css',
         'resources/css/fonts.css',
         'resources/css/animations.css',
+        'resources/css/print.css',
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.base.header' )

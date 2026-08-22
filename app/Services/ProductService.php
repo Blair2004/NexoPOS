@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductService
@@ -1199,6 +1200,14 @@ class ProductService
      * @param array{unit_id?: int, unit?: Unit, product_id?: int, sku?: string, unit_price: float|int, total_price?: float|int, procurement_id?: int|null, procurement_product_id?: int|null, sale_id?: int|null, quantity: float|int, orderProduct?: OrderProduct|null, procurementProduct?: ProcurementProduct|null, description?: string, author?: int} $data   Data to manage
      */
     public function stockAdjustment( string $action, array $data ): ProductHistory|EloquentCollection|bool
+    {
+        return DB::transaction(
+            fn() => $this->persistStockAdjustment( $action, $data ),
+            attempts: 3
+        );
+    }
+
+    private function persistStockAdjustment( string $action, array $data ): ProductHistory|EloquentCollection|bool
     {
         extract( $data, EXTR_REFS );
         /**

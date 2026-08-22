@@ -11,8 +11,10 @@ namespace App\Http\Controllers\Dashboard;
 use App\Crud\TransactionCrud;
 use App\Crud\TransactionsHistoryCrud;
 use App\Http\Controllers\DashboardController;
+use App\Http\Requests\SaveTransactionRuleRequest;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
+use App\Models\TransactionActionRule;
 use App\Models\TransactionHistory;
 use App\Services\DateService;
 use App\Services\Options;
@@ -46,9 +48,14 @@ class TransactionController extends DashboardController
         ] );
     }
 
-    public function saveRule( Request $request )
+    public function saveRule( SaveTransactionRuleRequest $request ): array
     {
-        return $this->transactionService->saveTransactionRule( $request->input( 'rule' ) );
+        return $this->transactionService->saveTransactionRule( $request->validated( 'rule' ) );
+    }
+
+    public function deleteRule( TransactionActionRule $rule ): array
+    {
+        return $this->transactionService->deleteTransactionRule( $rule );
     }
 
     public function listTransactions()

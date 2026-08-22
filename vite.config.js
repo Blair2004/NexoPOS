@@ -65,6 +65,7 @@ export default ({ mode }) => {
                     'resources/css/light.css',
                     'resources/css/dark.css',
                     'resources/css/phosphor.css',
+                    'resources/css/print.css',
                 ],
                 refresh: true,
             }),

@@ -25,6 +25,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CustomerService
 {
@@ -330,6 +331,14 @@ class CustomerService
      * save a customer transaction.
      */
     public function saveTransaction( Customer $customer, string $operation, float $amount, ?string $description = '', array $details = [] ): array
+    {
+        return DB::transaction(
+            fn(): array => $this->persistCustomerTransaction( $customer, $operation, $amount, $description, $details ),
+            attempts: 3
+        );
+    }
+
+    private function persistCustomerTransaction( Customer $customer, string $operation, float $amount, ?string $description, array $details ): array
     {
         if ( in_array( $operation, [
             CustomerAccountHistory::OPERATION_DEDUCT,

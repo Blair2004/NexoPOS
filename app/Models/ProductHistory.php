@@ -7,6 +7,7 @@ use App\Events\ProductHistoryAfterCreatedEvent;
 use App\Events\ProductHistoryAfterUpdatedEvent;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property int     $id
@@ -141,5 +142,10 @@ class ProductHistory extends NsModel
     public function user()
     {
         return $this->belongsTo( User::class, 'author_id' );
+    }
+
+    public function accountingJournals(): MorphMany
+    {
+        return $this->morphMany( AccountingJournal::class, 'source', 'source_type', 'source_id' );
     }
 }

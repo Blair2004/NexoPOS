@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property int    $id
@@ -45,6 +46,11 @@ class OrderProductRefund extends NsModel
 
     public function orderRefund()
     {
-        return $this->belongsTo( Order::class, 'order_refund_id', 'id' );
+        return $this->belongsTo( OrderRefund::class, 'order_refund_id', 'id' );
+    }
+
+    public function accountingJournals(): MorphMany
+    {
+        return $this->morphMany( AccountingJournal::class, 'source', 'source_type', 'source_id' );
     }
 }

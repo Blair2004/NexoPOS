@@ -6,6 +6,7 @@ use App\Classes\Cache;
 use App\Events\OrderPaymentAfterCreatedEvent;
 use App\Events\OrderPaymentAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property int    $id
@@ -56,5 +57,10 @@ class OrderPayment extends NsModel
         } );
 
         return $paymentTypes[ $this->identifier ] ?? __( 'Unknown Payment' );
+    }
+
+    public function accountingJournals(): MorphMany
+    {
+        return $this->morphMany( AccountingJournal::class, 'source', 'source_type', 'source_id' );
     }
 }

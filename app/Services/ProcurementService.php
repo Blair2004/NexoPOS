@@ -27,6 +27,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use stdClass;
 
 class ProcurementService
@@ -106,6 +107,14 @@ class ProcurementService
      */
     public function create( $data )
     {
+        return DB::transaction(
+            fn() => $this->persistProcurement( $data ),
+            attempts: 3
+        );
+    }
+
+    private function persistProcurement( $data )
+    {
         extract( $data );
 
         /**
@@ -184,6 +193,14 @@ class ProcurementService
      * @return array
      */
     public function edit( $id, $data )
+    {
+        return DB::transaction(
+            fn() => $this->persistEditedProcurement( $id, $data ),
+            attempts: 3
+        );
+    }
+
+    private function persistEditedProcurement( $id, $data )
     {
         /**
          * @param array  $general
@@ -876,10 +893,16 @@ class ProcurementService
      * When a procurement is being made
      * this will actually save the history and update
      * the product stock
-     *
-     * @return void
      */
-    public function handleProcurement( Procurement $procurement )
+    public function handleProcurement( Procurement $procurement ): void
+    {
+        DB::transaction(
+            fn() => $this->persistHandledProcurement( $procurement ),
+            attempts: 3
+        );
+    }
+
+    private function persistHandledProcurement( Procurement $procurement ): void
     {
         event( new ProcurementBeforeHandledEvent( $procurement ) );
 
