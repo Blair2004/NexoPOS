@@ -185,14 +185,14 @@
                                         ) }}</td>
                                     </tr>
                                 </template>
-                                <tr class="bg-info-primary">
-                                    <td colspan="2" class="p-2 border border-info-secondary">{{ category.name }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ computeTotal( category.products, 'quantity' ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'total_purchase_price' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( 
+                                <tr class="info">
+                                    <td colspan="2" class="p-2 border">{{ category.name }}</td>
+                                    <td class="p-2 border text-right">{{ computeTotal( category.products, 'quantity' ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'total_purchase_price' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( 
                                         computeTotal( category.products, 'total_price' ) -
                                         (
                                             computeTotal( category.products, 'total_purchase_price' ) +
