@@ -38,6 +38,20 @@ Use component-specific tokens inside tabs, tables, POS, CRUD, or numpad UI.
 
 Do not add a wrapper component if `ns-box` fits.
 
+## Accessible names without `sr-only`
+
+Do not use Tailwind's `sr-only` utility in NexoPOS Vue or Blade markup. The current application can render it as a layout box, creating unexplained whitespace and nested or double scrollbars.
+
+Give icon-only interactive elements their accessible name directly:
+
+```html
+<button type="button" aria-label="Delete group">
+    <i class="lar la-trash-alt" aria-hidden="true"></i>
+</button>
+```
+
+Use `aria-labelledby` when existing visible text should provide the name. Keep decorative icons `aria-hidden="true"`. Do not replace `sr-only` with a custom visually-hidden utility unless the user explicitly requests it and the behavior is verified in all supported layouts and themes.
+
 ## Form control
 
 Reuse `ns-input`, `ns-select`, `ns-textarea`, `ns-checkbox`, or another existing field. For a necessary custom control:

@@ -29,6 +29,7 @@ Build UI against semantic visual roles so the same component works with the `lig
 - Do not branch markup on `window.ns.theme` for ordinary styling.
 - Do not use `data-theme` as though it scopes token values; the selected Vite entry supplies them.
 - Do not construct Tailwind classes dynamically, such as `` `bg-${color}-500` ``. Use complete literal class maps or stable semantic classes.
+- Do not use Tailwind's `sr-only` utility in NexoPOS Vue or Blade markup. In the current application it can create an unexpected layout box, producing excess whitespace or nested scrollbars. Give icon-only controls an accessible name with `aria-label` or `aria-labelledby` on the interactive element instead.
 - Do not add `gray-*`, `white`, `black`, hex, RGB, or RGBA when a semantic token fits. Literal colors are acceptable for fixed assets, deliberate overlays, or third-party APIs that cannot consume CSS variables.
 - Do not edit only one theme's component stylesheet when the selector exists in all themes. Compare all three and preserve intentional differences.
 - Do not create a base component when an existing `ns-*` component can be extended safely.
@@ -101,6 +102,7 @@ Avoid theme-aware `@apply` inside an SFC `<style>` block when semantic utilities
 - Uses semantic tokens for foregrounds, surfaces, edges, controls, and feedback.
 - Has no accidental theme-specific palette literals.
 - Handles relevant states plus long, empty, loading, and error content.
+- Contains no `sr-only`; icon-only controls use `aria-label` or `aria-labelledby`.
 - Works at supported breakpoints and in RTL when layout is directional.
 - Uses literal, statically discoverable Tailwind classes.
 - Keeps light, dark, and phosphor selector contracts aligned.
