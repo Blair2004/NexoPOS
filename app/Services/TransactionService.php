@@ -15,6 +15,7 @@ use App\Fields\DirectTransactionFields;
 use App\Fields\EntityTransactionFields;
 use App\Fields\ReccurringTransactionFields;
 use App\Fields\ScheduledTransactionFields;
+use App\Models\AccountingJournal;
 use App\Models\Order;
 use App\Models\PaymentType;
 use App\Models\Procurement;
@@ -22,6 +23,7 @@ use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Models\TransactionActionRule;
+use App\Models\TransactionActionRuleLine;
 use App\Models\TransactionHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -1270,10 +1272,12 @@ class TransactionService
      */
     public function clearAllAccounts()
     {
-        TransactionAccount::truncate();
-        Transaction::truncate();
         TransactionHistory::truncate();
+        AccountingJournal::truncate();
+        TransactionActionRuleLine::truncate();
         TransactionActionRule::truncate();
+        Transaction::truncate();
+        TransactionAccount::truncate();
 
         return [
             'status' => 'success',

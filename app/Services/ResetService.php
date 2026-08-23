@@ -32,12 +32,14 @@ class ResetService
             'nexopos_dashboard_weeks',
             'nexopos_dashboard_months',
 
+            'nexopos_transactions_histories',
+            'nexopos_accounting_journals',
+            'nexopos_transactions_actions_rule_lines',
+            'nexopos_transactions_actions_rules',
             'nexopos_transactions',
             'nexopos_transactions_accounts',
-            'nexopos_transactions_histories',
             'nexopos_transactions_balance_days',
             'nexopos_transactions_balance_months',
-            'nexopos_transactions_actions_rules',
 
             'nexopos_medias',
             'nexopos_notifications',

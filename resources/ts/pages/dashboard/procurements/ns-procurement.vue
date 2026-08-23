@@ -809,7 +809,7 @@ export default {
                         type="text" 
                         :class="form.main.disabled ? '' : ''"
                         class="flex-auto outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                     <button @click="reloadEntities()" class="outline-none px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
                 <p class="text-xs text-fontcolor-soft py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
@@ -870,10 +870,10 @@ export default {
                                     </div>
                                     <div class="h-0">
                                         <div class="shadow bg-floating-menu relative z-10">
-                                            <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-primary">
-                                                <span class="block font-bold text-primary">{{ product.name }}</span>
-                                                <span class="block text-sm text-priamry">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
-                                                <span class="block text-sm text-primary">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
+                                            <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-fontcolor">
+                                                <span class="block font-bold text-fontcolor">{{ product.name }}</span>
+                                                <span class="block text-sm text-fontcolor-soft">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
+                                                <span class="block text-sm text-fontcolor-soft">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -882,30 +882,30 @@ export default {
                                     <table class="w-full ns-table">
                                         <thead>
                                             <tr>
-                                                <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-primary p-2 border">{{ column.label }}</td>
+                                                <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-fontcolor p-2 border border-box-edge">{{ column.label }}</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'error border-2 border-error-primary' : ''">
                                                 <template v-for="( column, key ) of form.columns">                                                                                                       
-                                                    <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-primary border">
+                                                    <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-fontcolor border">
                                                         <span class="">{{ product.name }}</span>
                                                         <div class="flex">
                                                             <div class="flex md:flex-row flex-col md:-mx-1">
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
+                                                                    <span class="text-xs text-fontcolor-soft cursor-pointer underline" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
+                                                                    <span class="text-xs text-fontcolor-soft cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="selectUnitForProduct( index )">{{ __( 'Unit' ) }}: {{ getSelectedUnit( index ) }}</span>
+                                                                    <span class="text-xs text-fontcolor-soft cursor-pointer underline" @click="selectUnitForProduct( index )">{{ __( 'Unit' ) }}: {{ getSelectedUnit( index ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
+                                                                    <span class="text-xs text-fontcolor-soft cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-primary cursor-pointer underline" @click="defineConversionOption( index )">{{ __( 'Convert' ) }}: {{ product.procurement.convert_unit_id ? product.procurement.convert_unit_label : __( 'N/A' ) }}</span>
+                                                                    <span class="text-xs text-fontcolor-soft cursor-pointer underline" @click="defineConversionOption( index )">{{ __( 'Convert' ) }}: {{ product.procurement.convert_unit_id ? product.procurement.convert_unit_label : __( 'N/A' ) }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>

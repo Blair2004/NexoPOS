@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Accounting\AccountingEventCatalog;
+use App\Models\AccountingJournal;
 use App\Models\TransactionAccount;
 use App\Models\TransactionActionRule;
+use App\Models\TransactionActionRuleLine;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -17,6 +19,8 @@ class TransactionServiceDefaultRulesTest extends TestCase
     {
         parent::setUp();
 
+        AccountingJournal::query()->delete();
+        TransactionActionRuleLine::query()->delete();
         TransactionActionRule::query()->delete();
         TransactionAccount::query()->delete();
     }
@@ -62,6 +66,32 @@ class TransactionServiceDefaultRulesTest extends TestCase
             AccountingEventCatalog::ORDER_PAYMENT,
             AccountingEventCatalog::RETURN_DAMAGED,
         ] )->count() );
+    }
+
+    public function test_clearing_accounts_removes_grouped_rule_children_before_reprovisioning(): void
+    {
+        $service = app( TransactionService::class );
+
+        $service->createAllSubAccounts();
+
+        $this->assertSame( 25, TransactionActionRule::query()->count() );
+        $this->assertSame( 55, TransactionActionRuleLine::query()->count() );
+
+        $service->clearAllAccounts();
+        $service->createAllSubAccounts();
+        $service->clearAllAccounts();
+        $service->createAllSubAccounts();
+
+        $this->assertSame( 25, TransactionActionRule::query()->count() );
+        $this->assertSame( 55, TransactionActionRuleLine::query()->count() );
+        $this->assertSame(
+            5,
+            TransactionActionRule::query()
+                ->where( 'on', AccountingEventCatalog::ORDER_FINALIZED )
+                ->sole()
+                ->lines()
+                ->count()
+        );
     }
 
     public function test_upgrade_preserves_custom_legacy_rules_while_merging_duplicates(): void

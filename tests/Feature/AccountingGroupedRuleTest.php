@@ -61,7 +61,10 @@ class AccountingGroupedRuleTest extends TestCase
             $this->assertSame( $accounts->get( 'operating_expenses' )->id, $accounts->get( $child )->sub_category_id );
         }
 
-        foreach ( app( AccountingEventCatalog::class )->all() as $event => $definition ) {
+        $eventDefinitions = app( AccountingEventCatalog::class )->all();
+        $this->assertCount( count( $eventDefinitions ), collect( $eventDefinitions )->pluck( 'description' )->filter()->unique() );
+
+        foreach ( $eventDefinitions as $event => $definition ) {
             $group = TransactionActionRule::query()->where( 'on', $event )->where( 'active', true )->with( 'lines' )->sole();
             $this->assertGreaterThanOrEqual( 2, $group->lines->count(), $definition['label'] );
         }

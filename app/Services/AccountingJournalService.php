@@ -61,7 +61,21 @@ class AccountingJournalService
             return null;
         }
 
-        return DB::transaction( function () use ( $event, $sourceType, $sourceId, $name, $amounts, $dynamicRoles, $sourceColumns, $authorId, $triggerDate, $rule ): AccountingJournal {
+        $computedAmounts = $rule->lines->mapWithKeys( function ( $line ) use ( $amounts ): array {
+            $amount = round( (float) ( $amounts[ $line->amount_source ] ?? 0 ), 5 );
+
+            if ( $amount < 0 ) {
+                throw new NotAllowedException( __( 'Accounting journal amounts cannot be negative.' ) );
+            }
+
+            return [ $line->id => $amount ];
+        } );
+
+        if ( $computedAmounts->every( fn( float $amount ): bool => $amount === 0.0 ) ) {
+            return null;
+        }
+
+        return DB::transaction( function () use ( $event, $sourceType, $sourceId, $name, $dynamicRoles, $sourceColumns, $authorId, $triggerDate, $rule, $computedAmounts ): AccountingJournal {
             $journal = AccountingJournal::query()->firstOrCreate(
                 [
                     'source_type' => $sourceType,
@@ -86,11 +100,7 @@ class AccountingJournalService
             $postedLines = 0;
 
             foreach ( $rule->lines as $line ) {
-                $amount = round( (float) ( $amounts[ $line->amount_source ] ?? 0 ), 5 );
-
-                if ( $amount < 0 ) {
-                    throw new NotAllowedException( __( 'Accounting journal amounts cannot be negative.' ) );
-                }
+                $amount = $computedAmounts->get( $line->id );
 
                 if ( $amount === 0.0 ) {
                     continue;

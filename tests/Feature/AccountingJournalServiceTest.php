@@ -7,6 +7,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\AccountingJournal;
 use App\Models\CustomerAccountHistory;
 use App\Models\Order;
+use App\Models\Procurement;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\TransactionActionRule;
@@ -176,6 +177,26 @@ class AccountingJournalServiceTest extends TestCase
             [ 'wallet_amount' => -1 ],
             authorId: ns()->getValidAuthor(),
         );
+    }
+
+    public function test_zero_cost_procurement_does_not_create_empty_journals(): void
+    {
+        app( TransactionService::class )->upgradeAccountingFoundation();
+        $procurement = new Procurement;
+        $procurement->id = 876543;
+        $procurement->name = 'Free procurement';
+        $procurement->cost = 0;
+        $procurement->author_id = ns()->getValidAuthor();
+        $procurement->created_at = ns()->date->toDateTimeString();
+        $procurement->updated_at = ns()->date->toDateTimeString();
+        $service = app( AccountingJournalService::class );
+
+        $this->assertNull( $service->postProcurementReceipt( $procurement ) );
+        $this->assertNull( $service->postProcurementPayment( $procurement ) );
+        $this->assertFalse( AccountingJournal::query()
+            ->where( 'source_type', Procurement::class )
+            ->where( 'source_id', (string) $procurement->id )
+            ->exists() );
     }
 
     private function createUnitQuantity(): ProductUnitQuantity
