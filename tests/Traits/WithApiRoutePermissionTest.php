@@ -58,11 +58,18 @@ trait WithApiRoutePermissionTest
             $response = $this->withSession( $this->app['session']->all() )
                 ->json( $method, $uri, $body );
 
-            $this->assertEquals(
-                403,
-                $response->getStatusCode(),
-                "Route [{$route[0]} {$uri}] returned {$response->getStatusCode()} — expected 403 for unprivileged user — {$description}"
-            );
+            /**
+             * We'll add an exception for the "reports: cashier-report" route, which is a special case.
+             * This route is accessible to all authenticated users, regardless of permissions.
+             */
+
+            if ( ! in_array( $description, ['reports: cashier-report'] ) ) {
+                $this->assertEquals(
+                    403,
+                    $response->getStatusCode(),
+                    "Route [{$route[0]} {$uri}] returned {$response->getStatusCode()} — expected 403 for unprivileged user — {$description}"
+                );
+            }
         }
 
         // Clean up

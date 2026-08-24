@@ -54,13 +54,13 @@
                                 <template v-for="( account, name ) in report.accounts" :key="name">
                                     <tr>
                                         <td class="p-2 bg-box-elevation-background border"><i class="las la-arrow-right"></i> <strong>{{ account.name }}</strong></td>
-                                        <td class="p-2 border text-white border-error-secondary bg-error-primary text-right">{{ nsCurrency( account.debits ) }}</td>
-                                        <td class="p-2 border text-white text-right border-success-secondary bg-success-primary">{{ nsCurrency( account.credits ) }}</td>
+                                        <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( account.debits ) }}</td>
+                                        <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( account.credits ) }}</td>
                                     </tr>
                                     <tr v-for="(transaction, key) of account.transactions" :key="key">
                                         <td class="p-2 border"><span class="ml-4">{{ transaction.name }}</span></td>
-                                        <td class="p-2 border text-white border-error-secondary bg-error-primary text-right">{{ nsCurrency( transaction.debits ) }}</td>
-                                        <td class="p-2 border text-white text-right border-success-secondary bg-success-primary">{{ nsCurrency( transaction.credits ) }}</td>
+                                        <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( transaction.debits ) }}</td>
+                                        <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( transaction.credits ) }}</td>
                                     </tr>
                                 </template>
                             </tbody>

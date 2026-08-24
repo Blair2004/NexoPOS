@@ -1171,19 +1171,9 @@ class OrdersService
 
             $this->computeOrderProduct( $orderProduct, $product );
 
-            if ( ns()->option->get( 'ns_pos_vat' ) === 'disabled' ) {
-                $subTotal = $order->subtotal;
-            } else {
-                if ( ns()->option->get( 'ns_pos_prefered_price' ) === 'net_prices' ) {
-                    $subTotal = $this->currencyService->define( $subTotal )
-                        ->additionateBy( $orderProduct->total_price_gross )
-                        ->get();
-                } else {
-                    $subTotal = $this->currencyService->define( $subTotal )
-                        ->additionateBy( $orderProduct->total_price )
-                        ->get();
-                }
-            }
+            $subTotal = $this->currencyService->define( $subTotal )
+                ->additionateBy( $orderProduct->total_price )
+                ->get();
 
             return $orderProduct;
         } );

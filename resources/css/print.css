@@ -26,6 +26,9 @@
                 @apply border-gray-400;
                 td {
                     @apply border-gray-400;
+                    &.bg-box-elevation-background {
+                        @apply bg-gray-100;
+                    }
                     &.info {
                         @apply border-info-secondary bg-info-primary/50 text-gray-700;
                     }

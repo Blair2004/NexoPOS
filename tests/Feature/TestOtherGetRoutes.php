@@ -49,6 +49,7 @@ class TestOtherGetRoutes extends TestCase
                             if ( strpos( $uri, 'api/setup' ) !== false ) {
                                 $response->assertStatus( 403 );
                             } else {
+                                $response->dump();
                                 $response->assertStatus( 200 );
                             }
                         }

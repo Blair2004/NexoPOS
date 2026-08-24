@@ -208,7 +208,7 @@
                                 <td colspan="2" class="p-2 border text-font"></td>
                                 <td class="p-2 border text-right text-font">{{ computeTotal( result, 'total_sold_items' ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
-                                <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'tax_value' ) ) }}</td>
+                                <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( 
@@ -216,7 +216,7 @@
                                     (
                                         computeTotal( result, 'total_purchase_price' )  +
                                         computeTotal( result, 'total_discount' ) +
-                                        computeTotal( result, 'tax_value' )
+                                        computeTotal( result, 'total_tax_value' )
                                     )
                                 ) }}</td>
                             </tr>

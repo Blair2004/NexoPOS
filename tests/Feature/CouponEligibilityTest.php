@@ -96,6 +96,44 @@ class CouponEligibilityTest extends TestCase
         );
     }
 
+    public function test_category_restricted_coupon_rejects_an_empty_cart(): void
+    {
+        $coupon = $this->createCoupon();
+        $eligibleProduct = $this->makeProduct( 1009, 2008 );
+
+        $this->attachCategoryRestriction( $coupon, $eligibleProduct->category_id );
+        $this->expectException( NotAllowedException::class );
+
+        app( CustomerService::class )->checkCouponExistence(
+            [ 'coupon_id' => $coupon->id ],
+            [ 'products' => [] ]
+        );
+    }
+
+    public function test_coupon_with_product_and_category_restrictions_accepts_only_their_intersection(): void
+    {
+        $coupon = $this->createCoupon();
+        $eligibleProduct = $this->makeProduct( 1010, 2009 );
+        $productWithIneligibleCategory = $this->makeProduct( 1011, 2010 );
+
+        $this->attachProductRestriction( $coupon, $eligibleProduct );
+        $this->attachProductRestriction( $coupon, $productWithIneligibleCategory );
+        $this->attachCategoryRestriction( $coupon, $eligibleProduct->category_id );
+
+        $result = app( CustomerService::class )->checkCouponExistence(
+            [ 'coupon_id' => $coupon->id ],
+            [ 'products' => [ [ 'product' => $eligibleProduct ] ] ]
+        );
+
+        $this->assertTrue( $coupon->is( $result ) );
+        $this->expectException( NotAllowedException::class );
+
+        app( CustomerService::class )->checkCouponExistence(
+            [ 'coupon_id' => $coupon->id ],
+            [ 'products' => [ [ 'product' => $productWithIneligibleCategory ] ] ]
+        );
+    }
+
     public function test_unrestricted_coupon_accepts_any_products(): void
     {
         $coupon = $this->createCoupon();
@@ -122,6 +160,14 @@ class CouponEligibilityTest extends TestCase
         $couponProduct->coupon_id = $coupon->id;
         $couponProduct->product_id = $product->id;
         $couponProduct->save();
+    }
+
+    private function attachCategoryRestriction( Coupon $coupon, int $categoryId ): void
+    {
+        $couponCategory = new CouponCategory;
+        $couponCategory->coupon_id = $coupon->id;
+        $couponCategory->category_id = $categoryId;
+        $couponCategory->save();
     }
 
     private function makeProduct( int $productId, int $categoryId ): Product

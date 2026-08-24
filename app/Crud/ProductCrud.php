@@ -729,7 +729,6 @@ class ProductCrud extends CrudService
             CrudTable::column(
                 label: __( 'Name' ),
                 identifier: 'name',
-                width: '300px',
             ),
             CrudTable::column(
                 label: __( 'Type' ),
@@ -739,6 +738,7 @@ class ProductCrud extends CrudService
             CrudTable::column(
                 label: __( 'Sku' ),
                 identifier: 'sku',
+                width: '150px',
             ),
             CrudTable::column(
                 label: __( 'Category' ),
@@ -748,10 +748,12 @@ class ProductCrud extends CrudService
             CrudTable::column(
                 label: __( 'Status' ),
                 identifier: 'status',
+                width: '100px',
             ),
             CrudTable::column(
                 label: __( 'Author' ),
                 identifier: 'user_username',
+                width: '150px',
             ),
             CrudTable::column(
                 label: __( 'Date' ),
