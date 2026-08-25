@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Guides;
 
 use App\Classes\Guide;

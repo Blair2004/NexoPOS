@@ -449,11 +449,10 @@ class UsersController extends DashboardController
 
     public function getGuides( Request $request )
     {
-        $validated = $request->validate([
+        $validated = $request->validate( [
             'route' => 'sometimes|string',
-            'path' => 'sometimes|string'
-        ]);
-        
+            'path' => 'sometimes|string',
+        ] );
 
         return $this->guideService
             ->initForUser( $request->user() )
@@ -532,7 +531,7 @@ class UsersController extends DashboardController
             ->dismissed();
 
         $page = Paginator::resolveCurrentPage() ?: 1;
-        
+
         $collection = collect( $dismissed );
 
         $currentPageItems = $collection->forPage( $page, 10 )->values();
@@ -550,9 +549,9 @@ class UsersController extends DashboardController
 
     public function resetGuide( Request $request )
     {
-        $validated = $request->validate([
+        $validated = $request->validate( [
             'guide_id' => 'required|string',
-        ]);
+        ] );
 
         $this->guideService
             ->initForUser( $request->user() )

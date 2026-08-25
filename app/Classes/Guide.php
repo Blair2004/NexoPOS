@@ -16,13 +16,13 @@ class Guide
         array $steps = [],
         ?string $version = null
     ): array {
-        if (trim($id) === '') {
+        if ( trim( $id ) === '' ) {
             throw new InvalidArgumentException(
                 'A guide experience must have a valid ID.'
             );
         }
 
-        return self::clean([
+        return self::clean( [
             'id' => $id,
             'title' => $title,
             'description' => $description,
@@ -31,9 +31,9 @@ class Guide
             'required_path' => $required_path,
             'steps' => $steps,
             'version' => $version ?? '1.0.0',
-        ]);
+        ] );
     }
-    
+
     /**
      * Creates a guide step.
      *
@@ -56,15 +56,15 @@ class Guide
         array $data = [],
         ?array $nextAction = null
     ): array {
-        if (trim($id) === '') {
+        if ( trim( $id ) === '' ) {
             throw new InvalidArgumentException(
                 'A guide step must have a valid ID.'
             );
         }
 
-        self::validateAction($nextAction);
+        self::validateAction( $nextAction );
 
-        return self::clean([
+        return self::clean( [
             'id' => $id,
             'element' => $element,
             'popover' => $popover,
@@ -76,7 +76,7 @@ class Guide
             'disableActiveInteraction' => $disableActiveInteraction,
             'advanceOnClick' => $advanceOnClick,
             'skipMissingElement' => $skipMissingElement,
-            'waitForElement' => max(0, $waitForElement),
+            'waitForElement' => max( 0, $waitForElement ),
 
             /**
              * Arbitrary module/frontend information.
@@ -88,7 +88,7 @@ class Guide
              * when the Driver.js Next button is clicked.
              */
             'nextAction' => $nextAction,
-        ]);
+        ] );
     }
 
     /**
@@ -108,12 +108,12 @@ class Guide
         ?string $progressText = null,
         ?string $popoverClass = null
     ): array {
-        if (! in_array($side, [
+        if ( ! in_array( $side, [
             'top',
             'right',
             'bottom',
             'left',
-        ], true)) {
+        ], true ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Invalid guide popover side [%s].',
@@ -122,11 +122,11 @@ class Guide
             );
         }
 
-        if (! in_array($align, [
+        if ( ! in_array( $align, [
             'start',
             'center',
             'end',
-        ], true)) {
+        ], true ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Invalid guide popover alignment [%s].',
@@ -135,10 +135,10 @@ class Guide
             );
         }
 
-        self::validateButtons($showButtons);
-        self::validateButtons($disableButtons);
+        self::validateButtons( $showButtons );
+        self::validateButtons( $disableButtons );
 
-        return self::clean([
+        return self::clean( [
             'title' => $title,
             'description' => $description,
 
@@ -156,13 +156,13 @@ class Guide
             'progressText' => $progressText,
 
             'popoverClass' => $popoverClass,
-        ]);
+        ] );
     }
 
     /**
      * Creates a collection of guide steps.
      */
-    public static function steps(array ...$steps): array
+    public static function steps( array ...$steps ): array
     {
         return $steps;
     }
@@ -176,10 +176,10 @@ class Guide
     public static function click(
         ?string $element = null
     ): array {
-        return self::clean([
+        return self::clean( [
             'type' => 'click',
             'element' => $element,
-        ]);
+        ] );
     }
 
     /**
@@ -209,11 +209,11 @@ class Guide
      * 0
      * []
      */
-    protected static function clean(array $data): array
+    protected static function clean( array $data ): array
     {
         return array_filter(
             $data,
-            fn ($value) => $value !== null
+            fn ( $value ) => $value !== null
         );
     }
 
@@ -223,7 +223,7 @@ class Guide
     protected static function validateButtons(
         ?array $buttons
     ): void {
-        if ($buttons === null) {
+        if ( $buttons === null ) {
             return;
         }
 
@@ -233,8 +233,8 @@ class Guide
             'close',
         ];
 
-        foreach ($buttons as $button) {
-            if (! in_array($button, $allowed, true)) {
+        foreach ( $buttons as $button ) {
+            if ( ! in_array( $button, $allowed, true ) ) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Invalid Driver.js button [%s].',
@@ -251,11 +251,11 @@ class Guide
     protected static function validateAction(
         ?array $action
     ): void {
-        if ($action === null) {
+        if ( $action === null ) {
             return;
         }
 
-        if (! isset($action['type'])) {
+        if ( ! isset( $action['type'] ) ) {
             throw new InvalidArgumentException(
                 'A guide action must define a type.'
             );
@@ -265,11 +265,11 @@ class Guide
             'click',
         ];
 
-        if (! in_array(
+        if ( ! in_array(
             $action['type'],
             $allowed,
             true
-        )) {
+        ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Unsupported guide action [%s].',

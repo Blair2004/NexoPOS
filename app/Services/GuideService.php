@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Services\UserOptions;
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
@@ -15,11 +14,15 @@ use RuntimeException;
 class GuideService
 {
     public const STATUS_NOT_STARTED = 'not_started';
+
     public const STATUS_IN_PROGRESS = 'in_progress';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_DISMISSED = 'dismissed';
 
     public const PERMISSION_ALL = 'all';
+
     public const PERMISSION_ANY = 'any';
 
     /**
@@ -40,12 +43,12 @@ class GuideService
     protected ?Closure $permissionChecker = null;
 
     public function __construct(
-        
+
     ) {
         // ...
     }
 
-    public function initForUser( User $user): self
+    public function initForUser( User $user ): self
     {
         $this->userOptions = new UserOptions( $user->id );
 
@@ -58,17 +61,17 @@ class GuideService
      * @throws LogicException
      * @throws InvalidArgumentException
      */
-    public function register(string $identifier, array $definition): static
+    public function register( string $identifier, array $definition ): static
     {
-        $identifier = trim($identifier);
+        $identifier = trim( $identifier );
 
-        if ($identifier === '') {
+        if ( $identifier === '' ) {
             throw new InvalidArgumentException(
                 'A guide experience must have an identifier.'
             );
         }
 
-        if (isset($this->experiences[$identifier])) {
+        if ( isset( $this->experiences[$identifier] ) ) {
             throw new LogicException(
                 sprintf(
                     'The guide experience [%s] has already been registered.',
@@ -95,10 +98,10 @@ class GuideService
      *     'gastro.introduction' => [...],
      * ]
      */
-    public function registerMany(array $experiences): static
+    public function registerMany( array $experiences ): static
     {
-        foreach ($experiences as $identifier => $definition) {
-            $this->register($identifier, $definition);
+        foreach ( $experiences as $identifier => $definition ) {
+            $this->register( $identifier, $definition );
         }
 
         return $this;
@@ -107,17 +110,17 @@ class GuideService
     /**
      * Determine whether an experience has been registered.
      */
-    public function has(string $identifier): bool
+    public function has( string $identifier ): bool
     {
-        return isset($this->experiences[$identifier]);
+        return isset( $this->experiences[$identifier] );
     }
 
     /**
      * Return a registered experience.
      */
-    public function get(string $identifier): array
+    public function get( string $identifier ): array
     {
-        if (! $this->has($identifier)) {
+        if ( ! $this->has( $identifier ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'The guide experience [%s] is not registered.',
@@ -134,7 +137,7 @@ class GuideService
      */
     public function all(): array
     {
-        return array_values($this->experiences);
+        return array_values( $this->experiences );
     }
 
     /**
@@ -145,7 +148,7 @@ class GuideService
         $available = array_values(
             array_filter(
                 $this->experiences,
-                fn (array $experience) => $this->hasRequiredPermissions(
+                fn ( array $experience ) => $this->hasRequiredPermissions(
                     $experience
                 )
             )
@@ -164,7 +167,7 @@ class GuideService
         return array_values(
             array_filter(
                 $this->experiences,
-                fn (array $experience) => $this->isCompleted(
+                fn ( array $experience ) => $this->isCompleted(
                     $experience['id']
                 )
             )
@@ -194,7 +197,7 @@ class GuideService
         return array_values(
             array_filter(
                 $this->experiences,
-                fn (array $experience) => $this->isDismissed(
+                fn ( array $experience ) => $this->isDismissed(
                     $experience['id']
                 )
             )
@@ -210,8 +213,8 @@ class GuideService
     {
         return array_values(
             array_filter(
-                $this->available($route),
-                fn (array $experience) => $this->shouldOffer(
+                $this->available( $route ),
+                fn ( array $experience ) => $this->shouldOffer(
                     $experience['id']
                 )
             )
@@ -221,11 +224,11 @@ class GuideService
     /**
      * Determine whether the current user may run an experience.
      */
-    public function canRun(string $identifier): bool
+    public function canRun( string $identifier ): bool
     {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        return $this->hasRequiredPermissions($experience);
+        return $this->hasRequiredPermissions( $experience );
     }
 
     /**
@@ -233,22 +236,22 @@ class GuideService
      *
      * A new experience version becomes available again automatically.
      */
-    public function shouldOffer(string $identifier, string | null $route = null ): bool
+    public function shouldOffer( string $identifier, ?string $route = null ): bool
     {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        if (! $this->hasRequiredPermissions($experience)) {
+        if ( ! $this->hasRequiredPermissions( $experience ) ) {
             return false;
         }
 
-        $state = $this->state($identifier);
+        $state = $this->state( $identifier );
 
         /**
          * The user's saved state belongs to an older version.
          *
          * The experience may therefore be shown again.
          */
-        if ($state['version'] < $experience['version']) {
+        if ( $state['version'] < $experience['version'] ) {
             return true;
         }
 
@@ -265,28 +268,28 @@ class GuideService
     /**
      * Get the current user's state for an experience.
      */
-    public function state(string $identifier): array
+    public function state( string $identifier ): array
     {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
         $state = $this->userOptions->get(
-            $this->optionKey($identifier),
+            $this->optionKey( $identifier ),
             null
         );
 
-        if (! is_array($state)) {
-            return $this->defaultState($experience);
+        if ( ! is_array( $state ) ) {
+            return $this->defaultState( $experience );
         }
 
         /**
          * Protect against hash/key collision or malformed data.
          */
-        if (($state['experience'] ?? null) !== $identifier) {
-            return $this->defaultState($experience);
+        if ( ( $state['experience'] ?? null ) !== $identifier ) {
+            return $this->defaultState( $experience );
         }
 
         return array_merge(
-            $this->defaultState($experience),
+            $this->defaultState( $experience ),
             $state
         );
     }
@@ -294,26 +297,26 @@ class GuideService
     /**
      * Start or resume an experience.
      */
-    public function start(string $identifier): array
+    public function start( string $identifier ): array
     {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
-        $state = $this->state($identifier);
+        $state = $this->state( $identifier );
 
         /**
          * If this is a newer experience version, start fresh.
          */
-        if ($state['version'] < $experience['version']) {
-            $state = $this->defaultState($experience);
+        if ( $state['version'] < $experience['version'] ) {
+            $state = $this->defaultState( $experience );
         }
 
-        if ($state['status'] === self::STATUS_COMPLETED) {
+        if ( $state['status'] === self::STATUS_COMPLETED ) {
             return $state;
         }
 
-        if ($state['status'] === self::STATUS_DISMISSED) {
+        if ( $state['status'] === self::STATUS_DISMISSED ) {
             /**
              * Explicit start means the user intentionally started it again.
              */
@@ -323,15 +326,15 @@ class GuideService
         $state['status'] = self::STATUS_IN_PROGRESS;
         $state['version'] = $experience['version'];
 
-        if (! $state['started_at']) {
+        if ( ! $state['started_at'] ) {
             $state['started_at'] = now()->toISOString();
         }
 
-        if (! $state['current_step']) {
-            $state['current_step'] = $this->firstStepId($experience);
+        if ( ! $state['current_step'] ) {
+            $state['current_step'] = $this->firstStepId( $experience );
         }
 
-        $this->saveState($identifier, $state);
+        $this->saveState( $identifier, $state );
 
         return $state;
     }
@@ -345,11 +348,11 @@ class GuideService
         string $identifier,
         string $stepIdentifier
     ): array {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
-        if (! $this->stepExists($experience, $stepIdentifier)) {
+        if ( ! $this->stepExists( $experience, $stepIdentifier ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'The step [%s] does not exist in experience [%s].',
@@ -359,24 +362,24 @@ class GuideService
             );
         }
 
-        $state = $this->state($identifier);
+        $state = $this->state( $identifier );
 
         /**
          * An action against an old guide version starts the current version.
          */
-        if ($state['version'] < $experience['version']) {
-            $state = $this->start($identifier);
+        if ( $state['version'] < $experience['version'] ) {
+            $state = $this->start( $identifier );
         }
 
-        if ($state['status'] !== self::STATUS_IN_PROGRESS) {
-            $state = $this->start($identifier);
+        if ( $state['status'] !== self::STATUS_IN_PROGRESS ) {
+            $state = $this->start( $identifier );
         }
 
-        if (! in_array(
+        if ( ! in_array(
             $stepIdentifier,
             $state['completed_steps'],
             true
-        )) {
+        ) ) {
             $state['completed_steps'][] = $stepIdentifier;
         }
 
@@ -385,13 +388,13 @@ class GuideService
             $state['completed_steps']
         );
 
-        if ($nextStep === null) {
-            return $this->complete($identifier, $state);
+        if ( $nextStep === null ) {
+            return $this->complete( $identifier, $state );
         }
 
         $state['current_step'] = $nextStep;
 
-        $this->saveState($identifier, $state);
+        $this->saveState( $identifier, $state );
 
         return $state;
     }
@@ -405,13 +408,13 @@ class GuideService
         string $identifier,
         string $stepIdentifier
     ): array {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
-        $step = $this->findStep($experience, $stepIdentifier);
+        $step = $this->findStep( $experience, $stepIdentifier );
 
-        if ($step === null) {
+        if ( $step === null ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'The step [%s] does not exist in experience [%s].',
@@ -421,7 +424,7 @@ class GuideService
             );
         }
 
-        if (! ($step['skippable'] ?? true)) {
+        if ( ! ( $step['skippable'] ?? true ) ) {
             throw new RuntimeException(
                 sprintf(
                     'The step [%s] cannot be skipped.',
@@ -430,38 +433,38 @@ class GuideService
             );
         }
 
-        $state = $this->state($identifier);
+        $state = $this->state( $identifier );
 
-        if ($state['version'] < $experience['version']) {
-            $state = $this->start($identifier);
+        if ( $state['version'] < $experience['version'] ) {
+            $state = $this->start( $identifier );
         }
 
-        if (! in_array(
+        if ( ! in_array(
             $stepIdentifier,
             $state['skipped_steps'],
             true
-        )) {
+        ) ) {
             $state['skipped_steps'][] = $stepIdentifier;
         }
 
-        $finishedSteps = array_unique([
+        $finishedSteps = array_unique( [
             ...$state['completed_steps'],
             ...$state['skipped_steps'],
-        ]);
+        ] );
 
         $nextStep = $this->nextIncompleteStep(
             $experience,
             $finishedSteps
         );
 
-        if ($nextStep === null) {
-            return $this->complete($identifier, $state);
+        if ( $nextStep === null ) {
+            return $this->complete( $identifier, $state );
         }
 
         $state['current_step'] = $nextStep;
         $state['status'] = self::STATUS_IN_PROGRESS;
 
-        $this->saveState($identifier, $state);
+        $this->saveState( $identifier, $state );
 
         return $state;
     }
@@ -475,11 +478,11 @@ class GuideService
         string $identifier,
         string $stepIdentifier
     ): array {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
-        if (! $this->stepExists($experience, $stepIdentifier)) {
+        if ( ! $this->stepExists( $experience, $stepIdentifier ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Unknown experience step [%s].',
@@ -488,16 +491,16 @@ class GuideService
             );
         }
 
-        $state = $this->state($identifier);
+        $state = $this->state( $identifier );
 
-        if ($state['version'] < $experience['version']) {
-            $state = $this->start($identifier);
+        if ( $state['version'] < $experience['version'] ) {
+            $state = $this->start( $identifier );
         }
 
         $state['status'] = self::STATUS_IN_PROGRESS;
         $state['current_step'] = $stepIdentifier;
 
-        $this->saveState($identifier, $state);
+        $this->saveState( $identifier, $state );
 
         return $state;
     }
@@ -509,11 +512,11 @@ class GuideService
         string $identifier,
         ?array $state = null
     ): array {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
-        $state ??= $this->state($identifier);
+        $state ??= $this->state( $identifier );
 
         $state['version'] = $experience['version'];
         $state['status'] = self::STATUS_COMPLETED;
@@ -521,7 +524,7 @@ class GuideService
         $state['completed_at'] = now()->toISOString();
         $state['dismissed_at'] = null;
 
-        $this->saveState($identifier, $state);
+        $this->saveState( $identifier, $state );
 
         return $state;
     }
@@ -531,20 +534,20 @@ class GuideService
      *
      * It will not be automatically proposed again until its version changes.
      */
-    public function dismiss(string $identifier): array
+    public function dismiss( string $identifier ): array
     {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
-        $state = $this->state($identifier);
+        $state = $this->state( $identifier );
 
         $state['version'] = $experience['version'];
         $state['status'] = self::STATUS_DISMISSED;
         $state['current_step'] = null;
         $state['dismissed_at'] = now()->toISOString();
 
-        $this->saveState($identifier, $state);
+        $this->saveState( $identifier, $state );
 
         return $state;
     }
@@ -552,31 +555,31 @@ class GuideService
     /**
      * Completely reset an experience for the current user.
      */
-    public function reset(string $identifier): void
+    public function reset( string $identifier ): void
     {
-        $this->get($identifier);
+        $this->get( $identifier );
 
         $this->userOptions->delete(
-            $this->optionKey($identifier)
+            $this->optionKey( $identifier )
         );
     }
 
     /**
      * Restart an experience even if it was completed or dismissed.
      */
-    public function restart(string $identifier): array
+    public function restart( string $identifier ): array
     {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
-        $state = $this->defaultState($experience);
+        $state = $this->defaultState( $experience );
 
         $state['status'] = self::STATUS_IN_PROGRESS;
         $state['started_at'] = now()->toISOString();
-        $state['current_step'] = $this->firstStepId($experience);
+        $state['current_step'] = $this->firstStepId( $experience );
 
-        $this->saveState($identifier, $state);
+        $this->saveState( $identifier, $state );
 
         return $state;
     }
@@ -586,16 +589,16 @@ class GuideService
      *
      * This is useful directly from an API controller.
      */
-    public function payload(string $identifier): array
+    public function payload( string $identifier ): array
     {
-        $experience = $this->get($identifier);
+        $experience = $this->get( $identifier );
 
-        $this->assertUserCanRun($experience);
+        $this->assertUserCanRun( $experience );
 
         return [
             'experience' => $experience,
-            'state' => $this->state($identifier),
-            'progress' => $this->progress($identifier),
+            'state' => $this->state( $identifier ),
+            'progress' => $this->progress( $identifier ),
         ];
     }
 
@@ -605,7 +608,7 @@ class GuideService
     public function payloads(): array
     {
         return array_map(
-            fn (array $experience) => $this->payload(
+            fn ( array $experience ) => $this->payload(
                 $experience['id']
             ),
             $this->available()
@@ -615,26 +618,26 @@ class GuideService
     /**
      * Calculate the current user's progress.
      */
-    public function progress(string $identifier): array
+    public function progress( string $identifier ): array
     {
-        $experience = $this->get($identifier);
-        $state = $this->state($identifier);
+        $experience = $this->get( $identifier );
+        $state = $this->state( $identifier );
 
-        $total = count($experience['steps']);
+        $total = count( $experience['steps'] );
 
         $finished = count(
-            array_unique([
+            array_unique( [
                 ...$state['completed_steps'],
                 ...$state['skipped_steps'],
-            ])
+            ] )
         );
 
         return [
             'total' => $total,
-            'completed' => min($finished, $total),
+            'completed' => min( $finished, $total ),
 
             'percentage' => $total > 0
-                ? (int) round(($finished / $total) * 100)
+                ? (int) round( ( $finished / $total ) * 100 )
                 : 100,
         ];
     }
@@ -642,10 +645,10 @@ class GuideService
     /**
      * Determine whether the current version has already been completed.
      */
-    public function isCompleted(string $identifier): bool
+    public function isCompleted( string $identifier ): bool
     {
-        $experience = $this->get($identifier);
-        $state = $this->state($identifier);
+        $experience = $this->get( $identifier );
+        $state = $this->state( $identifier );
 
         return $state['status'] === self::STATUS_COMPLETED
             && $state['version'] >= $experience['version'];
@@ -654,10 +657,10 @@ class GuideService
     /**
      * Determine wether the current version has been dismissed.
      */
-    public function isDismissed(string $identifier): bool
+    public function isDismissed( string $identifier ): bool
     {
-        $experience = $this->get($identifier);
-        $state = $this->state($identifier);
+        $experience = $this->get( $identifier );
+        $state = $this->state( $identifier );
 
         return $state['status'] === self::STATUS_DISMISSED
             && $state['version'] >= $experience['version'];
@@ -670,7 +673,7 @@ class GuideService
      *
      * function ($user, string $permission): bool
      */
-    public function resolvePermissionsUsing(Closure $callback): static
+    public function resolvePermissionsUsing( Closure $callback ): static
     {
         $this->permissionChecker = $callback;
 
@@ -684,7 +687,7 @@ class GuideService
         /**
          * Validate experience title.
          */
-        if (empty($definition['title'])) {
+        if ( empty( $definition['title'] ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Experience [%s] requires a title.',
@@ -711,13 +714,13 @@ class GuideService
             ?? $definition['permission']
             ?? null;
 
-        if (is_string($permissions)) {
+        if ( is_string( $permissions ) ) {
             $permissions = [$permissions];
         }
 
         if (
-            ! is_array($permissions)
-            || count(array_filter($permissions)) === 0
+            ! is_array( $permissions )
+            || count( array_filter( $permissions ) ) === 0
         ) {
             throw new InvalidArgumentException(
                 sprintf(
@@ -733,14 +736,14 @@ class GuideService
         $permissionMode = $definition['permission_mode']
             ?? self::PERMISSION_ALL;
 
-        if (! in_array(
+        if ( ! in_array(
             $permissionMode,
             [
                 self::PERMISSION_ALL,
                 self::PERMISSION_ANY,
             ],
             true
-        )) {
+        ) ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Invalid permission mode [%s].',
@@ -754,7 +757,7 @@ class GuideService
          */
         $steps = $definition['steps'] ?? [];
 
-        if (! is_array($steps) || count($steps) === 0) {
+        if ( ! is_array( $steps ) || count( $steps ) === 0 ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Experience [%s] must contain at least one step.',
@@ -766,11 +769,11 @@ class GuideService
         $normalizedSteps = [];
         $stepIdentifiers = [];
 
-        foreach ($steps as $index => $step) {
+        foreach ( $steps as $index => $step ) {
             /**
              * Guide::step() should return an array.
              */
-            if (! is_array($step)) {
+            if ( ! is_array( $step ) ) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Step #%d of experience [%s] is invalid.',
@@ -784,10 +787,10 @@ class GuideService
              * Validate the unique step ID.
              */
             $stepId = trim(
-                (string) ($step['id'] ?? '')
+                (string) ( $step['id'] ?? '' )
             );
 
-            if ($stepId === '') {
+            if ( $stepId === '' ) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Step #%d of experience [%s] requires an ID.',
@@ -797,7 +800,7 @@ class GuideService
                 );
             }
 
-            if (in_array($stepId, $stepIdentifiers, true)) {
+            if ( in_array( $stepId, $stepIdentifiers, true ) ) {
                 throw new LogicException(
                     sprintf(
                         'Duplicate step [%s] in experience [%s].',
@@ -819,8 +822,8 @@ class GuideService
             $element = $step['element'] ?? null;
 
             if (
-                ! is_string($element)
-                || trim($element) === ''
+                ! is_string( $element )
+                || trim( $element ) === ''
             ) {
                 throw new InvalidArgumentException(
                     sprintf(
@@ -836,7 +839,7 @@ class GuideService
              */
             $popover = $step['popover'] ?? null;
 
-            if (! is_array($popover)) {
+            if ( ! is_array( $popover ) ) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Step [%s] of experience [%s] requires a valid popover.',
@@ -857,8 +860,8 @@ class GuideService
              * ]
              */
             if (
-                ! array_key_exists('title', $popover)
-                || ! is_string($popover['title'])
+                ! array_key_exists( 'title', $popover )
+                || ! is_string( $popover['title'] )
             ) {
                 throw new InvalidArgumentException(
                     sprintf(
@@ -870,8 +873,8 @@ class GuideService
             }
 
             if (
-                ! array_key_exists('description', $popover)
-                || ! is_string($popover['description'])
+                ! array_key_exists( 'description', $popover )
+                || ! is_string( $popover['description'] )
             ) {
                 throw new InvalidArgumentException(
                     sprintf(
@@ -888,7 +891,7 @@ class GuideService
             $side = $popover['side'] ?? 'top';
             $align = $popover['align'] ?? 'center';
 
-            if (! in_array(
+            if ( ! in_array(
                 $side,
                 [
                     'top',
@@ -897,7 +900,7 @@ class GuideService
                     'left',
                 ],
                 true
-            )) {
+            ) ) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Invalid popover side [%s] for step [%s] of experience [%s].',
@@ -908,7 +911,7 @@ class GuideService
                 );
             }
 
-            if (! in_array(
+            if ( ! in_array(
                 $align,
                 [
                     'start',
@@ -916,7 +919,7 @@ class GuideService
                     'end',
                 ],
                 true
-            )) {
+            ) ) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Invalid popover alignment [%s] for step [%s] of experience [%s].',
@@ -948,7 +951,7 @@ class GuideService
             $normalizedStep = $step;
 
             $normalizedStep['id'] = $stepId;
-            $normalizedStep['element'] = trim($element);
+            $normalizedStep['element'] = trim( $element );
             $normalizedStep['popover'] = $normalizedPopover;
 
             $normalizedSteps[] = $normalizedStep;
@@ -982,12 +985,12 @@ class GuideService
              */
             'version' => max(
                 1,
-                (int) ($definition['version'] ?? 1)
+                (int) ( $definition['version'] ?? 1 )
             ),
 
             'permissions' => array_values(
                 array_unique(
-                    array_filter($permissions)
+                    array_filter( $permissions )
                 )
             ),
 
@@ -1021,7 +1024,7 @@ class GuideService
     /**
      * Default state of an experience for a user.
      */
-    protected function defaultState(array $experience): array
+    protected function defaultState( array $experience ): array
     {
         return [
             'experience' => $experience['id'],
@@ -1047,7 +1050,7 @@ class GuideService
         array $state
     ): void {
         $this->userOptions->set(
-            $this->optionKey($identifier),
+            $this->optionKey( $identifier ),
             $state,
             null
         );
@@ -1058,20 +1061,20 @@ class GuideService
      *
      * The experience ID is stored inside the value as well.
      */
-    protected function optionKey(string $identifier): string
+    protected function optionKey( string $identifier ): string
     {
         return sprintf(
             'nexopos_guidance_%s',
-            sha1($identifier)
+            sha1( $identifier )
         );
     }
 
     /**
      * Ensure the current user is authorized.
      */
-    protected function assertUserCanRun(array $experience): void
+    protected function assertUserCanRun( array $experience ): void
     {
-        if (! $this->hasRequiredPermissions($experience)) {
+        if ( ! $this->hasRequiredPermissions( $experience ) ) {
             throw new RuntimeException(
                 sprintf(
                     'The current user cannot access guide experience [%s].',
@@ -1089,15 +1092,15 @@ class GuideService
     ): bool {
         $user = Auth::user();
 
-        if (! $user) {
+        if ( ! $user ) {
             return false;
         }
 
         $permissions = $experience['permissions'];
 
-        if ($experience['permission_mode'] === self::PERMISSION_ANY) {
-            foreach ($permissions as $permission) {
-                if ($this->userCan($user, $permission)) {
+        if ( $experience['permission_mode'] === self::PERMISSION_ANY ) {
+            foreach ( $permissions as $permission ) {
+                if ( $this->userCan( $user, $permission ) ) {
                     return true;
                 }
             }
@@ -1105,8 +1108,8 @@ class GuideService
             return false;
         }
 
-        foreach ($permissions as $permission) {
-            if (! $this->userCan($user, $permission)) {
+        foreach ( $permissions as $permission ) {
+            if ( ! $this->userCan( $user, $permission ) ) {
                 return false;
             }
         }
@@ -1124,7 +1127,7 @@ class GuideService
         Authenticatable $user,
         string $permission
     ): bool {
-        if ($this->permissionChecker) {
+        if ( $this->permissionChecker ) {
             return (bool) call_user_func(
                 $this->permissionChecker,
                 $user,
@@ -1132,10 +1135,10 @@ class GuideService
             );
         }
 
-        return Gate::forUser($user)->check($permission);
+        return Gate::forUser( $user )->check( $permission );
     }
 
-    protected function firstStepId(array $experience): ?string
+    protected function firstStepId( array $experience ): ?string
     {
         return $experience['steps'][0]['id']
             ?? null;
@@ -1155,8 +1158,8 @@ class GuideService
         array $experience,
         string $stepIdentifier
     ): ?array {
-        foreach ($experience['steps'] as $step) {
-            if ($step['id'] === $stepIdentifier) {
+        foreach ( $experience['steps'] as $step ) {
+            if ( $step['id'] === $stepIdentifier ) {
                 return $step;
             }
         }
@@ -1171,12 +1174,12 @@ class GuideService
         array $experience,
         array $finishedSteps
     ): ?string {
-        foreach ($experience['steps'] as $step) {
-            if (! in_array(
+        foreach ( $experience['steps'] as $step ) {
+            if ( ! in_array(
                 $step['id'],
                 $finishedSteps,
                 true
-            )) {
+            ) ) {
                 return $step['id'];
             }
         }

@@ -35,7 +35,7 @@ class AutoTranslateCommand extends Command
 
     public function handle(): int
     {
-        $endpoint = rtrim( env( 'TRANSLATOR_ENDPOINT', '' ), '/' );
+        $endpoint = rtrim( (string) config( 'services.translator.endpoint', '' ), '/' );
         if ( empty( $endpoint ) ) {
             $this->error( 'TRANSLATOR_ENDPOINT not configured in .env' );
 
@@ -99,6 +99,7 @@ class AutoTranslateCommand extends Command
 
         $force = (bool) $this->option( 'force' );
         $dry = (bool) $this->option( 'dry' );
+        $hasErrors = false;
 
         foreach ( $targetFiles as $file ) {
             $basename = basename( $file );
@@ -127,7 +128,6 @@ class AutoTranslateCommand extends Command
             $this->output->progressStart( $total );
             foreach ( $keys as $key ) {
                 $this->output->progressAdvance();
-                $currentValue = $data[$key] ?? null;
                 $needsTranslation = $force || ! array_key_exists( $key, $data ) || $data[$key] === '' || $data[$key] === $en[$key];
                 if ( ! $needsTranslation ) {
                     $skipped++;
@@ -141,15 +141,19 @@ class AutoTranslateCommand extends Command
                     'content' => $key,
                 ];
                 try {
-                    $response = Http::timeout( 30 )->post( $endpoint . '/translate', $payload );
+                    $response = Http::connectTimeout( 10 )->timeout( 30 )->post( $endpoint . '/translate', $payload );
                     if ( $response->failed() ) {
                         $errors++;
+                        $responseBody = Str::limit( Str::squish( $response->body() ), 200 );
+                        $details = $responseBody !== '' ? " Response: {$responseBody}" : '';
+                        $this->error( "Translator returned HTTP {$response->status()} while translating '{$key}'.{$details}" );
 
                         continue;
                     }
                     $json = $response->json();
-                    if ( ! is_array( $json ) || ! array_key_exists( 'translated', $json ) ) {
+                    if ( ! is_array( $json ) || ! isset( $json['translated'] ) || ! is_string( $json['translated'] ) ) {
                         $errors++;
+                        $this->error( "Translator returned an invalid response while translating '{$key}'." );
 
                         continue;
                     }
@@ -161,6 +165,7 @@ class AutoTranslateCommand extends Command
                 }
             }
             $this->output->progressFinish();
+            $hasErrors = $hasErrors || $errors > 0;
 
             ksort( $data ); // stable order by key alpha
             if ( ! $dry ) {
@@ -171,6 +176,12 @@ class AutoTranslateCommand extends Command
             if ( $dry ) {
                 $this->comment( 'Dry run: no file written.' );
             }
+        }
+
+        if ( $hasErrors ) {
+            $this->error( 'Auto translation completed with errors.' );
+
+            return self::FAILURE;
         }
 
         $this->info( 'Auto translation complete.' );

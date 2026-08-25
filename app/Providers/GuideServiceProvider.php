@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Providers;
 
-use App\Classes\Guide;
 use App\Guides\DashboardGuide;
 use App\Guides\ProcurementGuide;
 use App\Guides\ProductGuide;
@@ -13,7 +13,7 @@ class GuideServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $guideService   =   app()->make( GuideService::class );
+        $guideService = app()->make( GuideService::class );
 
         $this->setMainGuide( $guideService );
     }

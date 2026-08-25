@@ -99,7 +99,7 @@ class Options
     /**
      * Set Option
      **/
-    public function set( string $key, mixed $value, string | null $expiration = null )
+    public function set( string $key, mixed $value, ?string $expiration = null )
     {
         if ( isset( $this->rawOptions[ $key ] ) ) {
             $this->rawOptions[ $key ]->value = $value;

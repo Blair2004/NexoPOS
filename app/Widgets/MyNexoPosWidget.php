@@ -11,7 +11,7 @@ class MyNexoPosWidget extends WidgetService
     protected string $layout = '1x3';
 
     protected string $layoutPolicy = 'restricted';
-        
+
     protected array $supportedLayouts = [ '1x3', '1x2', '2x3' ];
 
     public function __construct()

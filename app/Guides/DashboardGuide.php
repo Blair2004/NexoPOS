@@ -12,7 +12,7 @@ class DashboardGuide
             'dashboard.guide',
             Guide::experience(
                 id: 'dashboard.guide',
-                title: __('Welcome to NexoPOS'),
+                title: __( 'Welcome to NexoPOS' ),
                 description: __(
                     'Take a quick tour of your dashboard and discover the main areas of NexoPOS.'
                 ),
@@ -24,7 +24,7 @@ class DashboardGuide
                         id: 'dashboard-overview',
                         element: '#aside-menu',
                         popover: Guide::popover(
-                            title: __('Your Menu'),
+                            title: __( 'Your Menu' ),
 
                             description: __(
                                 'Use this side menu to access various areas within NexoPOS including settings, inventory, orders, customers and users.'
@@ -39,7 +39,7 @@ class DashboardGuide
                         id: 'main-navigation',
                         element: '[data-widget-identifier="nsIncompleteSaleCardWidget"]',
                         popover: Guide::popover(
-                            title: __('Dashboard Widgets'),
+                            title: __( 'Dashboard Widgets' ),
 
                             description: __(
                                 'These are dashboard widgets that provide quick insights into your store\'s performance.'
@@ -61,7 +61,7 @@ class DashboardGuide
                         element: '#submenu-general',
 
                         popover: Guide::popover(
-                            title: __('Configure your store'),
+                            title: __( 'Configure your store' ),
 
                             description: __(
                                 'You probably want to get started by configuring your store, including: your store name, currency, datetime format.'
@@ -85,7 +85,7 @@ class DashboardGuide
                         element: '#menu-inventory',
 
                         popover: Guide::popover(
-                            title: __('Inventory'),
+                            title: __( 'Inventory' ),
 
                             description: __(
                                 'Inventory contains everything you need to manage products, categories, units, suppliers, procurements, and stock.'
@@ -107,7 +107,7 @@ class DashboardGuide
                         element: '#menu-orders',
 
                         popover: Guide::popover(
-                            title: __('Orders'),
+                            title: __( 'Orders' ),
 
                             description: __(
                                 'Every sale created with NexoPOS is recorded as an order. You can review previous transactions from here.'
@@ -129,7 +129,7 @@ class DashboardGuide
                         element: '#menu-customers',
 
                         popover: Guide::popover(
-                            title: __('Customers'),
+                            title: __( 'Customers' ),
 
                             description: __(
                                 'Manage your customers and keep track of their purchases and account information from this section.'
@@ -151,7 +151,7 @@ class DashboardGuide
                         element: '#menu-reports',
 
                         popover: Guide::popover(
-                            title: __('Reports'),
+                            title: __( 'Reports' ),
 
                             description: __(
                                 'Reports help you understand how your store is performing by providing information about sales, inventory, customers, and other activities.'

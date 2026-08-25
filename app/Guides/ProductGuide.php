@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Guides;
 
 use App\Classes\Guide;
@@ -104,7 +105,7 @@ class ProductGuide
                             title: __( 'Create Unit Group' ),
                             description: __( 'You can create a unit group. For countable products, you can create a unit group named "Countable".' ),
                             side: 'bottom'
-                        ), 
+                        ),
                     ),
                     Guide::step(
                         id: 'product.accurate_tracking',
@@ -113,7 +114,7 @@ class ProductGuide
                             title: __( 'Accurate Tracking' ),
                             description: __( 'By enabling this options, NexoPOS will be able to the product sold. This will be useful to determine on which purchase order the procurement was provided.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                     ),
                     Guide::step(
                         id: 'product.auto_cogs',
@@ -122,7 +123,7 @@ class ProductGuide
                             title: __( 'Auto COGS' ),
                             description: __( 'If enabled, the Cost Of Good Sold will be automatically computed from the purchase price during the procurement. If set to no, you can manually define the COGS.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                         nextAction: [
                             'type' => 'click',
                             'element' => '#tab-expiry',
@@ -135,7 +136,7 @@ class ProductGuide
                             title: __( 'Product Expiry' ),
                             description: __( 'If the product likely to expire, you can enable that here. Note that the expiry of each purchased product is determined during the procurement, so each batch product will have different expiration time.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                     ),
                     Guide::step(
                         id: 'product.on_expiration',
@@ -144,7 +145,7 @@ class ProductGuide
                             title: __( 'On Expiration' ),
                             description: __( 'choose the action to execute when the product expires.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                         nextAction: [
                             'type' => 'click',
                             'element' => '#tab-taxes',
@@ -157,7 +158,7 @@ class ProductGuide
                             title: __( 'Tax Group' ),
                             description: __( 'If you have already created a tax group, you can assign that group here. You might eventually create a tax group if that doesn\'t yet exist.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                     ),
                     Guide::step(
                         id: 'product.tax_type',
@@ -166,7 +167,7 @@ class ProductGuide
                             title: __( 'Tax Type' ),
                             description: __( 'Set if your tax should be inclusive or exclusive.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                         nextAction: [
                             'type' => 'click',
                             'element' => '#tab-images',
@@ -179,7 +180,7 @@ class ProductGuide
                             title: __( 'Create Product' ),
                             description: __( 'A visual representation of a product helps cashier to identify product quickly if they are using the product grid.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                         nextAction: [
                             'type' => 'click',
                             'element' => '#create-image',
@@ -192,7 +193,7 @@ class ProductGuide
                             title: __( 'Choose Your Image' ),
                             description: __( 'Use the media library to upload your product images.' ),
                             side: 'bottom'
-                        ), 
+                        ),
                         waitForElement: 500,
                         nextAction: [
                             'type' => 'click',

@@ -1125,7 +1125,7 @@ trait WithOrderTest
                 $products = isset( $orderDetails[ 'productsRequest' ] ) ? $orderDetails[ 'productsRequest' ]() : Product::notGrouped()
                     ->notInGroup()
                     ->with( 'unit_quantities' )
-                    ->limit(1)
+                    ->limit( 1 )
                     ->get();
 
                 $products = $products->map( function ( $product ) use ( $faker, $taxService ) {
