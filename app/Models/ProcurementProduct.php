@@ -8,32 +8,33 @@ use App\Events\ProcurementProductAfterUpdateEvent;
 use App\Events\ProcurementProductBeforeCreateEvent;
 use App\Events\ProcurementProductBeforeDeleteEvent;
 use App\Events\ProcurementProductBeforeUpdateEvent;
+use Carbon\Carbon;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property mixed          $name
- * @property float          $gross_purchase_price
- * @property float          $net_purchase_price
- * @property int            $procurement_id
- * @property int            $product_id
- * @property float          $purchase_price
- * @property float          $quantity
- * @property float          $available_quantity
- * @property int            $tax_group_id
- * @property mixed          $barcode
- * @property \Carbon\Carbon $expiration_date
- * @property mixed          $tax_type
- * @property float          $tax_value
- * @property float          $total_purchase_price
- * @property int            $unit_id
- * @property int            $convert_unit_id
- * @property float          $cogs
- * @property int            $author_id
- * @property mixed          $uuid
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property mixed  $name
+ * @property float  $gross_purchase_price
+ * @property float  $net_purchase_price
+ * @property int    $procurement_id
+ * @property int    $product_id
+ * @property float  $purchase_price
+ * @property float  $quantity
+ * @property float  $available_quantity
+ * @property int    $tax_group_id
+ * @property mixed  $barcode
+ * @property Carbon $expiration_date
+ * @property mixed  $tax_type
+ * @property float  $tax_value
+ * @property float  $total_purchase_price
+ * @property int    $unit_id
+ * @property int    $convert_unit_id
+ * @property float  $cogs
+ * @property int    $author_id
+ * @property mixed  $uuid
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class ProcurementProduct extends NsModel
 {

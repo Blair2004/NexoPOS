@@ -1,9 +1,12 @@
 <template>
     <div id="ns-profile" class="flex ns-box flex-auto flex-col shadow rounded-lg overflow-hidden">
-        <div class="flex-auto">
+        <div class="flex-auto flex flex-col">
             <div class="head text-center ns-box-header border-b w-full flex justify-between items-center p-2">
                 <h5>{{ __( 'Profile' ) }}</h5>
                 <div class="flex -mx-1">
+                    <div class="px-1">
+                        <ns-widget-layout-selector :widget="widget"></ns-widget-layout-selector>
+                    </div>
                     <div class="px-1">
                         <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
                     </div>
@@ -15,8 +18,8 @@
                     </div>
                 </div>
             </div>
-            <div class="body">
-                <div class="h-40 flex items-center justify-center">
+            <div class="body flex flex-col flex-auto">
+                <div class="flex-auto flex items-center justify-center">
                     <div class="rounded-full border-4 border-secondary bg-white shadow-lg overflow-hidden">
                         <ns-avatar-image  :size="32" :url="user.attributes.avatar_link" :name="user.username"></ns-avatar-image>
                     </div>
@@ -41,6 +44,7 @@ import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-profile-widget',
     components: { nsAvatarImage },
+    props: [ 'widget' ],
     data() {
         return {
             svg: '',

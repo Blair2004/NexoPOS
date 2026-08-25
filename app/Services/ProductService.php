@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductService
@@ -1085,8 +1086,8 @@ class ProductService
     /**
      * get product variation
      *
-     * @param int|Product
-     * @return Collection<Product> variation
+     * @param  int|Product         $product Product id or instance
+     * @return Collection<Product>
      */
     public function getProductVariations( $product = null )
     {
@@ -1200,6 +1201,14 @@ class ProductService
      */
     public function stockAdjustment( string $action, array $data ): ProductHistory|EloquentCollection|bool
     {
+        return DB::transaction(
+            fn() => $this->persistStockAdjustment( $action, $data ),
+            attempts: 3
+        );
+    }
+
+    private function persistStockAdjustment( string $action, array $data ): ProductHistory|EloquentCollection|bool
+    {
         extract( $data, EXTR_REFS );
         /**
          * @var int|null                $product_id
@@ -1276,6 +1285,7 @@ class ProductService
                     orderProduct: isset( $orderProduct ) ? $orderProduct : null,
                     procurementProduct: isset( $procurementProduct ) ? $procurementProduct : null,
                     author: $author ?? 0,
+                    description: $description ?? '',
                 );
             }
         }
@@ -1404,7 +1414,7 @@ class ProductService
     /**
      * Handle stock adjustment for regular products.
      */
-    private function handleStockAdjustmentRegularProducts( string $action, float|int $quantity, int $product_id, int $unit_id, int $author = 0, ?OrderProduct $orderProduct = null, float|int $unit_price = 0, float|int $total_price = 0, ?ProcurementProduct $procurementProduct = null ): ProductHistory
+    private function handleStockAdjustmentRegularProducts( string $action, float|int $quantity, int $product_id, int $unit_id, int $author = 0, ?OrderProduct $orderProduct = null, float|int $unit_price = 0, float|int $total_price = 0, ?ProcurementProduct $procurementProduct = null, string $description = '' ): ProductHistory
     {
         /**
          * we would like to verify if
@@ -1462,7 +1472,8 @@ class ProductService
                 order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
                 order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
                 old_quantity: $result[ 'data' ][ 'oldQuantity' ],
-                new_quantity: $result[ 'data' ][ 'newQuantity' ]
+                new_quantity: $result[ 'data' ][ 'newQuantity' ],
+                description: $description
             );
         } elseif (
             in_array( $action, [ ProductHistory::ACTION_SET ] )
@@ -1507,7 +1518,8 @@ class ProductService
                 order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
                 order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
                 old_quantity: $currentQuantity,
-                new_quantity: $quantity
+                new_quantity: $quantity,
+                description: $description
             );
         }
 
@@ -1541,7 +1553,8 @@ class ProductService
         $procurement_product_id = null,
         $procurement_id = null,
         float|int $old_quantity = 0,
-        float|int $new_quantity = 0 ): ProductHistory
+        float|int $new_quantity = 0,
+        string $description = '' ): ProductHistory
     {
         $history = new ProductHistory;
         $history->product_id = $product_id;
@@ -1553,7 +1566,7 @@ class ProductService
         $history->operation_type = $action;
         $history->unit_price = $unit_price;
         $history->total_price = $total_price;
-        $history->description = $description ?? ''; // a description might be provided to describe the operation
+        $history->description = $description;
         $history->before_quantity = $old_quantity; // if the stock management is 0, it shouldn't change
         $history->quantity = abs( $quantity );
         $history->after_quantity = $new_quantity; // if the stock management is 0, it shouldn't change

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+
 /**
- * @property int            $id
- * @property string         $uuid
- * @property int            $author_id
- * @property bool           $featured
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property string $uuid
+ * @property int    $author_id
+ * @property bool   $featured
+ * @property Carbon $updated_at
  */
 class ProductGallery extends NsModel
 {

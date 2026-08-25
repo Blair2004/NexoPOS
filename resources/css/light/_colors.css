@@ -31,28 +31,28 @@
     --color-input-button-hover: rgb( 228 228 231 );
     --color-input-button-active: rgb( 212 212 216 );
     --color-input-option-hover: rgb( 107 114 128 );
-    --color-input-edge: var( --color-gray-400 );
+    --color-input-edge: var( --color-gray-300 );
     
     /** Box */
     --color-box-edge: var(--color-gray-300);
-    --color-box-background: rgb( 250 250 250 );
+    --color-box-background: var( --color-white );
     --color-box-elevation-background: rgb( 241 245 249 );
     --color-box-elevation-edge: rgb( 203 213 225 );
     --color-box-elevation-hover: rgb( 203 213 225 );
 
     /** CRUD */
-    --color-crud-button-edge: rgb( 209 213 219 );
-    --color-crud-input-background: rgb( 209 213 219 );
+    --color-crud-button-edge: var( --color-gray-300 );
+    --color-crud-input-background: var( --color-gray-300 );
 
     /** POS */
-    --color-pos-button-edge: rgb( 209 213 219 );
+    --color-pos-button-edge: var( --color-gray-300 );
 
     /** Numpad */
     --color-numpad-background: var( --color-gray-300 );
     --color-numpad-typography: rgb( 55 65 81 );
     --color-numpad-edge: var( --color-gray-300 );
     --color-numpad-hover: var( --color-gray-200 );
-    --color-numpad-hover-edge: rgb( 209 213 219 );
+    --color-numpad-hover-edge: var( --color-gray-300 );
 
     /** Option */
     --color-option-hover: rgb( 107 114 128 );
@@ -67,14 +67,14 @@
 
     /** Tabs */
     --color-tab-active: var( --color-white );
-    --color-tab-active-border: rgb( 209 213 219 );
+    --color-tab-active-border: var( --color-gray-300 );
     --color-tab-inactive: rgb( 229 231 235 );
-    --color-tab-table-th: rgb( 209 213 219 );
-    --color-tab-table-th-edge: rgb( 209 213 219 );
+    --color-tab-table-th: var( --color-gray-300 );
+    --color-tab-table-th-edge: var( --color-gray-300 );
 
     /** Table */
     --color-table-th: rgb( 229 231 235 );
-    --color-table-th-edge: rgb( 209 213 219 );
+    --color-table-th-edge: var( --color-gray-300 );
 
     /** Floating Menu */
     --color-floating-menu: rgb( 255 255 255 );
@@ -88,13 +88,13 @@
     --color-tertiary: var( --color-teal-700 );
 
     /** Error */
-    --color-error-primary: var( --color-red-400 );
-    --color-error-secondary: var( --color-red-500 );
+    --color-error-primary: var( --color-red-200 );
+    --color-error-secondary: var( --color-red-400 );
     --color-error-tertiary: var( --color-red-600 );
 
     /** Info */
     --color-info-primary: var( --color-blue-200 );
-    --color-info-secondary: var( --color-blue-500 );
+    --color-info-secondary: var( --color-blue-400 );
     --color-info-tertiary: var( --color-blue-600 );
 
     /** Success */

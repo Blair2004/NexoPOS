@@ -2,26 +2,27 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property mixed          $name
- * @property int            $account_id
- * @property string         $description
- * @property int            $media_id
- * @property float          $value
- * @property bool           $recurring
- * @property mixed          $type             / "income" or "expense"
- * @property bool           $active
- * @property int            $group_id
- * @property mixed          $occurrence
- * @property mixed          $occurrence_value
- * @property \Carbon\Carbon $scheduled_date
- * @property int            $author_id
- * @property mixed          $uuid
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property mixed  $name
+ * @property int    $account_id
+ * @property string $description
+ * @property int    $media_id
+ * @property float  $value
+ * @property bool   $recurring
+ * @property mixed  $type             / "income" or "expense"
+ * @property bool   $active
+ * @property int    $group_id
+ * @property mixed  $occurrence
+ * @property mixed  $occurrence_value
+ * @property Carbon $scheduled_date
+ * @property int    $author_id
+ * @property mixed  $uuid
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Transaction extends NsModel
 {

@@ -18,9 +18,9 @@ use App\Models\ProductHistoryCombined;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Resources\Json\PaginatedResourceResponse;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -72,7 +72,7 @@ class ReportService
     /**
      * Will compute the report for the current day
      */
-    public function computeDayReport( string | null $dateStart = null, string | null $dateEnd = null ): DashboardDay
+    public function computeDayReport( ?string $dateStart = null, ?string $dateEnd = null ): DashboardDay
     {
         $this->dayStarts = $dateStart ?: $this->dateService->copy()->startOfDay()->toDateTimeString();
         $this->dayEnds = $dateEnd ?: $this->dateService->copy()->endOfDay()->toDateTimeString();
@@ -221,12 +221,14 @@ class ReportService
     {
         $totalIncome = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( ActiveTransactionHistory::OPERATION_CREDIT )
+            ->operation( TransactionHistory::OPERATION_CREDIT )
+            ->whereHas( 'account', fn( $query ) => $query->where( 'category_identifier', 'revenues' ) )
             ->sum( 'value' );
 
         $totalExpenses = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( ActiveTransactionHistory::OPERATION_DEBIT )
+            ->operation( TransactionHistory::OPERATION_DEBIT )
+            ->whereHas( 'account', fn( $query ) => $query->where( 'category_identifier', 'expenses' ) )
             ->sum( 'value' );
 
         $todayReport->day_expenses = $totalExpenses;
@@ -368,10 +370,6 @@ class ReportService
 
     /**
      * get from a specific date
-     *
-     * @param  string     $startDate
-     * @param  string     $endDate
-     * @return Collection
      */
     public function getFromTimeRange( string $startDate, string $endDate ): Collection
     {
@@ -415,11 +413,6 @@ class ReportService
 
     /**
      * Will return the products report
-     *
-     * @param  string $startDate
-     * @param  string $endDate
-     * @param  string $sort
-     * @return array
      */
     public function getProductSalesDiff( string $startDate, string $endDate, string $sort ): array
     {
@@ -512,10 +505,6 @@ class ReportService
     /**
      * Will proceed the request to the
      * database that returns the products report
-     *
-     * @param  array  $previousDates
-     * @param  string $sort
-     * @return array
      */
     private function getBestRecords( array $previousDates, string $sort ): array
     {
@@ -841,7 +830,7 @@ class ReportService
     /**
      * Will returns the details for a specific cashier
      */
-    public function getCashierDashboard( int $cashier, string $startDate = null, string $endDate = null ): array
+    public function getCashierDashboard( int $cashier, ?string $startDate = null, ?string $endDate = null ): array
     {
         $cacheKey = 'cashier-report-' . $cashier;
 
@@ -1138,7 +1127,16 @@ class ReportService
             ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
             ->sum( 'quantity' );
 
-        $finalQuantity = $initialQuantity + $addedQuantity - $defectiveQuantity - $soldQuantity;
+        $finalQuantity = Hook::filter(
+            'ns-products-history-combined-final-quantity',
+            $initialQuantity + $addedQuantity - $defectiveQuantity - $soldQuantity,
+            $productHistory,
+            [
+                'mode' => 'whole-day',
+                'start' => $startOfDay,
+                'end' => $endOfDay,
+            ]
+        );
 
         $productHistoryCombined = ProductHistoryCombined::where( 'date', $startOfDay->format( 'Y-m-d' ) )
             ->where( 'product_id', $productHistory->product_id )
@@ -1221,11 +1219,21 @@ class ReportService
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
         }
 
-        $currentDetailedHistory->final_quantity = ns()->currency->define( $currentDetailedHistory->initial_quantity )
+        $finalQuantity = ns()->currency->define( $currentDetailedHistory->initial_quantity )
             ->additionateBy( $currentDetailedHistory->procured_quantity )
             ->subtractBy( $currentDetailedHistory->sold_quantity )
             ->subtractBy( $currentDetailedHistory->defective_quantity )
             ->toFloat();
+
+        $currentDetailedHistory->final_quantity = Hook::filter(
+            'ns-products-history-combined-final-quantity',
+            $finalQuantity,
+            $productHistory,
+            [
+                'mode' => 'incremental',
+                'combined' => $currentDetailedHistory,
+            ]
+        );
 
         return $currentDetailedHistory;
     }
@@ -1265,7 +1273,16 @@ class ReportService
             $request->whereIn( 'nexopos_products.category_id', $categories );
         }
 
-        $request->where( 'nexopos_products_histories_combined.date', Carbon::parse( $date )->format( 'Y-m-d' ) );
+        $formattedDate = Carbon::parse( $date )->format( 'Y-m-d' );
+        $request->where( 'nexopos_products_histories_combined.date', $formattedDate );
+
+        $request = Hook::filter(
+            'ns-products-history-combined-query',
+            $request,
+            $formattedDate,
+            $categories,
+            $units
+        );
 
         return $request->get();
     }
@@ -1273,7 +1290,7 @@ class ReportService
     /**
      * Only trigger the job for combined products.
      */
-    public function computeCombinedReport( string | null $date ): array
+    public function computeCombinedReport( ?string $date ): array
     {
         EnsureCombinedProductHistoryExistsJob::dispatch( $date );
 
@@ -1283,7 +1300,7 @@ class ReportService
         ];
     }
 
-    public function getAccountSummaryReport( string | null $startDate = null, string | null $endDate = null ): array
+    public function getAccountSummaryReport( ?string $startDate = null, ?string $endDate = null ): array
     {
         $startDate = $startDate === null ? ns()->date->getNow()->startOfMonth()->toDateTimeString() : $startDate;
         $endDate = $endDate === null ? ns()->date->getNow()->endOfMonth()->toDateTimeString() : $endDate;

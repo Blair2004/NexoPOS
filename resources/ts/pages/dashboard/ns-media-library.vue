@@ -483,7 +483,7 @@ export default {
                                     :class="item.selected ? 'ring-2 ring-info-primary' : ''">
                                     <img v-if="isImage( item )" class="h-full w-full object-cover" :src="item.sizes.thumb || item.sizes.original" :alt="item.name">
                                     <i v-else :class="fileIcons[ item.extension ] || fileIcons.unknown" class="las text-6xl text-white"></i>
-                                    <span v-if="item.selected" class="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-info-primary text-white">
+                                    <span v-if="item.selected" class="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-info-secondary text-white">
                                         <i class="las la-check"></i>
                                     </span>
                                 </button>

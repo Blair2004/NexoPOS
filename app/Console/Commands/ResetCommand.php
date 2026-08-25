@@ -69,7 +69,8 @@ class ResetCommand extends Command
                     'create_sales' => $this->option( 'with-sales' ) && $this->option( 'with-procurements' ) ? true : false,
                     'create_procurements' => $this->option( 'with-procurements' ) ? true : false,
                 ] );
-            return $this->info( __( 'The demo has been enabled.' ) );
+
+                return $this->info( __( 'The demo has been enabled.' ) );
         }
 
         /**

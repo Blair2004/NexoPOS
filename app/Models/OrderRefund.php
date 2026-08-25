@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * @property int            $id
- * @property int            $author_id
- * @property float          $shipping
- * @property string         $payment_method
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property int    $author_id
+ * @property float  $shipping
+ * @property string $payment_method
+ * @property Carbon $updated_at
  */
 class OrderRefund extends NsModel
 {
@@ -30,5 +32,10 @@ class OrderRefund extends NsModel
     public function author()
     {
         return $this->belongsTo( User::class );
+    }
+
+    public function accountingJournals(): MorphMany
+    {
+        return $this->morphMany( AccountingJournal::class, 'source', 'source_type', 'source_id' );
     }
 }

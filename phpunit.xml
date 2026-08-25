@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.4/phpunit.xsd" 
-  bootstrap="vendor/autoload.php" 
+  bootstrap="tests/bootstrap.php"
   colors="true">
   <testsuites>
     <testsuite name="Sequential-1">
@@ -39,6 +39,7 @@
       <directory suffix="TestCogsPrices.php">./tests/Feature</directory>
       <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>
+      <directory suffix="CouponEligibilityTest.php">./tests/Feature</directory>
       <directory suffix="CreateRewardSystemTest.php">./tests/Feature</directory>
       <directory suffix="TestRewardSystem.php">./tests/Feature</directory>
       <directory suffix="PerformStockAdjustmentTest.php">./tests/Feature</directory>

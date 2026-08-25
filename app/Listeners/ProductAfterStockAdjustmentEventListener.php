@@ -4,26 +4,15 @@ namespace App\Listeners;
 
 use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Jobs\HandleStockAdjustmentJob;
+use App\Services\AccountingJournalService;
 
 class ProductAfterStockAdjustmentEventListener
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct( private AccountingJournalService $accountingJournalService ) {}
 
-    /**
-     * Handle the event.
-     *
-     * @return void
-     */
-    public function handle( ProductAfterStockAdjustmentEvent $event )
+    public function handle( ProductAfterStockAdjustmentEvent $event ): void
     {
+        $this->accountingJournalService->postStockAdjustment( $event->history );
         HandleStockAdjustmentJob::dispatch( $event->history );
     }
 }

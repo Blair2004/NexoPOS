@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Crud\ProviderCrud;
 use App\Models\Provider;
+use App\Models\User;
 use App\Services\CrudService;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
@@ -173,7 +174,7 @@ class CrudModelRelationsTest extends TestCase
              */
             public $relations = [
                 'leftJoin' => [
-                    'author' => [ \App\Models\User::class, 'user' ],
+                    'author' => [ User::class, 'user' ],
                 ],
             ];
 
@@ -239,7 +240,7 @@ class CrudModelRelationsTest extends TestCase
              */
             public $relations = [
                 'leftJoin' => [
-                    '@author' => [ \App\Models\User::class, 'user' ],
+                    '@author' => [ User::class, 'user' ],
                 ],
             ];
 

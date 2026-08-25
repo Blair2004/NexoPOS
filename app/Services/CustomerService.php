@@ -17,6 +17,7 @@ use App\Models\CustomerCoupon;
 use App\Models\CustomerGroup;
 use App\Models\CustomerReward;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\RewardSystem;
 use App\Models\Role;
 use App\Models\User;
@@ -24,6 +25,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CustomerService
 {
@@ -329,6 +331,14 @@ class CustomerService
      * save a customer transaction.
      */
     public function saveTransaction( Customer $customer, string $operation, float $amount, ?string $description = '', array $details = [] ): array
+    {
+        return DB::transaction(
+            fn(): array => $this->persistCustomerTransaction( $customer, $operation, $amount, $description, $details ),
+            attempts: 3
+        );
+    }
+
+    private function persistCustomerTransaction( Customer $customer, string $operation, float $amount, ?string $description, array $details ): array
     {
         if ( in_array( $operation, [
             CustomerAccountHistory::OPERATION_DEDUCT,
@@ -756,9 +766,9 @@ class CustomerService
         return $customerCoupon;
     }
 
-    public function checkCouponExistence( array $couponConfig, $fields ): Coupon
+    public function checkCouponExistence( array $couponConfig, array $fields ): Coupon
     {
-        $coupon = Coupon::find( $couponConfig[ 'coupon_id' ] );
+        $coupon = Coupon::with( [ 'products', 'categories' ] )->find( $couponConfig[ 'coupon_id' ] );
 
         if ( ! $coupon instanceof Coupon ) {
             throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $couponConfig[ 'name' ] ?? __( 'N/A' ) ) );
@@ -771,10 +781,8 @@ class CustomerService
             throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s as it has expired.' ), $coupon->name ) );
         }
 
-        /**
-         * @todo check products on the order
-         * @todo check category on the order
-         */
+        $this->checkCouponProductEligibility( $coupon, $fields );
+        $this->checkCouponCategoryEligibility( $coupon, $fields );
 
         /**
          * We'll now check if we're about to use
@@ -825,6 +833,64 @@ class CustomerService
         }
 
         return $coupon;
+    }
+
+    private function checkCouponProductEligibility( Coupon $coupon, array $fields ): void
+    {
+        if ( $coupon->products->isEmpty() ) {
+            return;
+        }
+
+        $eligibleProductIds = $coupon->products
+            ->pluck( 'product_id' )
+            ->map( static fn( $productId ): int => (int) $productId );
+        $products = collect( $fields[ 'products' ] ?? [] );
+
+        $cartIsEligible = $products->isNotEmpty() && $products->every(
+            static function ( array $orderProduct ) use ( $eligibleProductIds ): bool {
+                $productId = $orderProduct[ 'product' ] instanceof Product
+                    ? $orderProduct[ 'product' ]->id
+                    : ( $orderProduct[ 'product_id' ] ?? 0 );
+
+                return $eligibleProductIds->containsStrict( (int) $productId );
+            }
+        );
+
+        if ( ! $cartIsEligible ) {
+            throw new NotAllowedException( sprintf(
+                __( 'Unable to use the coupon %s because every product in the cart must be eligible for it.' ),
+                $coupon->name
+            ) );
+        }
+    }
+
+    private function checkCouponCategoryEligibility( Coupon $coupon, array $fields ): void
+    {
+        if ( $coupon->categories->isEmpty() ) {
+            return;
+        }
+
+        $eligibleCategoryIds = $coupon->categories
+            ->pluck( 'category_id' )
+            ->map( static fn( $categoryId ): int => (int) $categoryId );
+        $products = collect( $fields[ 'products' ] ?? [] );
+
+        $cartIsEligible = $products->isNotEmpty() && $products->every(
+            static function ( array $orderProduct ) use ( $eligibleCategoryIds ): bool {
+                $categoryId = $orderProduct[ 'product' ] instanceof Product
+                    ? $orderProduct[ 'product' ]->category_id
+                    : ( $orderProduct[ 'product_category_id' ] ?? $orderProduct[ 'category_id' ] ?? 0 );
+
+                return $eligibleCategoryIds->containsStrict( (int) $categoryId );
+            }
+        );
+
+        if ( ! $cartIsEligible ) {
+            throw new NotAllowedException( sprintf(
+                __( 'Unable to use the coupon %s because every product must belong to an eligible category.' ),
+                $coupon->name
+            ) );
+        }
     }
 
     /**

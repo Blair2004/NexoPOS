@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
 
 /**
- * @property int            $tokenable_id
- * @property mixed          $token
- * @property string         $abilities
- * @property \Carbon\Carbon $updated_at
+ * @property int    $tokenable_id
+ * @property mixed  $token
+ * @property string $abilities
+ * @property Carbon $updated_at
  */
 class PersonalAccessToken extends SanctumPersonalAccessToken
 {

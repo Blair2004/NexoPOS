@@ -6,7 +6,6 @@ import * as ChartJS from "chart.js";
 import { fromEvent } from "rxjs";
 import * as RxJS from 'rxjs';
 import { default as moment } from 'moment';
-import { createApp } from "vue/dist/vue.esm-bundler";
 import { Popup } from "~/libraries/popup";
 import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
 import FormValidation from "./libraries/form-validation";
@@ -19,7 +18,17 @@ import { insertAfterKey, insertBeforeKey } from "./libraries/object";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
 import { timespan } from "./libraries/timespan";
-import { defineAsyncComponent, defineComponent, markRaw, shallowRef } from "vue";
+/**
+ * Prefer the host shared runtime (vue-runtime.ts). Fall back to a direct import
+ * only when that script was not loaded (e.g. isolated tooling).
+ */
+import {
+    createApp as bundledCreateApp,
+    defineAsyncComponent as bundledDefineAsyncComponent,
+    defineComponent as bundledDefineComponent,
+    markRaw as bundledMarkRaw,
+    shallowRef as bundledShallowRef,
+} from "vue/dist/vue.esm-bundler";
 import { nsCurrency, nsRawCurrency } from "./filters/currency";
 import { nsAbbreviate } from "./filters/abbreviate";
 import { nsTruncate } from "./filters/truncate";
@@ -27,6 +36,12 @@ import Tax from "./libraries/tax";
 import Print from "./libraries/print";
 import * as math from 'mathjs';
 
+const sharedVue = (window as any).NexoPOSVue ?? (window as any).ns?.vue;
+const createApp = sharedVue?.createApp ?? bundledCreateApp;
+const defineAsyncComponent = sharedVue?.defineAsyncComponent ?? bundledDefineAsyncComponent;
+const defineComponent = sharedVue?.defineComponent ?? bundledDefineComponent;
+const markRaw = sharedVue?.markRaw ?? bundledMarkRaw;
+const shallowRef = sharedVue?.shallowRef ?? bundledShallowRef;
 
 declare global {
     interface Window {

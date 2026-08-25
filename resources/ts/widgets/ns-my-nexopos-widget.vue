@@ -12,6 +12,9 @@
             </div>
             <div class="flex -mx-1">
                 <div class="px-1">
+                    <ns-widget-layout-selector :widget="widget"></ns-widget-layout-selector>
+                </div>
+                <div class="px-1">
                     <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
                 </div>
                 <div class="px-1">
@@ -22,7 +25,7 @@
 
         <div v-if="! isConnected" class="flex flex-auto flex-col gap-4 p-4">
             <div class="rounded border border-box-edge bg-box-elevation-background p-4">
-                <div class="mb-3 flex items-center gap-2 text-info-tertiary">
+                <div class="mb-3 flex items-center gap-2 text-info-secondary">
                     <i class="las la-cloud text-2xl"></i>
                     <span class="text-xs font-semibold uppercase tracking-wider">{{ __( 'Connected features' ) }}</span>
                 </div>

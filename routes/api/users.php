@@ -6,11 +6,18 @@ use Illuminate\Support\Facades\Route;
 
 // Current-user routes — accessible to any authenticated user
 Route::get( '/user', [ UsersController::class, 'getUser' ] );
-Route::get( '/user/permissions', [ UsersController::class, 'getUserPermissions' ] );
+
+/**
+ * This should not be restricted by a "read.users" permission, as it is used to return
+ * all the available permissions for the logged user.
+ */
+Route::get( '/user/permissions', [ UsersController::class, 'getUserPermissions' ] )
+    ->withoutMiddleware( NsRestrictMiddleware::arguments( 'read.users' ) );
+
 Route::post( '/user/access/{id}', [ UsersController::class, 'approveAccess' ] );
 Route::get( '/user/access/{id}', [ UsersController::class, 'getAccess' ] );
 Route::get( '/user/access/{access}/use', [ UsersController::class, 'markAccessAsUsed' ] );
-Route::post( '/users/widgets', [ UsersController::class, 'configureWidgets' ] );
+Route::put( '/users/widgets', [ UsersController::class, 'configureWidgets' ] );
 Route::post( '/users/create-token', [ UsersController::class, 'createToken' ] );
 Route::get( '/users/tokens', [ UsersController::class, 'getTokens' ] );
 Route::delete( '/users/tokens/{id}', [ UsersController::class, 'deleteToken' ] );
@@ -25,3 +32,9 @@ Route::get( '/users/roles', [ UsersController::class, 'getRoles' ] )->middleware
 Route::put( '/users/roles', [ UsersController::class, 'updateRole' ] )->middleware( NsRestrictMiddleware::arguments( 'update.roles' ) );
 Route::get( '/users/roles/{role}/clone', [ UsersController::class, 'cloneRole' ] )->middleware( NsRestrictMiddleware::arguments( 'create.roles' ) );
 Route::post( '/user/snooze-ads', [ UsersController::class, 'snoozeAds' ] );
+Route::post( '/user/guides', [ UsersController::class, 'getGuides' ] );
+Route::post( '/user/guides/dismiss', [ UsersController::class, 'dismissGuide' ] );
+Route::post( '/user/guides/complete', [ UsersController::class, 'completeGuide' ] );
+Route::get( '/user/guides/completed', [ UsersController::class, 'getCompletedGuides' ] );
+Route::get( '/user/guides/dismissed', [ UsersController::class, 'getDismissedGuides' ] );
+Route::post( '/user/guides/reset', [ UsersController::class, 'resetGuide' ] );

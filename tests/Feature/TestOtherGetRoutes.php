@@ -42,10 +42,24 @@ class TestOtherGetRoutes extends TestCase
                     $response = $this->withSession( $this->app[ 'session' ]->all() )
                         ->json( 'GET', $uri );
 
-                    if ( in_array( $uri, [
-                        'api/cash-registers/used',
-                    ] ) ) {
-                        $response->assertStatus( 403 );
+                    /**
+                     * Route that allow exception
+                     */
+                    if ( in_array( $response->status(), [ 200, 403 ] ) ) {
+                        if ( in_array( $uri, [
+                            'api/cash-registers/used',
+                        ] ) ) {
+                            $response->assertStatus( 403 );
+                        } else {
+                            /**
+                             * If $uri include /api/setup we should expect a failure
+                             */
+                            if ( strpos( $uri, 'api/setup' ) !== false ) {
+                                $response->assertStatus( 403 );
+                            } else {
+                                $response->assertStatus( 200 );
+                            }
+                        }
                     } else {
                         $response->assertStatus( 200 );
                     }
@@ -79,7 +93,7 @@ class TestOtherGetRoutes extends TestCase
                     if ( $response->status() === 302 ) {
                         $this->assertTrue( in_array( $uri, [
                             'dashboard/accounting/transactions/create',
-                            'dashboard/oauth/mynexopos/authorize'
+                            'dashboard/oauth/mynexopos/authorize',
                         ] ) );
                     } else {
                         if ( $response->status() == 200 ) {
@@ -88,8 +102,8 @@ class TestOtherGetRoutes extends TestCase
                             } else {
                                 $response->assertSee( 'dashboard-body' );
                             }
-                        } else if ( $response->status() === 422 ) {
-                            $this->assertTrue( in_array($uri, [
+                        } elseif ( $response->status() === 422 ) {
+                            $this->assertTrue( in_array( $uri, [
                                 'dashboard/oauth/mynexopos/callback',
                             ] ) );
                         } else {

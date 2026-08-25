@@ -12,7 +12,7 @@ Route::post( 'reports/annual-report', [ ReportsController::class, 'getAnnualRepo
 Route::post( 'reports/payment-types', [ ReportsController::class, 'getPaymentTypes' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.reports.payment-types' ) );
 Route::post( 'reports/products-report', [ ReportsController::class, 'getProductsReport' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.reports.products-report' ) );
 Route::post( 'reports/compute/{type}', [ ReportsController::class, 'computeReport' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.reports.sales' ) );
-Route::get( 'reports/cashier-report', [ ReportsController::class, 'getMyReport' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.reports.sales' ) );
+Route::get( 'reports/cashier-report', [ ReportsController::class, 'getMyReport' ] );
 Route::post( 'reports/low-stock', [ ReportsController::class, 'getLowStock' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.reports.low-stock' ) );
 Route::post( 'reports/stock-report', [ ReportsController::class, 'getStockReport' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.reports.inventory' ) );
 Route::post( 'reports/product-history-combined', [ ReportsController::class, 'getProductHistoryCombined' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.reports.stock-history' ) );

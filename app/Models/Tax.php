@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property string         $uuid
- * @property string         $description
- * @property float          $rate
- * @property int            $author_id
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property string $uuid
+ * @property string $description
+ * @property float  $rate
+ * @property int    $author_id
+ * @property Carbon $updated_at
  */
 class Tax extends NsModel
 {

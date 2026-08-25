@@ -4,14 +4,15 @@ namespace App\Models;
 
 use App\Events\CustomerRewardAfterCreatedEvent;
 use App\Events\CustomerRewardAfterUpdatedEvent;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property int            $reward_id
- * @property string         $reward_name
- * @property float          $target
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property int    $reward_id
+ * @property string $reward_name
+ * @property float  $target
+ * @property Carbon $updated_at
  */
 class CustomerReward extends NsModel
 {

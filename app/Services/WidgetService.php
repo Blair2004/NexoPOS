@@ -22,6 +22,24 @@ use Illuminate\Support\Facades\Gate;
 class WidgetService
 {
     /**
+     * Core widgets are arranged to fill complete grid rows on first install.
+     * Module widgets retain their registration order after these defaults.
+     *
+     * @var array<int, class-string<WidgetService>>
+     */
+    protected const DEFAULT_WIDGET_ORDER = [
+        IncompleteSaleCardWidget::class,
+        ExpenseCardWidget::class,
+        SaleCardWidget::class,
+        MyNexoPosWidget::class,
+        OrdersChartWidget::class,
+        BestCustomersWidget::class,
+        OrdersSummaryWidget::class,
+        BestCashiersWidget::class,
+        ProfileWidget::class,
+    ];
+
+    /**
      * The vue component name of the component
      * is registered on this property.
      */
@@ -54,6 +72,23 @@ class WidgetService
      * Describe what the widget does.
      */
     protected $description;
+
+    /**
+     * The widget footprint expressed as columns x rows.
+     */
+    protected string $layout = '1x1';
+
+    /**
+     * The resize policy: strict, restricted, or unrestricted.
+     */
+    protected string $layoutPolicy = 'strict';
+
+    /**
+     * Layouts accepted when the resize policy is restricted.
+     *
+     * @var array<int, string>
+     */
+    protected array $supportedLayouts = [];
 
     public function __construct( private UsersService $usersService )
     {
@@ -114,6 +149,9 @@ class WidgetService
                 'component-name' => $widgetInstance->getVueComponent(),
                 'canAccess' => $widgetInstance->canAccess(),
                 'data' => $widgetInstance->getData(),
+                'layout' => $widgetInstance->getLayout(),
+                'supported-layouts' => $widgetInstance->getSupportedLayouts(),
+                'layout-policy' => $widgetInstance->getLayoutPolicy(),
             ];
         } );
     }
@@ -142,6 +180,80 @@ class WidgetService
     public function getPermission(): string|bool
     {
         return $this->permission;
+    }
+
+    /**
+     * Return a normalized widget footprint.
+     *
+     * @return array{name: string, columns: int, rows: int}
+     */
+    public function getLayout(): array
+    {
+        return $this->normalizeLayout( $this->layout );
+    }
+
+    public function getLayoutPolicy(): string
+    {
+        return in_array( $this->layoutPolicy, [ 'strict', 'restricted', 'unrestricted' ], true )
+            ? $this->layoutPolicy
+            : 'strict';
+    }
+
+    /**
+     * Return the layouts a user may select for this widget.
+     *
+     * @return array<int, array{name: string, columns: int, rows: int}>
+     */
+    public function getSupportedLayouts(): array
+    {
+        $suggestedLayout = $this->getLayout();
+        $layoutPolicy = $this->getLayoutPolicy();
+
+        if ( $layoutPolicy === 'strict' ) {
+            return [ $suggestedLayout ];
+        }
+
+        $layouts = $layoutPolicy === 'unrestricted'
+            ? collect( range( 1, 3 ) )->flatMap( fn( int $columns ) => collect( range( 1, 5 ) )
+                ->map( fn( int $rows ) => "{$columns}x{$rows}" ) )
+            : collect( $this->supportedLayouts )->filter( fn( mixed $layout ) => is_string( $layout ) && $this->isValidLayout( $layout ) );
+
+        return $layouts
+            ->prepend( $suggestedLayout['name'] )
+            ->unique()
+            ->map( fn( string $layout ) => $this->normalizeLayout( $layout ) )
+            ->values()
+            ->all();
+    }
+
+    public function supportsLayout( string $layout ): bool
+    {
+        return collect( $this->getSupportedLayouts() )->contains( 'name', $layout );
+    }
+
+    /**
+     * @return array{name: string, columns: int, rows: int}
+     */
+    private function normalizeLayout( string $layout ): array
+    {
+        if ( preg_match( '/^([1-3])x([1-5])$/', $layout, $matches ) !== 1 ) {
+            return [
+                'name' => '1x1',
+                'columns' => 1,
+                'rows' => 1,
+            ];
+        }
+
+        return [
+            'name' => $layout,
+            'columns' => (int) $matches[1],
+            'rows' => (int) $matches[2],
+        ];
+    }
+
+    private function isValidLayout( string $layout ): bool
+    {
+        return preg_match( '/^([1-3])x([1-5])$/', $layout ) === 1;
     }
 
     /**
@@ -199,51 +311,36 @@ class WidgetService
      */
     public function addDefaultWidgetsToAreas( User $user ): void
     {
-        $areas = [
-            'first-column',
-            'second-column',
-            'third-column',
-        ];
-
-        $areaWidgets = [];
-
-        $widgetClasses = collect( $this->widgets )->filter( function ( $class ) use ( $user ) {
+        $widgets = $this->orderDefaultWidgetClasses( collect( $this->widgets ) )->filter( function ( $class ) use ( $user ) {
             return ( new $class )->canAccess( $user );
-        } )->toArray();
-
-        /**
-         * This will assign all widgets
-         * to available areas.
-         */
-        foreach ( $widgetClasses as $index => $widgetClass ) {
-            /**
-             * @var WidgetService $widgetInstance
-             */
+        } )->map( function ( string $widgetClass ): array {
             $widgetInstance = new $widgetClass;
 
-            $areaWidgets[ $areas[ $index % 3 ] ][] = [
+            return [
                 'class-name' => $widgetClass,
                 'component-name' => $widgetInstance->getVueComponent(),
+                'layout' => null,
             ];
-        }
+        } )->values()->all();
 
-        /**
-         * We're now storing widgets to
-         * each relevant area.
-         */
-        foreach ( $areaWidgets as $areaName => $widgets ) {
-            $config = [
-                'column' => [
-                    'name' => $areaName,
-                    'widgets' => $widgets,
-                ],
-            ];
+        $this->usersService->storeWidgetLayout( $widgets, $user );
+    }
 
-            $this->usersService->storeWidgetsOnAreas(
-                config: $config,
-                user: $user
-            );
-        }
+    /**
+     * Apply the fresh-install core order without reintroducing filtered widgets.
+     *
+     * @param  Collection<int, class-string<WidgetService>> $widgetClasses
+     * @return Collection<int, class-string<WidgetService>>
+     */
+    protected function orderDefaultWidgetClasses( Collection $widgetClasses ): Collection
+    {
+        $widgetClasses = $widgetClasses->unique()->values();
+        $coreWidgets = collect( self::DEFAULT_WIDGET_ORDER )
+            ->filter( fn( string $widgetClass ): bool => $widgetClasses->containsStrict( $widgetClass ) );
+        $additionalWidgets = $widgetClasses
+            ->reject( fn( string $widgetClass ): bool => in_array( $widgetClass, self::DEFAULT_WIDGET_ORDER, true ) );
+
+        return $coreWidgets->concat( $additionalWidgets )->values();
     }
 
     /**
@@ -252,23 +349,24 @@ class WidgetService
     public function bootWidgetsAreas(): void
     {
         $widgetArea = function () {
-            return collect( [ 'first', 'second', 'third' ] )->map( function ( $column ) {
-                $columnName = $column . '-column';
+            $registeredWidgets = collect( $this->widgets )->mapWithKeys( function ( string $widgetClass ): array {
+                return [ ( new $widgetClass )->getVueComponent() => $widgetClass ];
+            } );
 
-                return [
-                    'name' => $columnName,
+            return [
+                [
+                    'name' => 'dashboard',
                     'widgets' => UserWidget::where( 'user_id', Auth::id() )
-                        ->where( 'column', $columnName )
                         ->orderBy( 'position' )
                         ->get()
-                        ->filter( function ( $widget ) {
-                            $class = $widget->class_name;
+                        ->filter( function ( UserWidget $widget ) use ( $registeredWidgets ): bool {
+                            $widgetClass = $registeredWidgets->get( $widget->identifier );
 
-                            return class_exists( $class ) && Gate::allows( ( new $class )->getPermission() );
+                            return $widgetClass !== null && ( new $widgetClass )->canAccess();
                         } )
                         ->values(),
-                ];
-            } )->toArray();
+                ],
+            ];
         };
 
         $this->registerWidgetsArea( 'ns-dashboard-widgets', $widgetArea );

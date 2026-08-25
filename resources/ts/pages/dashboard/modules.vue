@@ -1,6 +1,6 @@
 <template>
     <div id="module-wrapper" class="flex-auto flex flex-col pb-4">
-        <div v-if="! noModules" class="flex flex-col lg:flex-row md:justify-between md:items-center">
+        <div class="flex flex-col lg:flex-row md:justify-between md:items-center">
             <div class="flex flex-col md:flex-row md:justify-between md:items-center -mx-2">
                 <span class="px-2">
                     <div class="ns-button mb-2">
@@ -9,7 +9,7 @@
                             <span class="mx-2">{{ __( 'Refresh' ) }}</span>
                         </a>
                     </div>
-                </span>
+                    </span>
                 <span class="px-2">
                     <div class="ns-button mb-2">
                         <a :href="upload" class="flex items-center justify-center rounded cursor-pointer shadow px-3 py-1">
@@ -19,15 +19,15 @@
                     </div>
                 </span>
                 <div class="px-2 w-auto">
-                    <div class="input-group mb-2 shadow border-2 info rounded overflow-hidden">
-                        <input ref="searchField" :placeholder="searchPlaceholder" v-model="searchText" type="text" class="w-full md:w-60 outline-hidden py-1 px-2">
+                    <div class="ns-module-search mb-2">
+                        <input ref="searchField" :placeholder="searchPlaceholder" v-model="searchText" type="text" class="h-8 outline-none w-full md:w-60 py-1 px-2">
                     </div>
                 </div>
             </div>
             <div class="header-tabs flex -mx-4 flex-wrap">
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'enabled' )">{{ __( 'Enabled' ) }}({{ total_enabled }})</a></div>
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'disabled' )">{{ __( 'Disabled' ) }} ({{ total_disabled }})</a></div>
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'invalid' )">{{ __( 'Invalid' ) }} ({{ total_invalid }})</a></div>
+                <div class="px-4 text-xs text-primary font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'enabled' )">{{ __( 'Enabled' ) }}({{ total_enabled }})</a></div>
+                <div class="px-4 text-xs text-primary font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'disabled' )">{{ __( 'Disabled' ) }} ({{ total_disabled }})</a></div>
+                <div class="px-4 text-xs text-primary font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'invalid' )">{{ __( 'Invalid' ) }} ({{ total_invalid }})</a></div>
             </div>
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">

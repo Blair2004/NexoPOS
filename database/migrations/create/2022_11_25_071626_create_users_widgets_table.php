@@ -20,8 +20,11 @@ return new class extends Migration
                 $table->string( 'column' );
                 $table->string( 'class_name' );
                 $table->integer( 'position' );
+                $table->string( 'layout', 3 )->nullable();
                 $table->integer( 'user_id' );
                 $table->timestamps();
+                $table->unique( [ 'user_id', 'identifier' ], 'users_widgets_user_identifier_unique' );
+                $table->index( [ 'user_id', 'position' ], 'users_widgets_user_position_index' );
             } );
         }
     }

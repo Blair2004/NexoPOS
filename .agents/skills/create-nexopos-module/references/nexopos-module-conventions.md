@@ -31,6 +31,7 @@ Read only the matching file:
 | Roles and access internals | `nexopos-roles-permissions.instructions.md` | Models, service methods, assignment and test patterns |
 | Restricted routes | `nexopos-middleware.instructions.md` | `NsRestrictMiddleware::arguments(...)` and server enforcement |
 | Settings/options | `nexopos-options.instructions.md` | Defaults, casting, module key prefixes, validation, secrets |
+| Module tests | [module-testing.md](module-testing.md) | Host bootstrap, module-local tests, PHPUnit runner, database isolation |
 
 Never rely solely on a hidden menu or button for authorization. Enforce access on the server and cover denial in a feature test.
 
@@ -40,8 +41,8 @@ Never rely solely on a hidden menu or button for authorization. Enforce access o
 | --- | --- | --- |
 | Sidebar menus | `nexopos-asidemenu.instructions.md` | Stable identifiers, placement, permissions, translation |
 | Render injection | `nexopos-view-injection.instructions.md` | Current render events and route/instance scoping |
-| Widgets | `nexopos-widgets.instructions.md` | Widget registration, Vue injection, closure behavior |
-| POS lifecycle | [pos-lifecycle.md](pos-lifecycle.md) | Cart buttons, initialization, order types, payment and submission hooks |
+| Widgets | `nexopos-widgets.instructions.md` | PHP declaration, `1x1`–`3x5` layout policy, widget-owned selector, Vue registration, default packing, tests |
+| **POS mastery (full guide)** | [pos-lifecycle.md](pos-lifecycle.md) | Decision matrix, hooks, product-row, **unit price vs `ns-pos-product-line-extra`**, addToCart `productData`, order types, pay/submit, NsAppointments/NsGastro references |
 
 Rely on NexoPOS/Laravel listener discovery for module listeners: place listener classes under the module Listeners directory and type-hint the event on handle(). Do not register these listeners manually with Event::listen() inside module service providers; use php artisan event:list to verify discovery. The old string-hook view injection mechanism is removed; do not reintroduce it. Avoid broad footer injection without checking the route or target instance.
 
@@ -53,9 +54,11 @@ Rely on NexoPOS/Laravel listener discovery for module listeners: place listener 
 | Inputs | `nexopos-forminput.instructions.md` | Existing input descriptors and conditional behavior |
 | Frontend globals/localization | [frontend-apis.md](frontend-apis.md), then `nexopos-frontend-api.instructions.md` if needed | Globals, module localization, safe declarations |
 | HTTP requests | [frontend-apis.md](frontend-apis.md), then `nexopos-httpclient.instructions.md` if needed | Observable API, current config limitations, errors |
+| Vue + Tailwind module assets | [module-frontend.md](module-frontend.md) | Shared Vue runtime, **required Tailwind prefix**, UI conventions |
+| **Dashboard Vue mount** | [dashboard-vue-mounting.md](dashboard-vue-mounting.md) | **No nested `createApp` in `#dashboard-content`** — use `nsExtraComponents` + tag |
 | Popups | `nexopos-popup.instructions.md` | Built-ins, promise resolution, cancellation, cleanup |
 | Tabs | `nexopos-tabs.instructions.md` | Identifiers, dynamic state, validation, accessibility |
-| Theme colors | `nexopos-colors.instructions.md` | Semantic classes, theme parity, contrast |
+| Theme colors | `nexopos-theming` skill + `nexopos-colors.instructions.md` | Semantic classes, theme parity, contrast |
 
 `.github/instructions/nexopos-localization.instructions.md` currently contains only a heading. Use the localization guidance in [frontend-apis.md](frontend-apis.md) and verify real `Lang/` files and `__m()` usage in a maintained module.
 
@@ -70,7 +73,9 @@ Module asset rules:
 - Do not use `@vite` for module entries.
 - Do not add a leading slash or `modules/{Namespace}` to the asset path.
 - Keep Vite output under `Public/build` and verify its manifest after building.
-- Use Tailwind CSS v4 and NexoPOS semantic theme tokens; avoid legacy SCSS `@apply` patterns and hard-coded palette values.
+- Use Tailwind CSS v4 with a **module-specific prefix** on the module CSS entry (`@import "tailwindcss" prefix(foo);`) and prefix every module utility in markup (`foo:flex`, `foo:md:p-4`). Prefix comes first, then variants, then the utility: `foo:dark:sm:flex`.
+- Prefer NexoPOS semantic theme tokens (`foo:bg-box-background`) over palette colors and over `dark:` as a theme strategy.
+- **Dashboard Vue pages:** register with `nsExtraComponents['name'] = Component` and render `<name>` inside `#dashboard-content`. Never nest `createApp().mount()` under that node (reactivity dies when `nsDashboardContent` mounts). Details: [dashboard-vue-mounting.md](dashboard-vue-mounting.md).
 
 ## Choosing examples
 

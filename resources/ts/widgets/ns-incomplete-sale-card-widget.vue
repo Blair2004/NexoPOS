@@ -1,11 +1,12 @@
 <template>
-    <div class="flex card-widget widget-handle flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-green-400 to-green-600 px-3 py-5">
-        <div class="flex flex-row md:flex-col flex-auto">
+    <div class="flex h-full card-widget flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-green-400 to-green-600 px-3 py-5">
+        <div class="flex justify-between flex-row md:flex-col flex-auto">
             <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                 <div class="flex justify-between w-full items-center">
                     <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Incomplete Orders' ) }}</h6>
-                    <div>
-                        <ns-close-button class="border-success-secondary" @click="$emit( 'onRemove' )"></ns-close-button>
+                    <div class="flex gap-1">
+                        <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
+                        <ns-close-button class="border-error-secondary" @click="$emit( 'onRemove' )"></ns-close-button>
                     </div>
                 </div>
                 <h3 class="text-2xl font-black">

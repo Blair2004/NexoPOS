@@ -115,7 +115,7 @@ declare const Popup: {
 ### window.nsExtraComponents
 
 **Type**: Component registry  
-**Description**: Global registry for Vue components that can be used throughout the application
+**Description**: Global registry for Vue components merged into `nsDashboardContent` (and related apps) in `app-init` before mount. **This is the correct way to add dashboard page UI.**
 
 ```typescript
 declare const nsExtraComponents: {
@@ -123,13 +123,21 @@ declare const nsExtraComponents: {
 };
 ```
 
-**Module Usage**:
-```typescript
-// Register module components
-import MyComponent from './components/MyComponent';
+**Dashboard page / panel (required pattern)**:
 
-nsExtraComponents['my-module-component'] = MyComponent;
+```typescript
+// Load in footer inject BEFORE app-init
+import MyPage from './components/MyPage.vue';
+
+nsExtraComponents['my-module-page'] = MyPage;
 ```
+
+```blade
+{{-- inside #dashboard-content --}}
+<my-module-page></my-module-page>
+```
+
+Do **not** `createApp(MyPage).mount('#child-of-dashboard-content')`. Core remounts `#dashboard-content` with an empty root that recompiles innerHTML as a static template — UI shows, reactivity dies. See `.agents/skills/create-nexopos-module/references/dashboard-vue-mounting.md`.
 
 ### Global Component Declarations
 

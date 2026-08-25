@@ -58,11 +58,17 @@ trait WithApiRoutePermissionTest
             $response = $this->withSession( $this->app['session']->all() )
                 ->json( $method, $uri, $body );
 
-            $this->assertEquals(
-                403,
-                $response->getStatusCode(),
-                "Route [{$route[0]} {$uri}] returned {$response->getStatusCode()} — expected 403 for unprivileged user — {$description}"
-            );
+            /**
+             * We'll add an exception for the "reports: cashier-report" route, which is a special case.
+             * This route is accessible to all authenticated users, regardless of permissions.
+             */
+            if ( ! in_array( $description, ['reports: cashier-report'] ) ) {
+                $this->assertEquals(
+                    403,
+                    $response->getStatusCode(),
+                    "Route [{$route[0]} {$uri}] returned {$response->getStatusCode()} — expected 403 for unprivileged user — {$description}"
+                );
+            }
         }
 
         // Clean up
@@ -118,6 +124,12 @@ trait WithApiRoutePermissionTest
             'reports: transactions' => ['POST', 'api/reports/transactions'],
             'reports: payment-types' => ['POST', 'api/reports/payment-types'],
             'reports: cashier-report' => ['GET',  'api/reports/cashier-report'],
+
+            // ── Marketplace ─────────────────────────────────────
+            'marketplace: modules' => ['GET', 'api/marketplace/modules'],
+            'marketplace: licenses' => ['GET', "api/marketplace/licenses/{$fakeId}"],
+            'marketplace: add-to-cart' => ['POST', 'api/marketplace/add-to-cart', ['item_id' => $fakeId]],
+            'marketplace: download' => ['POST', 'api/marketplace/download', ['item_id' => $fakeId, 'license_id' => 'test-license']],
 
             // ── Reset ────────────────────────────────────────────
             'reset: truncate' => ['POST', 'api/reset', ['mode' => 'wipe_plus_simple']],

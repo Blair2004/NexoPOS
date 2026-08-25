@@ -1,8 +1,8 @@
 @theme {
     /** Typography */
     --color-typography: var( --color-gray-800 );
-    --color-fontcolor: var( --color-gray-300 );
-    --color-fontcolor-soft: var( --color-gray-400 );
+    --color-fontcolor: var( --color-gray-200 );
+    --color-fontcolor-soft: var( --color-gray-300 );
     --color-fontcolor-hard: rgb( 107 114 128 );
 
     /** Surfaces */
@@ -89,18 +89,18 @@
 
     /** Error */
     --color-error-primary: var( --color-red-400 );
-    --color-error-secondary: var( --color-red-500 );
+    --color-error-secondary: var( --color-red-400 );
     --color-error-tertiary: var( --color-red-600 );
 
     /** Info */
-    --color-info-primary: var( --color-blue-400 );
-    --color-info-secondary: var( --color-blue-500 );
-    --color-info-tertiary: var( --color-blue-600 );
+    --color-info-primary: var( --color-blue-800 );
+    --color-info-secondary: var( --color-blue-600 );
+    --color-info-tertiary: var( --color-blue-400 );
 
     /** Success */
-    --color-success-primary: var( --color-green-400 );
-    --color-success-secondary: var( --color-green-500);
-    --color-success-tertiary: var( --color-green-600 );
+    --color-success-primary: var( --color-green-800 );
+    --color-success-secondary: var( --color-green-600);
+    --color-success-tertiary: var( --color-green-400 );
 
     /** Warning */
     --color-warning-primary: var( --color-orange-200);

@@ -13,6 +13,7 @@
                 </span>
             </div>
             <input 
+                :name="field.name"
                 :disabled="field.disabled" 
                 v-model="field.value" 
                 :id="field.name" :type="type || field.type || 'text'" 

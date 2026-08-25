@@ -38,7 +38,7 @@ class RewardSystemCrud extends CrudService
     /**
      * Define namespace
      *
-     * @param  string
+     * @param string $namespace
      */
     protected $namespace = 'ns.rewards-system';
 

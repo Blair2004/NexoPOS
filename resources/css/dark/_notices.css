@@ -87,7 +87,7 @@
     }
     
     &.info {
-        @apply border-info-tertiary bg-info-secondary;
+        @apply border-info-primary bg-info-secondary;
 
         h1, h2, h3, h4, h5 {
             @apply text-white;

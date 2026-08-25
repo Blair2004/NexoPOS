@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\ModulesService;
+use Illuminate\Console\Scheduling\Schedule;
 
 /**
  * @var ModulesService $modules
@@ -8,7 +9,7 @@ use App\Services\ModulesService;
 $modules = app()->make( ModulesService::class );
 
 /**
- * @var \Illuminate\Console\Scheduling\Schedule $schedule
+ * @var Schedule $schedule
  */
 
 /**

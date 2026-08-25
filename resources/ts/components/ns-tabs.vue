@@ -3,6 +3,7 @@
         <div class="header ml-4 flex justify-between" style="margin-bottom: -1px;">
             <div class="flex flex-auto">
                 <div 
+                    :id="'tab-' + identifier"
                     :key="tab.identifier" 
                     v-for="( tab , identifier ) of childrens" 
                     @click="selectTab( tab )" 

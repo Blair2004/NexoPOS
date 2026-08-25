@@ -1,7 +1,34 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckApplicationHealthMiddleware;
+use App\Http\Middleware\CheckMigrationStatus;
+use App\Http\Middleware\ClearRequestCacheMiddleware;
+use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\InstalledStateMiddleware;
+use App\Http\Middleware\KillSessionIfNotInstalledMiddleware;
+use App\Http\Middleware\LoadLangMiddleware;
+use App\Http\Middleware\NotInstalledStateMiddleware;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\ThrottleMiddelware;
+use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Auth\Middleware\RequirePassword;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\SetCacheHeaders;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ValidateSignature;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+
 /**
- * @var \Illuminate\Foundation\Configuration\Middleware $middleware
+ * @var Middleware $middleware
  */
 $middleware->redirectGuestsTo( fn() => route( 'ns.login' ) );
 
@@ -9,42 +36,42 @@ $middleware->redirectGuestsTo( fn() => route( 'ns.login' ) );
  * We'll list here all aliased middleware.
  */
 $middleware->alias( [
-    'ns.not-installed' => \App\Http\Middleware\NotInstalledStateMiddleware::class,
-    'ns.installed' => \App\Http\Middleware\InstalledStateMiddleware::class,
-    'ns.clear-cache' => \App\Http\Middleware\ClearRequestCacheMiddleware::class,
-    'auth' => \App\Http\Middleware\Authenticate::class,
-    'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-    'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-    'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-    'can' => \Illuminate\Auth\Middleware\Authorize::class,
-    'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-    'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-    'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-    'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-    'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-    'ns.check-migrations' => \App\Http\Middleware\CheckMigrationStatus::class,
-    'ns.check-application-health' => \App\Http\Middleware\CheckApplicationHealthMiddleware::class,
+    'ns.not-installed' => NotInstalledStateMiddleware::class,
+    'ns.installed' => InstalledStateMiddleware::class,
+    'ns.clear-cache' => ClearRequestCacheMiddleware::class,
+    'auth' => Authenticate::class,
+    'auth.basic' => AuthenticateWithBasicAuth::class,
+    'bindings' => SubstituteBindings::class,
+    'cache.headers' => SetCacheHeaders::class,
+    'can' => Authorize::class,
+    'guest' => RedirectIfAuthenticated::class,
+    'password.confirm' => RequirePassword::class,
+    'signed' => ValidateSignature::class,
+    'throttle' => ThrottleRequests::class,
+    'verified' => EnsureEmailIsVerified::class,
+    'ns.check-migrations' => CheckMigrationStatus::class,
+    'ns.check-application-health' => CheckApplicationHealthMiddleware::class,
 ] );
 
 /**
  * We'll now register middlewaregroups
  */
 $middleware->group( 'web', [
-    \App\Http\Middleware\EncryptCookies::class,
-    \App\Http\Middleware\KillSessionIfNotInstalledMiddleware::class,
-    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-    \Illuminate\Session\Middleware\StartSession::class,
-    \Illuminate\Session\Middleware\AuthenticateSession::class,
-    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-    \App\Http\Middleware\VerifyCsrfToken::class,
-    \App\Http\Middleware\LoadLangMiddleware::class,
+    EncryptCookies::class,
+    KillSessionIfNotInstalledMiddleware::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+    AuthenticateSession::class,
+    ShareErrorsFromSession::class,
+    VerifyCsrfToken::class,
+    LoadLangMiddleware::class,
 ] );
 
 /**
  * We'll now register the api middleware group
  */
 $middleware->group( 'api', [
-    \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-    \App\Http\Middleware\LoadLangMiddleware::class,
-    \App\Http\Middleware\ThrottleMiddelware::class . ':80,1',
+    EnsureFrontendRequestsAreStateful::class,
+    LoadLangMiddleware::class,
+    ThrottleMiddelware::class . ':80,1',
 ] );

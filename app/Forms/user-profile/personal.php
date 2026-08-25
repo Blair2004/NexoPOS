@@ -25,11 +25,11 @@ return SettingForm::tab(
             label: __( 'Gender' ),
             name: 'gender',
             value: Auth::user()->gender ?? '',
-            options: Helper::kvToJsOptions([
+            options: Helper::kvToJsOptions( [
                 'male' => __( 'Male' ),
                 'female' => __( 'Female' ),
                 'other' => __( 'Other' ),
-            ]),
+            ] ),
             description: __( 'Select the gender of the user.' ),
         ),
         FormInput::text(

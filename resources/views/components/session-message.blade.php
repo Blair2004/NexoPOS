@@ -58,7 +58,7 @@
                 <i class="las la-exclamation-circle text-2xl text-info-tertiary"></i>
             </div>
             <div class="flex-auto items-center flex p-3 pl-0">
-                <p class="text-info-tertiary py-1">{!! session()->get( 'infoMessage' )[ 'message' ] ?? __( 'Invalid Error Message' ) !!}</p>
+                <p class="text-info-white py-1">{!! session()->get( 'infoMessage' )[ 'message' ] ?? __( 'Invalid Error Message' ) !!}</p>
             </div>
         </div>
         <div class="flex w-full md:w-28 justify-end md:justify-center md:items-center">
@@ -71,7 +71,7 @@
             <i class="las la-exclamation-circle text-2xl text-info-tertiary"></i>
         </div>
         <div class="flex-auto items-center flex">
-            <p class="text-info-tertiary py-1">{!! session()->get( 'infoMessage' ) !!}</p>
+            <p class="text-info-white py-1">{!! session()->get( 'infoMessage' ) !!}</p>
         </div>
     </div>
     @endif

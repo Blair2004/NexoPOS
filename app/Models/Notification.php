@@ -5,16 +5,17 @@ namespace App\Models;
 use App\Events\NotificationCreatedEvent;
 use App\Events\NotificationDeletedEvent;
 use App\Events\NotificationUpdatedEvent;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * @property int            $id
- * @property int            $user_id
- * @property string         $source
- * @property string         $description
- * @property bool           $dismissable
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property int    $user_id
+ * @property string $source
+ * @property string $description
+ * @property bool   $dismissable
+ * @property Carbon $updated_at
  */
 class Notification extends NsModel
 {

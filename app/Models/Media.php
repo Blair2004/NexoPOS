@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Casts\DateCast;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $user_id
- * @property string         $slug
- * @property \Carbon\Carbon $updated_at
+ * @property int    $user_id
+ * @property string $slug
+ * @property Carbon $updated_at
  */
 class Media extends NsModel
 {

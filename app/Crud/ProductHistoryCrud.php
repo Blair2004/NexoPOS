@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Casts\ProductHistoryActionCast;
+use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductHistory;
 use App\Models\User;
@@ -361,71 +362,60 @@ class ProductHistoryCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'operation_type' => [
-                'label' => __( 'Operation' ),
-                '$direction' => '',
-                'width' => '100px',
-                '$sort' => false,
-            ],
-            'before_quantity' => [
-                'label' => __( 'P. Quantity' ),
-                'width' => '100px',
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'quantity' => [
-                'label' => __( 'Quantity' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'after_quantity' => [
-                'label' => __( 'N. Quantity' ),
-                '$direction' => '',
-                'width' => '100px',
-                '$sort' => false,
-            ],
-            'units_name' => [
-                'label' => __( 'Unit' ),
-                '$direction' => '',
-                'width' => '100px',
-                '$sort' => false,
-            ],
-            'orders_code' => [
-                'label' => __( 'Order' ),
-                '$direction' => '',
-                'width' => '100px',
-                '$sort' => false,
-            ],
-            'procurements_name' => [
-                'label' => __( 'Procurement' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'unit_price' => [
-                'label' => __( 'Unit Price' ),
-                '$direction' => '',
-                'width' => '100px',
-                '$sort' => false,
-            ],
-            'total_price' => [
-                'label' => __( 'Total Price' ),
-                '$direction' => '',
-                'width' => '100px',
-                '$sort' => false,
-            ],
-            'users_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Date' ),
-                'width' => '100px',
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column(
+                label: __( 'Operation' ),
+                identifier: 'operation_type',
+                width: '100px',
+            ),
+            CrudTable::column(
+                label: __( 'P. Quantity' ),
+                identifier: 'before_quantity',
+                width: '150px',
+            ),
+            CrudTable::column(
+                label: __( 'Quantity' ),
+                identifier: 'quantity',
+            ),
+            CrudTable::column(
+                label: __( 'N. Quantity' ),
+                identifier: 'after_quantity',
+                width: '150px',
+            ),
+            CrudTable::column(
+                label: __( 'Unit' ),
+                identifier: 'units_name',
+                width: '100px',
+            ),
+            CrudTable::column(
+                label: __( 'Order' ),
+                identifier: 'orders_code',
+                width: '100px',
+            ),
+            CrudTable::column(
+                label: __( 'Procurement' ),
+                identifier: 'procurements_name',
+            ),
+            CrudTable::column(
+                label: __( 'Unit Price' ),
+                identifier: 'unit_price',
+                width: '100px',
+            ),
+            CrudTable::column(
+                label: __( 'Total Price' ),
+                identifier: 'total_price',
+                width: '150px',
+            ),
+            CrudTable::column(
+                label: __( 'Author' ),
+                identifier: 'users_username',
+            ),
+            CrudTable::column(
+                label: __( 'Date' ),
+                identifier: 'created_at',
+                width: '150px',
+            )
+        );
     }
 
     /**

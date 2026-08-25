@@ -52,7 +52,7 @@
         &.error {
             @apply bg-error-primary border-error-secondary text-fontcolor;
             &.hoverable:hover {
-                @apply bg-error-secondary text-fontcolor;
+                @apply bg-error-primary text-fontcolor;
             }
         }
     

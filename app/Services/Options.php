@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Option;
 use App\Models\PaymentType;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class Options
 {
@@ -23,10 +25,8 @@ class Options
 
     /**
      * Will reset the default options
-     *
-     * @param array $options
      */
-    public function setDefault( $options = [] ): void
+    public function setDefault( array $options = [] ): void
     {
         Option::truncate();
 
@@ -38,7 +38,7 @@ class Options
             'ns_pos_show_quantity' => 'yes',
             'ns_currency_precision' => 2,
             'ns_pos_hide_empty_categories' => 'yes',
-            'ns_pos_unit_price_ediable' => 'yes',
+            'ns_pos_unit_price_editable' => 'yes',
             'ns_pos_order_types' => [ 'takeaway', 'delivery' ],
             'ns_pos_registers_default_change_payment_type' => PaymentType::where( 'identifier', 'cash-payment' )->first()?->id ?? 1,
         ];
@@ -52,10 +52,8 @@ class Options
 
     /**
      * return option service
-     *
-     * @return object
      */
-    public function option()
+    public function option(): Builder
     {
         return Option::where( 'user_id', null );
     }
@@ -82,10 +80,8 @@ class Options
     /**
      * Rebuild the options to ensure having
      * on the rawOptions the latest options.
-     *
-     * @return void
      **/
-    public function rebuild()
+    public function rebuild(): Collection
     {
         if ( Helper::installed() ) {
             $this->rawOptions = $this->option()
@@ -96,17 +92,14 @@ class Options
                     ];
                 } );
         }
+
+        return collect( $this->rawOptions );
     }
 
     /**
      * Set Option
-     *
-     * @param string key
-     * @param any value
-     * @param bool force set
-     * @return void
      **/
-    public function set( $key, $value, $expiration = null )
+    public function set( string $key, mixed $value, ?string $expiration = null )
     {
         if ( isset( $this->rawOptions[ $key ] ) ) {
             $this->rawOptions[ $key ]->value = $value;

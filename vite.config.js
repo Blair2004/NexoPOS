@@ -53,6 +53,7 @@ export default ({ mode }) => {
                     'resources/ts/popups.ts',
                     'resources/ts/widgets.ts',
                     'resources/ts/wizard.ts',
+                    'resources/ts/guide.ts',
     
                     'resources/css/app.css',
                     'resources/css/grid.css',
@@ -64,6 +65,7 @@ export default ({ mode }) => {
                     'resources/css/light.css',
                     'resources/css/dark.css',
                     'resources/css/phosphor.css',
+                    'resources/css/print.css',
                 ],
                 refresh: true,
             }),

@@ -131,6 +131,7 @@ import { defineAsyncComponent } from 'vue';
 
 declare const nsCrudHandler;
 declare const nsComponents;
+declare const nsExtraComponents;
 
 export default {
     data: () => {
@@ -245,7 +246,7 @@ export default {
             return this.headerButtons.map( buttonComponent => {
                 return defineAsyncComponent( () => {
                     return new Promise( ( resolve ) => {
-                        resolve( nsComponents[ buttonComponent ] );
+                        resolve( nsComponents[ buttonComponent ] || nsExtraComponents[ buttonComponent ] );
                     })
                 })
             });

@@ -191,10 +191,10 @@
                 }
 
                 #void-button {
-                    @apply bg-error-primary border-pos-button-edge hover:bg-error-secondary;
+                    @apply bg-error-secondary border-pos-button-edge;
 
                     &:hover, &:active {
-                        @apply bg-error-secondary;
+                        @apply bg-error-tertiary;
                     }
                 }
             }
@@ -407,9 +407,6 @@
         }
         .ns-payment-list {
             @apply border-t-tab-active;
-        }
-        .ns-payment-footer {
-            @apply bg-tab-active-border;
         }
     }
 }

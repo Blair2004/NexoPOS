@@ -5,7 +5,7 @@
         </td>
         <td v-if="prependOptions && showOptions" class="font-sans p-1">
             <div class=""> <!-- flex items-center justify-center -->
-                <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-hidden rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
+                <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-hidden rounded-full w-24 text-xs m-1 p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
                 <div class="dropdown-holder">
                     <!-- @todo: Move to decoupled component -->

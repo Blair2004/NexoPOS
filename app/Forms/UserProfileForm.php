@@ -23,8 +23,6 @@ class UserProfileForm extends SettingsPage
 
     public function __construct()
     {
-        $options = app()->make( UserOptions::class );
-
         $this->form = [
             'tabs' => Hook::filter( 'ns-user-profile-form', [
                 'attribute' => include ( dirname( __FILE__ ) . '/user-profile/attribute.php' ),
@@ -33,6 +31,7 @@ class UserProfileForm extends SettingsPage
                 'billing' => include ( dirname( __FILE__ ) . '/user-profile/billing.php' ),
                 'security' => include ( dirname( __FILE__ ) . '/user-profile/security.php' ),
                 'token' => include ( dirname( __FILE__ ) . '/user-profile/token.php' ),
+                'guides' => include ( dirname( __FILE__ ) . '/user-profile/guides.php' ),
             ] ),
         ];
     }
@@ -111,7 +110,7 @@ class UserProfileForm extends SettingsPage
         /**
          * @var UserOptions
          */
-        $userOptions = app()->make( UserOptions::class );
+        $userOptions = new UserOptions( Auth::id() );
 
         if ( $request->input( 'options' ) ) {
             foreach ( $request->input( 'options' ) as $field => $value ) {

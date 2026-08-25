@@ -32,6 +32,7 @@ import delivery from "./pages/dashboard/pos/queues/order-type/delivery";
 import axios from "axios";
 import { io, Socket } from "socket.io-client";
 import { ReactiveObject } from "./libraries/reactive-objects";
+import { cartSatisfiesCouponRestrictions } from "./libraries/coupon-eligibility";
 
 /**
  * these are dynamic component
@@ -71,6 +72,7 @@ export class POS {
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
     private _holdPopupEnabled = true;
+    private _bootGuards: (() => Promise<unknown>)[] = [];
     private _initialQueue: (() => Promise<StatusResponse>)[] = [];
     private _options: BehaviorSubject<{ [key: string]: any }>;
     private _responsive = new Responsive;
@@ -185,6 +187,10 @@ export class POS {
         return this._initialQueue;
     }
 
+    get bootGuards() {
+        return this._bootGuards;
+    }
+
     get responsive() {
         return this._responsive;
     }
@@ -221,6 +227,7 @@ export class POS {
                 nsHooks.doAction( 'ns-before-cart-reset' );
 
                 
+                await this.processBootGuards();
                 await this.processInitialQueue();
 
                 nsHooks.doAction( 'ns-after-cart-changed' );
@@ -263,7 +270,7 @@ export class POS {
         });
 
         this.initialQueue.push(() => new Promise((resolve, reject) => {
-            nsHttpClient.get(`/api/users/permissions/` ).subscribe({
+            nsHttpClient.get(`/api/user/permissions/` ).subscribe({
                 next: (response: any) => {
                     this._userPermissions.next(response);
                     resolve( response );
@@ -656,6 +663,18 @@ export class POS {
 
             resolve( true );
         });
+    }
+
+    /**
+     * Run blocking operator and security checks before regular initialization.
+     * These guards intentionally have no timeout because they can require input.
+     */
+    async processBootGuards() {
+        for ( const guard of this._bootGuards ) {
+            await guard();
+        }
+
+        return true;
     }
 
     /**
@@ -1454,48 +1473,8 @@ export class POS {
      */
     checkCart() {
         const order = this.order.getValue();
-        const unmatchedConditions = [];
-
-        order.coupons.forEach(coupon => {
-            /**
-             * by default we'll bypass
-             * the product if it's not available
-             */
-            let isProductValid = true;
-
-            /**
-             * if the coupon includes products
-             * we make sure the products are included on the cart
-             */
-            if (coupon.products.length > 0) {
-                isProductValid = order.products.filter(product => {
-                    return coupon.products.map(p => p.product_id).includes(product.product_id);
-                }).length > 0;
-
-                if (!isProductValid && unmatchedConditions.indexOf(coupon) === -1) {
-                    unmatchedConditions.push(coupon);
-                }
-            }
-
-            /**
-             * by default we'll bypass
-             * the product if it's not available
-             */
-            let isCategoryValid = true;
-
-            /**
-             * if the coupon includes products
-             * we make sure the products are included on the cart
-             */
-            if (coupon.categories.length > 0) {
-                isCategoryValid = order.products.filter(product => {
-                    return coupon.categories.map(p => p.category_id).includes(product.$original().category_id);
-                }).length > 0;
-
-                if (!isCategoryValid && unmatchedConditions.indexOf(coupon) === -1) {
-                    unmatchedConditions.push(coupon);
-                }
-            }
+        const unmatchedConditions = order.coupons.filter(coupon => {
+            return ! cartSatisfiesCouponRestrictions(coupon, order.products);
         });
 
         unmatchedConditions.forEach(coupon => {
@@ -1722,6 +1701,8 @@ export class POS {
                      * that means for some reason the Promise has
                      * been broken, therefore we need to stop the queue.
                      */
+                    console.log('broken promise', brokenPromise);
+                    
                     if (brokenPromise === false) {
                         this._processingAddQueue = false;
                         return false;
@@ -2058,6 +2039,18 @@ export class POS {
          */
         this.computeDiscount( product );
 
+        let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
+
+        /**
+         * Once-per-line extra (not multiplied by quantity). Modules use this for
+         * surcharges such as an appointment room fee attached to a service line.
+         * The amount is stored on the product, included in the tax base, and
+         * added to total_price after unit × qty − discount.
+         */
+        const rawLineExtra = nsHooks.applyFilters( 'ns-pos-product-line-extra', 0, product );
+        const lineExtra = Number( rawLineExtra );
+        product.line_extra = Number.isFinite( lineExtra ) ? Math.max( 0, lineExtra ) : 0;
+
         /**
          * The price with and without tax
          * needs to be updated as tax is by default computed
@@ -2065,9 +2058,11 @@ export class POS {
          */
         this.computeProductTaxValue( product );
 
-        let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
-        
-        product.total_price =   math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done();
+        product.total_price = math.chain( unitPrice )
+            .multiply( product.quantity )
+            .subtract( product.discount )
+            .add( product.line_extra || 0 )
+            .done();
         
         // Ensure total_tax_value is set (fallback for old computation paths)
         if ( product.total_tax_value === undefined ) {
@@ -2118,10 +2113,19 @@ export class POS {
         
         // Calculate line total after discount
         const lineAfterDiscount = math.chain( lineSubtotal ).subtract( product.discount ).done();
+
+        /**
+         * Include once-per-line extras (ns-pos-product-line-extra) in the tax base
+         * so surcharges such as room fees are taxed with the line.
+         */
+        const lineExtra = Number( product.line_extra || 0 );
+        const taxableLineTotal = math.chain( lineAfterDiscount )
+            .add( Number.isFinite( lineExtra ) ? Math.max( 0, lineExtra ) : 0 )
+            .done();
         
-        // Compute tax on the discounted line total
+        // Compute tax on the discounted line total (+ line extra)
         let result = this.computeTaxForGroup( 
-            lineAfterDiscount, 
+            taxableLineTotal, 
             tax_group, 
             product.tax_type
         );

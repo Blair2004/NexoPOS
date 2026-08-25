@@ -22,6 +22,7 @@
                 </div>
                 <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-tertiary' : ''" class="input-group info flex border rounded overflow-hidden">
                     <input v-model="form.main.value"
+                        :name="form.main.name"
                         @blur="formValidation.checkField( form.main )"
                         @change="formValidation.checkField( form.main )"
                         :disabled="form.main.disabled"
@@ -41,7 +42,7 @@
                         <div id="card-header" class="flex flex-wrap justify-between ns-tab ml-4">
                             <div class="flex flex-wrap">
                                 <template v-for="( tab, index ) in variation.tabs">
-                                    <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-fontcolor px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
+                                    <div @click="setTabActive( index, variation.tabs )" :id="'tab-' + tab.identifier" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-fontcolor px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
                                         <span class="block" :class="tab.errors && tab.errors.length > 0 ? 'mr-2' : ''">{{ tab.label }}</span>
                                         <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-error-secondary text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
                                     </div>
@@ -78,7 +79,7 @@
                                     <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <div class="rounded border custom-button flex justify-between p-2 items-center">
                                             <span>{{ __( 'Add Images' ) }}</span>
-                                            <button @click="addImage( variation )" class="outline-hidden rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
+                                            <button id="create-image" @click="addImage( variation )" class="outline-hidden rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
                                                 <i class="las la-plus-circle"></i>
                                             </button>
                                         </div>

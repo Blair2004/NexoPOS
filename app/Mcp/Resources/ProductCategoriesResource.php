@@ -21,9 +21,9 @@ class ProductCategoriesResource extends Resource
         try {
             $categories = ProductCategory::get();
 
-            return Response::json($categories->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $categories->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

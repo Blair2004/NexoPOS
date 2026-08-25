@@ -8,8 +8,8 @@ Use this reference for module TypeScript, Vue components, Blade-injected scripts
 - [Observable and promise usage](#observable-and-promise-usage)
 - [Errors and request state](#errors-and-request-state)
 - [Frontend globals](#frontend-globals)
-- [Shared Vue runtime and module SFCs](#shared-vue-runtime-and-module-sfcs)
-- [`Popup.show()` and custom popups](#popupshow-and-custom-popups)
+- [Confirmation popups](#confirmation-popups)
+- [Shared Vue runtime for modules](#shared-vue-runtime-for-modules)
 - [Localization](#localization)
 - [Module declarations](#module-declarations)
 
@@ -109,6 +109,10 @@ const result = await new Promise((resolve, reject) => {
 
 The error callback receives `error.response.data` when Axios provides it; otherwise it receives the Axios response or thrown error. Do not assume every error has the same shape.
 
+Use `nsSnackBar.error(message)` for most asynchronous failures: page loads, refreshes, submissions, and operational actions. A transient/global failure must not insert a full-width message block into the document flow because that shifts the surrounding UI. Preserve already-rendered content where possible; for an initial load, settle the spinner and keep a stable reserved content region instead of rendering a new error panel.
+
+Inline error content is appropriate only when it is spatially actionable (for example, validation attached to a field or one failed table/cart row) or when the page has a persistent fatal state with retry controls. Do not show the same error both inline and in a snackbar.
+
 ```ts
 function messageFrom(error: any): string {
     if (typeof error?.message === 'string') {
@@ -121,6 +125,9 @@ function messageFrom(error: any): string {
 
     return 'An unexpected request error occurred.';
 }
+
+const message = messageFrom(error);
+nsSnackBar.error(message);
 ```
 
 `nsHttpClient.response` exposes the last successful full Axios response globally. Do not use it to correlate concurrent requests.
@@ -158,7 +165,11 @@ Core globals include:
 | `popupResolver` | Settle a promise-driven popup and close it |
 | `nsEvent` | NexoPOS event emitter |
 | `RxJS` | RxJS exports for legacy/global code |
-| `nsExtraComponents` | Extra Vue component registry where available |
+| `ns.vue` / `NexoPOSVue` | Shared Vue runtime (single instance for core + modules) |
+| `nsCreateApp` | Create a module app on the shared runtime with core components registered |
+| `nsRegisterComponent` | Register a component on `nsExtraComponents` and live dashboard apps |
+| `nsExtraComponents` | Extra Vue component registry (merged into dashboard apps in app-init) |
+| `nsComponents` | Core Vue components map after app-init |
 | `ns.insertAfterKey`, `ns.insertBeforeKey` | Ordered object insertion |
 | `nsCurrency`, `nsRawCurrency` | Currency formatting and raw numeric conversion |
 
@@ -261,12 +272,189 @@ Follow these lifecycle rules:
 - Keep cancellation handling explicit in the caller with `try/catch`. Treat rejection with `false` as user cancellation, not an application error.
 - Import popup components statically. The current popup manager rejects Vue async components.
 - Nested calls are stacked automatically. Only the focused top popup handles Escape.
+### Confirmation popups
+
+Consequential actions must ask for confirmation through the native popup host. The current core confirmation component is `nsConfirmPopup`; do not refer to it as `nsConfirmDialog`, and do not use the browser-native `window.confirm()` dialog.
+
+Use the NexoPOS confirmation popup before destructive, revocation, reset, credential-rotation, or irreversible actions. Dashboard layouts expose both `Popup` and `nsConfirmPopup` globally:
+
+```ts
+declare const Popup: any;
+declare const nsConfirmPopup: any;
+
+function confirmDelete(entry: Entry): void {
+    Popup.show(nsConfirmPopup, {
+        title: __m('Delete Entry', 'ExampleModule'),
+        message: __m('This action cannot be undone. Would you like to proceed?', 'ExampleModule'),
+        onAction: (action: boolean) => {
+            if (action) {
+                deleteEntry(entry);
+            }
+        },
+    });
+}
+```
+
+Use this two-step handler for delete, cancel, close, refund, reset, stock-return, and similar operations: the click opens the popup, and only an affirmative `onAction` starts the request. A cancellation must not mutate state or call the API. Keep the title and message specific about the operational consequence. `nsConfirmPopup` closes itself after invoking `onAction`.
+
+## Shared Vue runtime for modules
+
+For the full Vue + Tailwind module checklist (including the **required Tailwind prefix** and class order), see [module-frontend.md](module-frontend.md).
+
+### Why this exists
+
+NexoPOS core and every module must share **one** Vue object. If a module Vite build bundles its own `vue`, components and apps created from that copy are a different runtime than core (`nsDashboardContent`, popups, POS). Symptoms include missing core components, broken plugins, and subtle state bugs.
+
+### Required module Vite setup
+
+Use the shared factory (preferred) or the plugin alone:
+
+```js
+// modules/ExampleModule/vite.config.js
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { defineNexoPOSModuleConfig } from '../../resources/vite-nexopos-module.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export default defineNexoPOSModuleConfig({
+    dirname: __dirname,
+    inputs: [
+        'Resources/ts/main.ts',
+        'Resources/css/style.css',
+    ],
+    port: 3335,
+});
+```
+
+That factory enables `nexoposVueRuntime()`, which rewrites `import … from 'vue'` to `window.ns.vue` / `window.NexoPOSVue` (loaded by host layouts via `resources/ts/vue-runtime.ts`).
+
+Host layouts already load the runtime in `<head>` before module scripts.
+
+### Prefer real `.vue` SFCs
+
+With the shared runtime plugin, modules can use normal Vue SFCs and Composition API helpers:
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
+const count = ref(0);
+onMounted(() => { count.value = 1; });
+</script>
+
+<template>
+    <ns-button @click="count++">{{ count }}</ns-button>
+</template>
+```
+
+Avoid the legacy pattern of `.ts` files with `template: \`...\`` and `declare const createApp` unless you are maintaining old code.
+
+### Standalone page: `nsCreateApp`
+
+When the module owns a mount point (calendar page, public booking, custom full page):
+
+```ts
+import { nsCreateApp } from 'vue';
+import Page from './components/Page.vue';
+
+nsCreateApp(Page, { title: 'Example' }).mount('#example-module-app');
+```
+
+`nsCreateApp`:
+
+1. Calls the shared runtime’s `createApp`
+2. Registers `window.nsComponents` and `window.nsExtraComponents` by default so `<ns-field>`, `<ns-button>`, etc. resolve
+
+Load the entry from a footer inject section (or after `app-init`) when you need core components already registered on `nsComponents`.
+
+To skip auto-registration:
+
+```ts
+nsCreateApp(Page, null, {
+    registerCoreComponents: false,
+    registerExtraComponents: false,
+});
+```
+
+Plain `createApp` from `'vue'` still uses the shared runtime when the plugin is enabled; it does **not** auto-register core components.
+
+### Dashboard injection: `nsRegisterComponent`
+
+When the UI lives inside `#dashboard-content` (or other core-mounted roots), register into the core app rather than creating a second root:
+
+```ts
+import { nsRegisterComponent } from 'vue';
+import MyPanel from './components/MyPanel.vue';
+
+nsRegisterComponent('example-module-panel', MyPanel);
+```
+
+Equivalent legacy form (still supported if assets load before `app-init`):
+
+```ts
+nsExtraComponents['example-module-panel'] = MyPanel;
+```
+
+Asset load order on the dashboard footer:
+
+1. `bootstrap.ts`
+2. Footer injections / `@moduleViteAssets` in `layout.dashboard.footer.inject`
+3. `app-init.ts` (merges `nsExtraComponents` into dashboard apps)
+4. `app.ts` (`ns-before-mount`, then mount)
+
+So module registration scripts should load in step 2 for the simplest path. `nsRegisterComponent` also updates live app instances if they already exist.
+
+### Widgets and POS
+
+- Dashboard widgets: assign `window['WidgetComponentName'] = Component` (or async component) from a footer-injected entry, using `import { defineAsyncComponent } from 'vue'` with the shared plugin.
+- POS: inject via POS queues/hooks; still import from `'vue'` only through the shared runtime plugin. Full mastery guide: [pos-lifecycle.md](pos-lifecycle.md).
+- **Cart product-row meta:** filter `ns-pos-product-row-components` + `markRaw(Component)` + `POS.updateProduct` — not raw HTML. Prefer Options API + string `template` for POS-injected components.
+- **Once-per-line fees:** `ns-pos-product-line-extra` (not unit price). See [pos-lifecycle.md § Unit price vs once-per-line extra](pos-lifecycle.md#unit-price-vs-once-per-line-extra).
 
 ## Localization
 
-- Use `__('Text')` for core-owned strings.
-- Use `__m('Text', 'ExampleModule')` for module-owned strings.
-- Keep the module namespace identical to `config.xml` and existing `Lang/` usage.
+- Use `__('Text')` for **core-owned** strings only.
+- Use **`__m('Text', 'ModuleNamespace')`** for **all module-owned** strings on **backend and frontend** (Vue/TS, Blade, PHP).
+- NexoPOS **scans module source for `__m(...)`** to collect translatable text. Wrappers like `t()`, `translate()`, or `localization()` hide strings from that scanner — **do not use them for user-facing copy**.
+- Keep the module namespace identical to `config.xml` / module directory (e.g. `'NsAppointments'`).
+- On the dashboard and POS, core installs **`window.__m`** after bootstrap. That is **not** enough for Vue templates: Vue only sees component bindings. A TypeScript `declare const __m` is **erased** and does **not** create a runtime value.
+- **Always create a real binding** the template can use:
+
+```ts
+// Preferred: module helper that forwards to window.__m (scanners still see __m('…', 'Ns…') call sites)
+import { __m } from '../i18n';
+```
+
+```vue
+<template>
+  <!-- Call sites keep __m('Literal', 'ModuleNamespace') for the language scanner -->
+  <h1>{{ __m('Appointments Calendar', 'NsAppointments') }}</h1>
+</template>
+
+<script setup lang="ts">
+import { __m } from '../i18n'; // real binding → available in template
+</script>
+```
+
+```ts
+// Options API (including POS string-template components)
+import { __m } from '../i18n';
+
+export default {
+  methods: {
+    __m, // required so template {{ __m('Save', 'NsAppointments') }} resolves
+  },
+};
+```
+
+Do **not** rely on bare globals in templates without `methods` / `setup` exposure.
+
+```php
+// PHP
+__m( 'Service started.', 'NsAppointments' );
+```
+
 - Treat API fields as localized objects only when their contract or comparable code shows that shape; do not assume every name or description is localized.
 - When consuming a localized object, use `window.ns?.language`, then an English or first-value fallback.
 

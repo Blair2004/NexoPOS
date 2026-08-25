@@ -172,7 +172,7 @@ class UnitService
 
         try {
             $group = $this->getGroups( $fields[ 'group_id' ] );
-        } catch ( \Exception $exception ) {
+        } catch ( Exception $exception ) {
             throw new NotFoundException( [
                 'status' => 'error',
                 'message' => __( 'Unable to find the unit group to which this unit is attached.' ),

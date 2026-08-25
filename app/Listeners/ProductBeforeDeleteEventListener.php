@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ProductBeforeDeleteEvent;
+use App\Events\ProductBeforeDeleteProductEvent;
 use App\Services\ProductService;
 
 class ProductBeforeDeleteEventListener
@@ -21,7 +22,7 @@ class ProductBeforeDeleteEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ProductBeforeDeleteProductEvent $event
+     * @param  ProductBeforeDeleteProductEvent $event
      * @return void
      */
     public function handle( ProductBeforeDeleteEvent $event )

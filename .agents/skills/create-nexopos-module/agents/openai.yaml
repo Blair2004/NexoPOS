@@ -1,4 +1,4 @@
 interface:
   display_name: "Create NexoPOS Module"
-  short_description: "Build production-ready NexoPOS modules"
-  default_prompt: "Use $create-nexopos-module to create a NexoPOS module for the requested feature."
+  short_description: "Build NexoPOS modules, widgets, and POS integrations"
+  default_prompt: "Use $create-nexopos-module to create or extend a NexoPOS module. Load the widget instructions for dashboard widgets and references/pos-lifecycle.md for POS/cart work."

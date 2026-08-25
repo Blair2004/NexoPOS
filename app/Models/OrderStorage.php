@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property int            $quantity
- * @property string         $session_identifier
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property int    $quantity
+ * @property string $session_identifier
+ * @property Carbon $updated_at
  */
 class OrderStorage extends NsModel
 {

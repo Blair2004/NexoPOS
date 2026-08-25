@@ -34,21 +34,25 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start text-fontcolor elevation-surface error border">
+                    <div class="p-2 flex justify-between items-start elevation-surface error border">
                         <div>
                             <span class="text-semibold">
                                 {{ __( 'Coupons' ) }}
                             </span>
                         </div>
-                        <div class="font-semibold text-font">{{ nsCurrency( order.total_coupons ) }}</div>
+                        <div class="font-semibold">
+                            <span>{{ nsCurrency( order.total_coupons ) }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start border ns-notice success">
+                    <div class="p-2 flex justify-between items-start border elevation-surface success">
                         <div>
                             <span class="text-semibold">{{ __( 'Total' ) }}</span>
                         </div>
-                        <div class="font-semibold text-font">{{ nsCurrency( order.total ) }}</div>
+                        <div class="font-semibold">
+                            <span>{{ nsCurrency( order.total ) }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -56,7 +60,9 @@
                         <div>
                             <span class="text-semibold">{{ __( 'Taxes' ) }}</span>
                         </div>
-                        <div class="font-semibold">{{ nsCurrency( order.tax_value ) }}</div>
+                        <div class="font-semibold">
+                            <span>{{ nsCurrency( order.tax_value ) }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -64,7 +70,9 @@
                         <div>
                             <span class="text-semibold">{{ __( 'Change' ) }}</span>
                         </div>
-                        <div class="font-semibold">{{ nsCurrency( order.change ) }}</div>
+                        <div class="font-semibold">
+                            <span>{{ nsCurrency( order.change ) }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -72,7 +80,9 @@
                         <div>
                             <span class="text-semibold">{{ __( 'Paid' ) }}</span>
                         </div>
-                        <div class="font-semibold">{{ nsCurrency( order.tendered ) }}</div>
+                        <div class="font-semibold">
+                            <span>{{ nsCurrency( order.tendered ) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,9 +129,9 @@
                                     :value="option.value">{{ option.label }}</option>
                             </select>
                         </div>
-                        <div class="pl-2 flex">
+                        <div class="pl-2 flex items-center gap-2">
                             <ns-close-button @click="showDeliverySelect = false"></ns-close-button>
-                            <button @click="submitDeliveryStatus( order )" class="bg-success-primary text-white rounded-full px-2 py-1">{{ __( 'Save' ) }}</button>
+                            <button @click="submitDeliveryStatus( order )" class="bg-primary text-white text-xs rounded-full px-2 py-1">{{ __( 'Save' ) }}</button>
                         </div>
                     </div>
                 </div>
@@ -145,9 +155,9 @@
                                     :value="option.value">{{ option.label }}</option>
                             </select>
                         </div>
-                        <div class="pl-2 flex">
+                        <div class="pl-2 flex gap-2">
                             <ns-close-button @click="showProcessingSelect = false"></ns-close-button>
-                            <button @click="submitProcessingChange( order )" class="bg-success-primary text-white rounded-full px-2 py-1">{{ __( 'Save' ) }}</button>
+                            <button @click="submitProcessingChange( order )" class="bg-primary text-white text-xs rounded-full px-2 py-1">{{ __( 'Save' ) }}</button>
                         </div>
                     </div>
                 </div>

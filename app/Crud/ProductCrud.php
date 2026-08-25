@@ -309,6 +309,7 @@ class ProductCrud extends CrudService
                     'tabs' => [
                         'identification' => [
                             'label' => __( 'Identification' ),
+                            'identifier' => 'identification',
                             'fields' => [
                                 [
                                     'type' => 'search-select',
@@ -405,6 +406,7 @@ class ProductCrud extends CrudService
                         ],
                         'groups' => [
                             'label' => __( 'Groups' ),
+                            'identifier' => 'groups',
                             'fields' => [
                                 [
                                     'type' => 'hidden',
@@ -435,6 +437,7 @@ class ProductCrud extends CrudService
                         ],
                         'units' => [
                             'label' => __( 'Units' ),
+                            'identifier' => 'units',
                             'fields' => [
                                 [
                                     'type' => 'search-select',
@@ -520,6 +523,7 @@ class ProductCrud extends CrudService
                         ],
                         'expiracy' => [
                             'label' => __( 'Expiry' ),
+                            'identifier' => 'expiry',
                             'fields' => [
                                 [
                                     'type' => 'switch',
@@ -547,14 +551,17 @@ class ProductCrud extends CrudService
                         ],
                         'taxes' => [
                             'label' => __( 'Taxes' ),
+                            'identifier' => 'taxes',
                             'fields' => [
                                 [
-                                    'type' => 'select',
+                                    'type' => 'search-select',
                                     'options' => Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
                                     'description' => __( 'Select the tax group that applies to the product/variation.' ),
                                     'name' => 'tax_group_id',
                                     'label' => __( 'Tax Group' ),
                                     'value' => $entry->tax_group_id ?? '',
+                                    'props' => TaxesGroupCrud::getFormConfig(),
+                                    'component' => 'nsCrudForm',
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::kvToJsOptions( [
@@ -570,6 +577,7 @@ class ProductCrud extends CrudService
                         ],
                         'images' => [
                             'label' => __( 'Images' ),
+                            'identifier' => 'images',
                             'fields' => [
                                 [
                                     'type' => 'media',
@@ -721,7 +729,6 @@ class ProductCrud extends CrudService
             CrudTable::column(
                 label: __( 'Name' ),
                 identifier: 'name',
-                width: '300px',
             ),
             CrudTable::column(
                 label: __( 'Type' ),
@@ -731,6 +738,7 @@ class ProductCrud extends CrudService
             CrudTable::column(
                 label: __( 'Sku' ),
                 identifier: 'sku',
+                width: '150px',
             ),
             CrudTable::column(
                 label: __( 'Category' ),
@@ -740,10 +748,12 @@ class ProductCrud extends CrudService
             CrudTable::column(
                 label: __( 'Status' ),
                 identifier: 'status',
+                width: '100px',
             ),
             CrudTable::column(
                 label: __( 'Author' ),
                 identifier: 'user_username',
+                width: '150px',
             ),
             CrudTable::column(
                 label: __( 'Date' ),

@@ -70,7 +70,8 @@ class OrdersService
         protected Options $optionsService,
         protected TaxService $taxService,
         protected ReportService $reportService,
-        protected MathService $mathService
+        protected MathService $mathService,
+        protected AccountingJournalService $accountingJournalService
     ) {
         // ...
     }
@@ -83,6 +84,14 @@ class OrdersService
      * @return array
      */
     public function create( $fields, ?Order $order = null )
+    {
+        return DB::transaction(
+            fn() => $this->persistOrder( $fields, $order ),
+            attempts: 3
+        );
+    }
+
+    private function persistOrder( $fields, ?Order $order = null )
     {
         $isNew = ! $order instanceof Order;
 
@@ -234,6 +243,8 @@ class OrdersService
         $order->load( 'payments' );
         $order->load( 'products' );
         $order->load( 'coupons' );
+
+        $this->accountingJournalService->postFinalizedOrder( $order );
 
         return [
             'status' => 'success',
@@ -790,6 +801,14 @@ class OrdersService
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
+        return DB::transaction(
+            fn() => $this->persistOrderSinglePayment( $payment, $order ),
+            attempts: 3
+        );
+    }
+
+    private function persistOrderSinglePayment( $payment, Order $order )
+    {
         // Check if the order is already paid
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             throw new NotAllowedException( __( 'Unable to proceed as the order is already paid.' ) );
@@ -1145,26 +1164,16 @@ class OrdersService
             }
 
             /**
-             * store the product that as it can be used while
+             * store the product data as it can be used while
              * listening to create and update events.
              */
             $orderProduct->setData( $product );
 
             $this->computeOrderProduct( $orderProduct, $product );
 
-            if ( ns()->option->get( 'ns_pos_vat' ) === 'disabled' ) {
-                $subTotal = $order->subtotal;
-            } else {
-                if ( ns()->option->get( 'ns_pos_prefered_price' ) === 'net_prices' ) {
-                    $subTotal = $this->currencyService->define( $subTotal )
-                        ->additionateBy( $orderProduct->total_price_gross )
-                        ->get();
-                } else {
-                    $subTotal = $this->currencyService->define( $subTotal )
-                        ->additionateBy( $orderProduct->total_price )
-                        ->get();
-                }
-            }
+            $subTotal = $this->currencyService->define( $subTotal )
+                ->additionateBy( $orderProduct->total_price )
+                ->get();
 
             return $orderProduct;
         } );
@@ -1777,6 +1786,14 @@ class OrdersService
     }
 
     public function refundOrder( Order $order, array $fields ): array
+    {
+        return DB::transaction(
+            fn(): array => $this->persistOrderRefund( $order, $fields ),
+            attempts: 3
+        );
+    }
+
+    private function persistOrderRefund( Order $order, array $fields ): array
     {
         if ( ! in_array( $order->payment_status, [
             Order::PAYMENT_PARTIALLY,

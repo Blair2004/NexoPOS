@@ -27,6 +27,8 @@ return new class extends Migration
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author_id' );
                 $table->string( 'uuid' )->nullable();
+                $table->string( 'system_identifier' )->nullable();
+                $table->unique( 'system_identifier', 'transactions_system_identifier_unique' );
                 $table->timestamps();
             } );
         }

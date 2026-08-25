@@ -74,6 +74,25 @@
                                     </div>
                                 </div>
                             </div>
+                            <!--
+                                Module product-row extensions (e.g. appointments staff/room).
+                                Register via nsHooks.addFilter( 'ns-pos-product-row-components', ... ).
+                            -->
+                            <div
+                                v-if="hasProductRowComponents( product, index )"
+                                class="product-row-meta mt-1 flex flex-wrap gap-2 items-center"
+                            >
+                                <component
+                                    v-for="( component, componentKey ) in productRowComponents( product, index )"
+                                    :key="componentKey"
+                                    :is="component"
+                                    :product="product"
+                                    :index="index"
+                                    :order="order"
+                                    :options="options"
+                                    :settings="settings"
+                                />
+                            </div>
                         </div>
                         <div @click="changeQuantity( product, index )" :class="allowQuantityModification( product ) ? 'cursor-pointer ns-numpad-key' : ''" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center">
                             <span v-if="allowQuantityModification( product )" class="border-b border-dashed border-secondary p-2">{{ displayProductQuantity( product ) }}</span>
@@ -415,6 +434,30 @@ export default {
         nsCurrency,
 
         switchTo,
+
+        /**
+         * Collect Vue components to render under a cart product row.
+         * Modules register via:
+         *   nsHooks.addFilter( 'ns-pos-product-row-components', 'module/key', ( components, product, index ) => {
+         *     if ( product.ns_appointment_service ) {
+         *       components.MyMeta = markRaw( MyMetaComponent );
+         *     }
+         *     return components;
+         *   });
+         */
+        productRowComponents( product, index ) {
+            if ( typeof nsHooks === 'undefined' || typeof nsHooks.applyFilters !== 'function' ) {
+                return {};
+            }
+
+            const components = nsHooks.applyFilters( 'ns-pos-product-row-components', {}, product, index );
+
+            return components && typeof components === 'object' ? components : {};
+        },
+
+        hasProductRowComponents( product, index ) {
+            return Object.keys( this.productRowComponents( product, index ) ).length > 0;
+        },
 
         getFirstName() {
             return `${this.order.customer.first_name || ''} ${this.order.customer.last_name || '' }`;

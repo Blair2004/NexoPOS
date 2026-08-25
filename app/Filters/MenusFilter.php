@@ -24,7 +24,7 @@ class MenusFilter
                         ],
                         'list' => [
                             'label' => __( 'Registers List' ),
-                            'permissions' => [ 'nexopos.create.registers' ],
+                            'permissions' => [ 'nexopos.read.registers' ],
                             'href' => ns()->route( 'ns.dashboard.registers-list' ),
                         ],
                     ],

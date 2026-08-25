@@ -26,6 +26,7 @@ $json               =   [
 ns.currency         =   <?php echo json_encode( $json );?>;
 ns.authentication   =   <?php echo json_encode( $authentication );?>;
 ns.base_url         =   '{{ url( "/" ) }}';
+ns.current_route    =   '{{ request()->route()->getName() }}';
 </script>
 @if( env( 'BROADCAST_DRIVER' ) === 'reverb' )
 <script>
@@ -51,3 +52,4 @@ document.addEventListener( 'DOMContentLoaded', () => {
 @yield( 'layout.dashboard.footer.inject' )
 @vite([ 'resources/ts/app-init.ts' ])
 @vite([ 'resources/ts/app.ts' ])
+@vite([ 'resources/ts/guide.ts' ])

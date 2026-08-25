@@ -53,15 +53,15 @@ class DashboardController extends Controller
 
     public function dispatchTelemetry()
     {
-        $version = config('nexopos.version');
+        $version = config( 'nexopos.version' );
         $modules = app()->make( ModulesService::class )->get();
 
         $modulesData = [];
-        foreach ($modules as $module) {
-            if ($module['enabled'] ?? false) {
+        foreach ( $modules as $module ) {
+            if ( $module['enabled'] ?? false ) {
                 $modulesData[] = [
                     'namespace' => $module['namespace'],
-                    'version'   => $module['version'],
+                    'version' => $module['version'],
                 ];
             }
         }
@@ -69,18 +69,19 @@ class DashboardController extends Controller
         $payload = [
             'version' => $version,
             'modules' => $modulesData,
-            'host'    => request()->getHost(),
+            'host' => request()->getHost(),
         ];
 
         try {
-            Http::post('https://my.nexopos.com/api/nexoplatform/telemetry', $payload);
-            ns()->option->set('ns_telemetry_last_sent', now()->toDateTimeString());
-        } catch (\Exception $e) {
-            Log::error('Telemetry failed: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Telemetry failed.'], 500);
+            Http::post( 'https://my.nexopos.com/api/nexoplatform/telemetry', $payload );
+            ns()->option->set( 'ns_telemetry_last_sent', now()->toDateTimeString() );
+        } catch ( \Exception $e ) {
+            Log::error( 'Telemetry failed: ' . $e->getMessage() );
+
+            return response()->json( ['status' => 'error', 'message' => 'Telemetry failed.'], 500 );
         }
 
-        return response()->json(['status' => 'success']);
+        return response()->json( ['status' => 'success'] );
     }
 
     public function getRecentsOrders()

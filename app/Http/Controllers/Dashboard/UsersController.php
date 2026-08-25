@@ -12,15 +12,21 @@ use App\Crud\RolesCrud;
 use App\Crud\UserCrud;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Http\Requests\UpdateWidgetLayoutRequest;
 use App\Models\Permission;
 use App\Models\PermissionAccess;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\DateService;
+use App\Services\GuideService;
 use App\Services\UserOptions;
 use App\Services\UsersService;
+use App\Services\WidgetService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -29,7 +35,9 @@ class UsersController extends DashboardController
 {
     public function __construct(
         protected UsersService $usersService,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected WidgetService $widgetService,
+        protected GuideService $guideService
     ) {
         // ...
     }
@@ -105,7 +113,7 @@ class UsersController extends DashboardController
     /**
      * displays the user profile
      *
-     * @return view
+     * @return View
      */
     public function getProfile()
     {
@@ -218,12 +226,24 @@ class UsersController extends DashboardController
 
     /**
      * Configure widgets on areas
-     *
-     * @return array
      */
-    public function configureWidgets( Request $request )
+    public function configureWidgets( UpdateWidgetLayoutRequest $request ): array
     {
-        return $this->usersService->storeWidgetsOnAreas( $request->only( [ 'column' ] ) );
+        $widgetRegistry = $this->widgetService->getWidgets()->keyBy( 'component-name' );
+        $widgets = collect( $request->validated( 'widgets' ) )
+            ->map( function ( array $widgetConfig ) use ( $widgetRegistry ): array {
+                $widget = $widgetRegistry->get( $widgetConfig['identifier'] );
+                $selectedLayout = $widgetConfig['layout'] ?? null;
+
+                return [
+                    'component-name' => $widgetConfig['identifier'],
+                    'class-name' => $widget->{'class-name'},
+                    'layout' => $selectedLayout === $widget->layout['name'] ? null : $selectedLayout,
+                ];
+            } )
+            ->all();
+
+        return $this->usersService->storeWidgetLayout( $widgets, $request->user() );
     }
 
     /**
@@ -270,7 +290,7 @@ class UsersController extends DashboardController
     /**
      * Check if the user has a specific permission
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function checkPermission( Request $request )
     {
@@ -418,12 +438,128 @@ class UsersController extends DashboardController
      */
     public function snoozeAds( Request $request )
     {
-        $userOptions = new UserOptions(Auth::id());
-        $userOptions->set('snooze_ads_24h', 'yes', now()->addHours(24));
+        $userOptions = new UserOptions( Auth::id() );
+        $userOptions->set( 'snooze_ads_24h', 'yes', now()->addHours( 24 ) );
 
-        return response()->json([
+        return response()->json( [
             'status' => 'success',
-            'message' => __('Ads have been snoozed for 24 hours.')
-        ]);
+            'message' => __( 'Ads have been snoozed for 24 hours.' ),
+        ] );
+    }
+
+    public function getGuides( Request $request )
+    {
+        $validated = $request->validate( [
+            'route' => 'sometimes|string',
+            'path' => 'sometimes|string',
+        ] );
+
+        return $this->guideService
+            ->initForUser( $request->user() )
+            ->pending( $validated['route'], $validated[ 'path' ] );
+    }
+
+    public function dismissGuide( Request $request )
+    {
+        $guideId = $request->input( 'identifier' );
+
+        if ( ! $guideId ) {
+            return response()->json( [
+                'status' => 'error',
+                'message' => __( 'The guide ID is required.' ),
+            ], 400 );
+        }
+
+        $this->guideService
+            ->initForUser( $request->user() )
+            ->dismiss( $guideId );
+
+        return response()->json( [
+            'status' => 'success',
+            'message' => __( 'The guide has been dismissed.' ),
+        ] );
+    }
+
+    public function completeGuide( Request $request )
+    {
+        $guideId = $request->input( 'identifier' );
+
+        if ( ! $guideId ) {
+            return response()->json( [
+                'status' => 'error',
+                'message' => __( 'The guide ID is required.' ),
+            ], 400 );
+        }
+
+        $this->guideService
+            ->initForUser( $request->user() )
+            ->complete( $guideId );
+
+        return response()->json( [
+            'status' => 'success',
+            'message' => __( 'The guide has been completed.' ),
+        ] );
+    }
+
+    public function getCompletedGuides( Request $request )
+    {
+        $completed = $this->guideService
+            ->initForUser( $request->user() )
+            ->completed();
+
+        $page = Paginator::resolveCurrentPage() ?: 1;
+
+        $collection = collect( $completed );
+
+        $currentPageItems = $collection->forPage( $page, 10 )->values();
+
+        return new LengthAwarePaginator(
+            $currentPageItems,
+            $collection->count(),
+            10,
+            $page,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+            ]
+        );
+    }
+
+    public function getDismissedGuides( Request $request )
+    {
+        $dismissed = $this->guideService
+            ->initForUser( $request->user() )
+            ->dismissed();
+
+        $page = Paginator::resolveCurrentPage() ?: 1;
+
+        $collection = collect( $dismissed );
+
+        $currentPageItems = $collection->forPage( $page, 10 )->values();
+
+        return new LengthAwarePaginator(
+            $currentPageItems,
+            $collection->count(),
+            10,
+            $page,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+            ]
+        );
+    }
+
+    public function resetGuide( Request $request )
+    {
+        $validated = $request->validate( [
+            'guide_id' => 'required|string',
+        ] );
+
+        $this->guideService
+            ->initForUser( $request->user() )
+            ->reset( $validated['guide_id'] );
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The guide has been reset.' ),
+        ];
     }
 }

@@ -59,39 +59,39 @@
                 <div class="-mx-4 flex md:flex-row flex-col">
                     <div class="w-full md:w-1/2 px-4">
                         <div class="shadow rounded my-4 ns-box">
-                            <div class="border-b ns-box-body">
+                            <div class="ns-box-body">
                                 <table class="table ns-table w-full">
                                     <tbody class="text-fontcolor">
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left info text-white">{{ __( 'Sub Total' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left info">{{ __( 'Sub Total' ) }}</td>
                                             <td class="p-2 border text-right border-info-primary">{{ nsCurrency( summary.subtotal ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left error text-white">{{ __( 'Sales Discounts' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left error">{{ __( 'Sales Discounts' ) }}</td>
                                             <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.sales_discounts ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left error text-white">{{ __( 'Sales Taxes' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left error">{{ __( 'Sales Taxes' ) }}</td>
                                             <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.sales_taxes ) }}</td>
                                         </tr>
                                         <tr class="" v-if="summary.product_taxes > 0">
-                                            <td width="200" class="font-semibold p-2 border text-left error text-white">{{ __( 'Product Taxes' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left error">{{ __( 'Product Taxes' ) }}</td>
                                             <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.product_taxes ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left info text-white">{{ __( 'Shipping' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left info">{{ __( 'Shipping' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.shipping ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left success text-white">{{ __( 'Total' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left success">{{ __( 'Total' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.total ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left success text-white">{{ __( 'Cost Of Goods' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left success">{{ __( 'Cost Of Goods' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.total_purchase_price ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left success text-white">{{ __( 'Profit' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left success">{{ __( 'Profit' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.profit ) }}</td>
                                         </tr>
                                     </tbody>
@@ -104,7 +104,7 @@
                 </div>
             </div>
             <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'products_report'">
-                <div class="border-b border-box-edge">
+                <div>
                     <table class="table ns-table w-full">
                         <thead class="text-fontcolor">
                             <tr>
@@ -125,11 +125,14 @@
                                 <td class="p-2 border text-right">{{ nsCurrency( product.total_purchase_price ) }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( product.tax_value ) }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( product.total_price ) }}</td>
-                                <td class="p-2 border text-right">{{ nsCurrency( 
-                                    Math.chain( product.total_price ).subtract( 
-                                        Math.chain( product.total_purchase_price ).add( product.tax_value ).done() 
-                                    ).done()
-                                ) }}</td>
+                                <td class="p-2 border text-right">{{ 
+                                    nsCurrency( 
+                                        Math.chain( product.total_price ).subtract( 
+                                            Math.chain( product.total_purchase_price ).add( product.tax_value ).done() 
+                                        ).done()
+                                    ) 
+                                }}
+                                </td>
                             </tr>
                         </tbody>
                         <tfoot class="text-fontcolor font-semibold">
@@ -147,7 +150,7 @@
                 </div>
             </div>
             <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'categories_report'">
-                <div class="border-b border-box-edge">
+                <div>
                     <table class="table ns-table w-full">
                         <thead class="text-fontcolor">
                             <tr>
@@ -182,14 +185,14 @@
                                         ) }}</td>
                                     </tr>
                                 </template>
-                                <tr class="bg-info-primary">
-                                    <td colspan="2" class="p-2 border border-info-secondary">{{ category.name }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ computeTotal( category.products, 'quantity' ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'total_purchase_price' ) ) }}</td>
-                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( 
+                                <tr class="info">
+                                    <td colspan="2" class="p-2 border">{{ category.name }}</td>
+                                    <td class="p-2 border text-right">{{ computeTotal( category.products, 'quantity' ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( computeTotal( category.products, 'total_purchase_price' ) ) }}</td>
+                                    <td class="p-2 border text-right">{{ nsCurrency( 
                                         computeTotal( category.products, 'total_price' ) -
                                         (
                                             computeTotal( category.products, 'total_purchase_price' ) +
@@ -205,7 +208,7 @@
                                 <td colspan="2" class="p-2 border text-font"></td>
                                 <td class="p-2 border text-right text-font">{{ computeTotal( result, 'total_sold_items' ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
-                                <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'tax_value' ) ) }}</td>
+                                <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-font">{{ nsCurrency( 
@@ -213,7 +216,7 @@
                                     (
                                         computeTotal( result, 'total_purchase_price' )  +
                                         computeTotal( result, 'total_discount' ) +
-                                        computeTotal( result, 'tax_value' )
+                                        computeTotal( result, 'total_tax_value' )
                                     )
                                 ) }}</td>
                             </tr>
@@ -222,7 +225,7 @@
                 </div>
             </div>
             <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'categories_summary'">
-                <div class="border-b border-box-edge">
+                <div>
                     <table class="table ns-table w-full">
                         <thead class="text-fontcolor">
                             <tr>

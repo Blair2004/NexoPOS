@@ -7,6 +7,7 @@ use App\Classes\CrudForm;
 use App\Classes\FormInput;
 use App\Exceptions\NotAllowedException;
 use App\Models\PaymentType;
+use App\Models\TransactionAccount;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
@@ -196,6 +197,27 @@ class PaymentTypeCrud extends CrudService
                             label: __( 'Identifier' ),
                             value: $entry->identifier ?? '',
                         ),
+                        FormInput::select(
+                            label: __( 'Accounting Account' ),
+                            name: 'accounting_account_id',
+                            options: TransactionAccount::query()->orderBy( 'account' )->get()->map( fn( TransactionAccount $account ) => [
+                                'label' => $account->account . ' - ' . $account->name,
+                                'value' => $account->id,
+                            ] )->all(),
+                            value: $entry->accounting_account_id ?? '',
+                            description: __( 'Select the account used when this payment method receives money. Leave empty to use the automatic Cash, Bank, Wallet, or Payment Clearing mapping.' ),
+                        ),
+                        FormInput::select(
+                            label: __( 'Incoming Accounting Effect' ),
+                            name: 'accounting_incoming_effect',
+                            options: Helper::kvToJsOptions( [
+                                'increase' => __( 'Increase' ),
+                                'decrease' => __( 'Decrease' ),
+                            ] ),
+                            value: $entry->accounting_incoming_effect ?? '',
+                            description: __( 'Choose how incoming payments affect the mapped account. Refunds automatically use the opposite effect.' ),
+                        ),
+
                         FormInput::textarea(
                             name: 'description',
                             label: __( 'Description' ),

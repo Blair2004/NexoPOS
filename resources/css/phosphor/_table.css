@@ -15,7 +15,7 @@
 }
 
 .ns-table {
-    @apply w-full;
+    @apply w-full border-collapse;
     thead {
         @apply border-table-th-edge text-sm;
         th {

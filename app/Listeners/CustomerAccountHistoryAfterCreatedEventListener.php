@@ -3,33 +3,19 @@
 namespace App\Listeners;
 
 use App\Events\CustomerAccountHistoryAfterCreatedEvent;
+use App\Services\AccountingJournalService;
 use App\Services\CustomerService;
-use App\Services\TransactionService;
 
 class CustomerAccountHistoryAfterCreatedEventListener
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
     public function __construct(
-        public CustomerService $customerService,
-        public TransactionService $transactionService
-    ) {
-        //
-    }
+        private CustomerService $customerService,
+        private AccountingJournalService $accountingJournalService,
+    ) {}
 
-    /**
-     * Handle the event.
-     *
-     * @return void
-     */
-    public function handle( CustomerAccountHistoryAfterCreatedEvent $event )
+    public function handle( CustomerAccountHistoryAfterCreatedEvent $event ): void
     {
-        /**
-         * @todo implement customer account history in accounting part
-         */
         $this->customerService->updateCustomerAccount( $event->customerAccountHistory );
+        $this->accountingJournalService->postWallet( $event->customerAccountHistory );
     }
 }

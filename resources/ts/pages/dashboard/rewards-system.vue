@@ -132,6 +132,7 @@ export default {
                 </div>
                 <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'info'" class="input-group flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value"
+                        :name="form.main.name"
                         @blur="formValidation.checkField( form.main )"
                         @change="formValidation.checkField( form.main )"
                         :disabled="form.main.disabled"
@@ -156,7 +157,7 @@ export default {
                         <div class="ns-body p-2 flex justify-between items-center my-3">
                             <slot name="add"><span class="text-fontcolor">{{ __( 'Add Rule' ) }}</span></slot>
                             <div class="ns-button info">
-                                <button @click="addRule()" class="rounded font-semibold flex items-center justify-center h-10 w-10">
+                                <button @click="addRule()" id="add-rule" class="rounded font-semibold flex items-center justify-center h-10 w-10">
                                     <i class="las la-plus"></i>
                                 </button>
                             </div>
@@ -164,7 +165,7 @@ export default {
                     </div>
                 </div>
                 <div class="w-full md:w-2/3 lg:3/4 px-4 -m-3 flex flex-wrap items-start justify-start">
-                    <div class="w-full md:w-1/2 p-3" v-bind:key="index" v-for="(rule,index) of form.rules">
+                    <div class="w-full md:w-1/2 p-3 rule-container" v-bind:key="index" v-for="(rule,index) of form.rules">
                         <div class="rounded shadow ns-box flex-auto">
                             <div class="body p-2">
                                 <ns-field class="mb-2" :field="field" v-bind:key="fieldIndex" v-for="(field,fieldIndex) of rule"></ns-field>

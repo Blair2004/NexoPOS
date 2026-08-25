@@ -8,6 +8,7 @@ use App\Events\ModulesLoadedEvent;
 use App\Facades\Config;
 use App\Models\Order;
 use App\Models\OrderProductRefund;
+use App\Services\AccountingJournalService;
 use App\Services\BarcodeService;
 use App\Services\CashRegistersService;
 use App\Services\CoreService;
@@ -17,7 +18,7 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\EnvEditor;
-use App\Services\Helper;
+use App\Services\GuideService;
 use App\Services\MarketplaceService;
 use App\Services\MathService;
 use App\Services\MediaService;
@@ -37,7 +38,6 @@ use App\Services\TaxService;
 use App\Services\TransactionService;
 use App\Services\UnitService;
 use App\Services\UpdateService;
-use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
@@ -45,11 +45,9 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Http\Request;
 use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -100,11 +98,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton( EnvEditor::class, function () {
             return new EnvEditor( base_path( '.env' ) );
-        } );
-
-        // save Singleton for options
-        $this->app->singleton( UserOptions::class, function () {
-            return new UserOptions( Auth::id() );
         } );
 
         $this->app->singleton( CashRegistersService::class, function () {
@@ -228,6 +221,7 @@ class AppServiceProvider extends ServiceProvider
                 taxService: $app->make( TaxService::class ),
                 reportService: $app->make( ReportService::class ),
                 mathService: $app->make( MathService::class ),
+                accountingJournalService: $app->make( AccountingJournalService::class ),
             );
         } );
 
@@ -256,6 +250,10 @@ class AppServiceProvider extends ServiceProvider
             return new MarketplaceService(
                 app()->make( ModulesService::class )
             );
+        } );
+
+        $this->app->singleton( GuideService::class, function ( $app ) {
+            return new GuideService;
         } );
 
         /**

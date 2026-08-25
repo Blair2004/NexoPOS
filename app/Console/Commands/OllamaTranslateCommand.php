@@ -43,8 +43,8 @@ class OllamaTranslateCommand extends Command
         if ( $baseLanguage === 'all' ) {
             $lang = config( 'nexopos.languages', [] );
 
-            foreach( $lang as $code => $name ) {
-                
+            foreach ( $lang as $code => $name ) {
+
             }
         }
 

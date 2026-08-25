@@ -18,31 +18,31 @@ class SearchProductsTool extends Tool
 
     protected string $description = 'Search for products by name or keyword. Returns a list of matching products with pricing, stock, and category information.';
 
-    public function schema(JsonSchema $schema): array
+    public function schema( JsonSchema $schema ): array
     {
         return [
             'search' => $schema->string()
-                ->description('The search keyword to filter products by name.')
+                ->description( 'The search keyword to filter products by name.' )
                 ->nullable(),
             'limit' => $schema->integer()
-                ->description('Maximum number of results to return.')
-                ->default(5)
-                ->min(1)
-                ->max(50),
+                ->description( 'Maximum number of results to return.' )
+                ->default( 5 )
+                ->min( 1 )
+                ->max( 50 ),
         ];
     }
 
-    public function handle(Request $request, ProductService $service): Response
+    public function handle( Request $request, ProductService $service ): Response
     {
         try {
             $results = $service->searchProduct(
-                $request->get('search'),
-                (int) $request->get('limit', 5)
+                $request->get( 'search' ),
+                (int) $request->get( 'limit', 5 )
             );
 
-            return Response::json($results->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $results->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

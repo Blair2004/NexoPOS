@@ -146,6 +146,11 @@ export default {
         this.rawOrder   =   this.popup.params.order;
         this.options    =   systemOptions;
         this.urls       =   systemUrls;
+        // Optional: open a specific tab (e.g. payments from calendar ops).
+        const requestedTab = this.popup.params.active || this.popup.params.tab;
+        if ( typeof requestedTab === 'string' && requestedTab.length > 0 ) {
+            this.active = requestedTab;
+        }
         this.loadOrderDetails( this.rawOrder.id );
         this.popupCloser();
     }

@@ -1,0 +1,48 @@
+@reference '&/css/light.css';
+
+@media print {
+    table {
+        @apply border-gray-400 border-collapse;
+        thead {
+            @apply border-gray-400 text-sm;
+            th {
+                @apply bg-table-th text-fontcolor border-gray-400;
+            }
+            tr.error > th, tr.error td {
+                @apply bg-error-tertiary text-white border-gray-400;
+            }
+            tr.success > th, tr.success td {
+                @apply bg-success-tertiary text-white border-gray-400;
+            }
+            tr.info > th, tr.info td {
+                @apply bg-info-secondary text-white border-gray-400;
+            }
+            tr.warning > th, tr.warning td {
+                @apply bg-warning-tertiary text-white border-gray-400;
+            }
+        }
+        tbody {
+            tr {
+                @apply border-gray-400;
+                td {
+                    @apply border-gray-400;
+                    &.bg-box-elevation-background {
+                        @apply bg-gray-100;
+                    }
+                    &.info {
+                        @apply border-info-secondary bg-info-primary/50 text-gray-700;
+                    }
+                    &.error {
+                        @apply border-error-secondary bg-error-primary/50 text-gray-700;
+                    }
+                    &.success {
+                        @apply border-success-secondary bg-success-primary/50 text-gray-700;
+                    }
+                    &.warning {
+                        @apply border-warning-secondary bg-warning-primary/50 text-gray-700;
+                    }
+                }
+            }
+        }
+    }
+}

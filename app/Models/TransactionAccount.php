@@ -3,21 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property int            $id
- * @property string         $uuid
- * @property string         $description
- * @property int            $author_id
- * @property \Carbon\Carbon $updated_at
- */
 class TransactionAccount extends NsModel
 {
     use HasFactory;
 
-    protected $table = 'nexopos_' . 'transactions_accounts';
+    protected $table = 'nexopos_transactions_accounts';
 
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany( Transaction::class, 'account_id' );
     }
@@ -32,8 +26,13 @@ class TransactionAccount extends NsModel
         return $query->where( 'category_identifier', $category );
     }
 
-    public function histories()
+    public function histories(): HasMany
     {
         return $this->hasMany( TransactionHistory::class, 'transaction_account_id' );
+    }
+
+    public function ruleLines(): HasMany
+    {
+        return $this->hasMany( TransactionActionRuleLine::class, 'account_id' );
     }
 }

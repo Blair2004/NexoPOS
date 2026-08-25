@@ -19,23 +19,23 @@ class CustomersMcpTest extends TestCase
         CustomerGroup::factory()->create();
         $customer = Customer::factory()->create();
 
-        $response = $this->runMcpTool(GetCustomerTool::class, [
+        $response = $this->runMcpTool( GetCustomerTool::class, [
             'id' => $customer->id,
-        ]);
+        ] );
 
-        $this->assertIsArray($response);
-        $this->assertArrayNotHasKey('error', $response);
-        $this->assertEquals($customer->id, $response['id']);
+        $this->assertIsArray( $response );
+        $this->assertArrayNotHasKey( 'error', $response );
+        $this->assertEquals( $customer->id, $response['id'] );
     }
 
     public function test_search_customers()
     {
-        $response = $this->runMcpTool(SearchCustomersTool::class, [
+        $response = $this->runMcpTool( SearchCustomersTool::class, [
             'search' => 'Alice',
             'limit' => 5,
-        ]);
+        ] );
 
-        $this->assertIsArray($response);
-        $this->assertArrayNotHasKey('error', $response);
+        $this->assertIsArray( $response );
+        $this->assertArrayNotHasKey( 'error', $response );
     }
 }

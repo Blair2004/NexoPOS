@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use App\Classes\Model;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int            $id
- * @property string         $uuid
- * @property string         $description
- * @property int            $group_id
- * @property float          $value
- * @property bool           $base_unit
- * @property \Carbon\Carbon $updated_at
+ * @property int    $id
+ * @property string $uuid
+ * @property string $description
+ * @property int    $group_id
+ * @property float  $value
+ * @property bool   $base_unit
+ * @property Carbon $updated_at
  */
 class Unit extends NsModel
 {

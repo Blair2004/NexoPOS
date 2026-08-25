@@ -4,9 +4,7 @@
 
 @import "./app.css";
 @import "./_shared/_spacing.css";
-/* @import "./phosphor/_breakpoints.css"; */
 @import "./phosphor/_colors.css";
-/* @import "./phosphor/_width.css"; */
 
 @import "./phosphor/_box.css";
 @import "./phosphor/_notices.css";
@@ -16,14 +14,13 @@
 @import './phosphor/_dashboard.css';
 @import './phosphor/_chart.css';
 @import './phosphor/_menu.css';
+@import './phosphor/_modules.css';
 @import './phosphor/_popups.css';
 @import './phosphor/_pos.css';
 @import './phosphor/_ns-tab.css';
 @import './phosphor/_product.css';
-/* @import './phosphor/_typography.css'; */
 @import './phosphor/_table.css';
-/* @import './phosphor/_loader.css'; */
 @import './phosphor/_numpad.css';
 @import './phosphor/_media.css';
-/* @import './phosphor/_link.css'; */
-@import './light/_permissions.css';
+@import './phosphor/_permissions.css';
+@import './phosphor/_hints.css';

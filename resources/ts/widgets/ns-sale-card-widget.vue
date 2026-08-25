@@ -1,10 +1,13 @@
 <template>
-    <div class="flex card-widget widget-handle flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-info-secondary to-info-tertiary px-3 py-5">
-        <div class="flex flex-row md:flex-col flex-auto">
+    <div class="flex card-widget flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-info-secondary to-info-tertiary px-3 py-5">
+        <div class="flex justify-between flex-row md:flex-col flex-auto">
             <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                 <div class="flex justify-between w-full items-center">
                     <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Income' ) }}</h6>
                     <div class="flex justify-between">
+                        <div class="px-1">
+                            <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
+                        </div>
                         <div class="px-1">
                             <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
                         </div>

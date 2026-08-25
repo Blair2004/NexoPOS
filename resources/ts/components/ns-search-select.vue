@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col flex-auto ns-select" v-if="field" :class="( hasError ? 'has-error' : 'is-pristine' )" :disabled="field.disabled">
         <label :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="( field.disabled ? 'cursor-not-allowed' : 'cursor-default' ) + ' ' + ( showResults ? 'rounded-t-md' : 'rounded-md')" 
+        <div :name="field.name" :class="( field.disabled ? 'cursor-not-allowed' : 'cursor-default' ) + ' ' + ( showResults ? 'rounded-t-md' : 'rounded-md')" 
             class="border mt-1 relative shadow-sm mb-1 flex overflow-hidden">
             <div @click="! field.disabled && (showResults = ! showResults)"
                 class="placeholder flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
@@ -187,6 +187,7 @@ export default {
 
                 this.$emit( 'saved', result );
             } catch ( error ) {
+                console.log({ error })
                 // probably the popup is closed
             }
         },

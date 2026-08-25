@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white rounded shadow my-4" v-if="! isCheckingDatabase">
         <div class="welcome-box p-3 text-gray-600">
-            <div class="border-b pb-4 mb-4">
+            <div class="border-b border-box-edge pb-4 mb-4">
                 <div v-if="isMySQL">
                     <h3 class="font-bold text-lg">{{ __( 'MySQL is selected as database driver' ) }}</h3>
                     <p>{{ __( 'Please provide the credentials to ensure NexoPOS can connect to the database.' ) }}</p>
@@ -171,7 +171,7 @@ export default {
                     }
                 }, {
                     label: __( 'Database Name' ),
-                    description: __( 'Provide the database name. Leave empty to use default file for SQLite Driver.' ),
+                    description: __( 'Provide the database name.' ),
                     name: 'database_name',
                     value : 'nexopos_v4',
                     show: ( form ) => {

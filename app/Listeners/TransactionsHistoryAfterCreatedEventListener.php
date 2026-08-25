@@ -23,7 +23,7 @@ class TransactionsHistoryAfterCreatedEventListener
      */
     public function handle( TransactionsHistoryAfterCreatedEvent $event )
     {
-        if ( ! $event->transactionHistory->is_reflection ) {
+        if ( ! $event->transactionHistory->is_reflection && $event->transactionHistory->journal_id === null ) {
             AccountingReflectionJob::dispatch( $event->transactionHistory );
         }
 

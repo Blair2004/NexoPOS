@@ -17,7 +17,7 @@
 }
 
 .ns-table {
-    @apply w-full;
+    @apply w-full border-collapse;
     thead {
         @apply border-table-th-edge text-sm;
         th {
@@ -30,7 +30,7 @@
             @apply bg-success-tertiary text-white border-table-th-edge;
         }
         tr.info > th, tr.info td {
-            @apply bg-[#0dcaf0] text-white border-table-th-edge;
+            @apply bg-info-secondary text-white border-table-th-edge;
         }
         tr.warning > th, tr.warning td {
             @apply bg-warning-tertiary text-white border-table-th-edge;
@@ -44,10 +44,10 @@
             td {
                 @apply border-table-th-edge;
                 &.info {
-                    @apply border-info-secondary bg-[#0dcaf0] text-white;
+                    @apply border-info-secondary bg-info-secondary text-white;
                 }
                 &.error {
-                    @apply border-error-secondary bg-error-primary text-white;
+                    @apply border-error-secondary bg-error-secondary text-white;
                 }
                 &.success {
                     @apply border-success-secondary bg-success-primary text-white;

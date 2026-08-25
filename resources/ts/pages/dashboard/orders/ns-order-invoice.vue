@@ -1,6 +1,6 @@
 <template>
     <div class="shadow ns-box">
-        <div class="head p-2 ns-box-title flex justify-between border-b">
+        <div class="head p-2 ns-box-header flex justify-between border-b">
             <div class="-mx-2 flex flex-wrap">
                 <div class="px-2">
                     <ns-button @click="printTable()" type="info">

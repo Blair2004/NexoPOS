@@ -19,11 +19,11 @@ class TaxGroupsResource extends Resource
     public function handle(): Response
     {
         try {
-            $groups = TaxGroup::with('taxes')->get();
+            $groups = TaxGroup::with( 'taxes' )->get();
 
-            return Response::json($groups->toArray());
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage());
+            return Response::json( $groups->toArray() );
+        } catch ( \Throwable $e ) {
+            return Response::error( $e->getMessage() );
         }
     }
 }

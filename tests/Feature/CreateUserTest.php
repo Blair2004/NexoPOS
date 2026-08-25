@@ -353,8 +353,8 @@ class CreateUserTest extends TestCase
                  * those routes.
                  */
                 if ( preg_match( '/\{(.+)\}/', $uri ) === 0 && ! in_array( $uri, [
-                    'dashboard/oauth/mynexopos/callback'
-                ])) {
+                    'dashboard/oauth/mynexopos/callback',
+                ] ) ) {
                     $response = $this
                         ->actingAs( $user )
                         ->json( 'GET', $uri );

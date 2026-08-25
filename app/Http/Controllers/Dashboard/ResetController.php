@@ -34,10 +34,10 @@ class ResetController extends DashboardController
                 $this->demoService->run( $request->all() );
                 break;
             default:
-            $this->resetService->handleCustom(
-                $request->all()
-            );
-            break;
+                $this->resetService->handleCustom(
+                    $request->all()
+                );
+                break;
         }
 
         return [
