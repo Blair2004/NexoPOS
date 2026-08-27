@@ -7,24 +7,24 @@
                 class="placeholder flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
                 <span class="text-fontcolor text-sm">{{ selectedOptionLabel }}</span>
             </div>
-            <button v-if="hasSelectedValues( field ) && ! field.disabled" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 border-l hover:cursor-pointer hover:bg-error-tertiary hover:text-white border-input-edge">
+            <button type="button" v-if="hasSelectedValues( field ) && ! field.disabled" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 border-l hover:cursor-pointer hover:bg-error-tertiary hover:text-white border-input-edge">
                 <i class="las la-times"></i>
             </button>
-            <button v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer border-l">
+            <button type="button" v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer border-l">
                 <i class="las la-plus"></i>
             </button>
-            <button v-if="field.about" @click="triggerFieldAbout( field )" class="flex items-center justify-center w-10 hover:cursor-pointer border-l">
+            <button type="button" v-if="field.about" @click="triggerFieldAbout( field )" class="flex items-center justify-center w-10 hover:cursor-pointer border-l">
                 <i class="las la-question-circle text-2xl text-font"></i>
             </button>
         </div>
         <div class="relative" v-if="showResults">
             <div class="w-full overflow-hidden -top-[5px] ns-select-results border rounded-b-md shadow z-10 absolute">
                 <div class="border-b border-dashed p-2 filter-input-wrapper">
-                    <input @keypress.enter="selectFirstOption()" ref="searchInputField" v-model="searchField" type="text" :placeholder="__( 'Search result' )">
+                    <input @keypress.enter.prevent="selectFirstOption()" ref="searchInputField" v-model="searchField" type="text" :placeholder="__( 'Search result' )">
                 </div>
                 <div class="h-60 overflow-y-auto">
                     <ul>
-                        <li @click="selectOption( option )" v-for="option of filtredOptions" class="py-1 px-2 hover:bg-info-primary cursor-pointer text-font">{{ option.label }}</li>
+                        <li @click="selectOption( option )" v-for="option of filtredOptions" :key="option.value" class="py-1 px-2 hover:bg-info-primary cursor-pointer text-font">{{ option.label }}</li>
                     </ul>
                 </div>
             </div>
@@ -68,11 +68,9 @@ export default {
         },
         filtredOptions() {
             if ( this.searchField.length > 0 ) {
-                return this.field.options.filter( option => {
-                    const expression    =   ( new RegExp( this.searchField, 'i' ) );
-                    
-                    return expression.test( option.label );
-                }).splice(0,10);
+                const search = this.searchField.toLocaleLowerCase();
+
+                return this.field.options.filter( option => option.label.toLocaleLowerCase().includes( search ) ).splice(0,10);
             } else {
                 return this.field.options;
             }
