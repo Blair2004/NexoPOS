@@ -15,6 +15,7 @@ use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
+use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Models\TransactionActionRule;
@@ -145,7 +146,13 @@ class AccountingJournalService
             }
 
             if ( $postedLines < 2 || round( $debits - $credits, 5 ) !== 0.0 ) {
-                throw new NotAllowedException( __( 'The computed accounting journal is not balanced.' ) );
+                $notification = app()->make( NotificationService::class );
+                $notification->create(
+                    title: __( 'Accounting Issue' ),
+                    description: __( 'The computed accounting journal is not balanced' ),
+                )->dispatchForGroup([
+                    Role::ADMIN,
+                ]);
             }
 
             return $journal->load( 'lines.account' );

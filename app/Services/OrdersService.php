@@ -3057,7 +3057,7 @@ class OrdersService
         return $order;
     }
 
-    public function handlePOSRoute( bool $bool, Request $request, $next ): bool|RedirectResponse
+    public function handlePOSRoute( bool | RedirectResponse $bool, Request $request, $next ): bool|RedirectResponse
     {
         if ( $request->routeIs( ns()->routeName( 'ns.dashboard.pos' ) ) ) {
             if ( PaymentType::count() === 0 ) {

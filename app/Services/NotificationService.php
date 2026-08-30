@@ -6,6 +6,7 @@ use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\support\Str;
@@ -68,13 +69,13 @@ class NotificationService
      * Dispatch notification for a specific
      * users which belong to a user group
      */
-    public function dispatchForGroup( Role|array|string $role ): void
+    public function dispatchForGroup( mixed $role ): void
     {
         if ( is_array( $role ) ) {
             collect( $role )->each( function ( $role ) {
                 $this->dispatchForGroup( $role );
             } );
-        } elseif ( $role instanceof Collection ) {
+        } elseif ( $role instanceof Collection || $role instanceof EloquentCollection ) {
             $role->each( function ( $role ) {
                 $this->dispatchForGroup( $role );
             } );

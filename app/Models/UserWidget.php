@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int    $user_id
  * @property Carbon $updated_at
  */
-class UserWidget extends Model
+class UserWidget extends NsModel
 {
     use HasFactory, HasUuids;
 
