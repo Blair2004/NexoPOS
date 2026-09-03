@@ -889,12 +889,19 @@ class ReportService
 
             if ( $module->getIfEnabled( 'NsCommissions' ) ) {
                 $config = [
-                    'today_commissions' => EarnedCommission::for( Auth::id() )
-                        ->where( 'created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString() )
-                        ->where( 'created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString() )
-                        ->sum( 'value' ),
-                    'total_commissions' => EarnedCommission::for( Auth::id() )
-                        ->sum( 'value' ),
+                    [
+                        'key' => 'today_commissions',
+                        'value' => ns()->currency->define( EarnedCommission::for( Auth::id() )
+                            ->where( 'created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString() )
+                            ->where( 'created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString() )
+                            ->sum( 'value' ) )->format(),
+                        'label' => __( 'Today\'s Commissions' ),
+                    ], [
+                        'key' => 'total_commissions',
+                        'value' => ns()->currency->define( EarnedCommission::for( Auth::id() )
+                            ->sum( 'value' ) )->format(),
+                        'label' => __( 'Total Commissions' ),
+                    ],
                 ];
             }
 

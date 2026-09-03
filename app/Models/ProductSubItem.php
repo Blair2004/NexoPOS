@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int    $id
@@ -18,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  */
-class ProductSubItem extends Model
+class ProductSubItem extends NsModel
 {
     use HasFactory;
 

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int   $id
@@ -15,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed $created_at
  * @property mixed $updated_at
  */
-class TransactionBalanceMonth extends Model
+class TransactionBalanceMonth extends NsModel
 {
     use HasFactory;
 

@@ -4,7 +4,6 @@
         class="relative inline-flex items-center rounded-full border border-box-edge text-fontcolor shadow-sm hover:bg-box-elevation-hover focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
         @pointerdown.stop
         @keydown.stop>
-        <span class="">{{ __( 'Widget size' ) }}</span>
         <select
             :value="widget.layout.name"
             :aria-label="__( 'Widget size' )"
