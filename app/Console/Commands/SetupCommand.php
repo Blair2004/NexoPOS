@@ -148,10 +148,11 @@ class SetupCommand extends Command
     private function setupLanguage()
     {
         while ( empty( $this->language ) ) {
-            $langIndex = $this->choice( __( 'In which language would you like to install NexoPOS ?' ), array_values( config( 'nexopos.languages' ) ) );
-            $this->language = array_keys( config( 'nexopos.languages' ) )[ $langIndex ];
+            $languages = config( 'nexopos.languages' );
+            $selectedLanguage = $this->choice( __( 'In which language would you like to install NexoPOS ?' ), array_values( $languages ) );
+            $this->language = array_search( $selectedLanguage, $languages, true );
 
-            if ( strlen( $this->language ) != 2 ) {
+            if ( ! is_string( $this->language ) || strlen( $this->language ) !== 2 ) {
                 $this->error( __( 'You must define the language of installation.' ) );
                 $this->language = null;
             }

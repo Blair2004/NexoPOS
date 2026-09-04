@@ -29,13 +29,13 @@ class ProductUnitQuantityFactory extends Factory
             'quantity' => $this->faker->numberBetween( 50, 400 ),
             'sale_price' => $sale_price,
             'sale_price_edit' => $sale_price,
-            'excl_tax_sale_price' => $sale_price,
-            'incl_tax_sale_price' => $sale_price,
+            'sale_price_net' => $sale_price,
+            'sale_price_gross' => $sale_price,
             'sale_price_tax' => 0,
             'wholesale_price' => $wholesale_price,
             'wholesale_price_edit' => $wholesale_price,
-            'incl_tax_wholesale_price' => $wholesale_price,
-            'excl_tax_wholesale_price' => $wholesale_price,
+            'wholesale_price_gross' => $wholesale_price,
+            'wholesale_price_net' => $wholesale_price,
             'wholesale_price_tax' => 0,
         ] );
     }
