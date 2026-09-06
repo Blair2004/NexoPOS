@@ -46,10 +46,10 @@ export default defineComponent({
 
         this.fields         =   this.validation.createFields([
             {
-                label: 'Unit',
+                label: __( 'Unit' ),
                 type: 'select',
                 name: 'selectedUnitQuantity',
-                description: 'Choose the unit to apply for the item',
+                description: __( 'Choose the unit to apply for the item' ),
                 options: product.unit_quantities.map( unit_quantity => {
                     return {
                         label: unit_quantity.unit.name,
@@ -58,10 +58,10 @@ export default defineComponent({
                 }),
                 value: product.selectedUnitQuantity || product.unit_quantities[0]
             }, {
-                label: 'Unit',
+                label: __( 'Unit' ),
                 type: 'select',
                 name: 'procurement_id',
-                description: 'Choose quantity from procurement',
+                description: __( 'Choose quantity from procurement' ),
                 options: product.unit_quantities.map( unit_quantity => {
                     return {
                         label: unit_quantity.unit.name,
@@ -70,10 +70,10 @@ export default defineComponent({
                 }),
                 value: product.procurement_id
             }, {
-                label: 'Quantity',
+                label: __( 'Quantity' ),
                 type: 'number',
                 name: 'times',
-                description: 'Define how many time the product will be printed',
+                description: __( 'Define how many time the product will be printed' ),
                 value: product.times || 1
             }
         ]);
