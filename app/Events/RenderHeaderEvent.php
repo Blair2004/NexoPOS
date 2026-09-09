@@ -16,7 +16,7 @@ class RenderHeaderEvent
     /**
      * Create a new event instance.
      */
-    public function __construct( public Output $output )
+    public function __construct( public Output $output, public ?string $routeName )
     {
         //
     }

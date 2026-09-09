@@ -56,69 +56,88 @@ class GenerateReportTool extends Tool
     public function handle( Request $request ): Response
     {
         try {
-            $title = trim( (string) $request->get( 'title' ) );
-            $sections = $request->get( 'sections', [] );
-
-            if ( $title === '' ) {
-                return Response::error( __( 'The report title is required.' ) );
-            }
-
-            if ( ! is_array( $sections ) || empty( $sections ) ) {
-                return Response::error( __( 'The report requires at least one section.' ) );
-            }
-
-            $expiresInMinutes = max( 5, min( 1440, (int) $request->get( 'expires_in_minutes', 120 ) ) );
-            $expiresAt = Carbon::now()->addMinutes( $expiresInMinutes );
-            $baseFilename = $this->makeBaseFilename( $request->get( 'filename' ), $title );
-            $htmlFilename = $baseFilename . '.html';
-            $pdfFilename = $baseFilename . '.pdf';
-
-            $html = $this->renderReport( [
-                'title' => $title,
+            return Response::json( $this->generate( [
+                'title' => $request->get( 'title' ),
                 'subtitle' => $request->get( 'subtitle' ),
                 'period_label' => $request->get( 'period_label' ),
                 'prepared_by' => $request->get( 'prepared_by' ),
-                'sections' => $sections,
-            ] );
-
-            Storage::disk( 'ns-temp' )->put( 'mcp-reports/' . $htmlFilename, $html );
-            Storage::disk( 'ns-temp' )->put( 'mcp-reports/' . $pdfFilename, $this->renderPdf( $html ) );
-
-            $downloadUrl = URL::temporarySignedRoute(
-                'mcp.reports.download',
-                $expiresAt,
-                ['filename' => $pdfFilename]
-            );
-
-            $htmlPreviewUrl = URL::temporarySignedRoute(
-                'mcp.reports.download',
-                $expiresAt,
-                ['filename' => $htmlFilename]
-            );
-
-            return Response::json( [
-                'status' => 'success',
-                'format' => 'pdf',
-                'filename' => $pdfFilename,
-                'html_filename' => $htmlFilename,
-                'download_url' => $downloadUrl,
-                'html_preview_url' => $htmlPreviewUrl,
-                'expires_at' => $expiresAt->toIso8601String(),
-                'capabilities' => [
-                    'sections' => ['text', 'kpi_grid', 'table', 'bar_chart', 'pie_chart', 'page_break'],
-                    'charts' => ['bar_chart', 'pie_chart'],
-                    'output' => 'PDF generated from self-contained HTML with inline CSS and SVG charts. The source HTML is also available as a temporary preview link.',
-                ],
-                'limitations' => [
-                    'The tool does not fetch or compute report data. Use other MCP tools first, then pass summarized data here.',
-                    'The PDF renderer is server-side Dompdf, so JavaScript, remote assets, and advanced browser-only CSS are not supported.',
-                    'HTML input is escaped; only structured report fields are rendered.',
-                    'Chart values must be numeric and greater than or equal to zero.',
-                ],
-            ] );
+                'filename' => $request->get( 'filename' ),
+                'expires_in_minutes' => $request->get( 'expires_in_minutes', 120 ),
+                'sections' => $request->get( 'sections', [] ),
+            ] ) );
         } catch ( \Throwable $e ) {
             return Response::error( $e->getMessage() );
         }
+    }
+
+    /** @return array<string, mixed> */
+    public function generate( array $input ): array
+    {
+        $title = trim( (string) ( $input['title'] ?? '' ) );
+        $sections = $input['sections'] ?? [];
+
+        if ( $title === '' ) {
+            throw new \InvalidArgumentException( __( 'The report title is required.' ) );
+        }
+
+        if ( ! is_array( $sections ) || empty( $sections ) ) {
+            throw new \InvalidArgumentException( __( 'The report requires at least one section.' ) );
+        }
+
+        $expiresInMinutes = max( 5, min( 1440, (int) ( $input['expires_in_minutes'] ?? 120 ) ) );
+        $expiresAt = Carbon::now()->addMinutes( $expiresInMinutes );
+        $baseFilename = $this->makeBaseFilename( $input['filename'] ?? null, $title );
+        $htmlFilename = $baseFilename . '.html';
+        $pdfFilename = $baseFilename . '.pdf';
+
+        $html = $this->renderReport( [
+            'title' => $title,
+            'subtitle' => $input['subtitle'] ?? null,
+            'period_label' => $input['period_label'] ?? null,
+            'prepared_by' => $input['prepared_by'] ?? null,
+            'sections' => $sections,
+        ] );
+
+        if ( ! Storage::disk( 'ns-temp' )->put( 'mcp-reports/' . $htmlFilename, $html ) ) {
+            throw new \RuntimeException( __( 'The report preview could not be stored.' ) );
+        }
+        if ( ! Storage::disk( 'ns-temp' )->put( 'mcp-reports/' . $pdfFilename, $this->renderPdf( $html ) ) ) {
+            Storage::disk( 'ns-temp' )->delete( 'mcp-reports/' . $htmlFilename );
+            throw new \RuntimeException( __( 'The PDF report could not be stored.' ) );
+        }
+
+        $downloadUrl = URL::temporarySignedRoute(
+            'mcp.reports.download',
+            $expiresAt,
+            ['filename' => $pdfFilename]
+        );
+
+        $htmlPreviewUrl = URL::temporarySignedRoute(
+            'mcp.reports.download',
+            $expiresAt,
+            ['filename' => $htmlFilename]
+        );
+
+        return [
+            'status' => 'success',
+            'format' => 'pdf',
+            'filename' => $pdfFilename,
+            'html_filename' => $htmlFilename,
+            'download_url' => $downloadUrl,
+            'html_preview_url' => $htmlPreviewUrl,
+            'expires_at' => $expiresAt->toIso8601String(),
+            'capabilities' => [
+                'sections' => ['text', 'kpi_grid', 'table', 'bar_chart', 'pie_chart', 'page_break'],
+                'charts' => ['bar_chart', 'pie_chart'],
+                'output' => 'PDF generated from self-contained HTML with inline CSS and SVG charts. The source HTML is also available as a temporary preview link.',
+            ],
+            'limitations' => [
+                'The tool does not fetch or compute report data. Use other MCP tools first, then pass summarized data here.',
+                'The PDF renderer is server-side Dompdf, so JavaScript, remote assets, and advanced browser-only CSS are not supported.',
+                'HTML input is escaped; only structured report fields are rendered.',
+                'Chart values must be numeric and greater than or equal to zero.',
+            ],
+        ];
     }
 
     private function makeBaseFilename( ?string $filename, string $title ): string

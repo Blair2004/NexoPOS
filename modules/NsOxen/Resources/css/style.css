@@ -1,0 +1,16 @@
+@import "tailwindcss" prefix(ox);
+@source "../ts/**/*.{vue,ts}";
+@theme { --color-box-background:var(--color-box-background); --color-box-edge:var(--color-box-edge); --color-box-elevation-background:var(--color-box-elevation-background); --color-box-elevation-hover:var(--color-box-elevation-hover); --color-fontcolor:var(--color-fontcolor); --color-fontcolor-soft:var(--color-fontcolor-soft); --color-input-background:var(--color-input-background); --color-input-edge:var(--color-input-edge); --color-primary:var(--color-primary); --color-secondary:var(--color-secondary); --color-info-primary:var(--color-info-primary); --color-info-secondary:var(--color-info-secondary); --color-info-tertiary:var(--color-info-tertiary); --color-error-secondary:var(--color-error-secondary); }
+.ns-oxen-thinking span{display:inline-block;color:var(--color-fontcolor-soft);animation:oxen-thinking-character 1.1s ease-in-out infinite}@keyframes oxen-thinking-character{0%,60%,100%{color:var(--color-fontcolor-soft);transform:translateY(0)}30%{color:var(--color-fontcolor);transform:translateY(-2px)}}
+.ns-oxen-launcher-morph{view-transition-name:ns-oxen-launcher}
+::view-transition-group(ns-oxen-launcher){animation-duration:360ms;animation-timing-function:ease-in-out}
+::view-transition-old(ns-oxen-launcher){animation:360ms ease-in-out both oxen-launcher-fade-out}
+::view-transition-new(ns-oxen-launcher){animation:360ms ease-in-out both oxen-launcher-fade-in}
+@keyframes oxen-launcher-fade-out{to{opacity:0;transform:scale(.8)}}
+@keyframes oxen-launcher-fade-in{from{opacity:0;transform:scale(.8)}}
+.ns-oxen-markdown{overflow-wrap:anywhere;line-height:1.55}.ns-oxen-markdown>*+*{margin-top:.65rem}.ns-oxen-markdown h1,.ns-oxen-markdown h2,.ns-oxen-markdown h3{font-weight:700;line-height:1.25}.ns-oxen-markdown h1{font-size:1.25rem}.ns-oxen-markdown h2{font-size:1.125rem}.ns-oxen-markdown ul{list-style:disc;padding-inline-start:1.25rem}.ns-oxen-markdown ol{list-style:decimal;padding-inline-start:1.25rem}.ns-oxen-markdown blockquote{border-inline-start:3px solid var(--color-box-edge);padding-inline-start:.75rem;color:var(--color-fontcolor-soft)}.ns-oxen-markdown pre{overflow:auto;border:1px solid var(--color-box-edge);border-radius:.5rem;background:var(--color-input-background);padding:.75rem}.ns-oxen-markdown code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.ns-oxen-markdown :not(pre)>code{border-radius:.25rem;background:var(--color-input-background);padding:.1rem .3rem}.ns-oxen-markdown table{display:block;max-width:100%;overflow:auto;border-collapse:collapse}.ns-oxen-markdown th,.ns-oxen-markdown td{border:1px solid var(--color-box-edge);padding:.4rem .55rem;text-align:start}.ns-oxen-markdown a{color:var(--color-info-primary);text-decoration:underline}
+@media (prefers-reduced-motion:reduce){.ns-oxen-motion{transition:none!important}.ns-oxen-thinking span{animation:none;transform:none}::view-transition-group(ns-oxen-launcher),::view-transition-old(ns-oxen-launcher),::view-transition-new(ns-oxen-launcher){animation:none!important}}
+
+.is-popup {
+    @apply ox:z-[50];
+}

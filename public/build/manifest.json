@@ -362,7 +362,7 @@
     ]
   },
   "resources/ts/app-init.ts": {
-    "file": "assets/app-init-BNbLFMJZ.js",
+    "file": "assets/app-init-Dj25T58E.js",
     "name": "app-init",
     "src": "resources/ts/app-init.ts",
     "isEntry": true,
@@ -669,7 +669,7 @@
     ]
   },
   "resources/ts/pages/dashboard/ns-settings.vue": {
-    "file": "assets/ns-settings-DVW2iaNq.js",
+    "file": "assets/ns-settings-DdVu_5Bx.js",
     "name": "ns-settings",
     "src": "resources/ts/pages/dashboard/ns-settings.vue",
     "isDynamicEntry": true,

@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<module>
+    <namespace>NsOxen</namespace>
+    <version>6.2.0</version>
+    <author>NexoPOS</author>
+    <name>Oxen</name>
+    <description>
+        <locale lang="en">Secure provider-neutral tools and assistant for NexoPOS.</locale>
+        <locale lang="fr">Outils et assistant sécurisés et indépendants pour NexoPOS.</locale>
+        <locale lang="es">Herramientas y asistente seguros e independientes para NexoPOS.</locale>
+        <locale lang="de">Sichere anbieterneutrale Werkzeuge und Assistenten für NexoPOS.</locale>
+        <locale lang="it">Strumenti e assistente sicuri e neutrali per NexoPOS.</locale>
+        <locale lang="pt">Ferramentas e assistente seguros e independentes para NexoPOS.</locale>
+        <locale lang="nl">Veilige leverancier-neutrale tools en assistent voor NexoPOS.</locale>
+        <locale lang="ru">Безопасные нейтральные инструменты и помощник для NexoPOS.</locale>
+        <locale lang="zh">为 NexoPOS 提供安全的供应商中立工具和助手。</locale>
+        <locale lang="ja">NexoPOS のための安全でベンダーに依存しないツールとアシスタント。</locale>
+    </description>
+    <core min-version="6.2.0" max-version="6.2.99" />
+</module>
