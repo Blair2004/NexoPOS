@@ -362,7 +362,7 @@
     ]
   },
   "resources/ts/app-init.ts": {
-    "file": "assets/app-init-Dj25T58E.js",
+    "file": "assets/app-init-UqZStz1j.js",
     "name": "app-init",
     "src": "resources/ts/app-init.ts",
     "isEntry": true,
@@ -604,7 +604,7 @@
     ]
   },
   "resources/ts/pages/dashboard/modules.vue": {
-    "file": "assets/modules-Bn3l5OZ2.js",
+    "file": "assets/modules-DiLtWrp5.js",
     "name": "modules",
     "src": "resources/ts/pages/dashboard/modules.vue",
     "isDynamicEntry": true,
@@ -669,7 +669,7 @@
     ]
   },
   "resources/ts/pages/dashboard/ns-settings.vue": {
-    "file": "assets/ns-settings-DdVu_5Bx.js",
+    "file": "assets/ns-settings-DVW2iaNq.js",
     "name": "ns-settings",
     "src": "resources/ts/pages/dashboard/ns-settings.vue",
     "isDynamicEntry": true,

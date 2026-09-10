@@ -223,7 +223,6 @@ export default {
             document.location   =   '/dashboard/modules/download/' + module.namespace;
         },
         truncateText(text, maxLength, replacement = '...' ) {
-            console.log({ text })
             let words = text.split(' ');
 
             if (words.length > maxLength) {
