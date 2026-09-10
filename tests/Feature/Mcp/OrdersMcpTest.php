@@ -19,7 +19,6 @@ class OrdersMcpTest extends TestCase
             'id' => 99999, // Unlikely to exist
         ] );
 
-        dump( $response );
         $this->assertIsArray( $response );
         $this->assertArrayHasKey( 'error', $response );
         $this->assertTrue( $response['error'] );
@@ -32,7 +31,6 @@ class OrdersMcpTest extends TestCase
             'limit' => 5,
         ] );
 
-        dump( $response );
         $this->assertIsArray( $response );
         $this->assertArrayNotHasKey( 'error', $response );
     }
@@ -44,7 +42,6 @@ class OrdersMcpTest extends TestCase
             'limit' => 5,
         ] );
 
-        dump( $response );
         $this->assertIsArray( $response );
         $this->assertArrayNotHasKey( 'error', $response );
     }
