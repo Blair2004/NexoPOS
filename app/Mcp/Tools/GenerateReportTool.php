@@ -147,6 +147,29 @@ class GenerateReportTool extends Tool
         return $base . '-' . now()->format( 'Ymd-His' ) . '-' . Str::lower( Str::random( 6 ) );
     }
 
+    /** @param array{name: string, address: string, contact: string} $store */
+    private function renderBrandMark( array $store ): string
+    {
+        $allowedRoots = array_filter( [realpath( public_path() ), realpath( storage_path( 'app/public' ) )] );
+        foreach ( ['ns_store_rectangle_logo', 'ns_store_square_logo'] as $key ) {
+            $url = (string) ns()->option->get( $key, '' );
+            $path = parse_url( $url, PHP_URL_PATH );
+            $candidate = is_string( $path ) ? realpath( public_path( ltrim( $path, '/' ) ) ) : false;
+            $isAllowed = $candidate && collect( $allowedRoots )->contains( fn ( string $root ): bool => $candidate === $root || str_starts_with( $candidate, $root . DIRECTORY_SEPARATOR ) );
+            if ( $isAllowed && is_file( $candidate ) ) {
+                $mime = mime_content_type( $candidate );
+                if ( in_array( $mime, ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], true ) ) {
+                    $contents = file_get_contents( $candidate );
+                    if ( is_string( $contents ) && strlen( $contents ) <= 5 * 1024 * 1024 ) {
+                        return '<div class="brand-logo-frame"><img class="brand-logo" alt="Store logo" src="data:' . e( $mime ) . ';base64,' . base64_encode( $contents ) . '"></div>';
+                    }
+                }
+            }
+        }
+
+        return '<div><div class="brand-mark">' . e( Str::substr( $store['name'], 0, 1 ) ) . '</div></div>';
+    }
+
     private function renderPdf( string $html ): string
     {
         $options = new Options;
@@ -179,7 +202,7 @@ class GenerateReportTool extends Tool
             '<style>' . $this->stylesheet() . '</style></head><body>' .
             '<main class="report-page">' .
             '<header class="store-header">' .
-            '<div><div class="brand-mark">' . e( Str::substr( $store['name'], 0, 1 ) ) . '</div></div>' .
+            $this->renderBrandMark( $store ) .
             '<div class="store-copy"><h1>' . e( $store['name'] ) . '</h1>' .
             '<p>' . e( $store['address'] ) . '</p><p>' . e( $store['contact'] ) . '</p></div>' .
             '</header>' .
@@ -223,15 +246,23 @@ class GenerateReportTool extends Tool
     private function renderKpiGrid( array $section ): string
     {
         $items = is_array( $section['items'] ?? null ) ? $section['items'] : [];
-        $html = collect( $items )->map( function ( $item ) {
+        $cards = collect( $items )->map( function ( $item ): string {
             $item = is_array( $item ) ? $item : [];
 
-            return '<article class="kpi-card"><span>' . e( (string) ( $item['label'] ?? 'Metric' ) ) . '</span>' .
+            return '<div class="kpi-card"><span>' . e( (string) ( $item['label'] ?? 'Metric' ) ) . '</span>' .
                 '<strong>' . e( (string) ( $item['value'] ?? '' ) ) . '</strong>' .
-                '<small>' . e( (string) ( $item['detail'] ?? '' ) ) . '</small></article>';
+                '<small>' . e( (string) ( $item['detail'] ?? '' ) ) . '</small></div>';
+        } )->values()->all();
+
+        $rows = collect( array_chunk( $cards, 4 ) )->map( function ( array $row ): string {
+            while ( count( $row ) < 4 ) {
+                $row[] = '<div class="kpi-card kpi-card-empty"></div>';
+            }
+
+            return '<tr>' . collect( $row )->map( fn ( string $card ): string => '<td>' . $card . '</td>' )->implode( '' ) . '</tr>';
         } )->implode( '' );
 
-        return $this->sectionShell( $section, '<div class="kpi-grid">' . $html . '</div>' );
+        return $this->sectionShell( $section, '<table class="kpi-grid"><tbody>' . $rows . '</tbody></table>' );
     }
 
     /** @param array<string, mixed> $section */
@@ -378,7 +409,7 @@ class GenerateReportTool extends Tool
     private function stylesheet(): string
     {
         return <<<'CSS'
-:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f5f7fb}body{margin:0;background:#f5f7fb}.report-page{max-width:1080px;margin:0 auto;padding:32px}.store-header,.report-footer{display:flex;align-items:center;justify-content:space-between;gap:20px}.store-header{border-bottom:3px solid #172033;padding-bottom:18px}.brand-mark{width:58px;height:58px;border-radius:8px;background:#172033;color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800}.store-copy h1{margin:0;font-size:22px}.store-copy p{margin:3px 0;color:#5d6678}.report-title{padding:26px 0}.eyebrow{text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-size:12px;font-weight:700;margin:0 0 8px}.report-title h2{font-size:34px;line-height:1.1;margin:0}.subtitle{font-size:16px;color:#475569}.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.meta-row span{border:1px solid #dbe2ee;border-radius:8px;background:#fff;padding:8px 10px;color:#475569}.meta-row b{display:block;color:#172033;font-size:11px;text-transform:uppercase}.report-section{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:22px;margin:18px 0;break-inside:avoid}.report-section h3{margin:0 0 8px;font-size:20px}.section-description,.body-copy{color:#475569;line-height:1.6}.notice{border:1px dashed #f59e0b;background:#fffbeb;color:#92400e;border-radius:8px;padding:12px}.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.kpi-card{border:1px solid #e2e8f0;border-radius:8px;padding:14px}.kpi-card span{color:#64748b;font-size:12px;text-transform:uppercase;font-weight:700}.kpi-card strong{display:block;font-size:28px;margin-top:4px}.kpi-card small{color:#64748b}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;border-bottom:1px solid #e2e8f0;padding:10px;vertical-align:top}th{background:#f8fafc;color:#334155}.chart-block{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:18px;align-items:center}.bar-chart{display:grid;gap:10px}.bar-row{display:grid;grid-template-columns:150px 1fr 80px;gap:10px;align-items:center}.bar-row span{color:#334155}.bar-row div{height:16px;background:#e2e8f0;border-radius:999px;overflow:hidden}.bar-row b{height:100%;display:block;border-radius:999px}.bar-row em{font-style:normal;text-align:right;color:#475569}.pie-chart{width:280px;max-width:100%;margin:auto;display:block}.pie-chart text{font-size:17px;font-weight:800;fill:#172033}.legend{display:flex;flex-direction:column;gap:8px}.legend span{display:flex;align-items:center;gap:8px;color:#475569}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}.report-footer{color:#64748b;border-top:1px solid #e2e8f0;margin-top:28px;padding-top:16px;font-size:12px}.page-break{break-after:page}@media(max-width:760px){.report-page{padding:18px}.chart-block{grid-template-columns:1fr}.bar-row{grid-template-columns:1fr}.bar-row em{text-align:left}}@media print{body{background:#fff}.report-page{max-width:none;padding:0}.report-section{box-shadow:none}.meta-row span,.report-section{border-color:#cbd5e1}}
+@page{margin:24px} :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f5f7fb} body{margin:0;background:#f5f7fb}.report-page{width:100%;margin:0 auto;padding:0}.store-header,.report-footer{display:table;width:100%;table-layout:fixed}.store-header{border-bottom:3px solid #172033;padding-bottom:18px}.store-header>div,.report-footer>span{display:table-cell;vertical-align:middle}.store-header>div:last-child,.report-footer>span:last-child{text-align:right}.brand-mark{width:58px;height:58px;border-radius:8px;background:#172033;color:#fff;display:block;text-align:center;line-height:58px;font-size:28px;font-weight:800}.brand-logo-frame{width:190px;height:64px;display:block;overflow:hidden}.brand-logo{display:block;max-width:190px;max-height:64px;width:auto;height:auto}.store-copy h1{margin:0;font-size:22px}.store-copy p{margin:3px 0;color:#5d6678}.report-title{padding:26px 0}.eyebrow{text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-size:12px;font-weight:700;margin:0 0 8px}.report-title h2{font-size:34px;line-height:1.1;margin:0}.subtitle{font-size:16px;color:#475569}.meta-row{margin-top:18px}.meta-row span{display:inline-block;border:1px solid #dbe2ee;border-radius:8px;background:#fff;padding:8px 10px;margin:0 6px 6px 0;color:#475569}.meta-row b{display:block;color:#172033;font-size:11px;text-transform:uppercase}.report-section{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:18px;margin:14px 0;break-inside:avoid}.report-section h3{margin:0 0 8px;font-size:20px}.section-description,.body-copy{color:#475569;line-height:1.6}.notice{border:1px dashed #f59e0b;background:#fffbeb;color:#92400e;border-radius:8px;padding:12px}.kpi-grid{width:100%;border-collapse:separate;border-spacing:8px;margin:0 -8px;table-layout:fixed}.kpi-grid td{width:25%;padding:0;vertical-align:top;border:0}.kpi-card{border:1px solid #e2e8f0;border-radius:8px;padding:12px;min-height:70px}.kpi-card-empty{border-color:transparent}.kpi-card span{color:#64748b;font-size:12px;text-transform:uppercase;font-weight:700}.kpi-card strong{display:block;font-size:24px;margin-top:4px}.kpi-card small{color:#64748b}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;border-bottom:1px solid #e2e8f0;padding:10px;vertical-align:top}th{background:#f8fafc;color:#334155}.chart-block{display:table;width:100%;table-layout:fixed}.chart-block>*{display:table-cell;vertical-align:middle}.chart-block>.legend{width:220px}.bar-chart{width:100%}.bar-row{display:table;width:100%;table-layout:fixed;margin-bottom:10px}.bar-row span,.bar-row div,.bar-row em{display:table-cell;vertical-align:middle}.bar-row span{width:25%;color:#334155}.bar-row div{width:55%;height:16px;background:#e2e8f0;border-radius:999px;overflow:hidden}.bar-row b{height:100%;display:block;border-radius:999px}.bar-row em{width:20%;font-style:normal;text-align:right;color:#475569}.pie-chart{width:280px;max-width:100%;margin:auto;display:block}.pie-chart text{font-size:17px;font-weight:800;fill:#172033}.legend span{display:block;margin-bottom:8px;color:#475569}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:8px}.report-footer{color:#64748b;border-top:1px solid #e2e8f0;margin-top:28px;padding-top:16px;font-size:12px}.page-break{break-after:page}@media print{body{background:#fff}.report-section{box-shadow:none}.meta-row span,.report-section{border-color:#cbd5e1}}
 CSS;
     }
 }

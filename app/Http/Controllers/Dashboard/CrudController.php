@@ -459,6 +459,8 @@ class CrudController extends DashboardController
          */
         $resource = new $crudClass;
 
+        $resource->allowedTo( 'read' );
+
         $model = $resource->getModel();
 
         $entry = $model::find( $request->route( 'id' ) );

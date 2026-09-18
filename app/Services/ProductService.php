@@ -884,6 +884,26 @@ class ProductService
     }
 
     /**
+     * Update editable product-unit prices and recompute all derived tax values.
+     *
+     * @param array{sale_price_edit?: float|int, wholesale_price_edit?: float|int} $prices
+     */
+    public function updateUnitEditPrices( ProductUnitQuantity $unitQuantity, array $prices ): ProductUnitQuantity
+    {
+        foreach ( ['sale_price_edit', 'wholesale_price_edit'] as $field ) {
+            if ( array_key_exists( $field, $prices ) ) {
+                $unitQuantity->{$field} = $prices[$field];
+            }
+        }
+
+        $product = $unitQuantity->product()->firstOrFail();
+        $this->taxService->computeTax( $unitQuantity, $product->tax_group_id, $product->tax_type );
+        $unitQuantity->save();
+
+        return $unitQuantity->refresh();
+    }
+
+    /**
      * get product quantity according
      * to a specific unit id
      */

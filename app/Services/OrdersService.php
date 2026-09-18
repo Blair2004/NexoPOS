@@ -20,6 +20,7 @@ use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderProductAfterComputedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotEnoughPermissionException;
 use App\Exceptions\NotFoundException;
 use App\Models\Coupon;
 use App\Models\Customer;
@@ -71,7 +72,8 @@ class OrdersService
         protected TaxService $taxService,
         protected ReportService $reportService,
         protected MathService $mathService,
-        protected AccountingJournalService $accountingJournalService
+        protected AccountingJournalService $accountingJournalService,
+        protected UsersService $usersService
     ) {
         // ...
     }
@@ -115,6 +117,8 @@ class OrdersService
          * products alongs with cogs and other details.
          */
         $fields[ 'products' ] = $this->__buildOrderProducts( $fields );
+
+        $this->__checkPosActionPermissions( $fields );
 
         /**
          * determine the value of the product
@@ -694,6 +698,63 @@ class OrdersService
                 }
             }
         }
+    }
+
+    /**
+     * Ensure POS prices and discounts are authorized on the server.
+     *
+     * @throws NotEnoughPermissionException
+     */
+    private function __checkPosActionPermissions( array $fields ): void
+    {
+        collect( $fields['products'] ?? [] )->each( function ( array $product ): void {
+            $unitQuantity = $product['unitQuantity'] ?? null;
+
+            if ( $unitQuantity instanceof ProductUnitQuantity ) {
+                $mode = $product['mode'] ?? 'normal';
+                $canonicalPrice = match ( $mode ) {
+                    'wholesale' => $unitQuantity->wholesale_price_edit,
+                    default => $unitQuantity->sale_price_edit,
+                };
+
+                if ( $mode === 'custom' || ! $this->pricesMatch( $product['unit_price'] ?? null, $canonicalPrice ) ) {
+                    $this->__restrictPosAction( 'nexopos.cart.product-price' );
+                }
+
+                if ( $mode === 'wholesale' ) {
+                    $this->__restrictPosAction( 'nexopos.cart.product-wholesale-price' );
+                }
+            }
+
+            if ( $this->hasAmount( $product['discount'] ?? 0 ) || $this->hasAmount( $product['discount_percentage'] ?? 0 ) ) {
+                $this->__restrictPosAction( 'nexopos.cart.product-discount' );
+            }
+        } );
+
+        if ( $this->hasAmount( $fields['discount'] ?? 0 ) || $this->hasAmount( $fields['discount_percentage'] ?? 0 ) ) {
+            $this->__restrictPosAction( 'nexopos.cart.discount' );
+        }
+    }
+
+    private function __restrictPosAction( string $permission ): void
+    {
+        if ( ! $this->usersService->isPosActionAllowed( $permission ) ) {
+            throw new NotEnoughPermissionException(
+                __( 'You do not have permission to perform this action.' )
+            );
+        }
+    }
+
+    private function pricesMatch( mixed $submittedPrice, mixed $canonicalPrice ): bool
+    {
+        return is_numeric( $submittedPrice )
+            && is_numeric( $canonicalPrice )
+            && abs( (float) $submittedPrice - (float) $canonicalPrice ) < 0.00001;
+    }
+
+    private function hasAmount( mixed $amount ): bool
+    {
+        return is_numeric( $amount ) && abs( (float) $amount ) > 0.00001;
     }
 
     /**

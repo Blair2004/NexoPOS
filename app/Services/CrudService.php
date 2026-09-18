@@ -1583,7 +1583,11 @@ class CrudService
          * This way, the user can start with a permissive approach and then gradually add restrictions by defining permissions.
          */
         if ( isset( $this->permissions ) && isset( $this->permissions[$permission] ) ) {
-            if ( $this->permissions[ $permission ] !== false ) {
+            if ( $this->permissions[ $permission ] === true ) {
+                return;
+            }
+
+            if ( is_string( $this->permissions[ $permission ] ) ) {
                 ns()->restrict( $this->permissions[$permission] );
             } else {
                 throw new NotAllowedException;

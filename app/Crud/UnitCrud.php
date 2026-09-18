@@ -123,6 +123,17 @@ class UnitCrud extends CrudService
         return false; // by default
     }
 
+    public function hook( $query ): void
+    {
+        $query->addSelect( [
+            'assigned_products' => function ( $query ) {
+                $query->selectRaw( 'COUNT(*)' )
+                    ->from( 'nexopos_products_unit_quantities' )
+                    ->whereColumn( 'nexopos_products_unit_quantities.unit_id', '=', 'nexopos_units.id' );
+            },
+        ] );
+    }
+
     /**
      * Fields
      *
@@ -313,6 +324,11 @@ class UnitCrud extends CrudService
             ],
             'base_unit' => [
                 'label' => __( 'Base Unit' ),
+                '$direction' => '',
+                '$sort' => false,
+            ],
+            'assigned_products' => [
+                'label' => __( 'Assigned Products' ),
                 '$direction' => '',
                 '$sort' => false,
             ],

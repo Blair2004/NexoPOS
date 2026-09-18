@@ -104,25 +104,23 @@ class CoreService
      */
     public function restrict( $permissions, $message = '' ): void
     {
+        $passed = false;
+
         if ( is_array( $permissions ) ) {
-            $passed = collect( $permissions )->filter( function ( $permission ) {
-                if ( is_bool( $permission ) ) {
-                    return $permission;
-                } else {
-                    return $this->allowedTo( $permission );
-                }
-            } )->count() === count( $permissions );
+            $passed = collect( $permissions )->every( fn ( $permission ) => is_string( $permission ) && $this->allowedTo( $permission ) );
         } elseif ( is_string( $permissions ) ) {
             $passed = $this->allowedTo( $permissions );
-        } elseif ( is_bool( $permissions ) ) {
-            $passed = $permissions;
         }
 
         if ( ! $passed ) {
+            $requiredPermissions = is_string( $permissions )
+                ? $permissions
+                : ( is_array( $permissions ) ? implode( ', ', array_filter( $permissions, 'is_string' ) ) : __( 'valid permission checks' ) );
+
             throw new NotEnoughPermissionException( $message ?:
                 sprintf(
                     __( 'You do not have enough permissions to perform this action.' ) . '<br>' . __( 'Required permissions: %s' ),
-                    is_string( $permissions ) ? $permissions : implode( ', ', $permissions )
+                    $requiredPermissions
                 )
             );
         }

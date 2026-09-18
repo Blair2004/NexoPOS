@@ -47,10 +47,10 @@ class HoldOrderCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create' => true,
-        'read' => true,
-        'update' => true,
-        'delete' => true,
+        'create' => 'nexopos.create.orders',
+        'read' => 'nexopos.read.orders',
+        'update' => 'nexopos.update.orders',
+        'delete' => 'nexopos.delete.orders',
     ];
 
     /**

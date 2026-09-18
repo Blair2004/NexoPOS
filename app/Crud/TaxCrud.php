@@ -58,10 +58,10 @@ class TaxCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create' => true,
-        'read' => true,
-        'update' => true,
-        'delete' => true,
+        'create' => 'nexopos.create.taxes',
+        'read' => 'nexopos.read.taxes',
+        'update' => 'nexopos.update.taxes',
+        'delete' => 'nexopos.delete.taxes',
     ];
 
     public $relations = [
