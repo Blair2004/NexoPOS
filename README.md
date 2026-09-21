@@ -67,6 +67,8 @@ For installation and updates, use **Modules → Upload Module** in NexoPOS and c
 
 ## Cloud, self-hosted, and Windows deployments
 
+![cloud-hosting](https://camo.githubusercontent.com/0cbe76dab0c6299fbd4baa706bf0e40515c3d83e7814ae2cddf446e7521d87bb/68747470733a2f2f6d792e6e65786f706f732e636f6d2f73746f726167652f323032362f30372f636861746770742d696d6167652d6a756c2d32382d323032362d31312d30392d32392d616d2e706e67)
+
 Choose the operating model that fits your business:
 
 - **[NexoPOS Cloud](https://nexopos.cloud)** — managed hosting with the infrastructure handled for you.
