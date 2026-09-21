@@ -10,6 +10,12 @@ NexoPOS is a modern, extensible point-of-sale platform for retail stores, restau
 
 The current ecosystem is built around the NexoPOS 6.2.x core and includes first-party modules, Windows applications, cloud hosting, developer tools, and the [My NexoPOS](https://my.nexopos.com/en) marketplace.
 
+### Deployment
+NexoPOS is partnering with InstaPods to offer you a smooth deployment experience with NexoPOS.
+
+[![Deploy On Nexo Cloud](https://my.nexopos.com/deploy-on-nexo-cloud-button-light.svg)](https://nexopos.cloud?utm_channel=github.com&utm_campaign=readme)
+[![Deploy On InstaPods](https://instapods.com/deploy-button.svg)](https://app.instapods.com/dashboard/pods/create?app=nexopos&ref=nexopos) 
+
 ## What the core provides
 
 The NexoPOS core includes:
