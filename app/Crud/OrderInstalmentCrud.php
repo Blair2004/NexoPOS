@@ -57,8 +57,8 @@ class OrderInstalmentCrud extends CrudService
      */
     protected $permissions = [
         'create' => false,
-        'read' => true,
-        'update' => true,
+        'read' => 'nexopos.read.orders-instalments',
+        'update' => false,
         'delete' => false,
     ];
 

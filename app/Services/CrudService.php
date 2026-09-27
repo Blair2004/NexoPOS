@@ -259,7 +259,7 @@ class CrudService
      */
     public function submitPreparedRequest( $inputs, $id = null ): array
     {
-        $model = $id !== null ? $this->getModel()::find( $id ) : null;
+        $model = $id !== null ? $this->findEntry( $id ) : null;
         $data = $this->getFlatForm( $inputs, $model );
 
         return $this->submitRequest( $this->getIdentifier(), $data, $id );
@@ -295,7 +295,7 @@ class CrudService
         $resource = $this->getCrudInstance( $identifier );
         $model = $resource->getModel();
         $isEditing = $id !== null;
-        $entry = ! $isEditing ? new $model : $model::find( $id );
+        $entry = ! $isEditing ? new $model : $resource->findEntry( $id );
 
         /**
          * let's keep old form inputs
@@ -1275,6 +1275,13 @@ class CrudService
     public function getModel(): string
     {
         return $this->model;
+    }
+
+    public function findEntry( int|string $id ): ?Model
+    {
+        $model = $this->getModel();
+
+        return $model::find( $id );
     }
 
     /**

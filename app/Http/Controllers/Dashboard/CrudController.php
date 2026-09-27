@@ -53,7 +53,7 @@ class CrudController extends DashboardController
         $resource->allowedTo( 'delete' );
 
         $modelClass = $resource->getModel();
-        $model = $modelClass::find( $id );
+        $model = $resource->findEntry( $id );
 
         if ( ! $model instanceof $modelClass ) {
             throw new NotFoundException( __( 'Unable to delete an entry that no longer exists.' ) );
@@ -301,7 +301,7 @@ class CrudController extends DashboardController
 
         if ( $resource instanceof CrudService ) {
             return $resource->getFormConfig(
-                entry: $resource->getModel()::find( $id )
+                entry: $id === null ? null : $resource->findEntry( $id )
             );
         }
 
@@ -462,8 +462,7 @@ class CrudController extends DashboardController
         $resource->allowedTo( 'read' );
 
         $model = $resource->getModel();
-
-        $entry = $model::find( $request->route( 'id' ) );
+        $entry = $resource->findEntry( $request->route( 'id' ) );
 
         if ( $entry instanceof $model ) {
             if ( $request->query( 'with-relations' ) ) {

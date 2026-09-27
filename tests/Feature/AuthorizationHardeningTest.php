@@ -2,7 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Crud\HoldOrderCrud;
+use App\Crud\OrderInstalmentCrud;
+use App\Crud\ProcurementProductCrud;
+use App\Crud\ProviderProcurementsCrud;
 use App\Exceptions\NotEnoughPermissionException;
+use App\Models\Order;
 use App\Models\PermissionAccess;
 use App\Models\Product;
 use App\Models\ProductUnitQuantity;
@@ -88,6 +93,57 @@ final class AuthorizationHardeningTest extends TestCase
         $this->attemptAuthenticate();
 
         $this->json( 'GET', "api/crud/ns.taxes/{$tax->id}" )->assertOk();
+    }
+
+    public function test_user_activation_credentials_are_never_serialized(): void
+    {
+        $user = new User;
+        $user->activation_token = 'secret-activation-token';
+        $user->activation_expiration = now()->addHour();
+
+        $serializedUser = $user->toArray();
+
+        $this->assertArrayNotHasKey( 'activation_token', $serializedUser );
+        $this->assertArrayNotHasKey( 'activation_expiration', $serializedUser );
+    }
+
+    public function test_specialized_crud_resources_do_not_use_boolean_grants(): void
+    {
+        $this->assertSame( 'nexopos.read.procurements', ( new ProviderProcurementsCrud )->getPermission( 'read' ) );
+        $this->assertFalse( ( new ProviderProcurementsCrud )->getPermission( 'delete' ) );
+        $this->assertSame( 'nexopos.read.orders-instalments', ( new OrderInstalmentCrud )->getPermission( 'read' ) );
+        $this->assertFalse( ( new OrderInstalmentCrud )->getPermission( 'update' ) );
+        $this->assertSame( 'nexopos.read.procurements', ( new ProcurementProductCrud )->getPermission( 'read' ) );
+        $this->assertFalse( ( new ProcurementProductCrud )->getPermission( 'update' ) );
+    }
+
+    public function test_hold_order_crud_cannot_target_non_held_orders_or_mutate_orders(): void
+    {
+        $order = Order::query()
+            ->where( 'payment_status', '<>', Order::PAYMENT_HOLD )
+            ->first();
+
+        $this->assertInstanceOf( Order::class, $order );
+        $this->attemptAuthenticate();
+
+        $this->json( 'GET', "api/crud/ns.hold-orders/{$order->id}" )
+            ->assertNotFound();
+        $this->json( 'PUT', "api/crud/ns.hold-orders/{$order->id}", [
+            'general' => [
+                'total' => 0,
+                'payment_status' => Order::PAYMENT_PAID,
+            ],
+        ] )->assertForbidden();
+        $this->json( 'DELETE', "api/crud/ns.hold-orders/{$order->id}" )
+            ->assertForbidden();
+
+        $this->assertDatabaseHas( $order->getTable(), [
+            'id' => $order->id,
+            'total' => $order->total,
+            'payment_status' => $order->payment_status,
+        ] );
+        $this->assertFalse( ( new HoldOrderCrud )->getPermission( 'update' ) );
+        $this->assertFalse( ( new HoldOrderCrud )->getPermission( 'delete' ) );
     }
 
     public function test_temporary_pos_action_approval_is_honored(): void

@@ -108,7 +108,13 @@ class TaxCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable = [];
+    public $fillable = [
+        'name',
+        'tax_group_id',
+        'rate',
+        'description',
+        'author_id',
+    ];
 
     /**
      * Define Constructor
