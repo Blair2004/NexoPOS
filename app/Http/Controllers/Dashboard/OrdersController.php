@@ -245,7 +245,7 @@ class OrdersController extends DashboardController
 
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
         $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
-        $order->deliveryStatus = $this->ordersService->getPaymentLabel( $order->delivery_status );
+        $order->deliveryStatus = $this->ordersService->getDeliveryStatus( $order->delivery_status );
 
         return View::make( 'pages.dashboard.orders.templates.invoice', [
             'order' => $order,
