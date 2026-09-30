@@ -139,7 +139,7 @@ class CoreService
      * Will determine if a user is allowed
      * to perform a specific action (using a permission)
      */
-    public function allowedTo( array|string $permissions ): bool
+    public function allowedTo( array|string|bool $permissions ): bool
     {
         if ( is_array( $permissions ) ) {
             return Gate::any( $permissions );

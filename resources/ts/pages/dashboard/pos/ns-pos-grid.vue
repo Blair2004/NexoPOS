@@ -11,36 +11,7 @@
         </div>
         <div id="grid-container" class="rounded shadow  overflow-hidden flex-auto flex flex-col">
             <div id="grid-header" class="p-2 border-b ">
-                <div class="border rounded flex  overflow-hidden">
-                    <button :title="__( 'Search for products.' )" @click="openSearchPopup()" class="w-10 h-10 border-r  outline-hidden">
-                        <i class="las la-search"></i>
-                    </button>
-                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-hidden w-10 h-10 border-r ">
-                        <i class="las la-compress-arrows-alt"></i>
-                    </button>
-                    <template v-if="options.ns_pos_barcode_reader_type === 'wireless'">
-                        <button v-if="! settings.marketplace_connected" :title="__( 'Connect/Disconnect wireless barcode reader.' )" 
-                            @click="inviteToMyNexoPOSConnexion()"
-                            :class="wirelessBarcodeConnected ? 'text-blue-500' : 'text-red-500'"
-                            class="outline-hidden border-r">
-                            <div class="animate-pulse bg-red-500/10 px-2 h-10 flex items-center justify-center">                                
-                                <i class="las la-exclamation-triangle text-lg animate-pulse"></i>
-                            </div>
-                        </button>
-                        <template v-else>
-                            <ns-pos-grid-wireless-barcode></ns-pos-grid-wireless-barcode>
-                        </template>
-                    </template>
-                    <template v-else>
-                        <button :title="__( 'Toggle auto focus.' )" 
-                            @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" 
-                            :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" 
-                            class="outline-hidden w-10 h-10 border-r">
-                            <i class="las la-barcode"></i>
-                        </button>
-                    </template>
-                    <input ref="search" v-model="barcode" type="text" class="flex-auto outline-hidden px-2 ">
-                </div>
+                <ns-pos-product-entry-toolbar></ns-pos-product-entry-toolbar>
             </div>
             <div style="height: 0px">
                 <div v-if="isLoading" class="fade-in-entrance ns-loader">
@@ -155,6 +126,7 @@ import nsPosSearchProductVue from '~/popups/ns-pos-search-product.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 import NsPosGridWirelessBarcode from './ns-pos-grid-wireless-barcode.vue';
+import NsPosProductEntryToolbar from './ns-pos-product-entry-toolbar.vue';
 import { ProductUnitPromise } from './queues/products/product-unit';
 
 declare const nsNotice;
@@ -205,6 +177,7 @@ export default {
     },
     components: {
         'ns-pos-grid-wireless-barcode': NsPosGridWirelessBarcode,
+        'ns-pos-product-entry-toolbar': NsPosProductEntryToolbar,
     },
     watch: {
         options: {
@@ -237,12 +210,6 @@ export default {
             this.$forceUpdate();
         });
 
-        this.wirelessStateSubscriber   =   POS.wirelessBarcodeState.property( 'barcode' ).subscribe( state => {
-            if ( typeof state === "string" && state.length > 0 ) {
-                this.submitSearch( state );
-            }
-        });
-
         this.optionsSubscriber          =   POS.options.subscribe( options => {
             this.options                =   options;
             this.$forceUpdate();
@@ -264,56 +231,6 @@ export default {
 
         this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
 
-        this.interval   =   setInterval( () => this.checkFocus(), 500 );
-
-        /**
-         * let's register hotkeys
-         */
-        for( let shortcut in nsShortcuts ) {
-            /**
-             * let's declare only shortcuts that
-             * works on the pos grid and that doesn't
-             * expect any popup to be visible
-             */
-            if ([
-                    'ns_pos_keyboard_quick_search',
-                ].includes( shortcut ) ) {
-                nsHotPress
-                    .create( 'search-popup' )
-                    .whenNotVisible([ '.is-popup', '#product-search' ])
-                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
-                        event.preventDefault();
-                        this.openSearchPopup();
-                });
-            }
-
-            /**
-             * let's declare only shortcuts that
-             * works on the pos grid and that doesn't
-             * expect any popup to be visible
-             */
-            if ([
-                    'ns_pos_keyboard_toggle_merge',
-                ].includes( shortcut ) ) {
-                nsHotPress
-                    .create( 'toggle-merge' )
-                    .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
-                        event.preventDefault();
-                        this.posToggleMerge();
-                });
-            }
-        }
-
-        /**
-         * We'll apply a reset on the barcode value. This will ensure
-         * similar barcode scan will work
-         */
-        nsHooks.addAction( 'ns-after-cart-changed', 'ns-pos-grid', () => {
-            POS.wirelessBarcodeState.update({
-                barcode: ''
-            });
-        })
     },
     unmounted() {
         this.orderSubscription.unsubscribe();
@@ -322,12 +239,7 @@ export default {
         this.settingsSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
         this.cartProductsSubscribe.unsubscribe();
-        this.wirelessStateSubscriber.unsubscribe();
-
-        clearInterval( this.interval );
-
-        nsHotPress.destroy( 'search-popup' );
-        nsHotPress.destroy( 'toggle-merge' );
+        this.wirelessStateSubscriber?.unsubscribe();
     },
     methods: {
         __, 

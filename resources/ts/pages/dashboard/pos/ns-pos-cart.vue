@@ -1,6 +1,6 @@
 <template>
     <div id="pos-cart" class="flex-auto flex flex-col">
-        <div id="tools" class="flex pl-2 ns-tab" v-if="visibleSection === 'cart'">
+        <div id="tools" class="flex pl-2 ns-tab" v-if="visibleSection === 'cart' && ! isUnified">
             <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 font-semibold active tab">
                 <span>{{ __( 'Cart' ) }}</span>
                 <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ products.length }}</span>
@@ -14,6 +14,11 @@
                 <div id="cart-toolbox" class="w-full p-2 border-b">
                     <div class="border rounded overflow-hidden">
                         <div class="flex flex-wrap">
+                            <ns-pos-product-entry-toolbar
+                                v-if="isUnified"
+                                embedded
+                                :show-pinned-products="options.ns_pos_enable_pinned_products"
+                            ></ns-pos-product-entry-toolbar>
                             <template v-for="component of cartHeaderButtons" :key="component">
                                 <component :is="component" :order="order" :settings="settings" :options="options"></component>
                             </template>
@@ -296,6 +301,8 @@ import { ref, markRaw } from '@vue/reactivity';
 import { Order } from '~/interfaces/order';
 import { defineAsyncComponent, Ref } from 'vue';
 import ActionPermissions from '~/libraries/action-permissions';
+import { normalizePosLayout } from '~/libraries/pos-layout-state';
+import nsPosProductEntryToolbar from './ns-pos-product-entry-toolbar.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -339,6 +346,9 @@ export default {
         },
         isVisible() {
             return this.visibleSection === 'cart';
+        },
+        isUnified() {
+            return normalizePosLayout( this.options.ns_pos_layout ) === 'unified';
         },
         customerName() {
             return this.order.customer ? `${this.order.customer.first_name || this.order.customer.last_name ? this.getFirstName() : this.getUserName() }` : 'N/A';
@@ -428,6 +438,9 @@ export default {
 
         nsHotPress.destroy( 'ns_pos_keyboard_shipping' );
         nsHotPress.destroy( 'ns_pos_keyboard_note' );
+    },
+    components: {
+        nsPosProductEntryToolbar,
     },
     methods: {
         __,

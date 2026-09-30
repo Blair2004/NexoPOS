@@ -5,6 +5,7 @@ use App\Http\Middleware\NsRestrictMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware( NsRestrictMiddleware::arguments( 'nexopos.read.products' ) )->group( function () {
+    Route::get( 'products/pos/pinned', [ ProductsController::class, 'getPinnedProducts' ] );
     Route::get( 'products', [ ProductsController::class, 'getProduts' ] );
     Route::get( 'products/all/variations', [ ProductsController::class, 'getAllVariations' ] );
     Route::get( 'products/{identifier}', [ ProductsController::class, 'singleProduct' ] );

@@ -109,6 +109,7 @@ trait WithApiRoutePermissionTest
 
             // ── Products ─────────────────────────────────────────
             'products: list' => ['GET',  'api/products'],
+            'products: pinned POS list' => ['GET', 'api/products/pos/pinned'],
             'products: search' => ['POST', 'api/products/search', ['search' => 'test']],
 
             // ── Registers ────────────────────────────────────────

@@ -28,6 +28,7 @@ use App\Services\DateService;
 use App\Services\MarketplaceService;
 use App\Services\Options;
 use App\Services\OrdersService;
+use App\Support\PosLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
@@ -216,6 +217,7 @@ class OrdersController extends DashboardController
                 'ns_pos_show_preview_pinned_products' => ns()->option->get( 'ns_pos_show_preview_pinned_products', 'no' ) === 'yes' ? true : false,
                 'ns_pos_enable_pinned_products' => ns()->option->get( 'ns_pos_enable_pinned_products', 'no' ) === 'yes' ? true : false,
                 'ns_pos_barcode_reader_type' => ns()->option->get( 'ns_pos_barcode_reader_type' ),
+                'ns_pos_layout' => PosLayout::normalize( ns()->option->get( 'ns_pos_layout' ) ),
                 'mynexopos_access_token' => ns()->option->get( 'mynexopos_access_token' ),
             ] ),
             'urls' => [

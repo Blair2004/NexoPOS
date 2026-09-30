@@ -1076,6 +1076,10 @@ class CrudService
             }
         }
 
+        if ( $request->integer( 'exclude_id' ) > 0 ) {
+            $query->where( $table . '.id', '<>', $request->integer( 'exclude_id' ) );
+        }
+
         /**
          * let's make the "perPage" value adjustable
          */

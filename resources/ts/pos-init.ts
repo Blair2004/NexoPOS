@@ -33,6 +33,8 @@ import axios from "axios";
 import { io, Socket } from "socket.io-client";
 import { ReactiveObject } from "./libraries/reactive-objects";
 import { cartSatisfiesCouponRestrictions } from "./libraries/coupon-eligibility";
+import { resolvePosSection } from "./libraries/pos-layout-state";
+import { setPosSetting, unsetPosSetting } from "./libraries/pos-settings-state";
 
 /**
  * these are dynamic component
@@ -750,12 +752,14 @@ export class POS {
     }
 
     defineCurrentScreen() {
-        this._visibleSection.next(['xs', 'sm'].includes(<string>this._responsive.is()) ? 'grid' : 'both');
-        this._screen.next(<string>this._responsive.is());
+        const screen = <string>this._responsive.is();
+        this._visibleSection.next( resolvePosSection( this.options.getValue().ns_pos_layout, null, screen ) );
+        this._screen.next( screen );
     }
 
     changeVisibleSection(section) {
         if (['both', 'cart', 'grid'].includes(section)) {
+            section = resolvePosSection( this.options.getValue().ns_pos_layout, section, <string>this._responsive.is() );
 
             if (['cart', 'both'].includes(section)) {
                 this.refreshCart();
@@ -2300,15 +2304,11 @@ export class POS {
     }
 
     set(key, value) {
-        const settings = this.settings.getValue();
-        settings[key] = value;
-        this.settings.next(settings);
+        this.settings.next( setPosSetting( this.settings.getValue(), key, value ) );
     }
 
     unset(key) {
-        const settings = this.settings.getValue();
-        delete settings[key];
-        this.settings.next(settings);
+        this.settings.next( unsetPosSetting( this.settings.getValue(), key ) );
     }
 
     get(key) {

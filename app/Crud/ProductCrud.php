@@ -9,7 +9,6 @@ use App\Classes\CrudTable;
 use App\Classes\FormInput;
 use App\Exceptions\NotAllowedException;
 use App\Models\Product;
-use App\Models\ProductCategory;
 use App\Models\ProductUnitQuantity;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
@@ -316,7 +315,14 @@ class ProductCrud extends CrudService
                                     'component' => 'nsCrudForm',
                                     'props' => ProductCategoryCrud::getFormConfig(),
                                     'description' => __( 'Select to which category the item is assigned.' ),
-                                    'options' => Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ] ),
+                                    'options' => [
+                                        'search' => FormInput::searchSelectOptions(
+                                            ProductCategoryCrud::IDENTIFIER,
+                                            limit: 10,
+                                            moreLabel: __( '+{count} more searchable categories. Type to search.' ),
+                                            minLength: 1,
+                                        ),
+                                    ],
                                     'name' => 'category_id',
                                     'label' => __( 'Category' ),
                                     'validation' => 'required',
@@ -449,6 +455,21 @@ class ProductCrud extends CrudService
                                     'props' => UnitGroupCrud::getFormConfig(),
                                     'component' => 'nsCrudForm',
                                     'value' => $entry->unit_group ?? ( ! $groups->isEmpty() ? $groups->first()->id : '' ),
+                                ], [
+                                    'type' => 'search-select',
+                                    'options' => Helper::toJsOptions( $units, [ 'id', 'name' ] ),
+                                    'name' => 'default_purchase_unit_id',
+                                    'description' => __( 'Select the unit used for scheduled procurement lines.' ),
+                                    'label' => __( 'Default Purchase Unit' ),
+                                    'validation' => 'nullable|integer|exists:nexopos_units,id',
+                                    'value' => $entry->default_purchase_unit_id ?? '',
+                                ], [
+                                    'type' => 'number',
+                                    'name' => 'scheduled_reorder_quantity',
+                                    'description' => __( 'Set the exact quantity to order when a scheduled low-stock check qualifies this product.' ),
+                                    'label' => __( 'Scheduled Reorder Quantity' ),
+                                    'validation' => 'nullable|numeric|gt:0',
+                                    'value' => $entry->scheduled_reorder_quantity ?? '',
                                 ], [
                                     'type' => 'switch',
                                     'description' => __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),
