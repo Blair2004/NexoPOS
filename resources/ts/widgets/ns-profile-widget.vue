@@ -64,8 +64,13 @@ export default {
         __,
         nsCurrency,
         loadUserProfileWidget( refresh ) {
-            nsHttpClient.get( `/api/reports/cashier-report${refresh ? '?refresh=true' : ''}` ).subscribe( result => {
-                this.profileDetails     =   result;
+            nsHttpClient.get( `/api/reports/cashier-report${refresh ? '?refresh=true' : ''}` ).subscribe({
+                next: result => {
+                    this.profileDetails     =   result;
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             })
         }
     }

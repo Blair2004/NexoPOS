@@ -28,6 +28,8 @@ return new class extends Migration
                 $table->string( 'type' )->default( 'tangible' ); // intangible, tangible (or any other extended types)
                 $table->boolean( 'accurate_tracking' )->default( 0 ); // @since db 1.3
                 $table->boolean( 'auto_cogs' )->default( true ); // @since v5.0.x
+                $table->integer( 'default_purchase_unit_id' )->nullable();
+                $table->float( 'scheduled_reorder_quantity' )->nullable()->default( 0 );
                 $table->string( 'status' )->default( 'available' ); // available, unavailable
                 $table->string( 'stock_management' )->default( 'enabled' ); // enabled, disabled
                 $table->string( 'barcode' ); // works if the product type is "product"

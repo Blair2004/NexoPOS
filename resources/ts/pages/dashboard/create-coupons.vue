@@ -94,9 +94,14 @@ export default {
         },
         loadForm() {
             const request   =   nsHttpClient.get( `${this.src}` );
-            request.subscribe( f => {
-                this.labels     =   f.labels;
-                this.form    =   this.parseForm( f.form );
+            request.subscribe({
+                next: f => {
+                    this.labels     =   f.labels;
+                    this.form    =   this.parseForm( f.form );
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             });
         },
         parseForm( form ) {

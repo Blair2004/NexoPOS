@@ -106,8 +106,13 @@ export default {
         },
         loadPaymentFields() {
             nsHttpClient.get( '/api/orders/payments' )
-                .subscribe( fields => {
-                    this.fields     =   this.validation.createFields( fields );
+                .subscribe({
+                    next: fields => {
+                        this.fields     =   this.validation.createFields( fields );
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 });
         },
         printPaymentReceipt( payment ) {

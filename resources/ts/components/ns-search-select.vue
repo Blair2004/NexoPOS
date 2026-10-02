@@ -271,6 +271,10 @@ export default {
 
                     config.options.unshift( this.mapSearchEntry( entry, config ) );
                 },
+
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             });
         },
         mapSearchEntry( entry, config ) {

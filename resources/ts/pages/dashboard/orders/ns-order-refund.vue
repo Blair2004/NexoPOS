@@ -345,8 +345,13 @@ export default {
     mounted() {
         this.selectFields   =   this.formValidation.createFields( this.selectFields );
         nsHttpClient.get( '/api/orders/payments' )
-            .subscribe( paymentField => {
-                this.paymentField       =   paymentField;
+            .subscribe({
+                next: paymentField => {
+                    this.paymentField       =   paymentField;
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             });
     }
 }

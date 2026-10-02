@@ -128,7 +128,7 @@ export default defineComponent({
                                             }
                                         });
                                 } else {
-                                    console.log('Permission not granted yet, will check again...');
+                                    resolve(false);
                                 }
                             },
                             error: (error) => {
@@ -137,8 +137,10 @@ export default defineComponent({
                         });
                 });
                 
-                props.popup.close();
-                props.resolve( true );
+                if ( result === true ) {
+                    props.popup.close();
+                    props.resolve( true );
+                }
             } catch( exception ) {
                 console.error('Failed to check permission status:', exception);
                 close();

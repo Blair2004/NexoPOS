@@ -68,9 +68,14 @@ export default {
         loadCoupons() {
             this.hasLoaded  =   false;
             nsHttpClient.get( `/api/customers/${this.order.customer_id}/coupons` )
-                .subscribe( coupons => {
-                    this.hasLoaded  =   true;
-                    this.coupons    =   coupons;
+                .subscribe({
+                    next: coupons => {
+                        this.hasLoaded  =   true;
+                        this.coupons    =   coupons;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         }
     }

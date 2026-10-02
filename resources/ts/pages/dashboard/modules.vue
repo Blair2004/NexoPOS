@@ -161,7 +161,11 @@ export default {
         }
     },
     mounted() {
-        this.loadModules().subscribe();
+        this.loadModules().subscribe({
+            error: error => {
+                nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+            }
+        });
 
         document.addEventListener('keypress', (event) => {
             if (event.key === '/') {
@@ -237,11 +241,19 @@ export default {
         },
 
         reloadModules( segment ) {
-            return this.loadModules( this.url + '/' + segment ).subscribe();
+            return this.loadModules( this.url + '/' + segment ).subscribe({
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
+            });
         },
 
         refreshModules() {
-            this.loadModules().subscribe();
+            this.loadModules().subscribe({
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
+            });
         },
         enableModule( object ) {
             const url   =   `${this.url}/${object.namespace}/enable`;
@@ -306,6 +318,9 @@ export default {
                             this.loadModules().subscribe({
                                 next: result => {
                                     document.location.reload();
+                                },
+                                error: error => {
+                                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                                 }
                             })
                         },

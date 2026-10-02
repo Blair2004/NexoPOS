@@ -23,7 +23,7 @@ export default class ActionPermissions {
                             },
                             error: ( error ) => {
                                 if ( error.type && [ 'permission_denied', 'permission_pending' ].includes( error.type ) ) {
-                                    Popup.show( NsPosPermissionsPopup, {
+                                    return Popup.show( NsPosPermissionsPopup, {
                                         permission: permission,
                                         access_id: error.data.access.id,
                                         resolve,
@@ -34,6 +34,8 @@ export default class ActionPermissions {
                                 if ( error.type === 'permission_cooldown' ) {
                                     nsSnackBar.error( error.message );
                                 }
+
+                                reject( error );
                             },
                         })
                 }

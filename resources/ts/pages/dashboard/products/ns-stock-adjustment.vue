@@ -34,25 +34,30 @@ export default {
         searchProduct( argument ) {
             if ( argument.length > 0 ) {
                 nsHttpClient.post( '/api/procurements/products/search-procurement-product', { argument })
-                    .subscribe( result => {
-                        if ( result.from === 'products' ) {
-                            if ( result.products.length > 0 ) {
-                                if ( result.products.length === 1 ) {
-                                    this.addSuggestion( result.products[0] );
+                    .subscribe({
+                        next: result => {
+                            if ( result.from === 'products' ) {
+                                if ( result.products.length > 0 ) {
+                                    if ( result.products.length === 1 ) {
+                                        this.addSuggestion( result.products[0] );
+                                    } else {
+                                        this.suggestions    =   result.products;
+                                    }
                                 } else {
-                                    this.suggestions    =   result.products;
+                                    this.closeSearch();
+                                    return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) );
                                 }
-                            } else {
-                                this.closeSearch();
-                                return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) );
+                            } else if ( result.from === 'procurements' ) {
+                                if ( result.product === null ) {
+                                    this.closeSearch();
+                                    return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) );
+                                } else {
+                                    this.addProductToList( result.product );
+                                }
                             }
-                        } else if ( result.from === 'procurements' ) {
-                            if ( result.product === null ) {
-                                this.closeSearch();
-                                return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) );
-                            } else {
-                                this.addProductToList( result.product );
-                            }
+                        },
+                        error: error => {
+                            nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                         }
                     })
             }
@@ -102,39 +107,35 @@ export default {
             forkJoin([
                 nsHttpClient.get( `/api/products/${suggestion.id}/units/quantities` ),
                 // nsHttpClient.get( `/api/products/${suggestion.id}/procurements` )
-            ]).subscribe( result => {
-                    if ( result[0].length > 0 ) {
+            ]).subscribe({
+                next: result => {
+                        if ( result[0].length > 0 ) {
 
-                        const defaultUnit = result[0].filter( unitQuantity => unitQuantity.unit.base_unit );
+                            const defaultUnit = result[0].filter( unitQuantity => unitQuantity.unit.base_unit );
 
-                        const action = this.actions.filter( action => action.value === 'set' );
-                        let defaultAction = action.length === 1 ? action[0] : { value: 'set' };
+                            const action = this.actions.filter( action => action.value === 'set' );
+                            let defaultAction = action.length === 1 ? action[0] : { value: 'set' };
 
-                        suggestion.selected                         =   false;
-                        suggestion.quantities                       =   result[0];
-                        suggestion.adjust_quantity                  =   1;
-                        suggestion.adjust_action                    =   defaultAction.value,
-                        suggestion.adjust_reason                    =   '',
-                        suggestion.adjust_unit                      =   defaultUnit.length > 0 && ! alreadyAdded ? defaultUnit[0]: '',
-                        suggestion.adjust_value                     =   0;
-                        suggestion.procurement_product_id           =   0;
+                            suggestion.selected                         =   false;
+                            suggestion.quantities                       =   result[0];
+                            suggestion.adjust_quantity                  =   1;
+                            suggestion.adjust_action                    =   defaultAction.value,
+                            suggestion.adjust_reason                    =   '',
+                            suggestion.adjust_unit                      =   defaultUnit.length > 0 && ! alreadyAdded ? defaultUnit[0]: '',
+                            suggestion.adjust_value                     =   0;
+                            suggestion.procurement_product_id           =   0;
 
-                        this.recalculateProduct( suggestion );
-                        this.products.unshift( suggestion );
-                        this.clearSearch();
-                    } else {
-                        return nsSnackBar.error( __( `This product doesn't have any stock to adjust.` ) );
-                    }
-
-                    if ( suggestion.accurate_tracking === 1 ) {
-                        // suggestion.procurement_history      =   result[1].map( product => {
-                        //     return {
-                        //         label: `${product.procurement.name} (${product.available_quantity})`,
-                        //         value: product.id
-                        //     }
-                        // })
-                    }
-                });
+                            this.recalculateProduct( suggestion );
+                            this.products.unshift( suggestion );
+                            this.clearSearch();
+                        } else {
+                            return nsSnackBar.error( __( `This product doesn't have any stock to adjust.` ) );
+                        }
+                    },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
+            });
         },
         closeSearch() {
             this.$refs.searchField.select();

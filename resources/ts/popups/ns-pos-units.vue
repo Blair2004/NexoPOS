@@ -89,21 +89,28 @@ export default {
 
         loadUnits() {
             nsHttpClient.get( `/api/products/${this.popup.params.product.$original().id}/units/quantities` )
-                .subscribe( result => {
-                    
-                    if ( result.length === 0 ) {
+                .subscribe({
+                    next: result => {
+
+                        if ( result.length === 0 ) {
+                            this.popup.close();
+                            return nsSnackBar.error( __( 'This product doesn\'t have any unit defined for selling. Make sure to mark at least one unit as visible.' ) );
+                        }
+
+                        this.unitsQuantities  =   result;
+
+                        /**
+                         * This will automatically
+                         * select a unit if there is only one unit available.
+                         */
+                        if ( this.unitsQuantities.length === 1 ) {
+                            this.selectUnit( this.unitsQuantities[0] );
+                        }
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                        this.popup.params.reject( error );
                         this.popup.close();
-                        return nsSnackBar.error( __( 'This product doesn\'t have any unit defined for selling. Make sure to mark at least one unit as visible.' ) );
-                    }
-
-                    this.unitsQuantities  =   result;
-
-                    /**
-                     * This will automatically
-                     * select a unit if there is only one unit available.
-                     */
-                    if ( this.unitsQuantities.length === 1 ) {
-                        this.selectUnit( this.unitsQuantities[0] );
                     }
                 })
         },
