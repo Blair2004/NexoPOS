@@ -68,12 +68,17 @@ export default {
     },
     mounted() {
         nsHttpClient.get( '/sanctum/csrf-cookie' )
-            .subscribe( _ => {
-                try {
-                    this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
-                    this.proceedUpdate()
-                } catch( e ) {
-                    nsSnackBar.error( e.message );
+            .subscribe({
+                next: _ => {
+                    try {
+                        this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+                        this.proceedUpdate()
+                    } catch( e ) {
+                        nsSnackBar.error( e.message );
+                    }
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                 }
             })
     },

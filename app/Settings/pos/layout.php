@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Helper;
+use App\Support\PosLayout;
 
 $audios = Helper::kvToJsOptions( [
     '' => __( 'Disabled' ),
@@ -15,14 +16,14 @@ return [
     'fields' => [
         [
             'name' => 'ns_pos_layout',
-            'value' => ns()->option->get( 'ns_pos_layout' ),
+            'value' => PosLayout::normalize( ns()->option->get( 'ns_pos_layout' ) ),
             'options' => Helper::kvToJsOptions( [
-                'grocery_shop' => __( 'Retail Layout' ),
-                'clothing_shop' => __( 'Clothing Shop' ),
+                PosLayout::Split => __( 'Split Layout' ),
+                PosLayout::Unified => __( 'Unified Layout' ),
             ] ),
             'label' => __( 'POS Layout' ),
             'type' => 'select',
-            'description' => __( 'Change the layout of the POS.' ),
+            'description' => __( 'Split shows the cart and product grid. Unified shows a full-width cart with product entry controls.' ),
         ], [
             'name' => 'ns_pos_complete_sale_audio',
             'value' => ns()->option->get( 'ns_pos_complete_sale_audio' ),

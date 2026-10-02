@@ -222,6 +222,7 @@ class AppServiceProvider extends ServiceProvider
                 reportService: $app->make( ReportService::class ),
                 mathService: $app->make( MathService::class ),
                 accountingJournalService: $app->make( AccountingJournalService::class ),
+                usersService: $app->make( UsersService::class ),
             );
         } );
 

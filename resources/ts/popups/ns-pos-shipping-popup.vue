@@ -159,26 +159,32 @@ export default {
         },
         loadForm() {
             nsHttpClient.get( '/api/forms/ns.pos-addresses' )
-                .subscribe( ({tabs}) => {
-                    /**
-                     * let's populate back the fields
-                     * with what might have been set previously.
-                     */
-                    for( let index in tabs ) {
-                        if ( index === 'general' ) {
-                            tabs[ index ].fields.forEach( field => {
-                                field.value     =   this.order[ field.name ] || (
-                                    /\d/.test( field.value ) || field.value.length > 0 ? field.value : ''
-                                );
-                            });
-                        } else {
-                            tabs[ index ].fields.forEach( field => {
-                                field.value     =   this.order.addresses[ index ] ? this.order.addresses[ index ][ field.name ] : '';
-                            });
+                .subscribe({
+                    next: ({tabs}) => {
+                        /**
+                         * let's populate back the fields
+                         * with what might have been set previously.
+                         */
+                        for( let index in tabs ) {
+                            if ( index === 'general' ) {
+                                tabs[ index ].fields.forEach( field => {
+                                    field.value     =   this.order[ field.name ] || (
+                                        /\d/.test( field.value ) || field.value.length > 0 ? field.value : ''
+                                    );
+                                });
+                            } else {
+                                tabs[ index ].fields.forEach( field => {
+                                    field.value     =   this.order.addresses[ index ] ? this.order.addresses[ index ][ field.name ] : '';
+                                });
+                            }
                         }
-                    }
 
-                    this.tabs   =   this.formValidation.initializeTabs( tabs );
+                        this.tabs   =   this.formValidation.initializeTabs( tabs );
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                        this.resolveIfQueued( false );
+                    }
                 });
         }
     }

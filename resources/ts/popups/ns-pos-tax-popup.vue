@@ -149,18 +149,23 @@ export default {
         },  
         loadGroups() {
             nsHttpClient.get( `/api/taxes/groups` )
-                .subscribe( groups => {
-                    this.groups     =   groups;
-                    this.group_fields.forEach( field => {
-                        if ( field.name === 'tax_group_id' ) {
-                            field.options   =   this.groups.map( group => {
-                                return {
-                                    label: group.name,
-                                    value: group.id
-                                }
-                            });
-                        }
-                    })
+                .subscribe({
+                    next: groups => {
+                        this.groups     =   groups;
+                        this.group_fields.forEach( field => {
+                            if ( field.name === 'tax_group_id' ) {
+                                field.options   =   this.groups.map( group => {
+                                    return {
+                                        label: group.name,
+                                        value: group.id
+                                    }
+                                });
+                            }
+                        })
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         }
     }

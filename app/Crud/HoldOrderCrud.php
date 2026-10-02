@@ -6,6 +6,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\Order;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -47,10 +48,10 @@ class HoldOrderCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create' => true,
-        'read' => true,
-        'update' => true,
-        'delete' => true,
+        'create' => false,
+        'read' => 'nexopos.read.orders',
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
@@ -120,6 +121,14 @@ class HoldOrderCrud extends CrudService
     {
         $query->orderBy( 'created_at', 'desc' );
         $query->where( 'payment_status', 'hold' );
+    }
+
+    public function findEntry( int|string $id ): ?Model
+    {
+        return Order::query()
+            ->whereKey( $id )
+            ->where( 'payment_status', Order::PAYMENT_HOLD )
+            ->first();
     }
 
     /**

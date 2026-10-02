@@ -111,6 +111,41 @@ Do not pass `--force` without explicit overwrite authorization. Add only directo
 
 For PHP classes not supplied by a NexoPOS generator, use the appropriate `php artisan make:* --no-interaction` command when it supports the target location. Otherwise, follow a sibling module exactly.
 
+### Scheduled jobs and the module console kernel
+
+Modules register scheduled work through `Console/Kernel.php`, not `Routes/console.php`. Laravel's application bootstrap calls `withSchedule()` in `bootstrap/app.php`; NexoPOS then includes `bootstrap/modules-schedule.php`, which scans enabled/autoloaded modules and invokes `schedule(Schedule $schedule)` on `Modules\{Namespace}\Console\Kernel`.
+
+Use the generator when adding the kernel:
+
+```bash
+php artisan modules:kernel ExampleModule --no-interaction
+```
+
+Define the schedule in the module kernel and keep the method public because NexoPOS calls it from the bootstrap bridge:
+
+```php
+namespace Modules\ExampleModule\Console;
+
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Modules\ExampleModule\Jobs\RefreshExampleDataJob;
+
+class Kernel extends ConsoleKernel
+{
+    public function schedule( Schedule $schedule ): void
+    {
+        $schedule->job( new RefreshExampleDataJob )
+            ->everyFifteenMinutes()
+            ->withoutOverlapping()
+            ->name( 'example-module:refresh-data' );
+    }
+}
+```
+
+This keeps module jobs in the same Laravel scheduler as core jobs, so they run under the normal `schedule:run` / `schedule:work` process and can use scheduler features such as overlap locks, single-server execution, names, environments, and background execution. Do not register schedules from the module service provider, and do not assume a module `Routes/console.php` file will be loaded; the current module loader only uses that path as metadata. A module kernel is considered only when the module is enabled or explicitly autoloaded. After adding or changing one, inspect the result with `php artisan schedule:list --no-interaction`.
+
+The bootstrap bridge currently constructs the kernel with the application and event dispatcher arguments. Extend Laravel's `ConsoleKernel` scaffold or otherwise provide a compatible constructor; do not replace it with a zero-argument custom kernel without checking that contract.
+
 ## Implement in vertical slices
 
 Build the smallest complete path through the module:

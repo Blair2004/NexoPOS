@@ -44,8 +44,13 @@ export default {
             }
 
             nsHttpClient.get( `/api/cash-registers/${this.settings.register.id}` )
-                .subscribe( result => {
-                    this.register   =   result;
+                .subscribe({
+                    next: result => {
+                        this.register   =   result;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         },
 

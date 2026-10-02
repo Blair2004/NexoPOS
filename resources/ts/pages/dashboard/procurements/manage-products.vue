@@ -324,8 +324,9 @@ export default {
         },
         async handleSaved( event, activeTabKey, variationIndex, field ) {
             if ( event.data.entry ) {
+                const options = Array.isArray( field.options ) ? field.options : field.options.search.options;
 
-                field.options.push({
+                options.push({
                     label: event.data.entry[ field.props.optionAttributes.label ],
                     value: event.data.entry[ field.props.optionAttributes.value ]
                 });

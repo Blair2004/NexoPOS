@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
  * @property int $coupon_id
  * @property int $group_id
  */
-class CouponCustomerGroup extends Model
+class CouponCustomerGroup extends NsModel
 {
     use HasFactory;
 

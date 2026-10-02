@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Classes\FormInput;
 use App\Events\ProductCategoryAfterCreatedEvent;
 use App\Events\ProductCategoryAfterUpdatedEvent;
 use App\Events\ProductCategoryBeforeDeletedEvent;
@@ -147,12 +148,6 @@ class ProductCategoryCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
-        $parents = ProductCategory::where( 'id', '<>', $entry->id ?? 0 )->get();
-        $parents->prepend( (object) [
-            'id' => 0,
-            'name' => __( 'No Parent' ),
-        ] );
-
         // Get scale ranges for PLU assignment
         $scaleRanges = ScaleRange::all();
         $scaleRangeOptions = $scaleRanges->map( function ( $range ) {
@@ -197,8 +192,20 @@ class ProductCategoryCrud extends CrudService
                             'validation' => 'required',
                             'value' => $entry->displays_on_pos ?? 1, // ( $entry !== null && $entry->displays_on_pos ? ( int ) $entry->displays_on_pos : 1 ),
                         ], [
-                            'type' => 'select',
-                            'options' => Helper::toJsOptions( $parents, [ 'id', 'name' ] ),
+                            'type' => 'search-select',
+                            'options' => [
+                                'search' => FormInput::searchSelectOptions(
+                                    self::IDENTIFIER,
+                                    limit: 10,
+                                    moreLabel: __( '+{count} more searchable categories. Type to search.' ),
+                                    minLength: 1,
+                                    query: [ 'exclude_id' => $entry->id ?? null ],
+                                    staticOptions: [ [
+                                        'label' => __( 'No Parent' ),
+                                        'value' => 0,
+                                    ] ],
+                                ),
+                            ],
                             'name' => 'parent_id',
                             'label' => __( 'Parent' ),
                             'description' => __( 'If this category should be a child category of an existing category' ),

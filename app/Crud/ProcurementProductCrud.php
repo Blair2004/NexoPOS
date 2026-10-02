@@ -56,8 +56,8 @@ class ProcurementProductCrud extends CrudService
      */
     protected $permissions = [
         'create' => false,
-        'read' => true,
-        'update' => true,
+        'read' => 'nexopos.read.procurements',
+        'update' => false,
         'delete' => false, // cannot be deleted
     ];
 

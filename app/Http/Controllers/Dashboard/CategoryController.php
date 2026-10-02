@@ -16,18 +16,19 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\DateService;
+use App\Services\PosPinnedProductService;
 use App\Services\ProductCategoryService;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends DashboardController
 {
     public function __construct(
         protected ProductCategoryService $categoryService,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected PosPinnedProductService $pinnedProductService
     ) {
         // ...
     }
@@ -316,7 +317,7 @@ class CategoryController extends DashboardController
                 'categories' => $categoriesQuery->get(),
                 'previousCategory' => ProductCategory::find( $category->parent_id ) ?? null,
                 'currentCategory' => $category,
-                'pinnedProducts' => $this->getPinnedProducts(),
+                'pinnedProducts' => $this->pinnedProductService->get(),
             ];
         }
 
@@ -341,34 +342,8 @@ class CategoryController extends DashboardController
             'previousCategory' => false,
             'currentCategory' => false,
             'categories' => $categoriesQuery->get(),
-            'pinnedProducts' => $this->getPinnedProducts(),
+            'pinnedProducts' => $this->pinnedProductService->get(),
         ];
-    }
-
-    /**
-     * Get pinned products for POS display
-     *
-     * @return Collection
-     */
-    private function getPinnedProducts()
-    {
-        return Product::where( 'pinned', true )
-            ->with( 'galleries', 'tax_group.taxes' )
-            ->onSale()
-            ->where( function ( $query ) {
-                $this->applyHideProducts( $query );
-            } )
-            ->trackingDisabled()
-            ->get()
-            ->map( function ( $product ) {
-                if ( $product->unit_quantities()->where( 'visible', true )->count() === 1 ) {
-                    $product->load( [ 'unit_quantities' => function ( $query ) {
-                        $query->where( 'visible', true )->with( 'unit' );
-                    } ] );
-                }
-
-                return $product;
-            } );
     }
 
     private function applyHideProducts( $query )

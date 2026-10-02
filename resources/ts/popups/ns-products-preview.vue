@@ -43,7 +43,7 @@
 </template>
 <script lang="ts">
 import { nsCurrency } from '~/filters/currency';
-import { nsHttpClient } from '~/bootstrap';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import nsProductsConversion from './ns-products-conversion.vue';
 
@@ -76,6 +76,9 @@ export default {
                     next: result => {
                         this.unitQuantities             =   result;
                         this.hasLoadedUnitQuantities    =   true;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                     }
                 })
         },

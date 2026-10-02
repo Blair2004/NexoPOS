@@ -1,5 +1,5 @@
 import { driver } from "driver.js";
-import { nsHttpClient, nsNotice } from "./bootstrap";
+import { nsHttpClient, nsNotice, nsSnackBar } from "./bootstrap";
 import { __ } from "./libraries/lang";
 
 type GuideAction = {
@@ -100,6 +100,9 @@ class GuideService {
                         }
                     )
                 }
+            },
+            error: error => {
+                nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
             }
         })
     }
@@ -108,6 +111,9 @@ class GuideService {
         nsHttpClient.post('/api/user/guides/dismiss', { identifier }).subscribe({
             next: () => {
                 console.log('Guide dismissed');
+            },
+            error: error => {
+                nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
             }
         })
     }
@@ -116,6 +122,9 @@ class GuideService {
         nsHttpClient.post('/api/user/guides/complete', { identifier }).subscribe({
             next: () => {
                 console.log('Guide completed');
+            },
+            error: error => {
+                nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
             }
         })
     }

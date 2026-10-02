@@ -316,7 +316,7 @@ export default defineComponent({
                 ${styleOutput}
                 <title>${ __( 'Printing Labels' ) }</title>
                 <style>
-                    body {   
+                    body {
                         width: ${this.form.document_size + 'px' || 'auto'}
                     }
                 </style>

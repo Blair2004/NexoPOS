@@ -259,7 +259,7 @@ class CrudService
      */
     public function submitPreparedRequest( $inputs, $id = null ): array
     {
-        $model = $id !== null ? $this->getModel()::find( $id ) : null;
+        $model = $id !== null ? $this->findEntry( $id ) : null;
         $data = $this->getFlatForm( $inputs, $model );
 
         return $this->submitRequest( $this->getIdentifier(), $data, $id );
@@ -295,7 +295,7 @@ class CrudService
         $resource = $this->getCrudInstance( $identifier );
         $model = $resource->getModel();
         $isEditing = $id !== null;
-        $entry = ! $isEditing ? new $model : $model::find( $id );
+        $entry = ! $isEditing ? new $model : $resource->findEntry( $id );
 
         /**
          * let's keep old form inputs
@@ -1076,6 +1076,10 @@ class CrudService
             }
         }
 
+        if ( $request->integer( 'exclude_id' ) > 0 ) {
+            $query->where( $table . '.id', '<>', $request->integer( 'exclude_id' ) );
+        }
+
         /**
          * let's make the "perPage" value adjustable
          */
@@ -1275,6 +1279,13 @@ class CrudService
     public function getModel(): string
     {
         return $this->model;
+    }
+
+    public function findEntry( int|string $id ): ?Model
+    {
+        $model = $this->getModel();
+
+        return $model::find( $id );
     }
 
     /**
@@ -1583,7 +1594,11 @@ class CrudService
          * This way, the user can start with a permissive approach and then gradually add restrictions by defining permissions.
          */
         if ( isset( $this->permissions ) && isset( $this->permissions[$permission] ) ) {
-            if ( $this->permissions[ $permission ] !== false ) {
+            if ( $this->permissions[ $permission ] === true ) {
+                return;
+            }
+
+            if ( is_string( $this->permissions[ $permission ] ) ) {
                 ns()->restrict( $this->permissions[$permission] );
             } else {
                 throw new NotAllowedException;

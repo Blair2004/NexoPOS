@@ -149,9 +149,14 @@ export default {
         searchCustomer( value ) {
             nsHttpClient.post( '/api/customers/search', {
                 search: value
-            }).subscribe( (customers: SelectableCustomer[]) => {
-                customers.forEach( customer => customer.selected = false );
-                this.customers  =   customers;
+            }).subscribe({
+                next: (customers: SelectableCustomer[]) => {
+                    customers.forEach( customer => customer.selected = false );
+                    this.customers  =   customers;
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             })
         },
 

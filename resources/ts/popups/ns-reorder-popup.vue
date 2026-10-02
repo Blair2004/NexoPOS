@@ -284,8 +284,14 @@ export default {
                                                     this.originalItems = JSON.parse(JSON.stringify(this.items));
                                                     this.hasChanges = false;
                                                     this.loading = false;
+                                                },
+                                                error: error => {
+                                                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                                                 }
                                             });
+                                    },
+                                    error: error => {
+                                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                                     }
                                 });
                         } else {

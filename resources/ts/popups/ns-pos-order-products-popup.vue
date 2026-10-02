@@ -31,9 +31,14 @@ export default {
             const id    =   this.popup.params.order.id;
 
             nsHttpClient.get( `/api/orders/${id}/products` )
-                .subscribe( result => {
-                    this.isLoading  =   false;
-                    this.products   =   result;
+                .subscribe({
+                    next: result => {
+                        this.isLoading  =   false;
+                        this.products   =   result;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         },
         openOrder() {
