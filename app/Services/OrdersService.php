@@ -2540,7 +2540,7 @@ class OrdersService
     {
         $shipping = $this->getDeliveryStatuses();
 
-        return $shipping[ $type ] ?? sprintf( _( 'Unknown Status (%s)' ), $type );
+        return $shipping[ $type ] ?? sprintf( __( 'Unknown Status (%s)' ), $type );
     }
 
     /**
@@ -2550,7 +2550,7 @@ class OrdersService
     {
         $process = $this->getProcessStatuses();
 
-        return $process[ $type ] ?? sprintf( _( 'Unknown Status (%s)' ), $type );
+        return $process[ $type ] ?? sprintf( __( 'Unknown Status (%s)' ), $type );
     }
 
     /**
@@ -2614,7 +2614,7 @@ class OrdersService
     {
         $process = $this->getDeliveryStatuses();
 
-        return $process[ $status ] ?? sprintf( _( 'Unknown Delivery (%s)' ), $status );
+        return $process[ $status ] ?? sprintf( __( 'Unknown Delivery (%s)' ), $status );
     }
 
     /**
