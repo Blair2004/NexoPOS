@@ -282,7 +282,7 @@ $storeInformation   =   array_values( array_filter( [
                     <td class="py-1 text-right">{{ ns()->currency->define( $order->tendered ) }}</td>
                 </tr>
                 @if ( in_array( $order->payment_status, [ 'refunded', 'partially_refunded' ] ) )
-                    @foreach( $order->refund as $refund )
+                    @foreach( $order->refunds as $refund )
                     <tr>
                         <td class="py-1 pr-4 font-semibold">{{ __( 'Refunded' ) }}</td>
                         <td class="py-1 text-right">{{ ns()->currency->define( - $refund->total ) }}</td>

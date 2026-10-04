@@ -96,7 +96,7 @@ use App\Classes\Hook;
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tendered ) }}</td>
                     </tr>
                     @if ( in_array( $order->payment_status, [ 'refunded', 'partially_refunded' ]) )
-                        @foreach( $order->refund as $refund )
+                       @foreach( $order->refunds as $refund )
                         <tr>
                             <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Refunded' ) }}</td>
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( - $refund->total ) }}</td>

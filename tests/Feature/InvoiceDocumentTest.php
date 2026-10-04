@@ -6,6 +6,7 @@ use App\Crud\OrderCrud;
 use App\Models\Customer;
 use App\Models\CustomerGroup;
 use App\Models\Order;
+use App\Models\OrderRefund;
 use App\Models\Product;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
@@ -560,5 +561,51 @@ class InvoiceDocumentTest extends TestCase
 
         ns()->option->delete( 'ns_invoice_font_scale' );
         ns()->option->delete( 'ns_invoice_receipt_font_scale' );
+    }
+
+    /**
+     * Refunded orders must render every document: the refund loops used
+     * the non-existent $order->refund attribute (typo for refunds()).
+     */
+    public function test_refunded_order_documents_render()
+    {
+        $order = $this->createOrder();
+
+        $order->payment_status = Order::PAYMENT_REFUNDED;
+        $order->save();
+
+        $refund = new OrderRefund;
+        $refund->order_id = $order->id;
+        $refund->author_id = $order->author_id;
+        $refund->total = $order->total;
+        $refund->shipping = 0;
+        $refund->payment_method = 'cash-payment';
+        $refund->save();
+
+        // Invoice shows the refund row instead of crashing.
+        $response = $this->get( '/dashboard/orders/invoice/' . $order->id );
+
+        $response->assertStatus( 200 );
+        $response->assertSee( 'Refunded', false );
+
+        // Receipt (pre-existing typo) renders too.
+        $response = $this->get( '/dashboard/orders/receipt/' . $order->id );
+
+        $response->assertStatus( 200 );
+        $response->assertSee( 'Refunded', false );
+
+        // Payment receipt renders too.
+        $payment = $order->payments->first();
+        $response = $this->get( '/dashboard/orders/payment-receipt/' . $payment->id );
+
+        $response->assertStatus( 200 );
+        $response->assertSee( 'Refunded', false );
+
+        // The refund receipt — the target of the orders-list popup print
+        // button — must render and autoprint.
+        $response = $this->get( '/dashboard/orders/refund-receipt/' . $refund->id . '?dash-visibility=disabled&autoprint=true' );
+
+        $response->assertStatus( 200 );
+        $response->assertSee( 'window.print', false );
     }
 }

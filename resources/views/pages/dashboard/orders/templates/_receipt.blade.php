@@ -29,7 +29,7 @@ $fontScale         =   (int) ns()->option->get( 'ns_invoice_receipt_font_scale',
     }
 </style>
 <div class="w-full h-full">
-    <div class="ns-receipt-document shadow-lg bg-white p-2 mx-auto">
+    <div class="w-full md:w-1/2 lg:w-1/3 ns-receipt-document shadow-lg bg-white p-2 mx-auto">
         <div class="flex items-center justify-center">
             @if ( empty( ns()->option->get( 'ns_invoice_receipt_logo' ) ) )
             <h3 class="text-3xl font-bold">{{ ns()->option->get( 'ns_store_name' ) }}</h3>
@@ -155,7 +155,7 @@ $fontScale         =   (int) ns()->option->get( 'ns_invoice_receipt_font_scale',
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tendered ) }}</td>
                     </tr>
                     @if ( in_array( $order->payment_status, [ 'refunded', 'partially_refunded' ]) )
-                        @foreach( $order->refund as $refund )
+                        @foreach( $order->refunds as $refund )
                         <tr>
                             <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Refunded' ) }}</td>
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( - $refund->total ) }}</td>
