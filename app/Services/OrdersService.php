@@ -2642,6 +2642,9 @@ class OrdersService
         $template = ns()->option->get( $option, '' );
         $availableTags = [
             'store_name' => ns()->option->get( 'ns_store_name' ),
+            'store_address' => ns()->option->get( 'ns_store_address' ),
+            'store_city' => ns()->option->get( 'ns_store_city' ),
+            'store_pobox' => ns()->option->get( 'ns_store_pobox' ),
             'store_email' => ns()->option->get( 'ns_store_email' ),
             'store_phone' => ns()->option->get( 'ns_store_phone' ),
             'cashier_name' => $order->user->username,
@@ -2683,6 +2686,48 @@ class OrdersService
         }
 
         return $template;
+    }
+
+    /**
+     * Provides the printing URLs consumed by the frontend Print
+     * library. This is the single source of truth for the printing
+     * URLs (previously duplicated on the POS footer, the orders list
+     * and the showPOS() payload, where they had drifted apart).
+     *
+     * The "sale_printing_url" follows the "Print Selection" option
+     * (ns_pos_printing_document) and is used for auto-prints and
+     * manual prints. Explicit "sale_receipt_printing_url" and
+     * "sale_invoice_printing_url" variants are provided so the POS
+     * post-sale choice can print either document on demand.
+     *
+     * @return array<string, string>
+     */
+    public function getPrintingUrls(): array
+    {
+        $document = ns()->option->get( 'ns_pos_printing_document', 'receipt' ) === 'invoice'
+            ? 'invoice'
+            : 'receipt';
+
+        $urls = [
+            'refund_printing_url' => ns()->url( '/dashboard/orders/refund-receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
+            'sale_printing_url' => ns()->url( sprintf(
+                '/dashboard/orders/%s/{reference_id}?autoprint=true&dash-visibility=disabled',
+                $document
+            ) ),
+            'sale_receipt_printing_url' => ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
+            'sale_invoice_printing_url' => ns()->url( '/dashboard/orders/invoice/{reference_id}?autoprint=true&dash-visibility=disabled' ),
+            'payment_printing_url' => ns()->url( '/dashboard/orders/payment-receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
+            'z_report_printing_url' => ns()->url( '/dashboard/cash-registers/z-report/{reference_id}?autoprint=true&dash-visibility=disabled' ),
+        ];
+
+        /**
+         * Legacy filter: allows modules to replace the default
+         * sale document URL. Kept for backward compatibility as it
+         * was previously applied within OrdersController::showPOS().
+         */
+        $urls['sale_printing_url'] = Hook::filter( 'ns-pos-printing-url', $urls['sale_printing_url'] );
+
+        return $urls;
     }
 
     /**

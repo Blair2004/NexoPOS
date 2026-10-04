@@ -17,6 +17,16 @@ return [
             ] ),
             'description' => __( 'Choose the document used for printing aster a sale.' ),
         ], [
+            'name' => 'ns_pos_printing_document_choice',
+            'value' => ns()->option->get( 'ns_pos_printing_document_choice', 'no' ),
+            'label' => __( 'Post-Sale Print Choice' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions( [
+                'no' => __( 'No' ),
+                'yes' => __( 'Yes' ),
+            ] ),
+            'description' => __( 'After completing a sale, ask which document to print (Receipt or Invoice). The choice is preselected with the Printed Document selection.' ),
+        ], [
             'name' => 'ns_pos_printing_enabled_for',
             'value' => ns()->option->get( 'ns_pos_printing_enabled_for' ),
             'label' => __( 'Printing Enabled For' ),

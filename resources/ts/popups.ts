@@ -8,6 +8,7 @@ import nsMediaPopup from '~/pages/dashboard/ns-media.vue';
 import nsOrderPreview from '~/popups/ns-orders-preview-popup.vue';
 import nsOrdersRefund from '~/popups/ns-orders-refund-popup.vue';
 import nsPOSLoadingPopup from '~/popups/ns-pos-loading-popup.vue';
+import nsPosPrintChoicePopup from '~/popups/ns-pos-print-choice-popup.vue';
 import nsProcurementQuantity from '~/popups/ns-procurement-quantity.vue';
 import nsProductPreview from '~/popups/ns-products-preview.vue';
 import nsPromptPopup from '~/popups/ns-prompt-popup.vue';
@@ -25,6 +26,7 @@ const popups    =   {
     nsOrdersRefund,
     nsSelectPopup,
     nsPOSLoadingPopup,
+    nsPosPrintChoicePopup,
 };
 
 for( let index in popups ) {

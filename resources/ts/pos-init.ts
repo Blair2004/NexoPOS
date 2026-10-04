@@ -1358,10 +1358,17 @@ export class POS {
         nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
-    printOrderReceipt( order, mode ) {
+    /**
+     * Indicates if a sale document should be printed for the
+     * provided order, based on the "Printing Enabled For" option
+     * (ns_pos_printing_enabled_for). Used by the auto-print flow
+     * and by the post-sale print choice popup.
+     * @param order Order
+     */
+    shouldPrintOrder( order ): boolean {
         const options = this.options.getValue();
 
-        if (options.ns_pos_printing_enabled_for === 'disabled') {
+        if ( options.ns_pos_printing_enabled_for === 'disabled' ) {
             return false;
         }
 
@@ -1369,15 +1376,40 @@ export class POS {
          * There should be a better
          * way of writing this.
          */
-        if ( 
+        return (
             ( options.ns_pos_printing_enabled_for === 'all_orders'  ) ||
             ( options.ns_pos_printing_enabled_for === 'partially_paid_orders' && [ 'paid', 'partially_paid' ].includes( order.payment_status ) ) ||
             ( options.ns_pos_printing_enabled_for === 'only_paid_orders' && [ 'paid' ].includes( order.payment_status ) )
-        ) {
-            this.print.process( order.id, 'sale', mode );
-        } else {
+        );
+    }
+
+    /**
+     * Prints the sale document for the provided order.
+     * @param order Order
+     * @param mode "silent" or "aloud"
+     * @param document "receipt" | "invoice" | null (null uses the configured Printed Document)
+     */
+    printOrderReceipt( order, mode, document = null ) {
+        if ( ! this.shouldPrintOrder( order ) ) {
             return false;
         }
+
+        const documentType = document === 'receipt' ? 'sale-receipt'
+            : document === 'invoice' ? 'sale-invoice'
+            : 'sale';
+
+        this.print.process( order.id, documentType, mode );
+    }
+
+    /**
+     * Prints an explicit sale document variant. Used by the
+     * post-sale print choice popup, once the print gate has been
+     * verified with shouldPrintOrder().
+     * @param orderId number
+     * @param document "receipt" | "invoice"
+     */
+    printSaleDocument( orderId, document ) {
+        return this.print.process( orderId, document === 'invoice' ? 'sale-invoice' : 'sale-receipt', 'silent' );
     }
 
 
