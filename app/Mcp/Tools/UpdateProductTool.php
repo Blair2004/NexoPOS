@@ -6,10 +6,11 @@ use App\Models\Product;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class UpdateProductTool extends Tool
+class UpdateProductTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.update.products' ];
+
     public string $name = 'update_product';
 
     public string $description = 'Update an existing product main entry. Requires product id. Does not touch quantity or pricing, which are handled by product unit quantities.';

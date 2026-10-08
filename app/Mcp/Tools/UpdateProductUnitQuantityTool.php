@@ -6,10 +6,11 @@ use App\Models\ProductUnitQuantity;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class UpdateProductUnitQuantityTool extends Tool
+class UpdateProductUnitQuantityTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.update.products' ];
+
     public string $name = 'update_product_unit_quantity';
 
     public string $description = 'Updates product pricing, inventory tracking, barcodes, etc. for a specific unit quantity. Use get_product_unit_quantities to find the correct ID.';

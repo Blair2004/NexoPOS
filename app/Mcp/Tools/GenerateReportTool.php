@@ -13,10 +13,21 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class GenerateReportTool extends Tool
+class GenerateReportTool extends AuthorizedTool
 {
+    protected array $permissions = [
+        'nexopos.reports.sales',
+        'nexopos.reports.transactions',
+        'nexopos.reports.yearly',
+        'nexopos.reports.payment-types',
+        'nexopos.reports.products-report',
+        'nexopos.reports.low-stock',
+        'nexopos.reports.inventory',
+        'nexopos.reports.stock-history',
+        'nexopos.reports.customers-statement',
+    ];
+
     protected string $name = 'generate_report';
 
     protected string $description = 'Generate a temporary downloadable PDF report from a self-contained HTML template with a predefined store-branded header/footer. The AI supplies already-computed data and may compose sections as text, KPI cards, tables, bar charts, or pie charts. This tool does not query data, execute SQL, run JavaScript, or fetch external assets.';

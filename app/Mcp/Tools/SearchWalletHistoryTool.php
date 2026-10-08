@@ -9,12 +9,13 @@ use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
 #[IsReadOnly]
-class SearchWalletHistoryTool extends Tool
+class SearchWalletHistoryTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.read.customers' ];
+
     protected string $name = 'search_wallet_history';
 
     protected string $description = 'Search customer wallet (account) history. Use this to lookup wallet top-ups, payments, or balance adjustments for a specific customer or transaction type over a period.';

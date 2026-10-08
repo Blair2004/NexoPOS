@@ -5,11 +5,12 @@ use App\Services\ModulesService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Mcp\Facades\Mcp;
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Modules\NsOxen\Http\Middleware\EnsureOxenConnection;
 use Modules\NsOxen\Mcp\Servers\OxenServer;
 
 Mcp::web( '/mcp/pos', POSServer::class )
-    ->middleware( ['auth:sanctum', 'throttle:mcp'] );
+    ->middleware( [ 'auth:sanctum', CheckAbilities::class . ':mcp:use', 'throttle:mcp' ] );
 
 if ( app( ModulesService::class )->getEnabledAndAutoloadedModules()->contains( fn ( array $module ): bool => ( $module[ 'namespace' ] ?? null ) === 'NsOxen' ) ) {
     Mcp::web( '/mcp/oxen', OxenServer::class )
