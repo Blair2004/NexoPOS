@@ -5,9 +5,31 @@ use Illuminate\Support\Facades\View;
 
 $prefered_price     =   $order->settings?->where( 'key', 'ns_pos_prefered_price' )->first()?->value;
 $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?->value;
+
+/**
+ * Font scaling: the declared width is divided by the scale so the
+ * zoomed receipt keeps the same footprint while fonts grow/shrink.
+ */
+$fontScale         =   (int) ns()->option->get( 'ns_invoice_receipt_font_scale', 100 );
 ?>
+<style>
+    .ns-receipt-document {
+        zoom: {{ $fontScale }}%;
+        width: calc(100% * 100 / {{ $fontScale }});
+    }
+    @media (min-width: 768px) {
+        .ns-receipt-document {
+            width: calc(50% * 100 / {{ $fontScale }});
+        }
+    }
+    @media (min-width: 1024px) {
+        .ns-receipt-document {
+            width: calc(33.3333% * 100 / {{ $fontScale }});
+        }
+    }
+</style>
 <div class="w-full h-full">
-    <div class="w-full md:w-1/2 lg:w-1/3 shadow-lg bg-white p-2 mx-auto">
+    <div class="w-full md:w-1/2 lg:w-1/3 ns-receipt-document shadow-lg bg-white p-2 mx-auto">
         <div class="flex items-center justify-center">
             @if ( empty( ns()->option->get( 'ns_invoice_receipt_logo' ) ) )
             <h3 class="text-3xl font-bold">{{ ns()->option->get( 'ns_store_name' ) }}</h3>
@@ -133,7 +155,7 @@ $pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?-
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tendered ) }}</td>
                     </tr>
                     @if ( in_array( $order->payment_status, [ 'refunded', 'partially_refunded' ]) )
-                        @foreach( $order->refund as $refund )
+                        @foreach( $order->refunds as $refund )
                         <tr>
                             <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Refunded' ) }}</td>
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( - $refund->total ) }}</td>

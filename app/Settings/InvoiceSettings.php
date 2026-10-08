@@ -16,7 +16,9 @@ class InvoiceSettings extends SettingsPage
             'title' => __( 'Invoice Settings' ),
             'description' => __( 'Configure how invoice and receipts are used.' ),
             'tabs' => [
+                'display' => include ( dirname( __FILE__ ) . '/invoice-settings/display.php' ),
                 'receipts' => include ( dirname( __FILE__ ) . '/invoice-settings/receipts.php' ),
+                'invoices' => include ( dirname( __FILE__ ) . '/invoice-settings/invoices.php' ),
             ],
         ];
     }
