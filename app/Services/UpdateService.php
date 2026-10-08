@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\NotAllowedException;
 use App\Models\Migration;
 use Exception;
 use Illuminate\Database\Migrations\Migration as MigrationsMigration;
@@ -45,6 +46,15 @@ class UpdateService
      * execute a files by pulling the full path
      * in order to identifiy the migration type
      */
+    public function executePendingMigrationFromFileName( string $file ): void
+    {
+        if ( ! $this->getMigrations()->containsStrict( $file ) ) {
+            throw new NotAllowedException( __( 'The requested migration is not pending.' ) );
+        }
+
+        $this->executeMigrationFromFileName( $file );
+    }
+
     public function executeMigrationFromFileName( string $file ): void
     {
         $file = $this->getMatchingFullPath( $file );
@@ -76,7 +86,7 @@ class UpdateService
         throw new Exception( 'Unsupported class provided for the migration.' );
     }
 
-    public function getMatchingFullPath( $file )
+    public function getMatchingFullPath( string $file ): string
     {
         $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )
             ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
@@ -86,7 +96,11 @@ class UpdateService
                 return [ $fileInfo[ 'filename' ] => $file ];
             } );
 
-        return $files[ $file ];
+        if ( ! $files->has( $file ) ) {
+            throw new NotAllowedException( __( 'The requested migration file is not valid.' ) );
+        }
+
+        return $files->get( $file );
     }
 
     public function executeMigration( $file, $method = 'up' )
