@@ -256,7 +256,7 @@ class UsersController extends DashboardController
     public function createToken( Request $request )
     {
         $validation = Validator::make( $request->all(), [
-            'name' => 'required',
+            'name' => 'required|string|max:255',
         ] );
 
         if ( ! $validation->passes() ) {
