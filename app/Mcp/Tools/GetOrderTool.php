@@ -8,12 +8,13 @@ use App\Services\OrdersService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
 #[IsReadOnly]
-class GetOrderTool extends Tool
+class GetOrderTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.read.orders' ];
+
     protected string $name = 'get_order';
 
     protected string $description = 'Retrieve a single order with all details including products, payments, addresses, taxes, and customer information. Lookup by numeric ID or order code.';
