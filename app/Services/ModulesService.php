@@ -1380,7 +1380,7 @@ class ModulesService
         /**
          * include initial migration files
          */
-        $filePath = base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file;
+        $filePath = $this->resolveModuleMigrationFilePath( $namespace, $file );
         $fileInfo = pathinfo( $filePath );
         $fileName = $fileInfo[ 'filename' ];
         $className = str_replace( ' ', '', ucwords( str_replace( '_', ' ', $fileName ) ) );
@@ -1408,6 +1408,25 @@ class ModulesService
             'status' => 'error',
             'message' => sprintf( __( 'Unable to locate the following file : %s' ), $filePath ),
         ];
+    }
+
+    private function resolveModuleMigrationFilePath( string $namespace, string $file ): string
+    {
+        $migrationDirectory = realpath(
+            base_path( 'modules' ) . DIRECTORY_SEPARATOR . ucwords( $namespace ) . DIRECTORY_SEPARATOR . 'Migrations'
+        );
+        $filePath = realpath( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
+
+        if (
+            $migrationDirectory === false ||
+            $filePath === false ||
+            pathinfo( $filePath, PATHINFO_EXTENSION ) !== 'php' ||
+            ! Str::startsWith( $filePath, $migrationDirectory . DIRECTORY_SEPARATOR )
+        ) {
+            throw new NotAllowedException( __( 'The requested module migration file is not valid.' ) );
+        }
+
+        return $filePath;
     }
 
     public function triggerObject( $object, string $method )
@@ -1806,6 +1825,10 @@ class ModulesService
      */
     public function runMigration( string $namespace, string $file )
     {
+        if ( ! in_array( $file, $this->getMigrations( $namespace ), true ) ) {
+            throw new NotAllowedException( __( 'The requested module migration is not pending.' ) );
+        }
+
         $result = $this->__runSingleFile(
             method: 'up',
             namespace: $namespace,

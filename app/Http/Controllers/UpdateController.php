@@ -33,19 +33,27 @@ class UpdateController extends Controller
 
     public function runMigration( Request $request )
     {
+        $validated = $request->validate( [
+            'file' => [ 'nullable', 'string', 'required_without:module' ],
+            'module' => [ 'nullable', 'array', 'required_without:file' ],
+            'module.namespace' => [ 'required_with:module', 'string' ],
+            'module.migrations' => [ 'required_with:module', 'array', 'min:1' ],
+            'module.migrations.*' => [ 'string' ],
+        ] );
+
         /**
          * Proceeding code migration.
          */
-        if ( $request->input( 'file' ) ) {
-            $this->updateService->executeMigrationFromFileName( file: $request->input( 'file' ) );
+        if ( isset( $validated[ 'file' ] ) ) {
+            $this->updateService->executePendingMigrationFromFileName( file: $validated[ 'file' ] );
         }
 
         /**
          * proceeding the migration for
          * the provided module.
          */
-        if ( $request->input( 'module' ) ) {
-            $module = $request->input( 'module' );
+        if ( isset( $validated[ 'module' ] ) ) {
+            $module = $validated[ 'module' ];
             foreach ( $module[ 'migrations' ] as $file ) {
                 $response = $this->modulesService->runMigration( $module[ 'namespace' ], $file );
                 AfterMigrationExecutedEvent::dispatch( $module, $response, $file );
