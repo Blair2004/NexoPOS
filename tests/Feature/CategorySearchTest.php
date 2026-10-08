@@ -39,6 +39,31 @@ class CategorySearchTest extends TestCase
         ] );
     }
 
+    public function test_category_search_excludes_the_edited_category(): void
+    {
+        $this->attemptAuthenticate();
+
+        $prefix = 'Exclude Category ' . Str::upper( Str::random( 8 ) );
+        collect( [ 'ALPHA', 'BRAVO', 'CHARLIE' ] )->each( fn( $suffix ) => ProductCategory::factory()->create( [
+            'name' => $prefix . ' ' . $suffix,
+        ] ) );
+
+        $excluded = ProductCategory::where( 'name', $prefix . ' ALPHA' )->first();
+
+        $response = $this->getJson( '/api/crud/ns.products-categories?' . http_build_query( [
+            'search' => $prefix,
+            'per_page' => 10,
+            'page' => 1,
+            'exclude_id' => $excluded->id,
+        ] ) );
+
+        $response->assertOk()
+            ->assertJsonCount( 2, 'data' )
+            ->assertJsonPath( 'total', 2 );
+
+        $this->assertStringNotContainsString( 'ALPHA', $response->getContent() );
+    }
+
     public function test_product_form_uses_crud_category_search_configuration(): void
     {
         $this->attemptAuthenticate();

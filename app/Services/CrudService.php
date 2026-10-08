@@ -865,7 +865,7 @@ class CrudService
                      * Will ensure to only pick
                      * some columns from the related tables
                      */
-                    $table = $relation[0];
+                    $relationTable = $relation[0];
 
                     /**
                      * If the CRUD instance has some entries
@@ -878,8 +878,8 @@ class CrudService
                     $hasAlias[0] = $this->hookTableName( $hasAlias[0] ); // make the table name hookable
                     $aliasName = $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
                     $columns = collect( Schema::getColumnListing( count( $hasAlias ) === 2 ? trim( $hasAlias[0] ) : $relation[0] ) )
-                        ->filter( function ( $column ) use ( $pick, $table, $aliasName, $hiddenByAlias ) {
-                            $alias = $aliasName ? trim( $aliasName ) : $table;
+                        ->filter( function ( $column ) use ( $pick, $relationTable, $aliasName, $hiddenByAlias ) {
+                            $alias = $aliasName ? trim( $aliasName ) : $relationTable;
                             $picked = $pick[$alias] ?? [];
 
                             if ( ! empty( $picked ) ) {
