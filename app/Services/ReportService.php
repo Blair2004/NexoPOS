@@ -389,15 +389,17 @@ class ReportService
         $date->year = $year >= 2019 && $year <= 2099 ? $year : 2020; // validate the date
         $startOfYear = $date->startOfYear()->copy();
         $endOfYear = $date->endOfYear()->copy();
+        $monthlyReports = DashboardMonth::from( $startOfYear->toDateTimeString() )
+            ->to( $endOfYear->toDateTimeString() )
+            ->get()
+            ->keyBy( 'month_of_year' );
 
         $reports = [];
 
         do {
             $currentMonth = $startOfYear->copy();
 
-            $monthReport = DashboardMonth::from( $currentMonth->startOfMonth()->toDateTimeString() )
-                ->to( $currentMonth->endOfMonth()->toDateTimeString() )
-                ->first();
+            $monthReport = $monthlyReports->get( (int) $currentMonth->format( 'm' ) );
 
             if ( ! $monthReport instanceof DashboardMonth ) {
                 $monthReport = $this->computeDashboardMonth( $currentMonth );
