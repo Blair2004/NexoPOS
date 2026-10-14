@@ -187,6 +187,7 @@ class OrdersController extends DashboardController
                 } ),
             'options' => Hook::filter( 'ns-pos-options', [
                 'ns_pos_printing_document' => ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
+                'ns_pos_printing_document_choice' => ns()->option->get( 'ns_pos_printing_document_choice', 'no' ),
                 'ns_orders_allow_partial' => ns()->option->get( 'ns_orders_allow_partial', 'no' ),
                 'ns_orders_allow_unpaid' => ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
                 'ns_pos_order_types' => ns()->option->get( 'ns_pos_order_types', [] ),
@@ -220,15 +221,14 @@ class OrdersController extends DashboardController
                 'ns_pos_layout' => PosLayout::normalize( ns()->option->get( 'ns_pos_layout' ) ),
                 'mynexopos_access_token' => ns()->option->get( 'mynexopos_access_token' ),
             ] ),
-            'urls' => [
-                'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
+            'urls' => array_merge( $this->ordersService->getPrintingUrls(), [
                 'orders_url' => ns()->route( 'ns.dashboard.orders' ),
                 'dashboard_url' => ns()->route( 'ns.dashboard.home' ),
                 'categories_url' => ns()->route( 'ns.dashboard.products.categories.create' ),
                 'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
                 'order_type_url' => ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ] ),
                 'marketplace_url' => ns()->route( 'ns.dashboard.modules-marketplace' ) . '?action=authenticate&return=pos',
-            ],
+            ] ),
             'paymentTypes' => $this->paymentTypes,
             'marketplaceConnected' => $marketplaceConnected,
         ] );
@@ -239,13 +239,12 @@ class OrdersController extends DashboardController
         $optionsService = app()->make( Options::class );
 
         $order->load( 'customer' );
-        $order->load( 'products' );
+        $order->load( 'products.unit' );
         $order->load( 'shipping_address' );
         $order->load( 'billing_address' );
         $order->load( 'user' );
         $order->load( 'taxes' );
 
-        $order->products = Hook::filter( 'ns-receipt-products', $order->products );
         $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
         $order->deliveryStatus = $this->ordersService->getDeliveryStatus( $order->delivery_status );
 
@@ -254,6 +253,10 @@ class OrdersController extends DashboardController
             'options' => $optionsService->get(),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
+            'ordersService' => $this->ordersService,
+            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
+                return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
+            } ),
             'title' => sprintf( __( 'Order Invoice — %s' ), $order->code ),
         ] );
     }

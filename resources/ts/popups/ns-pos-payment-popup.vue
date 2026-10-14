@@ -10,6 +10,7 @@ import AccountPayment from '~/pages/dashboard/pos/payments/account-payment.vue';
 import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
 import samplePaymentVue from '~/pages/dashboard/pos/payments/sample-payment.vue';
 import nsSelectPopupVue from './ns-select-popup.vue';
+import nsPosPrintChoicePopup from './ns-pos-print-choice-popup.vue';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 import { ref } from 'vue';
 import { nsConfirmPopup } from '~/components/components';
@@ -156,7 +157,7 @@ export default {
                                 nsSnackBar.success( submitPromise.message );
 
                                 // If the order is likely to be printed, we'll trigger the print method.
-                                POS.printOrderReceipt( submitPromise.data.order, 'silent' );
+                                this.printAfterSale( submitPromise.data.order );
 
                                 // the loading popup is still open, so we'll close it.
                                 loadingPopup.close();
@@ -181,6 +182,29 @@ export default {
 
             return payment.identifier;
         },
+        /**
+         * Handles the post-sale printing flow: prints silently using
+         * the configured Printed Document, or asks the cashier which
+         * document should be printed when the "Post-Sale Print Choice"
+         * is enabled (Settings -> POS -> Printing).
+         * @param order Order
+         */
+        printAfterSale( order ) {
+            if ( ! POS.shouldPrintOrder( order ) ) {
+                return;
+            }
+
+            const options   =   POS.options.getValue();
+
+            if ( options.ns_pos_printing_document_choice !== 'yes' ) {
+                return POS.printOrderReceipt( order, 'silent' );
+            }
+
+            Popup.show( nsPosPrintChoicePopup, {
+                order,
+                defaultDocument: options.ns_pos_printing_document === 'invoice' ? 'invoice' : 'receipt',
+            });
+        },
         submitOrder( data = {}) {
             const popup     =   Popup.show( nsPosLoadingPopupVue );
             
@@ -194,7 +218,7 @@ export default {
 
                     nsSnackBar.success( result.message );
 
-                    POS.printOrderReceipt( result.data.order, 'silent' );
+                    this.printAfterSale( result.data.order );
     
                     // close payment popup
                     this.popup.close();

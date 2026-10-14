@@ -34,12 +34,7 @@ const systemOptions       =   <?php echo json_encode([
     'ns_pos_printing_enabled_for'   =>  ns()->option->get( 'ns_pos_printing_enabled_for', 'all_orders' ),
 ]);?>
 
-const systemUrls      =  <?php echo json_encode([
-    'refund_printing_url'   =>  ns()->url( '/dashboard/orders/refund-receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
-    'sale_printing_url'     =>  ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
-    'payment_printing_url'  =>  ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
-    'z_report_printing_url' =>  ns()->url( '/dashboard/cash-registers/z-report/{reference_id}?autoprint=true&dash-visibility=disabled' ),
-]);?>
+const systemUrls      =  <?php echo json_encode( $ordersService->getPrintingUrls() );?>
 
 document.addEventListener( 'DOMContentLoaded', () => {
     nsEvent.subject().subscribe( event => {
