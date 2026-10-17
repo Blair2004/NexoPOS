@@ -1313,10 +1313,16 @@ class ReportService
     {
         $startDate = $startDate === null ? ns()->date->getNow()->startOfMonth()->toDateTimeString() : $startDate;
         $endDate = $endDate === null ? ns()->date->getNow()->endOfMonth()->toDateTimeString() : $endDate;
-        $accounts = collect( config( 'accounting.accounts' ) )->map( function ( $account, $name ) use ( $startDate, $endDate ) {
-            $transactionAccount = TransactionAccount::where( 'category_identifier', $name )->with( [ 'histories' => function ( $query ) use ( $startDate, $endDate ) {
+        $accountCategories = collect( config( 'accounting.accounts' ) );
+        $transactionAccounts = TransactionAccount::whereIn( 'category_identifier', $accountCategories->keys() )
+            ->with( [ 'histories' => function ( $query ) use ( $startDate, $endDate ) {
                 $query->where( 'created_at', '>=', $startDate )->where( 'created_at', '<=', $endDate );
-            }] )->get();
+            }] )
+            ->get()
+            ->groupBy( 'category_identifier' );
+
+        $accounts = $accountCategories->map( function ( $account, $name ) use ( $transactionAccounts ) {
+            $transactionAccount = $transactionAccounts->get( $name, collect() );
 
             $transactions = $transactionAccount->map( function ( $account ) {
                 return [
