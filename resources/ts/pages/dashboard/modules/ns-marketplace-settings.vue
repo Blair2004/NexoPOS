@@ -60,6 +60,8 @@
 </template>
 
 <script lang="ts">
+import { nsConfirmPopup } from '~/components/components';
+import { Popup } from '~/libraries/popup';
 import popupCloser from '~/libraries/popup-closer';
 
 declare const __;
@@ -106,24 +108,27 @@ export default {
             } );
         },
         disconnect() {
-            const confirmed = window.confirm( __( 'Disconnect this NexoPOS installation from My NexoPOS? You will need to connect again before accessing licenses, downloads, or your marketplace cart.' ) );
+            Popup.show( nsConfirmPopup, {
+                title: __( 'Confirm your action' ),
+                message: __( 'Disconnect this NexoPOS installation from My NexoPOS? You will need to connect again before accessing licenses, downloads, or your marketplace cart.' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        this.isDisconnecting = true;
 
-            if ( ! confirmed ) {
-                return;
-            }
-
-            this.isDisconnecting = true;
-
-            nsHttpClient.delete( '/api/marketplace/connection' ).subscribe( {
-                next: response => {
-                    nsSnackBar.success( response.message || __( 'This installation has been disconnected from My NexoPOS.' ) );
-                    window.location.reload();
-                },
-                error: error => {
-                    this.isDisconnecting = false;
-                    nsSnackBar.error( error.message || __( 'Failed to disconnect this installation from My NexoPOS.' ) );
-                },
-            } );
+                        nsHttpClient.delete( '/api/marketplace/connection' ).subscribe( {
+                            next: response => {
+                                nsSnackBar.success( response.message || __( 'This installation has been disconnected from My NexoPOS.' ) );
+                                window.location.reload();
+                                this.isDisconnecting = false;
+                            },
+                            error: error => {
+                                this.isDisconnecting = false;
+                                nsSnackBar.error( error.message || __( 'Failed to disconnect this installation from My NexoPOS.' ) );
+                            },
+                        } );
+                    }
+                }
+            });
         },
     },
 };

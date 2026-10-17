@@ -3,7 +3,7 @@
         <Teleport to="#marketplace-title-actions">
             <button
                 type="button"
-                class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-box-edge bg-box-background text-fontcolor transition-colors hover:border-primary/30 hover:bg-box-elevation-hover hover:text-primary"
+                class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-box-edge bg-box-background text-fontcolor transition-colors hover:border-primary/30 hover:bg-primary hover:text-white"
                 :title="__( 'Marketplace settings' )"
                 :aria-label="__( 'Marketplace settings' )"
                 @click="openSettings()">
