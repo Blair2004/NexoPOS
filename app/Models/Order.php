@@ -9,6 +9,7 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Services\DateService;
+use App\Services\OrderAccessService;
 use App\Traits\NsFlashData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -217,6 +218,13 @@ class Order extends NsModel
     public function scopeFrom( Builder $query, string $range_starts )
     {
         return $query->where( 'created_at', '>=', $range_starts );
+    }
+
+    public function scopeAccessibleTo( Builder $query, User $user ): Builder
+    {
+        app( OrderAccessService::class )->scopeAccessible( $query, $user );
+
+        return $query;
     }
 
     public function scopeTo( Builder $query, string $range_ends )

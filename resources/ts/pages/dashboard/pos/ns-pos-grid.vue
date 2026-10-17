@@ -312,7 +312,7 @@ export default {
 
         submitSearch( value ) {
             if ( value.length > 0 ) {
-                const url   =   nsHooks.applyFilters( 'ns-pos-submit-search-url', `/api/products/search/using-barcode/${ value }`, value );
+                const url   =   nsHooks.applyFilters( 'ns-pos-submit-search-url', `/api/pos/catalog/products/barcode/${ value }`, value );
 
                 nsHttpClient.get( url )
                     .subscribe({
@@ -417,7 +417,7 @@ export default {
 
         loadCategories( parent ) {
             this.isLoading  =   true;
-            nsHttpClient.get( `/api/categories/pos/${ parent ? parent.id : ''}` )
+            nsHttpClient.get( `/api/pos/catalog/categories/${ parent ? parent.id : ''}` )
                 .subscribe({
                     next: (result ) => {
                         this.categories         =   result.categories;

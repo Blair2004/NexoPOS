@@ -172,7 +172,7 @@ export default {
 			if (!value.length) return;
 			const url = nsHooks.applyFilters(
 				'ns-pos-submit-search-url',
-				`/api/products/search/using-barcode/${value}`,
+				`/api/pos/catalog/products/barcode/${value}`,
 				value
 			);
 			nsHttpClient.get(url).subscribe({

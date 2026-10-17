@@ -3,6 +3,25 @@
 use App\Models\Permission;
 use App\Models\Role;
 
+$posReadPermissions = [
+    'nexopos.pos.access' => [ __( 'POS: Access' ), __( 'Access the point of sale workspace.' ) ],
+    'nexopos.pos.read-products' => [ __( 'POS: Read Products' ), __( 'Browse the sale catalog through POS workflows.' ) ],
+    'nexopos.pos.read-own-orders' => [ __( 'POS: Read Own Orders' ), __( 'Read orders created by the current user through POS workflows.' ) ],
+    'nexopos.pos.read-all-orders' => [ __( 'POS: Read All Orders' ), __( 'Read every order through POS workflows.' ) ],
+];
+
+foreach ( $posReadPermissions as $namespace => [$name, $description] ) {
+    if ( Permission::where( 'name', $name )->where( 'namespace', '!=', $namespace )->exists() ) {
+        throw new RuntimeException( sprintf( 'The permission name "%s" is already assigned to another namespace.', $name ) );
+    }
+
+    $permission = Permission::firstOrNew( [ 'namespace' => $namespace ] );
+    $permission->name = $name;
+    $permission->namespace = $namespace;
+    $permission->description = $description;
+    $permission->save();
+}
+
 if ( ! Permission::namespace( 'nexopos.pos.edit-purchase-price' ) instanceof Permission ) {
     $pos = Permission::firstOrNew( [ 'namespace' => 'nexopos.pos.edit-purchase-price' ] );
     $pos->name = __( 'Edit Purchase Price' );
@@ -73,5 +92,5 @@ foreach ( $posCartPermissions as $namespace => $name ) {
  */
 $admin = Role::namespace( 'admin' );
 if ( $admin instanceof Role ) {
-    $admin->addPermissions( array_keys( $posCartPermissions ) );
+    $admin->addPermissions( array_merge( array_keys( $posReadPermissions ), array_keys( $posCartPermissions ) ) );
 }

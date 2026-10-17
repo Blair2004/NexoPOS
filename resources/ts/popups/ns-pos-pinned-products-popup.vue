@@ -84,7 +84,7 @@ export default {
     loadProducts() {
       this.isLoading = true;
       this.hasError = false;
-      nsHttpClient.get('/api/products/pos/pinned').subscribe({
+      nsHttpClient.get('/api/pos/catalog/products/pinned').subscribe({
         next: (result) => {
           this.products = result.pinnedProducts || [];
           this.isLoading = false;

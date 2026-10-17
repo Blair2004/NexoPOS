@@ -30,7 +30,7 @@ export default {
             this.isLoading  =   true;
             const id    =   this.popup.params.order.id;
 
-            nsHttpClient.get( `/api/orders/${id}/products` )
+            nsHttpClient.get( `/api/pos/orders/${id}/products` )
                 .subscribe({
                     next: result => {
                         this.isLoading  =   false;

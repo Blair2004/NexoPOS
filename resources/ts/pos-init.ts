@@ -1252,7 +1252,7 @@ export class POS {
 
     loadOrder(order_id) {
         return new Promise((resolve, reject) => {
-            nsHttpClient.get(`/api/orders/${order_id}/pos`)
+            nsHttpClient.get(`/api/pos/orders/${order_id}`)
                 .subscribe({
                     next: async (order: any) => {
                         /**

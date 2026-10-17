@@ -88,7 +88,7 @@ export default {
         },
 
         loadUnits() {
-            nsHttpClient.get( `/api/products/${this.popup.params.product.$original().id}/units/quantities` )
+            nsHttpClient.get( `/api/pos/catalog/products/${this.popup.params.product.$original().id}/units` )
                 .subscribe({
                     next: result => {
 
