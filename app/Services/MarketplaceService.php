@@ -21,6 +21,15 @@ use Illuminate\Support\Str;
 
 class MarketplaceService
 {
+    private const CONNECTION_AUTH_ERRORS = [
+        'installation_revoked',
+        'installation_inactive',
+        'invalid_installation',
+        'installation_client_mismatch',
+        'installation_token_mismatch',
+        'unauthenticated',
+    ];
+
     public function __construct(
         protected ModulesService $moduleService
     ) {}
@@ -36,6 +45,11 @@ class MarketplaceService
             'page' => $data[ 'page' ] ?? 1,
             'type' => 'zip',
         ];
+        $cacheVersion = ns()->option->get( 'mynexopos_marketplace_cache_version' );
+
+        if ( $cacheVersion ) {
+            $queryParams['cache_version'] = $cacheVersion;
+        }
 
         if ( isset( $data['categories'] ) ) {
             $queryParams['categories'] = $data['categories'];
@@ -91,7 +105,8 @@ class MarketplaceService
         PendingRequest $request,
         string $method = '',
         string $endpoint = '',
-        array $body = []
+        array $body = [],
+        bool $requireAuthentication = false
     ): void {
         $accessToken = ns()->option->get( 'mynexopos_access_token' );
         $refreshToken = ns()->option->get( 'mynexopos_refresh_token' );
@@ -163,6 +178,10 @@ class MarketplaceService
             try {
                 $this->refreshAccessToken( $request, $refreshToken );
             } catch ( CoreException $e ) {
+                if ( $requireAuthentication ) {
+                    throw $e;
+                }
+
                 // If refreshing the token fails, we can choose to log the error
                 // or ignore it and proceed without authentication.
             }
@@ -183,6 +202,13 @@ class MarketplaceService
             ] );
 
         if ( $response->failed() ) {
+            if (
+                $response->status() === 401
+                || in_array( $response->json( 'error' ), [ 'invalid_grant', 'invalid_token' ], true )
+            ) {
+                $this->clearConnection();
+            }
+
             throw new CoreException( __( 'Failed to refresh access token.' ) );
         }
 
@@ -276,6 +302,14 @@ class MarketplaceService
         ns()->option->set( 'mynexopos_token_expires_in', Carbon::now()->addSeconds( $response->json( 'expires_in' ) ) );
 
         /**
+         * Make one signed request immediately so My NexoPOS can bind the
+         * newly-issued OAuth token to this installation.
+         */
+        if ( ! $this->testConnection() ) {
+            throw new CoreException( __( 'My NexoPOS rejected this installation connection.' ) );
+        }
+
+        /**
          * if the user was invited to authenticate from a specific page,
          * we should redirect him back to this page after authentication.
          */
@@ -327,9 +361,11 @@ class MarketplaceService
         $response = $request->accept( 'application/json' )
             ->withoutVerifying()
             ->withBody( json_encode( $payload, JSON_UNESCAPED_SLASHES ), 'application/json' )
-            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
+            ->send( 'POST', env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
 
         if ( $response->failed() ) {
+            $this->handleProtectedResponse( $response );
+
             throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to add item to cart.' ) );
         }
 
@@ -365,9 +401,11 @@ class MarketplaceService
         );
 
         $response = $request->withBody( json_encode( $payload, JSON_UNESCAPED_SLASHES ), 'application/json' )
-            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
+            ->send( 'POST', env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
 
         if ( $response->failed() ) {
+            $this->handleProtectedResponse( $response );
+
             throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to retrieve cart information.' ) );
         }
 
@@ -378,13 +416,21 @@ class MarketplaceService
     {
         $request = Http::accept( 'application/json' );
 
-        $this->authenticateRequest( $request );
+        $endpoint = '/api/nexoplatform/oauth/user/licenses/for-product/' . $itemId;
+
+        $this->authenticateRequest(
+            request: $request,
+            method: 'GET',
+            endpoint: $endpoint
+        );
 
         $response = $request->accept( 'application/json' )
             ->withoutVerifying()
-            ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/licenses/for-product/' . $itemId );
+            ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
 
         if ( $response->failed() ) {
+            $this->handleProtectedResponse( $response );
+
             throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to retrieve licenses.' ) );
         }
 
@@ -405,19 +451,22 @@ class MarketplaceService
             'product_id' => $itemId,
             'license_id' => $licenseId,
         ];
+        $endpoint = '/api/nexoplatform/oauth/user/download';
 
         $this->authenticateRequest(
             request: $request,
             method: 'POST',
-            endpoint: '/api/nexoplatform/oauth/user/download',
+            endpoint: $endpoint,
             body: $payload
         );
 
         $response = $request->accept( 'application/json' )
             ->withBody( json_encode( $payload, JSON_UNESCAPED_SLASHES ), 'application/json' )
-            ->post( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user/download', $payload );
+            ->send( 'POST', env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
 
         if ( $response->failed() ) {
+            $this->handleProtectedResponse( $response );
+
             throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to download module.' ) );
         }
 
@@ -440,14 +489,33 @@ class MarketplaceService
 
     public function testConnection()
     {
+        if (
+            ! ns()->option->get( 'mynexopos_access_token' )
+            && ! ns()->option->get( 'mynexopos_refresh_token' )
+        ) {
+            return false;
+        }
+
         try {
             $request = Http::accept( 'application/json' );
 
-            $this->authenticateRequest( $request );
+            $endpoint = '/api/nexoplatform/oauth/user';
+
+            $this->authenticateRequest(
+                request: $request,
+                method: 'GET',
+                endpoint: $endpoint
+            );
+
+            $accessToken = ns()->option->get( 'mynexopos_access_token' );
+
+            if ( ! $accessToken ) {
+                return false;
+            }
 
             $response = $request->accept( 'application/json' )
-                ->withToken( ns()->option->get( 'mynexopos_access_token' ) )
-                ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/oauth/user' );
+                ->withToken( $accessToken )
+                ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
 
             /**
              * The request failed. We need to inform the user of what might have
@@ -456,8 +524,7 @@ class MarketplaceService
             if ( $response->failed() ) {
                 $parsedResponse = $this->parseHttpErrorResponse( $response );
 
-                ns()->option->delete( 'mynexopos_access_token' );
-                ns()->option->delete( 'mynexopos_refresh_token' );
+                $this->handleProtectedResponse( $response );
 
                 ns()->notification->create(
                     title: __( 'My NexoPOS: Authentication Failed' ),
@@ -480,6 +547,86 @@ class MarketplaceService
 
             return false;
         }
+    }
+
+    /**
+     * Revoke this installation on My NexoPOS, then remove the local connection.
+     */
+    public function disconnect(): array
+    {
+        if ( ! ns()->option->get( 'mynexopos_access_token' ) && ! ns()->option->get( 'mynexopos_refresh_token' ) ) {
+            $this->clearConnection();
+
+            return [
+                'status' => 'success',
+                'message' => __( 'This installation is already disconnected from My NexoPOS.' ),
+            ];
+        }
+
+        $request = Http::accept( 'application/json' );
+        $endpoint = '/api/nexoplatform/oauth/user/installation';
+
+        $this->authenticateRequest(
+            request: $request,
+            method: 'DELETE',
+            endpoint: $endpoint,
+            requireAuthentication: true
+        );
+
+        $response = $request
+            ->withoutVerifying()
+            ->send( 'DELETE', env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . $endpoint );
+
+        if ( $response->successful() || $this->isConnectionAuthenticationFailure( $response ) ) {
+            $this->clearConnection();
+
+            return [
+                'status' => 'success',
+                'message' => __( 'This installation has been disconnected from My NexoPOS.' ),
+            ];
+        }
+
+        throw new CoreException(
+            $response->json( 'message' ) ?: __( 'Failed to disconnect this installation from My NexoPOS.' )
+        );
+    }
+
+    public function clearConnection(): void
+    {
+        foreach ([
+            'mynexopos_access_token',
+            'mynexopos_refresh_token',
+            'mynexopos_token_type',
+            'mynexopos_token_expires_in',
+        ] as $option ) {
+            ns()->option->delete( $option );
+        }
+    }
+
+    /**
+     * Rotate the cache namespace used for remote marketplace listing requests.
+     */
+    public function clearCache(): array
+    {
+        ns()->option->set( 'mynexopos_marketplace_cache_version', (string) Str::uuid() );
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The marketplace cache has been cleared.' ),
+        ];
+    }
+
+    private function handleProtectedResponse( Response $response ): void
+    {
+        if ( $this->isConnectionAuthenticationFailure( $response ) ) {
+            $this->clearConnection();
+        }
+    }
+
+    private function isConnectionAuthenticationFailure( Response $response ): bool
+    {
+        return $response->status() === 401
+            || in_array( $response->json( 'error' ), self::CONNECTION_AUTH_ERRORS, true );
     }
 
     private function parseHttpErrorResponse( Response $response )
@@ -510,12 +657,16 @@ class MarketplaceService
     public function getCategories()
     {
         $request = Http::accept( 'application/json' );
+        $cacheVersion = ns()->option->get( 'mynexopos_marketplace_cache_version' );
+        $query = $cacheVersion
+            ? '?' . http_build_query( [ 'cache_version' => $cacheVersion ] )
+            : '';
 
         $this->authenticateRequest( $request );
 
         $response = $request->accept( 'application/json' )
             ->withoutVerifying()
-            ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/marketplace/categories' );
+            ->get( env( 'MARKETPLACE_DOMAIN', 'https://my.nexopos.com' ) . '/api/nexoplatform/marketplace/categories' . $query );
 
         if ( $response->failed() ) {
             throw new CoreException( $response->json( 'message' ) ?: __( 'Failed to retrieve categories from marketplace.' ) );

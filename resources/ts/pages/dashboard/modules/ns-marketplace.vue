@@ -1,5 +1,15 @@
 <template>
     <div class="marketplace-shell w-full flex flex-col gap-6">
+        <Teleport to="#marketplace-title-actions">
+            <button
+                type="button"
+                class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-box-edge bg-box-background text-fontcolor transition-colors hover:border-primary/30 hover:bg-primary hover:text-white"
+                :title="__( 'Marketplace settings' )"
+                :aria-label="__( 'Marketplace settings' )"
+                @click="openSettings()">
+                <i class="las la-cogs text-xl" aria-hidden="true"></i>
+            </button>
+        </Teleport>
 
         <div class="grid grid-cols-1 gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
             <aside class="marketplace-filters self-start xl:sticky xl:top-6">
@@ -126,6 +136,7 @@
 import NsMarketplaceItem from './ns-marketplace-item.vue';
 import NsMynexoposLicenseSelection from './ns-mynexopos-license-selection.vue';
 import NsMynexopos from './ns-mynexopos.vue';
+import NsMarketplaceSettings from './ns-marketplace-settings.vue';
 
 declare const nsSnackBar;
 declare const nsHttpClient;
@@ -229,6 +240,12 @@ export default {
     },
     methods: {
         __,
+        openSettings() {
+            Popup.show( NsMarketplaceSettings, {
+                isConnected: this.isConnected,
+            } );
+        },
+
         normalizeFilterOption( item: MarketplaceFilterOption, index: number, kind: 'category' ) {
             if ( typeof item === 'string' || typeof item === 'number' ) {
                 const label = String( item );

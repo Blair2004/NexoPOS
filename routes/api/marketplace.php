@@ -12,4 +12,6 @@ Route::prefix( 'marketplace' )
         Route::post( 'add-to-cart', [ MarketplaceController::class, 'addToCart' ] );
         Route::post( 'download', [ MarketplaceController::class, 'downloadModule' ] );
         Route::get( 'categories', [ MarketplaceController::class, 'getCategories' ] );
+        Route::delete( 'cache', [ MarketplaceController::class, 'clearCache' ] );
+        Route::delete( 'connection', [ MarketplaceController::class, 'disconnect' ] );
     } );
