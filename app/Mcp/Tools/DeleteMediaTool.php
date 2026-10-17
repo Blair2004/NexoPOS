@@ -7,10 +7,11 @@ use App\Services\MediaService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class DeleteMediaTool extends Tool
+class DeleteMediaTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.delete.medias' ];
+
     public string $name = 'delete_media';
 
     public string $description = 'Deletes a media item and its corresponding files from storage.';

@@ -6,10 +6,11 @@ use App\Models\ProductCategory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class UpdateCategoryTool extends Tool
+class UpdateCategoryTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.update.categories' ];
+
     public string $name = 'update_product_category';
 
     public string $description = 'Update an existing product category. Requires category id.';

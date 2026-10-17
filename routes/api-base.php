@@ -25,6 +25,7 @@ Route::middleware( [
         include dirname( __FILE__ ) . '/api/medias.php';
         include dirname( __FILE__ ) . '/api/notifications.php';
         include dirname( __FILE__ ) . '/api/orders.php';
+        include dirname( __FILE__ ) . '/api/pos.php';
         include dirname( __FILE__ ) . '/api/procurements.php';
         include dirname( __FILE__ ) . '/api/products.php';
         include dirname( __FILE__ ) . '/api/providers.php';

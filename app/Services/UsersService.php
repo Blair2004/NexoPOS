@@ -405,9 +405,25 @@ class UsersService
 
     public function checkPermission( string $permission, ?User $user = null ): bool
     {
-        ns()->restrict( $permission );
+        return $this->isPosActionAllowed( $permission, $user );
+    }
 
-        return true;
+    public function isPosActionAllowed( string $permission, ?User $user = null ): bool
+    {
+        $restrictedFeatures = ns()->option->get( 'ns_pos_action_permission_restricted_features', [] );
+        $restrictedFeatures = is_array( $restrictedFeatures ) ? $restrictedFeatures : [];
+
+        if ( ! in_array( $permission, $restrictedFeatures, true ) ) {
+            return true;
+        }
+
+        $userId = $user?->id ?? Auth::id();
+
+        return ns()->allowedTo( $permission ) || PermissionAccess::where( 'requester_id', $userId )
+            ->where( 'permission', $permission )
+            ->where( 'status', PermissionAccess::GRANTED )
+            ->where( 'expired_at', '>=', now() )
+            ->exists();
     }
 
     public function requestAccess( string $permission )
@@ -418,7 +434,7 @@ class UsersService
             ->where( 'expired_at', '>=', now() )
             ->first();
 
-        if ( ! ns()->allowedTo( $permission ) && ! $approvedTemporaryPermission instanceof PermissionAccess ) {
+        if ( ! $this->isPosActionAllowed( $permission ) ) {
 
             /**
              * If we've explicitly enabled the action permission feature

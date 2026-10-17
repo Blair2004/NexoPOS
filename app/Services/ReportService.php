@@ -389,15 +389,17 @@ class ReportService
         $date->year = $year >= 2019 && $year <= 2099 ? $year : 2020; // validate the date
         $startOfYear = $date->startOfYear()->copy();
         $endOfYear = $date->endOfYear()->copy();
+        $monthlyReports = DashboardMonth::from( $startOfYear->toDateTimeString() )
+            ->to( $endOfYear->toDateTimeString() )
+            ->get()
+            ->keyBy( 'month_of_year' );
 
         $reports = [];
 
         do {
             $currentMonth = $startOfYear->copy();
 
-            $monthReport = DashboardMonth::from( $currentMonth->startOfMonth()->toDateTimeString() )
-                ->to( $currentMonth->endOfMonth()->toDateTimeString() )
-                ->first();
+            $monthReport = $monthlyReports->get( (int) $currentMonth->format( 'm' ) );
 
             if ( ! $monthReport instanceof DashboardMonth ) {
                 $monthReport = $this->computeDashboardMonth( $currentMonth );
@@ -889,12 +891,19 @@ class ReportService
 
             if ( $module->getIfEnabled( 'NsCommissions' ) ) {
                 $config = [
-                    'today_commissions' => EarnedCommission::for( Auth::id() )
-                        ->where( 'created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString() )
-                        ->where( 'created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString() )
-                        ->sum( 'value' ),
-                    'total_commissions' => EarnedCommission::for( Auth::id() )
-                        ->sum( 'value' ),
+                    [
+                        'key' => 'today_commissions',
+                        'value' => ns()->currency->define( EarnedCommission::for( Auth::id() )
+                            ->where( 'created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString() )
+                            ->where( 'created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString() )
+                            ->sum( 'value' ) )->format(),
+                        'label' => __( 'Today\'s Commissions' ),
+                    ], [
+                        'key' => 'total_commissions',
+                        'value' => ns()->currency->define( EarnedCommission::for( Auth::id() )
+                            ->sum( 'value' ) )->format(),
+                        'label' => __( 'Total Commissions' ),
+                    ],
                 ];
             }
 
@@ -1304,10 +1313,16 @@ class ReportService
     {
         $startDate = $startDate === null ? ns()->date->getNow()->startOfMonth()->toDateTimeString() : $startDate;
         $endDate = $endDate === null ? ns()->date->getNow()->endOfMonth()->toDateTimeString() : $endDate;
-        $accounts = collect( config( 'accounting.accounts' ) )->map( function ( $account, $name ) use ( $startDate, $endDate ) {
-            $transactionAccount = TransactionAccount::where( 'category_identifier', $name )->with( [ 'histories' => function ( $query ) use ( $startDate, $endDate ) {
+        $accountCategories = collect( config( 'accounting.accounts' ) );
+        $transactionAccounts = TransactionAccount::whereIn( 'category_identifier', $accountCategories->keys() )
+            ->with( [ 'histories' => function ( $query ) use ( $startDate, $endDate ) {
                 $query->where( 'created_at', '>=', $startDate )->where( 'created_at', '<=', $endDate );
-            }] )->get();
+            }] )
+            ->get()
+            ->groupBy( 'category_identifier' );
+
+        $accounts = $accountCategories->map( function ( $account, $name ) use ( $transactionAccounts ) {
+            $transactionAccount = $transactionAccounts->get( $name, collect() );
 
             $transactions = $transactionAccount->map( function ( $account ) {
                 return [

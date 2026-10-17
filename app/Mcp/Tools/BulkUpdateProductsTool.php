@@ -6,10 +6,11 @@ use App\Models\Product;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class BulkUpdateProductsTool extends Tool
+class BulkUpdateProductsTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.update.products' ];
+
     public string $name = 'bulk_update_products';
 
     public string $description = 'Applies the provided field updates to an array of product IDs.';

@@ -87,6 +87,9 @@ export default {
                 .subscribe({
                     next: fields => {
                         this.fields     =   this.formValidation.createFields( fields );
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                     }
                 })
         }

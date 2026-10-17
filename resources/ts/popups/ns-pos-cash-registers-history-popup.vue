@@ -109,16 +109,21 @@ export default {
 
         getHistory() {
             nsHttpClient.get( `/api/cash-registers/session-history/${this.settings.register.id}` )
-                .subscribe( cashRegisterReport  =>  {
-                    this.cashRegisterReport      =   cashRegisterReport;
-                    this.totalIn        =   this.cashRegisterReport.history
-                        .filter( history => [ 'register-opening', 'register-order-payment', 'register-cash-in' ].includes( history.action ) )
-                        .map( history => parseFloat( history.value ) )
-                        .reduce( ( before, after ) => before + after, 0 );
-                    this.totalOut        =   this.cashRegisterReport.history
-                        .filter( history => [ 'register-order-change', 'register-closing', 'register-refund', 'register-cash-out' ].includes( history.action ) )
-                        .map( history => parseFloat( history.value ) )
-                        .reduce( ( before, after ) => before + after, 0 );
+                .subscribe({
+                    next: cashRegisterReport  =>  {
+                        this.cashRegisterReport      =   cashRegisterReport;
+                        this.totalIn        =   this.cashRegisterReport.history
+                            .filter( history => [ 'register-opening', 'register-order-payment', 'register-cash-in' ].includes( history.action ) )
+                            .map( history => parseFloat( history.value ) )
+                            .reduce( ( before, after ) => before + after, 0 );
+                        this.totalOut        =   this.cashRegisterReport.history
+                            .filter( history => [ 'register-order-change', 'register-closing', 'register-refund', 'register-cash-out' ].includes( history.action ) )
+                            .map( history => parseFloat( history.value ) )
+                            .reduce( ( before, after ) => before + after, 0 );
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 });
         }
     }

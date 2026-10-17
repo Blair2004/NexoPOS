@@ -286,13 +286,18 @@ export default {
         },
         loadFields() {
             nsHttpClient.get( `/api/fields/ns.layaway` )
-                .subscribe( fields => {
-                    this.fields     =   this.formValidation.createFields( fields );
-                    this.fields.forEach( field => {
-                        if ( field.name === 'total_instalments' ) {
-                            field.value     =   this.order.total_instalments || 0;
-                        }
-                    });
+                .subscribe({
+                    next: fields => {
+                        this.fields     =   this.formValidation.createFields( fields );
+                        this.fields.forEach( field => {
+                            if ( field.name === 'total_instalments' ) {
+                                field.value     =   this.order.total_instalments || 0;
+                            }
+                        });
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         }
     }

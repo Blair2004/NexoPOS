@@ -7,33 +7,36 @@ use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductBeforeDeleteEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string   $id
- * @property string   $name
- * @property string   $tax_type
- * @property int      $tax_group_id
- * @property float    $tax_value
- * @property string   $product_type
- * @property string   $type
- * @property bool     $accurate_tracking
- * @property bool     $auto_cogs
- * @property string   $status
- * @property string   $stock_management  Can either be "enabled" or "disabled"
- * @property string   $barcode
- * @property string   $barcode_type
- * @property string   $sku
- * @property string   $description
- * @property int      $thumbnail_id
- * @property int      $category_id
- * @property int      $parent_id
- * @property int      $unit_group
- * @property string   $on_expiration
- * @property bool     $expires           whether or not the product has expired
- * @property bool     $searchable
- * @property int      $author_id
- * @property string   $uuid
- * @property TaxGroup $tax_group
+ * @property string     $id
+ * @property string     $name
+ * @property string     $tax_type
+ * @property int        $tax_group_id
+ * @property float      $tax_value
+ * @property string     $product_type
+ * @property string     $type
+ * @property bool       $accurate_tracking
+ * @property bool       $auto_cogs
+ * @property string     $status
+ * @property string     $stock_management           Can either be "enabled" or "disabled"
+ * @property string     $barcode
+ * @property string     $barcode_type
+ * @property string     $sku
+ * @property string     $description
+ * @property int        $thumbnail_id
+ * @property int        $category_id
+ * @property int        $parent_id
+ * @property int        $unit_group
+ * @property int|null   $default_purchase_unit_id
+ * @property float|null $scheduled_reorder_quantity
+ * @property string     $on_expiration
+ * @property bool       $expires                    whether or not the product has expired
+ * @property bool       $searchable
+ * @property int        $author_id
+ * @property string     $uuid
+ * @property TaxGroup   $tax_group
  *
  * @method static Builder trackingEnabled()
  * @method static Builder trackingDisabled()
@@ -83,6 +86,8 @@ class Product extends NsModel
     protected $casts = [
         'accurate_tracking' => 'boolean',
         'auto_cogs' => 'boolean',
+        'default_purchase_unit_id' => 'integer',
+        'scheduled_reorder_quantity' => 'float',
     ];
 
     protected $dispatchesEvents = [
@@ -271,6 +276,11 @@ class Product extends NsModel
     public function unitGroup()
     {
         return $this->hasOne( UnitGroup::class, 'id', 'unit_group' );
+    }
+
+    public function defaultPurchaseUnit(): BelongsTo
+    {
+        return $this->belongsTo( Unit::class, 'default_purchase_unit_id' );
     }
 
     public function product_taxes()

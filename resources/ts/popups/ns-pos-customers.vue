@@ -501,8 +501,13 @@ export default {
              */
             promise.then( result => {
                 POS.loadCustomer( customer.id )
-                    .subscribe( _customer => {
-                        POS.selectCustomer( _customer );
+                    .subscribe({
+                        next: _customer => {
+                            POS.selectCustomer( _customer );
+                        },
+                        error: error => {
+                            nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                        }
                     });
             })
         },

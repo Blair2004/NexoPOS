@@ -9,10 +9,10 @@
         </div>
         <div class="flex-auto overflow-hidden flex p-2">
             <div class="flex flex-auto overflow-hidden -m-2">
-                <div :class="visibleSection === 'both' ? 'w-1/2' : 'w-full'" class="flex overflow-hidden p-2" v-if="[ 'both', 'cart' ].includes( visibleSection )">
-                    <ns-pos-cart></ns-pos-cart>
+                <div :class="visibleSection === 'both' ? 'w-1/2' : 'w-full'" class="flex flex-col overflow-hidden p-2" v-if="[ 'both', 'cart' ].includes( visibleSection )">
+                    <div class="flex flex-auto overflow-hidden"><ns-pos-cart></ns-pos-cart></div>
                 </div>
-                <div :class="visibleSection === 'both' ? 'w-1/2' : 'w-full'" class="p-2 flex overflow-hidden" v-if="[ 'both', 'grid' ].includes( visibleSection )">
+                <div :class="visibleSection === 'both' ? 'w-1/2' : 'w-full'" class="p-2 flex overflow-hidden" v-if="optionsReady && ! isUnified && [ 'both', 'grid' ].includes( visibleSection )">
                     <ns-pos-grid></ns-pos-grid>
                 </div>
             </div>
@@ -22,17 +22,30 @@
 <script>
 import nsPosCart from './ns-pos-cart.vue';
 import nsPosGrid from './ns-pos-grid.vue';
+import { normalizePosLayout } from '~/libraries/pos-layout-state';
 
 export default {
     name: 'ns-pos',
     computed: {
         buttons() {
             return POS.header.buttons;
-        }
+        },
+        isUnified() {
+            return normalizePosLayout( this.options.ns_pos_layout ) === 'unified';
+        },
+        optionsReady() {
+            return Object.prototype.hasOwnProperty.call( this.options, 'ns_pos_layout' );
+        },
     },
     mounted() {
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection    =   section;
+        });
+        this.optionsSubscriber = POS.options.subscribe( options => {
+            this.options = options;
+            if ( normalizePosLayout( options.ns_pos_layout ) === 'unified' ) {
+                POS.changeVisibleSection( 'cart' );
+            }
         });
 
         /**
@@ -51,11 +64,14 @@ export default {
     },
     unmounted() {
         this.visibleSectionSubscriber.unsubscribe();
+        this.optionsSubscriber.unsubscribe();
     },
     data() {
         return {
-            visibleSection: null,
+            visibleSection: POS.visibleSection.getValue(),
             visibleSectionSubscriber: null,
+            options: POS.options.getValue(),
+            optionsSubscriber: null,
         }
     },
     components: {

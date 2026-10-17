@@ -8,12 +8,13 @@ use App\Services\ProductService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
 #[IsReadOnly]
-class GetProductTool extends Tool
+class GetProductTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.read.products' ];
+
     protected string $name = 'get_product';
 
     protected string $description = 'Retrieve a single product by its ID, barcode, or SKU. Exactly one of id, barcode, or sku must be provided.';

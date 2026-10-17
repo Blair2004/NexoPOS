@@ -18,7 +18,8 @@ Route::post( '/user/access/{id}', [ UsersController::class, 'approveAccess' ] );
 Route::get( '/user/access/{id}', [ UsersController::class, 'getAccess' ] );
 Route::get( '/user/access/{access}/use', [ UsersController::class, 'markAccessAsUsed' ] );
 Route::put( '/users/widgets', [ UsersController::class, 'configureWidgets' ] );
-Route::post( '/users/create-token', [ UsersController::class, 'createToken' ] );
+Route::post( '/users/create-token', [ UsersController::class, 'createToken' ] )
+    ->middleware( NsRestrictMiddleware::arguments( 'manage.profile' ) );
 Route::get( '/users/tokens', [ UsersController::class, 'getTokens' ] );
 Route::delete( '/users/tokens/{id}', [ UsersController::class, 'deleteToken' ] );
 Route::post( '/users/check-permission', [ UsersController::class, 'checkPermission' ] );

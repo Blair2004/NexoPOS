@@ -5,6 +5,7 @@ Use this reference for module TypeScript, Vue components, Blade-injected scripts
 ## Contents
 
 - [`nsHttpClient`](#nshttpclient)
+- [`ns-search-select`](#ns-search-select)
 - [Observable and promise usage](#observable-and-promise-usage)
 - [Errors and request state](#errors-and-request-state)
 - [Frontend globals](#frontend-globals)
@@ -12,6 +13,18 @@ Use this reference for module TypeScript, Vue components, Blade-injected scripts
 - [Shared Vue runtime for modules](#shared-vue-runtime-for-modules)
 - [Localization](#localization)
 - [Module declarations](#module-declarations)
+
+## `ns-search-select`
+
+Use the globally registered `ns-search-select` component when a dashboard select needs client-side text search. Pass a stable, mutable field descriptor; the component updates `field.value` and emits `change` with the selected option value.
+
+```vue
+<ns-search-select :field="userField" @change="userField.value = $event">
+    User
+</ns-search-select>
+```
+
+The descriptor must provide `name`, `value`, and `options`; each option has a `label` and `value`. Search matches `option.label`, so include every searchable value (for example, both user name and email) in the label. Keep `field.value` and `option.value` the same type because selection matching uses strict equality. Provide `errors`, `disabled`, and `description` when those native field states are needed. Do not import the component or mount another Vue app—the dashboard registers it globally.
 
 ## `nsHttpClient`
 

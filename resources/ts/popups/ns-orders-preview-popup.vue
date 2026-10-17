@@ -73,11 +73,16 @@ export default {
                 nsHttpClient.get( `/api/orders/${orderId}/products` ),
                 nsHttpClient.get( `/api/orders/${orderId}/payments` ),
             ])
-                .subscribe( result => {
-                    this.orderDetailLoaded  =   true;
-                    this.order              =   result[0];
-                    this.products           =   result[1];
-                    this.payments           =   result[2];
+                .subscribe({
+                    next: result => {
+                        this.orderDetailLoaded  =   true;
+                        this.order              =   result[0];
+                        this.products           =   result[1];
+                        this.payments           =   result[2];
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 });
         },
         deleteOrder() {

@@ -259,6 +259,23 @@ class FormInput
     }
 
     /**
+     * Configure a search-select to retrieve options from a CRUD resource.
+     */
+    public static function searchSelectOptions( string $identifier, int $limit = 10, string $moreLabel = '', int $minLength = 1, array $query = [], array $staticOptions = [] ): array
+    {
+        return [
+            'identifier' => $identifier,
+            'limit' => $limit,
+            'moreLabel' => $moreLabel,
+            'minLength' => $minLength,
+            'query' => array_filter( $query, fn( $value ) => $value !== null && $value !== '' ),
+            'options' => [],
+            'staticOptions' => $staticOptions,
+            'remaining' => 0,
+        ];
+    }
+
+    /**
      * Configures a refreshable component with a URL and watch parameters.
      *
      * @param  string $url   The URL to refresh the component.

@@ -303,6 +303,9 @@ export default {
                             value: unitQuantity.unit.id
                         }
                     });
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                 }
             })
         },

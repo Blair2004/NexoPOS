@@ -49,6 +49,7 @@ import nsPosPendingOrders from './ns-pos-pending-orders.vue';
 import { __ } from '~/libraries/lang';
 import popupResolver from '~/libraries/popup-resolver';
 import popupCloser from '~/libraries/popup-closer';
+import { nsSnackBar } from '~/bootstrap.js';
 
 declare const POS, Popup, nsEvent, nsHttpClient;
 
@@ -64,8 +65,13 @@ export default {
         
         searchOrder( search ) {
             nsHttpClient.get( `/api/crud/${this.active}?search=${search}` )
-                .subscribe( (result) => {
-                    this.orders     =   result.data;
+                .subscribe({
+                    next: (result) => {
+                        this.orders     =   result.data;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         },
 
@@ -81,8 +87,13 @@ export default {
 
         loadOrderFromType( type ) {
             nsHttpClient.get( `/api/crud/${type}` )
-                .subscribe( result => {
-                    this.orders     =   result.data;
+                .subscribe({
+                    next: result => {
+                        this.orders     =   result.data;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 });
         },
         previewOrder( order ) {

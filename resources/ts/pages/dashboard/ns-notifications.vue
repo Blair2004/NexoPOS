@@ -198,8 +198,13 @@ export default {
 
         loadNotifications() {
             nsHttpClient.get( '/api/notifications' )
-                .subscribe( notifications => {
-                    this.notifications  =   notifications;
+                .subscribe({
+                    next: notifications => {
+                        this.notifications  =   notifications;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         },
 
@@ -211,9 +216,14 @@ export default {
 
         closeNotice( event, notification ) {
             nsHttpClient.delete( `/api/notifications/${notification.id}` )
-                .subscribe( result => {
-                    if ( ! this.socketEnabled ) {
-                        this.loadNotifications();
+                .subscribe({
+                    next: result => {
+                        if ( ! this.socketEnabled ) {
+                            this.loadNotifications();
+                        }
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                     }
                 });
             event.stopPropagation();

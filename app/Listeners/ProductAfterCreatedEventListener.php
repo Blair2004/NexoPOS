@@ -32,6 +32,6 @@ class ProductAfterCreatedEventListener
     {
         $this->productService->generateProductBarcode( $event->product );
 
-        ComputeCategoryProductsJob::dispatch( $event->product->category );
+        ComputeCategoryProductsJob::dispatch( $event->product->category )->afterCommit();
     }
 }

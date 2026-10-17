@@ -9,12 +9,13 @@ use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
 #[IsReadOnly]
-class SearchOrdersTool extends Tool
+class SearchOrdersTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.read.orders' ];
+
     protected string $name = 'search_orders';
 
     protected string $description = 'Search and list orders with advanced filtering. Useful to find orders created in a date range, placed by a specific user or customer, having specific payment statuses, or check if they have installments.';

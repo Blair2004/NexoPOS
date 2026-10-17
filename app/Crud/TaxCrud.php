@@ -58,10 +58,10 @@ class TaxCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create' => true,
-        'read' => true,
-        'update' => true,
-        'delete' => true,
+        'create' => 'nexopos.create.taxes',
+        'read' => 'nexopos.read.taxes',
+        'update' => 'nexopos.update.taxes',
+        'delete' => 'nexopos.delete.taxes',
     ];
 
     public $relations = [
@@ -108,7 +108,13 @@ class TaxCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable = [];
+    public $fillable = [
+        'name',
+        'tax_group_id',
+        'rate',
+        'description',
+        'author_id',
+    ];
 
     /**
      * Define Constructor

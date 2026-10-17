@@ -27,9 +27,14 @@ export class Cashier {
 
     refreshReport() {
         nsHttpClient.get( '/api/reports/cashier-report?refresh=true' )
-            .subscribe( result => {
-                this._mysales.next( result );
-                nsSnackBar.success( __  ( 'The report has been refreshed.' ), __( 'OK' ) );
+            .subscribe({
+                next: result => {
+                    this._mysales.next( result );
+                    nsSnackBar.success( __  ( 'The report has been refreshed.' ), __( 'OK' ) );
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             })
     }
 

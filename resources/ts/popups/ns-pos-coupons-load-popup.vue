@@ -159,6 +159,9 @@ export default {
                         next: ( coupon ) => {
                             this.coupon     =   coupon;
                             this.apply();
+                        },
+                        error: error => {
+                            nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                         }
                     })
             }

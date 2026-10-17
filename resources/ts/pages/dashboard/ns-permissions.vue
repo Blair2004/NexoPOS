@@ -174,10 +174,15 @@ export default {
                 });
 
                 nsHttpClient.put( '/api/users/roles', roles )
-                    .subscribe( result => {
-                        nsSnackBar.success( result.message, null, {
-                            duration: 3000
-                        });
+                    .subscribe({
+                        next: result => {
+                            nsSnackBar.success( result.message, null, {
+                                duration: 3000
+                            });
+                        },
+                        error: error => {
+                            nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                        }
                     });
             } else {
                 /**
@@ -225,10 +230,15 @@ export default {
             roles[ role.namespace ][ permission.name ]  =   permission.value;
 
             nsHttpClient.put( '/api/users/roles', roles )
-                .subscribe( result => {
-                    nsSnackBar.success( result.message, null, {
-                        duration: 3000
-                    });
+                .subscribe({
+                    next: result => {
+                        nsSnackBar.success( result.message, null, {
+                            duration: 3000
+                        });
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         },
 
@@ -260,30 +270,35 @@ export default {
             return forkJoin([
                 nsHttpClient.get( '/api/users/roles' ),
                 nsHttpClient.get( '/api/users/permissions' ),
-            ]).subscribe( result => {
-                this.permissions    =   result[1];
-                this.roles          =   result[0].map( role => {
-                    let isChecked           =   false;
-                    role.fields             =   {};
-                    role.visible            =   true;
-                    role.field              =   {
-                        type: 'checkbox',
-                        name: role.namespace,
-                        value: false
-                    }
-                    this.permissions.forEach( permission => {
-                        role.fields[ permission.namespace ]     =   {
+            ]).subscribe({
+                next: result => {
+                    this.permissions    =   result[1];
+                    this.roles          =   result[0].map( role => {
+                        let isChecked           =   false;
+                        role.fields             =   {};
+                        role.visible            =   true;
+                        role.field              =   {
                             type: 'checkbox',
-                            value: role.permissions
-                                .filter( role_permission => role_permission.namespace === permission.namespace )
-                                .length > 0,
-                            name: permission.namespace,
-                            label: null,
-                        };
-                    });
+                            name: role.namespace,
+                            value: false
+                        }
+                        this.permissions.forEach( permission => {
+                            role.fields[ permission.namespace ]     =   {
+                                type: 'checkbox',
+                                value: role.permissions
+                                    .filter( role_permission => role_permission.namespace === permission.namespace )
+                                    .length > 0,
+                                name: permission.namespace,
+                                label: null,
+                            };
+                        });
 
-                    return role;
-                });
+                        return role;
+                    });
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             });
         }
     }

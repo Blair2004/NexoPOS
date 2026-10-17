@@ -29,6 +29,7 @@ use App\Models\ScaleRange;
 use App\Models\Unit;
 use App\Services\DateService;
 use App\Services\Helper;
+use App\Services\PosPinnedProductService;
 use App\Services\ProductService;
 use Exception;
 use Illuminate\Http\Request;
@@ -39,7 +40,8 @@ class ProductsController extends DashboardController
 {
     public function __construct(
         protected ProductService $productService,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected PosPinnedProductService $pinnedProductService
     ) {
         // ...
     }
@@ -110,6 +112,11 @@ class ProductsController extends DashboardController
     public function getProduts()
     {
         return $this->productService->getProducts();
+    }
+
+    public function getPinnedProducts(): array
+    {
+        return [ 'pinnedProducts' => $this->pinnedProductService->get() ];
     }
 
     /**

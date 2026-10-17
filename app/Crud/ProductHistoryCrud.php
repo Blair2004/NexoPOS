@@ -366,7 +366,7 @@ class ProductHistoryCrud extends CrudService
             CrudTable::column(
                 label: __( 'Operation' ),
                 identifier: 'operation_type',
-                width: '100px',
+                width: '200px',
             ),
             CrudTable::column(
                 label: __( 'P. Quantity' ),
@@ -408,7 +408,7 @@ class ProductHistoryCrud extends CrudService
             ),
             CrudTable::column(
                 label: __( 'Author' ),
-                identifier: 'users_username',
+                identifier: 'user_username',
             ),
             CrudTable::column(
                 label: __( 'Date' ),

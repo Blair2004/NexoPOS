@@ -72,8 +72,13 @@ export default {
         },
         loadForm() {
             const request   =   nsHttpClient.get( `${this.src}` );
-            request.subscribe( f => {
-                this.form    =   this.parseForm( f.form );
+            request.subscribe({
+                next: f => {
+                    this.form    =   this.parseForm( f.form );
+                },
+                error: error => {
+                    nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                }
             });
         },
         parseForm( form ) {

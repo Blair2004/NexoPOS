@@ -177,6 +177,8 @@ class ProductService
             } );
         }
 
+        $this->validateScheduledProcurementSettings( $data );
+
         /**
          * check if it's a simple product or not
          */
@@ -397,6 +399,8 @@ class ProductService
                 }
             } );
         }
+
+        $this->validateScheduledProcurementSettings( $data );
 
         switch ( $data[ 'product_type' ] ) {
             case 'product':
@@ -722,8 +726,47 @@ class ProductService
             $product->$field = $value;
         } elseif ( $field === 'units' ) {
             $product->unit_group = $fields[ 'units' ][ 'unit_group' ];
+            $product->default_purchase_unit_id = $fields[ 'units' ][ 'default_purchase_unit_id' ] ?? null;
+            $product->scheduled_reorder_quantity = $fields[ 'units' ][ 'scheduled_reorder_quantity' ] ?? null;
             $product->accurate_tracking = $fields[ 'units' ][ 'accurate_tracking' ] ?? false;
             $product->auto_cogs = $fields[ 'units' ][ 'auto_cogs' ] ?? false;
+        }
+    }
+
+    /**
+     * Validate the optional product-level settings used by scheduled procurement.
+     *
+     * @param array<string, mixed> $data
+     */
+    private function validateScheduledProcurementSettings( array $data ): void
+    {
+        $purchaseUnitId = data_get( $data, 'units.default_purchase_unit_id' );
+        $reorderQuantity = data_get( $data, 'units.scheduled_reorder_quantity' );
+
+        if ( $purchaseUnitId === null && ( $reorderQuantity === null || $reorderQuantity === '' ) ) {
+            return;
+        }
+
+        if ( $purchaseUnitId === null || $purchaseUnitId === '' ) {
+            throw new NotAllowedException( __( 'A default purchase unit is required when a scheduled reorder quantity is configured.' ) );
+        }
+
+        if ( $reorderQuantity === null || $reorderQuantity === '' || ! is_numeric( $reorderQuantity ) || (float) $reorderQuantity <= 0 ) {
+            throw new NotAllowedException( __( 'The scheduled reorder quantity must be greater than zero.' ) );
+        }
+
+        $unit = Unit::query()->find( (int) $purchaseUnitId );
+        if ( ! $unit instanceof Unit ) {
+            throw new NotAllowedException( __( 'The default purchase unit does not exist.' ) );
+        }
+
+        $assignedUnitIds = collect( data_get( $data, 'units.selling_group', [] ) )
+            ->pluck( 'unit_id' )
+            ->filter()
+            ->map( static fn ( mixed $unitId ): int => (int) $unitId );
+
+        if ( ! $assignedUnitIds->contains( (int) $unit->id ) ) {
+            throw new NotAllowedException( __( 'The default purchase unit must be assigned to the product.' ) );
         }
     }
 
@@ -881,6 +924,26 @@ class ProductService
     public function refreshPrices( ProductUnitQuantity $product )
     {
         return $this->taxService->computeTax( $product, $product->tax_group_id ?? null );
+    }
+
+    /**
+     * Update editable product-unit prices and recompute all derived tax values.
+     *
+     * @param array{sale_price_edit?: float|int, wholesale_price_edit?: float|int} $prices
+     */
+    public function updateUnitEditPrices( ProductUnitQuantity $unitQuantity, array $prices ): ProductUnitQuantity
+    {
+        foreach ( ['sale_price_edit', 'wholesale_price_edit'] as $field ) {
+            if ( array_key_exists( $field, $prices ) ) {
+                $unitQuantity->{$field} = $prices[$field];
+            }
+        }
+
+        $product = $unitQuantity->product()->firstOrFail();
+        $this->taxService->computeTax( $unitQuantity, $product->tax_group_id, $product->tax_type );
+        $unitQuantity->save();
+
+        return $unitQuantity->refresh();
     }
 
     /**

@@ -34,7 +34,7 @@ class MenuService
                 label: __( 'POS' ),
                 icon: 'la-cash-register',
                 identifier: 'pos',
-                permissions: [ 'nexopos.create.orders' ],
+                permissions: [ 'nexopos.pos.access' ],
                 href: ns()->url( '/dashboard/pos' ),
             ),
             AsideMenu::menu(

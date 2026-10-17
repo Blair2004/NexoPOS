@@ -78,15 +78,20 @@ export default {
             }
 
             nsHttpClient.post( `/api/users/create-token`, this.validation.extractFields( this.fields ) )
-                .subscribe( async (result) => {
-                    try {
-                        await new Promise ( ( resolve, reject ) => {
-                            Popup.show( nsTokenOutputPopupVue, { resolve, reject, result })
-                        });
+                .subscribe({
+                    next: async (result) => {
+                        try {
+                            await new Promise ( ( resolve, reject ) => {
+                                Popup.show( nsTokenOutputPopupVue, { resolve, reject, result })
+                            });
 
-                        this.loadTokens();
-                    } catch( exception ) {
-                        console.log( exception );
+                            this.loadTokens();
+                        } catch( exception ) {
+                            console.log( exception );
+                        }
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                     }
                 })
         },

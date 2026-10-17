@@ -31,7 +31,7 @@
                                     </div>
                                 </div>
                             </th>
-                            <th class="flex justify-end p-2">{{ nsCurrency( cashier.total_sales, 'abbreviate' ) }}</th>
+                            <th class="p-2 text-right">{{ nsCurrency( cashier.total_sales, 'abbreviate' ) }}</th>
                         </tr>
                         <tr v-if="cashiers.length === 0">
                             <th colspan="2">{{ __( 'No result to display.' ) }}</th>

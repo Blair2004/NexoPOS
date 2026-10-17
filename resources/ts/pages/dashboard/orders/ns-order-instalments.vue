@@ -124,14 +124,19 @@ export default {
         nsCurrency,
         loadInstalments() {
             nsHttpClient.get( `/api/orders/${this.order.id}/instalments` )
-                .subscribe( instalments => {
-                    this.original       =   instalments;
-                    this.instalments    =   instalments.map( instalment => {
-                        instalment.price_clicked    =   false;
-                        instalment.date_clicked     =   false;
-                        instalment.date             =   moment( instalment.date ).format( 'YYYY-MM-DD' );
-                        return instalment;
-                    });
+                .subscribe({
+                    next: instalments => {
+                        this.original       =   instalments;
+                        this.instalments    =   instalments.map( instalment => {
+                            instalment.price_clicked    =   false;
+                            instalment.date_clicked     =   false;
+                            instalment.date             =   moment( instalment.date ).format( 'YYYY-MM-DD' );
+                            return instalment;
+                        });
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         },
         showReceipt( instalment ) {

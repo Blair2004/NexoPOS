@@ -89,7 +89,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'activation_token', 'activation_expiration',
     ];
 
     public function __construct( $attributes = [] )

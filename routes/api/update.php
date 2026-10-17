@@ -1,9 +1,8 @@
 <?php
 
 use App\Http\Controllers\UpdateController;
-use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\CheckMigrationStatus;
+use App\Http\Middleware\InstalledStateMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::post( 'update', [ UpdateController::class, 'runMigration' ] )
-    ->withoutMiddleware( [ Authenticate::class, CheckMigrationStatus::class ] );
+    ->middleware( InstalledStateMiddleware::class );

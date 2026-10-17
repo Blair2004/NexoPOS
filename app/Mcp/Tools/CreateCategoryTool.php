@@ -6,10 +6,11 @@ use App\Models\ProductCategory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class CreateCategoryTool extends Tool
+class CreateCategoryTool extends AuthorizedTool
 {
+    protected array $permissions = [ 'nexopos.create.categories' ];
+
     public string $name = 'create_product_category';
 
     public string $description = 'Create a new product category in NexoPOS.';

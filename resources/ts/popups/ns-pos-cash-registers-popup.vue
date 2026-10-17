@@ -78,9 +78,14 @@ export default {
         loadRegisters() {
             this.hasLoadedRegisters     =   false;
             nsHttpClient.get( `/api/cash-registers` )
-                .subscribe( result => {
-                    this.registers              =   result;
-                    this.hasLoadedRegisters     =   true;
+                .subscribe({
+                    next: result => {
+                        this.registers              =   result;
+                        this.hasLoadedRegisters     =   true;
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                    }
                 })
         },
         getClass( register ) {

@@ -6,6 +6,8 @@ use App\Exceptions\NotAllowedException;
 use App\Models\Order;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
+use App\Services\OrderAccessService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -16,15 +18,15 @@ class HoldOrderCrud extends CrudService
     /**
      * define the base table
      *
-     * @param  string
+     * @param string $table
      */
     protected $table = 'nexopos_orders';
 
     /**
      * default identifier
      *
-     * @param  string
-     */
+     * @property string $IDENTIFIER
+     **/
     const IDENTIFIER = 'ns.hold-orders';
 
     /**
@@ -47,10 +49,10 @@ class HoldOrderCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create' => true,
-        'read' => true,
-        'update' => true,
-        'delete' => true,
+        'create' => false,
+        'read' => 'nexopos.read.orders',
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
@@ -118,8 +120,32 @@ class HoldOrderCrud extends CrudService
 
     public function hook( $query ): void
     {
+        app( OrderAccessService::class )->scopeAccessible( $query, auth()->user() );
+
         $query->orderBy( 'created_at', 'desc' );
         $query->where( 'payment_status', 'hold' );
+    }
+
+    public function findEntry( int|string $id ): ?Model
+    {
+        return Order::query()
+            ->accessibleTo( auth()->user() )
+            ->whereKey( $id )
+            ->where( 'payment_status', Order::PAYMENT_HOLD )
+            ->first();
+    }
+
+    public function allowedTo( string $permission ): void
+    {
+        if ( $permission === 'read' && ns()->allowedTo( [
+            OrderAccessService::READ_ALL,
+            OrderAccessService::POS_READ_ALL,
+            OrderAccessService::POS_READ_OWN,
+        ] ) ) {
+            return;
+        }
+
+        parent::allowedTo( $permission );
     }
 
     /**

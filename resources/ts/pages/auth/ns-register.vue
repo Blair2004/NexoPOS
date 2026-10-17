@@ -43,15 +43,20 @@ export default {
             nsHttpClient.get( '/api/fields/ns.register' ),
             nsHttpClient.get( '/sanctum/csrf-cookie' ),
         ])
-        .subscribe( result => {
-            this.fields         =   this.validation.createFields( result[0] );
-            this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+        .subscribe({
+            next: result => {
+                this.fields         =   this.validation.createFields( result[0] );
+                this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
 
-            /**
-             * emit an event
-             * when the component is mounted
-             */
-            setTimeout( () => nsHooks.doAction( 'ns-register-mounted', this ) );
+                /**
+                 * emit an event
+                 * when the component is mounted
+                 */
+                setTimeout( () => nsHooks.doAction( 'ns-register-mounted', this ) );
+            },
+            error: error => {
+                nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+            }
         });
     },
     methods: {

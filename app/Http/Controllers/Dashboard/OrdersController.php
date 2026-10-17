@@ -27,7 +27,9 @@ use App\Models\PaymentType;
 use App\Services\DateService;
 use App\Services\MarketplaceService;
 use App\Services\Options;
+use App\Services\OrderAccessService;
 use App\Services\OrdersService;
+use App\Support\PosLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
@@ -38,6 +40,7 @@ class OrdersController extends DashboardController
 
     public function __construct(
         private OrdersService $ordersService,
+        private OrderAccessService $orderAccessService,
         private Options $optionsService,
         protected DateService $dateService,
         protected MarketplaceService $marketplaceService
@@ -61,17 +64,24 @@ class OrdersController extends DashboardController
 
     public function create( Request $request )
     {
-        return $this->ordersService->create( $request->post() );
+        return $this->ordersService->create( array_merge( $request->post(), [
+            'author_id' => $request->user()->id,
+        ] ) );
     }
 
     public function updateOrder( Order $id, Request $request )
     {
-        return $this->ordersService->create( $request->post(), $id );
+        $this->authorizeOrder( $request, $id );
+
+        return $this->ordersService->create( array_merge( $request->post(), [
+            'author_id' => $id->author_id,
+        ] ), $id );
     }
 
     public function addProductToOrder( $order_id, Request $request )
     {
         $order = $this->ordersService->getOrder( $order_id );
+        $this->authorizeOrder( request(), $order );
 
         return $this->ordersService->addProducts( $order, $request->input( 'products' ) );
     }
@@ -79,6 +89,7 @@ class OrdersController extends DashboardController
     public function getOrderPaymentReceipt( OrderPayment $orderPayment, Request $request )
     {
         $order = $orderPayment->order;
+        $this->authorizeOrder( $request, $order );
         $order->load( 'customer' );
         $order->load( 'products' );
         $order->load( 'shipping_address' );
@@ -107,7 +118,24 @@ class OrdersController extends DashboardController
 
     public function getPOSOrder( $order_id )
     {
-        return $this->ordersService->getOrder( $order_id );
+        $order = $this->ordersService->getOrder( $order_id );
+        $this->authorizeOrder( request(), $order );
+
+        return $order;
+    }
+
+    public function posOrder( Request $request, Order $order ): Order
+    {
+        $this->authorizeOrder( $request, $order );
+
+        return $this->ordersService->getOrder( $order->id );
+    }
+
+    public function posOrderProducts( Request $request, Order $order ): mixed
+    {
+        $this->authorizeOrder( $request, $order );
+
+        return $this->ordersService->getOrderProducts( $order->id );
     }
 
     /**
@@ -118,17 +146,22 @@ class OrdersController extends DashboardController
      */
     public function getOrderProducts( $id )
     {
+        $this->authorizeOrder( request(), Order::findOrFail( $id ) );
+
         return $this->ordersService->getOrderProducts( $id );
     }
 
     public function getOrderPayments( $id )
     {
+        $this->authorizeOrder( request(), Order::findOrFail( $id ) );
+
         return $this->ordersService->getOrderPayments( $id );
     }
 
     public function deleteOrderProduct( $orderId, $productId )
     {
         $order = $this->ordersService->getOrder( $orderId );
+        $this->authorizeOrder( request(), $order );
 
         return $this->ordersService->deleteOrderProduct( $order, $productId );
     }
@@ -216,6 +249,7 @@ class OrdersController extends DashboardController
                 'ns_pos_show_preview_pinned_products' => ns()->option->get( 'ns_pos_show_preview_pinned_products', 'no' ) === 'yes' ? true : false,
                 'ns_pos_enable_pinned_products' => ns()->option->get( 'ns_pos_enable_pinned_products', 'no' ) === 'yes' ? true : false,
                 'ns_pos_barcode_reader_type' => ns()->option->get( 'ns_pos_barcode_reader_type' ),
+                'ns_pos_layout' => PosLayout::normalize( ns()->option->get( 'ns_pos_layout' ) ),
                 'mynexopos_access_token' => ns()->option->get( 'mynexopos_access_token' ),
             ] ),
             'urls' => [
@@ -234,6 +268,7 @@ class OrdersController extends DashboardController
 
     public function orderInvoice( Order $order )
     {
+        $this->authorizeOrder( request(), $order );
         $optionsService = app()->make( Options::class );
 
         $order->load( 'customer' );
@@ -258,6 +293,7 @@ class OrdersController extends DashboardController
 
     public function orderRefundReceipt( OrderRefund $refund )
     {
+        $this->authorizeOrder( request(), $refund->order );
         $refund->load( 'order.customer', 'order.refundedProducts', 'order.refunds.author', 'order.shipping_address', 'order.billing_address', 'order.user' );
         $refund->load( 'refunded_products.product', 'refunded_products.unit' );
 
@@ -274,6 +310,7 @@ class OrdersController extends DashboardController
 
     public function orderReceipt( Order $order )
     {
+        $this->authorizeOrder( request(), $order );
         $order->load( 'customer' );
         $order->load( 'products' );
         $order->load( 'shipping_address' );
@@ -295,11 +332,15 @@ class OrdersController extends DashboardController
 
     public function voidOrder( Order $order, Request $request )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->void( $order, $request->input( 'reason' ) );
     }
 
     public function deleteOrder( Order $order )
     {
+        $this->authorizeOrder( request(), $order );
+
         return $this->ordersService->deleteOrder( $order );
     }
 
@@ -316,6 +357,8 @@ class OrdersController extends DashboardController
      */
     public function addPayment( Order $order, OrderPaymentRequest $request )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->makeOrderSinglePayment( [
             'identifier' => $request->input( 'identifier' ),
             'value' => $request->input( 'value' ),
@@ -325,11 +368,14 @@ class OrdersController extends DashboardController
 
     public function makeOrderRefund( Order $order, Request $request )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->refundOrder( $order, $request->all() );
     }
 
     public function printOrder( Order $order, $doc = 'receipt' )
     {
+        $this->authorizeOrder( request(), $order );
         OrderAfterPrintedEvent::dispatch( $order, $doc );
 
         return [
@@ -345,11 +391,15 @@ class OrdersController extends DashboardController
 
     public function getOrderInstalments( Order $order )
     {
+        $this->authorizeOrder( request(), $order );
+
         return $order->instalments;
     }
 
     public function updateInstalment( Order $order, OrderInstalment $instalment, Request $request )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->updateInstalment(
             $order,
             $instalment,
@@ -359,6 +409,7 @@ class OrdersController extends DashboardController
 
     public function deleteInstalment( Order $order, OrderInstalment $instalment )
     {
+        $this->authorizeOrder( request(), $order );
         if ( (int) $order->id !== (int) $instalment->order_id ) {
             throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
         }
@@ -368,6 +419,8 @@ class OrdersController extends DashboardController
 
     public function createInstalment( Order $order, Request $request )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->createInstalment( $order, $request->input( 'instalment' ) );
     }
 
@@ -382,6 +435,7 @@ class OrdersController extends DashboardController
 
     public function payInstalment( Order $order, OrderInstalment $instalment, Request $request )
     {
+        $this->authorizeOrder( $request, $order );
         if ( (int) $order->id !== (int) $instalment->order_id ) {
             throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
         }
@@ -396,6 +450,8 @@ class OrdersController extends DashboardController
      */
     public function changeOrderProcessingStatus( Request $request, Order $order )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->changeProcessingStatus( $order, $request->input( 'process_status' ) );
     }
 
@@ -406,6 +462,8 @@ class OrdersController extends DashboardController
      */
     public function changeOrderDeliveryStatus( Request $request, Order $order )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->changeDeliveryStatus( $order, $request->input( 'delivery_status' ) );
     }
 
@@ -426,11 +484,20 @@ class OrdersController extends DashboardController
 
     public function getOrderProductsRefunded( Request $request, Order $order )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->getOrderRefundedProducts( $order );
     }
 
     public function getOrderRefunds( Request $request, Order $order )
     {
+        $this->authorizeOrder( $request, $order );
+
         return $this->ordersService->getOrderRefunds( $order );
+    }
+
+    private function authorizeOrder( Request $request, Order $order ): void
+    {
+        $this->orderAccessService->authorizeOrFail( $request->user(), $order );
     }
 }

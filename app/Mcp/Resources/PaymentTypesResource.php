@@ -6,10 +6,11 @@ namespace App\Mcp\Resources;
 
 use App\Models\PaymentType;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Resource;
 
-class PaymentTypesResource extends Resource
+class PaymentTypesResource extends AuthorizedResource
 {
+    protected array $permissions = [ 'nexopos.reports.payment-types' ];
+
     protected string $uri = 'pos://resources/payment-types';
 
     protected string $mimeType = 'application/json';

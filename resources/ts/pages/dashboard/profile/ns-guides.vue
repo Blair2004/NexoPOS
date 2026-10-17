@@ -49,6 +49,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { nsSnackBar } from '~/bootstrap';
 import { nsConfirmPopup } from '~/components/components';
 import { __ } from '~/libraries/lang';
 
@@ -59,6 +60,9 @@ function loadCompleted( path ) {
     nsHttpClient.get( path || '/api/user/guides/completed' ).subscribe({
         next: completed => {
             paginatedCompletedGuides.value = completed;
+        },
+        error: error => {
+            nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
         }
     })
 }
@@ -67,6 +71,9 @@ function loadDismissed( path ) {
     nsHttpClient.get( path || '/api/user/guides/dismissed' ).subscribe({
         next: dismissed => {
             paginatedDismissedGuides.value = dismissed;
+        },
+        error: error => {
+            nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
         }
     })
 }
@@ -81,6 +88,9 @@ function reset( id ) {
                     next: () => {
                         loadCompleted();
                         loadDismissed();
+                    },
+                    error: error => {
+                        nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
                     }
                 })
             }
