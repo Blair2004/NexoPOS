@@ -4,7 +4,7 @@
 <div class="flex-auto flex flex-col">
     @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
     <div class="px-4 flex flex-col flex-auto" id="dashboard-content">
-        @include( 'common.dashboard.title' )
+        @include( 'common.dashboard.title', [ 'dashboardTitleActionTarget' => 'marketplace-title-actions' ] )
         <ns-marketplace :authenticate="{{ request()->has( 'action' ) && request()->input( 'action' ) === 'authenticate' }}" :is-connected="{{ $isConnected ? 'true' : 'false' }}"></ns-marketplace>
     </div>
 </div>

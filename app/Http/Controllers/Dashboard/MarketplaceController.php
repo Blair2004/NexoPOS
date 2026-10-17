@@ -69,4 +69,14 @@ class MarketplaceController extends DashboardController
     {
         return $this->marketplaceService->getCategories();
     }
+
+    public function disconnect()
+    {
+        return $this->marketplaceService->disconnect();
+    }
+
+    public function clearCache()
+    {
+        return $this->marketplaceService->clearCache();
+    }
 }
