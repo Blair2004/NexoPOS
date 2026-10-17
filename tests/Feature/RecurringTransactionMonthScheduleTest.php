@@ -24,6 +24,9 @@ class RecurringTransactionMonthScheduleTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * TransactionService::getScheduledTransactions() places "5 days after the month starts" on the 6th.
+     */
     public function test_transactions_relative_to_the_month_are_triggered_on_their_day(): void
     {
         $author = new User;
@@ -44,7 +47,6 @@ class RecurringTransactionMonthScheduleTest extends TestCase
         $events = $this->scheduledTransactionEvents();
         $ids = [ $afterStart->id, $beforeEnd->id ];
 
-        // TransactionService::getScheduledTransactions() places "5 days after the month starts" on the 6th.
         $this->assertSame( [ $afterStart->id ], $this->triggeredOn( $events, '2026-11-06 00:01:00', $ids ) );
         $this->assertSame( [ $beforeEnd->id ], $this->triggeredOn( $events, '2026-10-26 00:01:00', $ids ) );
         $this->assertSame( [], $this->triggeredOn( $events, '2026-10-15 00:01:00', $ids ) );
