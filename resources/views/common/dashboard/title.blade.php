@@ -8,9 +8,14 @@ use App\Events\BeforeDashboardTitleEvent;
 ?>
 <?php echo Output::dispatch( BeforeDashboardTitleEvent::class ); ?>
 
-<div class="page-inner-header mb-4">
-    <h3 class="text-2xl text-fontcolor font-bold">{!! $title ?? __( 'Unnamed Page' ) !!}</h3>
-    <p class="text-fontcolor-soft">{{ $description ?? __( 'No description' ) }}</p>
+<div class="page-inner-header mb-4 flex items-start justify-between gap-4">
+    <div class="min-w-0">
+        <h3 class="text-2xl text-fontcolor font-bold">{!! $title ?? __( 'Unnamed Page' ) !!}</h3>
+        <p class="text-fontcolor-soft">{{ $description ?? __( 'No description' ) }}</p>
+    </div>
+    @if ( ! empty( $dashboardTitleActionTarget ) )
+        <div id="{{ $dashboardTitleActionTarget }}" class="shrink-0"></div>
+    @endif
 </div>
 @include( 'components.session-message' )
 
