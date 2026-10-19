@@ -6,6 +6,28 @@ use Illuminate\Http\Request;
 
 abstract class FieldsService
 {
+    /** Only opt-in authentication form schemas may be retrieved anonymously. */
+    public const PUBLIC_ACCESS = false;
+
+    /** Optional permission required to retrieve this form schema. */
+    public const REQUIRED_PERMISSION = null;
+
+    /**
+     * Authorize field retrieval before constructing model-backed field classes.
+     */
+    public static function authorizeAccess(): void
+    {
+        if ( static::PUBLIC_ACCESS ) {
+            return;
+        }
+
+        abort_unless( request()->user( 'sanctum' ), 401 );
+
+        if ( static::REQUIRED_PERMISSION !== null ) {
+            abort_unless( ns()->allowedTo( static::REQUIRED_PERMISSION ), 403 );
+        }
+    }
+
     protected $fields = [];
 
     public function get()
