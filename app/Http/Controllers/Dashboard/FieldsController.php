@@ -17,6 +17,9 @@ class FieldsController extends DashboardController
             throw new Exception( sprintf( __( '"%s" is not an instance of "FieldsService"' ), $resource ) );
         }
 
+        // Also enforce policies for field instances supplied by third-party hooks.
+        $instance::authorizeAccess();
+
         return $instance->get( $identifier );
     }
 }
