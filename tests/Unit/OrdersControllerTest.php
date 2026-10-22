@@ -5,9 +5,11 @@ namespace Tests\Unit;
 use App\Crud\CustomerCrud;
 use App\Http\Controllers\Dashboard\OrdersController;
 use App\Models\Order;
+use App\Models\User;
 use App\Services\DateService;
 use App\Services\MarketplaceService;
 use App\Services\Options;
+use App\Services\OrderAccessService;
 use App\Services\OrdersService;
 use Illuminate\Support\Facades\View;
 use Mockery;
@@ -61,8 +63,17 @@ class OrdersControllerTest extends TestCase
             } )
             ->andReturn( 'invoice-view' );
 
+        $user = new User;
+        request()->setUserResolver( fn() => $user );
+
+        $orderAccessService = Mockery::mock( OrderAccessService::class );
+        $orderAccessService->shouldReceive( 'authorizeOrFail' )
+            ->once()
+            ->with( $user, $order );
+
         $controller = new OrdersController(
             $ordersService,
+            $orderAccessService,
             $optionsService,
             Mockery::mock( DateService::class ),
             Mockery::mock( MarketplaceService::class )

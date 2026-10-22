@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\PaymentType;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class HardResetTest extends TestCase
@@ -15,6 +17,10 @@ class HardResetTest extends TestCase
      */
     public function test_hard_reset_system()
     {
+        Schema::create( 'hard_reset_probe', function ( Blueprint $table ): void {
+            $table->id();
+        } );
+
         Artisan::call( 'ns:reset --mode=hard' );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -27,6 +33,7 @@ class HardResetTest extends TestCase
             ] );
 
         $response->assertStatus( 200 );
+        $this->assertFalse( Schema::hasTable( 'hard_reset_probe' ) );
 
         // Check if 3 order payments have been created
         $paymentTypeCount = PaymentType::count();

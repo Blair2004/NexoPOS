@@ -107,7 +107,11 @@ class TestOtherGetRoutes extends TestCase
                                 'dashboard/oauth/mynexopos/callback',
                             ] ) );
                         } else {
-                            throw new Exception( 'Not supported status detected.' );
+                            throw new Exception( sprintf(
+                                'Unsupported status [%d] for route [%s].',
+                                $response->status(),
+                                $uri
+                            ) );
                         }
                     }
                 }

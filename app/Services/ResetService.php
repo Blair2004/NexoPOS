@@ -153,7 +153,15 @@ class ResetService
                 DB::statement( 'SET FOREIGN_KEY_CHECKS = 1' );
             }
         } else {
-            file_put_contents( database_path( 'database.sqlite' ), '' );
+            DB::statement( 'PRAGMA writable_schema = 1' );
+
+            try {
+                DB::statement( "DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger', 'view')" );
+            } finally {
+                DB::statement( 'PRAGMA writable_schema = 0' );
+            }
+
+            DB::statement( 'VACUUM' );
         }
 
         Artisan::call( 'key:generate', [ '--force' => true ] );

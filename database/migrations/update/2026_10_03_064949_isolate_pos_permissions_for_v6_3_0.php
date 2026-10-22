@@ -3,7 +3,6 @@
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
-use RuntimeException;
 
 return new class extends Migration
 {
