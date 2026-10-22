@@ -58,7 +58,7 @@ class McpAuthorizationSecurityTest extends TestCase
     public function test_pos_server_requires_mcp_token_ability(): void
     {
         $route = collect( app( 'router' )->getRoutes() )
-            ->first( fn( $route ) => $route->uri() === 'mcp/pos' );
+            ->first( fn( $route ) => $route->uri() === 'mcp/pos' && in_array( 'POST', $route->methods(), true ) );
 
         $this->assertNotNull( $route );
         $this->assertContains(
