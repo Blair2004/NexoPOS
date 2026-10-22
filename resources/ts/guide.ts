@@ -102,7 +102,7 @@ class GuideService {
                 }
             },
             error: error => {
-                nsSnackBar.error( error?.message || __( 'An unexpected error occurred.' ) );
+                // ... most of the time it should be silenced.
             }
         })
     }
