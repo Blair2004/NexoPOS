@@ -90,7 +90,7 @@ class ReportService
         return $todayReport;
     }
 
-    public function computeDashboardMonth( Carbon $todayCarbon ): DashboardMonth
+    public function computeDashboardMonth( ?Carbon $todayCarbon = null ): DashboardMonth
     {
         if ( $todayCarbon === null ) {
             $todayCarbon = $this->dateService->copy()->now();
