@@ -1451,6 +1451,7 @@ class CrudService
          */
         $calledClass = get_called_class();
         $instance = new $calledClass;
+
         $instance->allowedTo( $entry === null ? 'create' : 'update' );
 
         /**

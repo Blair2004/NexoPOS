@@ -8,7 +8,12 @@
             <ns-notice color="error">
                 <template #title>{{ __( 'An Error Has Occurred' ) }}</template>
                 <template #description>
-                    {{  __( 'An unexpected error has occurred while loading the form. Please check the log or contact the support.' ) }}
+                    <template v-if="error && error.message">
+                        {{ error.message }}
+                    </template>
+                    <template v-else>
+                        {{  __( 'An unexpected error has occurred while loading the form. Please check the log or contact the support.' ) }}
+                    </template>
                 </template>
             </ns-notice>
         </div>
@@ -200,6 +205,7 @@ export default {
             hasLoaded: false,
             hasError: false,
             isWatching: false,
+            error: null,
         }
     },
     watch: {
@@ -748,6 +754,7 @@ export default {
                     },
                     error: error => {
                         reject( error );
+                        this.error = error;
                         this.hasError   =   true;
                     }
                 });
