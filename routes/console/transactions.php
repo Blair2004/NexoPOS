@@ -34,7 +34,7 @@ Transaction::recurring()->where( 'active', true )->where( 'occurrence', Transact
 
 Transaction::recurring()->where( 'active', true )->where( 'occurrence', Transaction::OCCURRENCE_X_AFTER_MONTH_STARTS )->get()->each( function ( $transaction ) {
     Schedule::call( function () use ( $transaction ) {
-        if ( now()->copy()->addDays( $transaction->occurrence_value )->isFirstOfMonth() ) {
+        if ( now()->isSameDay( now()->copy()->startOfMonth()->addDays( $transaction->occurrence_value ) ) ) {
             dispatch( new TriggerRecurringTransactionJob( $transaction ) );
         }
     } )->daily();
