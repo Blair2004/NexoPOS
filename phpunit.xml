@@ -46,6 +46,7 @@
       <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="CreateRegisterTest.php">./tests/Feature</directory>
       <directory suffix="CashRegisterActionsTest.php">./tests/Feature</directory>
+      <directory suffix="RegisterSessionAuthorizationTest.php">./tests/Feature</directory>
     </testsuite>
     <testsuite name="Parallel-2">
       <directory suffix="CreateOrderOnRegister.php">./tests/Feature</directory>
