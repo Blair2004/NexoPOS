@@ -100,7 +100,8 @@ class ReportService
         $monthEnds = $todayCarbon->endOfMonth()->toDateTimeString();
 
         $entries = DashboardDay::from( $monthStarts )
-            ->to( $monthEnds );
+            ->to( $monthEnds )
+            ->get();
 
         $dashboardMonth = DashboardMonth::from( $monthStarts )
             ->to( $monthEnds )
@@ -141,7 +142,7 @@ class ReportService
             'total_wasted_goods',
             'total_expenses',
         ] as $field ) {
-            $dashboardMonth->$field = $entries->get()->last()->$field ?? 0;
+            $dashboardMonth->$field = $entries->last()->$field ?? 0;
         }
 
         $dashboardMonth->save();
