@@ -54,7 +54,7 @@
     "rxjs": "^7.8.1",
     "socket.io-client": "^4.8.3",
     "sortablejs": "^1.15.3",
-    "vue": "^3.5.28",
+    "vue": "^3.5.44",
     "vue-chartjs": "^5.3.3",
     "vue-router": "^4.4.3",
     "vuedraggable": "^4.1.0"
