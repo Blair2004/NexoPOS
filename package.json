@@ -47,7 +47,7 @@
     "lodash": "^4.17.23",
     "marked": "^16.4.2",
     "mathjs": "^15.2.0",
-    "moment": "^2.30.1",
+    "moment": "^2.31.0",
     "numeral": "^2.0.6",
     "qrcode": "^1.5.4",
     "qrcode-vue": "^1.2.0",
