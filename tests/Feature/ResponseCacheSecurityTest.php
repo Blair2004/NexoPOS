@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Classes\ModuleRouting;
+use App\Http\Middleware\ClearRequestCacheMiddleware;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Role;
 use App\Models\User;
@@ -10,6 +12,7 @@ use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -26,7 +29,7 @@ class ResponseCacheSecurityTest extends TestCase
 
     public function test_authenticated_dashboard_response_is_not_stored_by_browsers(): void
     {
-        $admin = User::where( 'username', 'admin' )->firstOrFail();
+        $admin = $this->adminUser();
 
         $response = $this->actingAs( $admin )->get( '/dashboard/users/profile' );
 
@@ -37,7 +40,7 @@ class ResponseCacheSecurityTest extends TestCase
 
     public function test_authenticated_api_response_is_not_stored_by_browsers(): void
     {
-        $admin = User::where( 'username', 'admin' )->firstOrFail();
+        $admin = $this->adminUser();
         Sanctum::actingAs( $admin, [ '*' ] );
 
         $response = $this->getJson( '/api/user' );
@@ -45,6 +48,30 @@ class ResponseCacheSecurityTest extends TestCase
         $response->assertOk();
         $this->assertStringContainsString( 'no-store', (string) $response->headers->get( 'Cache-Control' ) );
         $this->assertStringContainsString( 'private', (string) $response->headers->get( 'Cache-Control' ) );
+    }
+
+    public function test_module_web_routes_are_not_stored_by_browsers(): void
+    {
+        $this->assertModuleRouteUsesCacheClearingMiddleware(
+            routeUri: '__test-module-web',
+            expectedUri: '__test-module-web',
+            register: fn ( string $routeFile ) => ModuleRouting::mapModuleWebRoutes( [
+                'namespace' => 'TestModule',
+                'routes-file' => $routeFile,
+            ] ),
+        );
+    }
+
+    public function test_module_api_routes_are_not_stored_by_browsers(): void
+    {
+        $this->assertModuleRouteUsesCacheClearingMiddleware(
+            routeUri: '__test-module-api',
+            expectedUri: 'api/__test-module-api',
+            register: fn ( string $routeFile ) => ModuleRouting::mapModuleApiRoutes( [
+                'namespace' => 'TestModule',
+                'api-file' => $routeFile,
+            ] ),
+        );
     }
 
     public function test_logout_invalidates_and_rotates_the_session(): void
@@ -93,6 +120,33 @@ class ResponseCacheSecurityTest extends TestCase
             UserRoleRelation::where( 'user_id', $user->id )->delete();
             $user->attribute()->delete();
             $user->delete();
+        }
+    }
+
+    private function adminUser(): User
+    {
+        return User::whereRelation( 'roles', 'namespace', Role::ADMIN )->firstOrFail();
+    }
+
+    private function assertModuleRouteUsesCacheClearingMiddleware( string $routeUri, string $expectedUri, callable $register ): void
+    {
+        $routeFile = tempnam( sys_get_temp_dir(), 'pos-module-route-' );
+        file_put_contents( $routeFile, sprintf(
+            '<?php use Illuminate\\Support\\Facades\\Route; Route::get(%s, fn () => "ok");',
+            var_export( $routeUri, true )
+        ) );
+
+        try {
+            $register( $routeFile );
+
+            $route = collect( Route::getRoutes() )->first(
+                fn ( $route ) => $route->uri() === $expectedUri
+            );
+
+            $this->assertNotNull( $route, "Route [{$expectedUri}] was not registered." );
+            $this->assertContains( ClearRequestCacheMiddleware::class, $route->gatherMiddleware() );
+        } finally {
+            unlink( $routeFile );
         }
     }
 
