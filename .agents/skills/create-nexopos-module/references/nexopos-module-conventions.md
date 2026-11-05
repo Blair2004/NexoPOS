@@ -32,6 +32,9 @@ Read only the matching file:
 | Restricted routes | `nexopos-middleware.instructions.md` | `NsRestrictMiddleware::arguments(...)` and server enforcement |
 | Settings/options | `nexopos-options.instructions.md` | Defaults, casting, module key prefixes, validation, secrets |
 | Module tests | [module-testing.md](module-testing.md) | Host bootstrap, module-local tests, PHPUnit runner, database isolation |
+| Multistore compatibility | [multistore-compatibility.md](multistore-compatibility.md) | Store-aware models, migrations, queries, routes, menus, and URLs |
+
+Read [multistore-compatibility.md](multistore-compatibility.md) for every new module and whenever work changes models, migrations, routes, menus, generated URLs, or raw table queries.
 
 Never rely solely on a hidden menu or button for authorization. Enforce access on the server and cover denial in a feature test.
 
