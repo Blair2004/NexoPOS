@@ -37,7 +37,7 @@ export default {
         this.input    =   this.popup.params.input || '';
         this.title    =   this.popup.params.title;
         this.message  =   this.popup.params.message;
-        this.type     =   this.popup.params.type;
+        this.type     =   this.popup.params.type || 'textarea';
 
         /**
          * We need to look for any textarea or input field and focus on it
