@@ -39,6 +39,27 @@ class CategorySearchTest extends TestCase
         ] );
     }
 
+    public function test_category_search_can_exclude_the_category_being_edited(): void
+    {
+        $this->attemptAuthenticate();
+
+        $excludedCategory = ProductCategory::factory()->create();
+        $availableCategory = ProductCategory::factory()->create();
+
+        $response = $this->getJson( '/api/crud/ns.products-categories?' . http_build_query( [
+            'exclude_id' => $excludedCategory->id,
+            'per_page' => 100,
+        ] ) );
+
+        $response->assertOk();
+        $response->assertJsonMissing( [
+            'id' => $excludedCategory->id,
+        ] );
+        $response->assertJsonFragment( [
+            'id' => $availableCategory->id,
+        ] );
+    }
+
     public function test_product_form_uses_crud_category_search_configuration(): void
     {
         $this->attemptAuthenticate();
