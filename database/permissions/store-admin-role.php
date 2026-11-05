@@ -9,6 +9,7 @@ $storeAdmin->namespace = 'nexopos.store.administrator';
 $storeAdmin->locked = true;
 $storeAdmin->description = __( 'Has a control over an entire store of NexoPOS.' );
 $storeAdmin->save();
+$storeAdmin->addPermissions( Permission::includes( '.permissions-access' )->get()->pluck( 'namespace' ) );
 
 $storeAdmin->addPermissions( [ 'read.dashboard' ] );
 $storeAdmin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );

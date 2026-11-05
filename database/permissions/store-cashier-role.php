@@ -10,6 +10,10 @@ $storeCashier->namespace = 'nexopos.store.cashier';
 $storeCashier->locked = true;
 $storeCashier->description = __( 'Has a control over the sale process.' );
 $storeCashier->save();
+$storeCashier->addPermissions( Permission::whereIn( 'namespace', [
+    'create.permissions-access',
+    'delete.permissions-access',
+] )->pluck( 'namespace' ) );
 $storeCashier->addPermissions( [ 'read.dashboard' ] );
 $storeCashier->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
