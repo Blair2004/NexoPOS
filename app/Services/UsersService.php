@@ -498,6 +498,8 @@ class UsersService
                     ], 403 );
                 }
 
+                ns()->restrict( 'create.permissions-access' );
+
                 $access = new PermissionAccess;
                 $access->requester_id = Auth::id();
                 $access->granter_id = 0; // 0 means no granter yet
