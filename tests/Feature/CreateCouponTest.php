@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Coupon;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithCouponTest;
@@ -9,6 +10,73 @@ use Tests\Traits\WithCouponTest;
 class CreateCouponTest extends TestCase
 {
     use WithAuthentication, WithCouponTest;
+
+    public function test_percentage_discount_cannot_exceed_one_hundred_percent()
+    {
+        $this->attemptAuthenticate();
+
+        $couponCount = Coupon::count();
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.coupons', [
+                'name' => 'Invalid Percentage Coupon',
+                'general' => [
+                    'type' => 'percentage_discount',
+                    'code' => 'invalid-percentage-' . uniqid(),
+                    'discount_value' => 101,
+                    'limit_usage' => 10,
+                ],
+            ] );
+
+        $response->assertForbidden()->assertJsonPath( 'status', 'error' );
+        $this->assertSame( $couponCount, Coupon::count() );
+    }
+
+    public function test_limit_usage_cannot_be_negative()
+    {
+        $this->attemptAuthenticate();
+
+        $couponCount = Coupon::count();
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.coupons', [
+                'name' => 'Invalid Usage Coupon',
+                'general' => [
+                    'type' => 'flat_discount',
+                    'code' => 'invalid-usage-' . uniqid(),
+                    'discount_value' => 10,
+                    'limit_usage' => -1,
+                ],
+            ] );
+
+        $response->assertStatus( 422 )
+            ->assertJsonValidationErrors( 'general.limit_usage' );
+
+        $this->assertSame( $couponCount, Coupon::count() );
+    }
+
+    public function test_minimum_cart_value_cannot_exceed_maximum_cart_value()
+    {
+        $this->attemptAuthenticate();
+
+        $couponCount = Coupon::count();
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.coupons', [
+                'name' => 'Invalid Cart Range Coupon',
+                'general' => [
+                    'type' => 'flat_discount',
+                    'code' => 'invalid-range-' . uniqid(),
+                    'discount_value' => 10,
+                    'minimum_cart_value' => 100,
+                    'maximum_cart_value' => 50,
+                    'limit_usage' => 10,
+                ],
+            ] );
+
+        $response->assertForbidden()->assertJsonPath( 'status', 'error' );
+        $this->assertSame( $couponCount, Coupon::count() );
+    }
 
     /**
      * A basic feature test example.

@@ -219,7 +219,8 @@ class CouponCrud extends CrudService
                         FormInput::text(
                             label: __( 'Discount Value' ),
                             name: 'discount_value',
-                            description: __( 'Define the percentage or flat value.' ),
+                            validation: 'nullable|numeric|min:0',
+                            description: __( 'Define the percentage (0-100) or flat value.' ),
                             value: $entry->discount_value ?? '',
                         ),
                         FormInput::datetime(
@@ -231,12 +232,14 @@ class CouponCrud extends CrudService
                         FormInput::number(
                             label: __( 'Minimum Cart Value' ),
                             name: 'minimum_cart_value',
+                            validation: 'nullable|numeric|min:0',
                             description: __( 'What is the minimum value of the cart to make this coupon eligible.' ),
                             value: $entry->minimum_cart_value ?? '',
                         ),
                         FormInput::text(
                             label: __( 'Maximum Cart Value' ),
                             name: 'maximum_cart_value',
+                            validation: 'nullable|numeric|min:0',
                             description: __( 'The value above which the current coupon can\'t apply.' ),
                             value: $entry->maximum_cart_value ?? '',
                         ),
@@ -255,7 +258,8 @@ class CouponCrud extends CrudService
                         FormInput::number(
                             label: __( 'Limit Usage' ),
                             name: 'limit_usage',
-                            description: __( 'Define how many time a coupons can be redeemed.' ),
+                            validation: 'nullable|integer|min:0',
+                            description: __( 'Define how many time a coupons can be redeemed. Set to "0" for unlimited usage.' ),
                             value: $entry->limit_usage ?? '',
                         ),
                     )
@@ -391,10 +395,32 @@ class CouponCrud extends CrudService
     }
 
     /**
+     * Validates invariants that depend on several coupon fields.
+     */
+    private function validateCouponInvariants( array $inputs ): void
+    {
+        $type = $inputs[ 'type' ] ?? null;
+        $discountValue = (float) ( $inputs[ 'discount_value' ] ?? 0 );
+
+        if ( $type === Coupon::TYPE_PERCENTAGE && $discountValue > 100 ) {
+            throw new NotAllowedException( __( 'A percentage discount coupon cannot exceed 100%.' ) );
+        }
+
+        $minimumCartValue = (float) ( $inputs[ 'minimum_cart_value' ] ?? 0 );
+        $maximumCartValue = (float) ( $inputs[ 'maximum_cart_value' ] ?? 0 );
+
+        if ( $maximumCartValue > 0 && $minimumCartValue > $maximumCartValue ) {
+            throw new NotAllowedException( __( 'The minimum cart value cannot be greater than the maximum cart value.' ) );
+        }
+    }
+
+    /**
      * Before saving a record
      */
     public function beforePost( array $inputs ): array
     {
+        $this->validateCouponInvariants( $inputs );
+
         if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
             foreach ( $inputs[ 'products' ] as $product_id ) {
                 $product = Product::find( $product_id );
@@ -494,6 +520,8 @@ class CouponCrud extends CrudService
      */
     public function beforePut( array $inputs, $entry ): array
     {
+        $this->validateCouponInvariants( $inputs );
+
         foreach ( $inputs[ 'products' ] ?? [] as $product_id ) {
             $product = Product::find( $product_id );
             if ( ! $product instanceof Product ) {
