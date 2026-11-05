@@ -9,6 +9,7 @@ $admin->namespace = 'admin';
 $admin->locked = true;
 $admin->description = __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
 $admin->save();
+$admin->addPermissions( Permission::includes( '.permissions-access' )->get()->pluck( 'namespace' ) );
 $admin->addPermissions( [
     'create.users',
     'read.users',

@@ -8,6 +8,8 @@ use App\Models\PermissionAccess;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class PermissionAccessCrud extends CrudService
@@ -52,9 +54,9 @@ class PermissionAccessCrud extends CrudService
      */
     protected $permissions = [
         'create' => false,
-        'read' => true,
+        'read' => 'read.permissions-access',
         'update' => false,
-        'delete' => true,
+        'delete' => 'delete.permissions-access',
     ];
 
     /**
@@ -176,7 +178,7 @@ class PermissionAccessCrud extends CrudService
      */
     public function getForm( ?PermissionAccess $entry = null ): array
     {
-        return [];
+        return [ 'tabs' => [] ];
     }
 
     /**
@@ -260,7 +262,13 @@ class PermissionAccessCrud extends CrudService
     public function beforeDelete( $identifier, $id, $model ): void
     {
         if ( $identifier == self::IDENTIFIER ) {
-            //
+            if ( ns()->allowedTo( 'delete-all.permissions-access' ) ) {
+                return;
+            }
+
+            if ( (int) $model->requester_id !== (int) Auth::id() || $model->status !== PermissionAccess::PENDING ) {
+                throw new NotAllowedException( __( 'You can only delete your own pending permission requests.' ) );
+            }
         }
     }
 
@@ -344,29 +352,31 @@ class PermissionAccessCrud extends CrudService
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
-            /**
-             * Will control if the user has the permissoin to do that.
-             */
-            if ( $this->permissions['delete'] !== false ) {
-                ns()->restrict( $this->permissions['delete'] );
-            } else {
-                throw new NotAllowedException;
-            }
+            $this->allowedTo( 'delete' );
 
             $status = [
                 'success' => 0,
                 'error' => 0,
             ];
 
-            foreach ( $request->input( 'entries' ) as $id ) {
-                $entity = $this->model::find( $id );
-                if ( $entity instanceof PermissionAccess ) {
+            DB::transaction( function () use ( $request, &$status ): void {
+                $entries = [];
+
+                foreach ( array_unique( $request->input( 'entries', [] ) ) as $id ) {
+                    $entity = $this->model::whereKey( $id )->lockForUpdate()->first();
+                    if ( $entity instanceof PermissionAccess ) {
+                        $this->beforeDelete( self::IDENTIFIER, $id, $entity );
+                        $entries[] = $entity;
+                    } else {
+                        $status['error']++;
+                    }
+                }
+
+                foreach ( $entries as $entity ) {
                     $entity->delete();
                     $status['success']++;
-                } else {
-                    $status['error']++;
                 }
-            }
+            } );
 
             return $status;
         }

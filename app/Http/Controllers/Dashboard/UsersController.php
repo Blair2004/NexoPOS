@@ -336,6 +336,8 @@ class UsersController extends DashboardController
 
     public function approveAccess( Request $request, $id )
     {
+        ns()->restrict( 'update.permissions-access' );
+
         $access = PermissionAccess::with( 'perm' )->find( $id );
 
         /**
