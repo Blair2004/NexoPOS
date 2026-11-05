@@ -29,8 +29,9 @@ Build modules that match the current repository rather than relying on generic L
 10. **Any dashboard Vue page or UI under `#dashboard-content`:** read [references/dashboard-vue-mounting.md](references/dashboard-vue-mounting.md) first. Nested `createApp()` there breaks reactivity.
 11. For a settings-managed external font or reusable asset registry, read [references/module-font-registries.md](references/module-font-registries.md).
 12. For module tests or module PHPUnit configuration, read [references/module-testing.md](references/module-testing.md).
-13. **Custom fields under a cart product line:** `ns-pos-product-row-components` — not raw HTML.
-14. **Once-per-line money (room, setup fee):** `ns-pos-product-line-extra` — not unit price × qty.
+13. **Multistore compatibility (mandatory):** for new modules, or any work touching module models, migrations, routes, menus, generated URLs, or raw table queries, read [references/multistore-compatibility.md](references/multistore-compatibility.md).
+14. **Custom fields under a cart product line:** `ns-pos-product-row-components` — not raw HTML.
+15. **Once-per-line money (room, setup fee):** `ns-pos-product-line-extra` — not unit price × qty.
 
 ## Master POS extensions
 
@@ -165,6 +166,7 @@ Keep business logic out of controllers and listeners when it warrants a service.
 
 - Keep `config.xml`, the module directory, the main module class, PHP namespaces, view namespace, translation namespace, and asset namespace consistent.
 - Use PascalCase for the module namespace and a module-specific lowercase prefix for tables, routes, option keys, and permissions.
+- Keep module storage, routes, menu links, and generated URLs compatible with Multistore. Follow [references/multistore-compatibility.md](references/multistore-compatibility.md); in particular, use `NsModel`, `App\Classes\Schema`, dedicated store routes, and NexoPOS route/URL helpers.
 - Always wrap module routes with `SubstituteBindings::class`; NexoPOS route discovery does not apply this middleware automatically. Import `Illuminate\Routing\Middleware\SubstituteBindings` and include it in the route group middleware array for both `Routes/api.php` and `Routes/web.php`:
 
 ```php
@@ -200,6 +202,16 @@ Route::middleware([
 - **Dashboard widgets:** declare the suggested `1x1`–`3x5` footprint and an intentional strict/restricted/unrestricted policy; pass the `widget` prop; provide `widget-handle` and `onRemove`; and place `ns-widget-layout-selector` inside the widget template only when sizing should be exposed. Preserve `WidgetService::DEFAULT_WIDGET_ORDER` packing when core footprints change.
 
 ## Handle frontend assets correctly
+
+### Make blocked actions understandable
+
+Do not leave an important action disabled without explaining the unmet prerequisite. A disabled control does not communicate whether the user must sign in, select an item, complete a field, wait for loading, or lacks permission.
+
+- Prefer an enabled action that explains the prerequisite on click with a snackbar, field-level message, or navigation to the required step.
+- When the next step is unambiguous, change the action label to state it, such as `Select a service to find times` or `Sign in to continue`.
+- Disable controls only for states where interaction is unsafe or meaningless, such as an in-flight submission. If a control must remain disabled, place a concise visible explanation nearby.
+- Derive the message from the actual blocking condition; do not guess that authentication is required when guest access or another prerequisite applies.
+- Cover blocked-action behavior in the relevant frontend or source-contract test.
 
 Load module assets from Blade with paths relative to the module root and no leading slash. On dashboard pages, load the standalone CSS entry in the header and load the Vue registration script in the footer inject before `app-init`:
 
