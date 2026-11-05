@@ -124,6 +124,28 @@ class PermissionAccessAuthorizationTest extends TestCase
         $this->assertNotNull( $foreign->fresh() );
     }
 
+    public function test_bulk_delete_requires_delete_permission_in_addition_to_read(): void
+    {
+        $role = Role::namespace( Role::STORECASHIER );
+        $role->addPermissions( 'read.permissions-access' );
+        $role->removePermissions( 'delete.permissions-access' );
+        $access = $this->access( $this->cashier );
+        Sanctum::actingAs( $this->cashier );
+
+        $this->postJson( '/api/crud/ns.permissions-access/bulk-actions', [
+            'action' => 'delete_selected', 'entries' => [$access->id],
+        ] )->assertForbidden();
+        $this->assertNotNull( $access->fresh() );
+    }
+
+    public function test_administrator_delete_permission_is_visible_in_the_permission_manager_api(): void
+    {
+        Sanctum::actingAs( $this->admin );
+        $this->getJson( '/api/users/permissions' )->assertOk()
+            ->assertJsonFragment( ['namespace' => 'delete.permissions-access'] )
+            ->assertJsonFragment( ['namespace' => 'delete-all.permissions-access'] );
+    }
+
     #[DataProvider( 'administratorRoles' )]
     public function test_administrators_can_read_and_delete_other_users_completed_requests( string $role ): void
     {
