@@ -262,8 +262,6 @@ class PermissionAccessCrud extends CrudService
     public function beforeDelete( $identifier, $id, $model ): void
     {
         if ( $identifier == self::IDENTIFIER ) {
-            ns()->restrict( 'delete.permissions-access' );
-
             if ( ns()->allowedTo( 'delete-all.permissions-access' ) ) {
                 return;
             }
@@ -354,14 +352,7 @@ class PermissionAccessCrud extends CrudService
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
-            /**
-             * Will control if the user has the permissoin to do that.
-             */
-            if ( $this->permissions['delete'] !== false ) {
-                ns()->restrict( $this->permissions['delete'] );
-            } else {
-                throw new NotAllowedException;
-            }
+            $this->allowedTo( 'delete' );
 
             $status = [
                 'success' => 0,
