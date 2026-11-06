@@ -24,6 +24,7 @@
       <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
       <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
       <directory suffix="AuthenticationTest.php">./tests/Feature</directory>
+      <directory suffix="RecurringTransactionMonthScheduleTest.php">./tests/Feature</directory>
     </testsuite>
     <testsuite name="Sequential-2">
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
