@@ -287,6 +287,7 @@ class Order extends NsModel
                     'total_purchase_price',
                     'total_price_gross',
                     'discount',
+                    'tax_value',
                 ] );
 
                 if ( in_array( $stringified, $keys ) ) {

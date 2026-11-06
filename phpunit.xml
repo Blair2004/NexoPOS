@@ -60,6 +60,7 @@
       <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="DeletingOrderTest.php">./tests/Feature</directory>
       <directory suffix="CombiningProductsTest.php">./tests/Feature</directory>
+      <directory suffix="InvoiceDocumentTest.php">./tests/Feature</directory>
       <directory suffix="ComputeTaxesFromSales.php">./tests/Feature</directory>
       <directory suffix="CanSeeReportsTest.php">./tests/Feature</directory>
       <directory suffix="CustomerRouteTest.php">./tests/Feature</directory>
