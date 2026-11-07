@@ -712,12 +712,39 @@ class OrdersService
 
             if ( $unitQuantity instanceof ProductUnitQuantity ) {
                 $mode = $product['mode'] ?? 'normal';
-                $canonicalPrice = match ( $mode ) {
-                    'wholesale' => $unitQuantity->wholesale_price_edit,
-                    default => $unitQuantity->sale_price_edit,
+
+                /**
+                 * A price is "canonical" when it matches one of the
+                 * prices POS itself computes for the product: the
+                 * editable base price (sale_price_edit) or the gross /
+                 * net price derived from it (sale_price_gross /
+                 * sale_price_net). POS sends the gross or net price as
+                 * unit_price (see PosService::getSalePrice() and
+                 * QrOrderController::resolveSalePrice()), so comparing
+                 * only against sale_price_edit wrongly flagged every
+                 * taxed product as a custom-priced product. For a
+                 * guest (QR order) that meant
+                 * NotEnoughPermissionException whenever the
+                 * product-price action was restricted, even though the
+                 * guest never chose a price. Only a price matching
+                 * none of the canonical prices still requires the
+                 * product-price permission. The price the customer
+                 * pays is unchanged by this fix.
+                 */
+                $canonicalPrices = match ( $mode ) {
+                    'wholesale' => [
+                        $unitQuantity->wholesale_price_edit,
+                        $unitQuantity->wholesale_price_gross,
+                        $unitQuantity->wholesale_price_net,
+                    ],
+                    default => [
+                        $unitQuantity->sale_price_edit,
+                        $unitQuantity->sale_price_gross,
+                        $unitQuantity->sale_price_net,
+                    ],
                 };
 
-                if ( $mode === 'custom' || ! $this->pricesMatch( $product['unit_price'] ?? null, $canonicalPrice ) ) {
+                if ( $mode === 'custom' || ! $this->pricesMatchAny( $product['unit_price'] ?? null, $canonicalPrices ) ) {
                     $this->__restrictPosAction( 'nexopos.cart.product-price' );
                 }
 
@@ -750,6 +777,17 @@ class OrdersService
         return is_numeric( $submittedPrice )
             && is_numeric( $canonicalPrice )
             && abs( (float) $submittedPrice - (float) $canonicalPrice ) < 0.00001;
+    }
+
+    private function pricesMatchAny( mixed $submittedPrice, array $canonicalPrices ): bool
+    {
+        foreach ( $canonicalPrices as $canonicalPrice ) {
+            if ( $this->pricesMatch( $submittedPrice, $canonicalPrice ) ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function hasAmount( mixed $amount ): bool

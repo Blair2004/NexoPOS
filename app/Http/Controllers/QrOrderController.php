@@ -40,10 +40,17 @@ use App\Services\NotificationService;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class QrOrderController extends Controller
 {
+    /**
+     * Tiền tố tiêu đề chỉ đơn QR mới có (đặt trong store()).
+     * Dùng làm dấu hiệu để trang trạng thái công khai chỉ tra cứu
+     * được đơn QR, không tra cứu được đơn POS.
+     */
+    public const QR_TITLE_PREFIX = 'QR — ';
     public function __construct(
         private OrdersService $ordersService,
         private NotificationService $notificationService
@@ -297,7 +304,14 @@ class QrOrderController extends Controller
                 'code' => $order->code,
                 'total' => (float) $order->total,
                 'total_formatted' => (string) ns()->currency->define( $order->total ),
-                'status_url' => route( 'ns.qr-order.status', [ 'code' => $order->code ] ),
+                /**
+                 * Link trạng thái có chữ ký (signed URL): mã đơn dạng
+                 * yymmdd-NNN rất dễ đoán nên không thể để link công khai
+                 * dạng /dat-mon/don/{code}. Route trạng thái có
+                 * middleware 'signed' nên link không có chữ ký hợp lệ
+                 * sẽ bị từ chối.
+                 */
+                'status_url' => URL::signedRoute( 'ns.qr-order.status', [ 'code' => $order->code ] ),
             ],
         ], 201 );
     }
@@ -305,10 +319,18 @@ class QrOrderController extends Controller
     /**
      * Trang tra cứu trạng thái đơn theo mã (công khai, chỉ hiện trạng
      * thái + món + tổng tiền, không lộ số điện thoại của khách).
+     * Chỉ tra cứu được đơn QR: đơn QR luôn có tiêu đề bắt đầu bằng
+     * "QR — " (chỉ store() đặt tiêu đề này). Route có middleware
+     * 'signed' + throttle nên không thể liệt kê đơn bằng cách đoán
+     * mã yymmdd-NNN. Ghi chú của đơn (chứa tên/SĐT/địa chỉ) không
+     * bao giờ hiển thị ở trang này.
      */
     public function show( string $code )
     {
-        $order = Order::with( 'products' )->where( 'code', $code )->first();
+        $order = Order::with( 'products' )
+            ->where( 'code', $code )
+            ->where( 'title', 'like', self::QR_TITLE_PREFIX . '%' )
+            ->first();
 
         if ( ! $order instanceof Order ) {
             abort( 404, __( 'Order not found.' ) );
@@ -349,14 +371,12 @@ class QrOrderController extends Controller
         $order = null;
 
         if ( ! empty( $validated[ 'order_code' ] ) ) {
+            /**
+             * Không tiết lộ đơn có tồn tại hay không: mã sai chỉ đơn
+             * giản là không gắn mã đơn vào thông báo, vẫn trả thành
+             * công như thường (tránh làm oracle để liệt kê mã đơn).
+             */
             $order = Order::where( 'code', $validated[ 'order_code' ] )->first();
-
-            if ( ! $order instanceof Order ) {
-                return response()->json( [
-                    'status' => 'error',
-                    'message' => __( 'Order not found.' ),
-                ], 422 );
-            }
         }
 
         $where = [];
@@ -385,6 +405,9 @@ class QrOrderController extends Controller
     /**
      * Giá bán của POS: VAT tắt → sale_price; VAT bật → gross/net theo
      * cài đặt ns_pos_prefered_price. Giống hệt PosService::getSalePrice().
+     * Đây là giá chuẩn của POS (không phải giá khách tự sửa), nên
+     * OrdersService::__checkPosActionPermissions() chấp nhận nó mà
+     * không yêu cầu quyền nexopos.cart.product-price.
      */
     private function resolveSalePrice( ProductUnitQuantity $unitQuantity ): float
     {

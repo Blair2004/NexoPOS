@@ -17,8 +17,13 @@ Route::prefix( 'dat-mon' )->group( function () {
         ->where( 'table', '[A-Za-z0-9\-]{1,20}' )
         ->name( 'ns.qr-order.table-menu' );
 
+    /**
+     * Trang trạng thái đơn: link có chữ ký (signed URL do store()
+     * tạo) + throttle, vì mã đơn dạng yymmdd-NNN rất dễ đoán.
+     */
     Route::get( '/don/{code}', [ QrOrderController::class, 'show' ] )
         ->where( 'code', '[A-Za-z0-9\-]+' )
+        ->middleware( [ 'signed', 'throttle:30,1' ] )
         ->name( 'ns.qr-order.status' );
 
     Route::post( '/', [ QrOrderController::class, 'store' ] )

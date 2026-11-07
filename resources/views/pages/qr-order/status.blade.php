@@ -43,9 +43,11 @@
             @endforeach
         </div>
         <div class="total"><span>{{ __( 'Total' ) }}</span><span>{{ ns()->currency->define( $order->total ) }}</span></div>
-        @if( $order->note )
-            <div class="row"><span>{{ __( 'Note' ) }}</span><span>{{ $order->note }}</span></div>
-        @endif
+        {{--
+            Không hiển thị $order->note ở trang công khai này: ghi chú
+            của đơn QR chứa tên, số điện thoại và địa chỉ giao hàng
+            của khách. Nhân viên xem ghi chú trong Dashboard/POS.
+        --}}
     </div>
     <a class="back" href="{{ route( 'ns.qr-order.menu' ) }}">← {{ __( 'Back to menu' ) }}</a>
 </div>
