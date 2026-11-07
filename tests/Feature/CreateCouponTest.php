@@ -11,7 +11,7 @@ class CreateCouponTest extends TestCase
 {
     use WithAuthentication, WithCouponTest;
 
-    public function test_percentage_discount_cannot_exceed_one_hundred_percent()
+    public function test_percentage_discount_cannot_exceed_one_hundred_percent(): void
     {
         $this->attemptAuthenticate();
 
@@ -32,7 +32,7 @@ class CreateCouponTest extends TestCase
         $this->assertSame( $couponCount, Coupon::count() );
     }
 
-    public function test_limit_usage_cannot_be_negative()
+    public function test_limit_usage_cannot_be_negative(): void
     {
         $this->attemptAuthenticate();
 
@@ -55,7 +55,7 @@ class CreateCouponTest extends TestCase
         $this->assertSame( $couponCount, Coupon::count() );
     }
 
-    public function test_minimum_cart_value_cannot_exceed_maximum_cart_value()
+    public function test_minimum_cart_value_cannot_exceed_maximum_cart_value(): void
     {
         $this->attemptAuthenticate();
 
@@ -75,6 +75,39 @@ class CreateCouponTest extends TestCase
             ] );
 
         $response->assertForbidden()->assertJsonPath( 'status', 'error' );
+        $this->assertSame( $couponCount, Coupon::count() );
+    }
+
+    public function test_flattened_negative_values_are_rejected(): void
+    {
+        $this->attemptAuthenticate();
+
+        $couponCount = Coupon::count();
+        $negativeValues = [
+            'discount_value' => -5,
+            'minimum_cart_value' => -1,
+            'maximum_cart_value' => -1,
+            'limit_usage' => -1,
+        ];
+
+        foreach ( $negativeValues as $field => $value ) {
+            $response = $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/crud/ns.coupons', [
+                    'name' => 'Invalid Negative Coupon ' . $field,
+                    $field => $value,
+                    'general' => [
+                        'type' => 'flat_discount',
+                        'code' => 'invalid-negative-' . $field . '-' . uniqid(),
+                        'discount_value' => 10,
+                        'minimum_cart_value' => 0,
+                        'maximum_cart_value' => 0,
+                        'limit_usage' => 10,
+                    ],
+                ] );
+
+            $response->assertForbidden()->assertJsonPath( 'status', 'error' );
+        }
+
         $this->assertSame( $couponCount, Coupon::count() );
     }
 
