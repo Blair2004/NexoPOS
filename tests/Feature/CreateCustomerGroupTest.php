@@ -22,7 +22,7 @@ class CreateCustomerGroupTest extends TestCase
         $this->attemptCreateCustomerGroup();
     }
 
-    public function test_minimal_credit_payment_must_be_a_percentage()
+    public function test_minimal_credit_payment_must_be_a_percentage(): void
     {
         $this->attemptAuthenticate();
 
@@ -33,6 +33,26 @@ class CreateCustomerGroupTest extends TestCase
                 'name' => 'Invalid Credit Group',
                 'general' => [
                     'minimal_credit_payment' => 12000000,
+                ],
+            ] );
+
+        $response->assertStatus( 422 )
+            ->assertJsonValidationErrors( 'general.minimal_credit_payment' );
+
+        $this->assertSame( $groupCount, CustomerGroup::count() );
+    }
+
+    public function test_minimal_credit_payment_cannot_be_negative(): void
+    {
+        $this->attemptAuthenticate();
+
+        $groupCount = CustomerGroup::count();
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.customers-groups', [
+                'name' => 'Negative Credit Group',
+                'general' => [
+                    'minimal_credit_payment' => -1,
                 ],
             ] );
 

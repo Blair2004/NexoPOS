@@ -159,7 +159,7 @@ class CustomerGroupCrud extends CrudService
                             'name' => 'minimal_credit_payment',
                             'label' => __( 'Minimum Credit Amount' ),
                             'value' => $entry->minimal_credit_payment ?? '',
-                            'validation' => 'nullable|numeric|min:0|max:100',
+                            'validation' => 'nullable|numeric|gte:0|lte:100',
                             'description' => __( 'Determine in percentage, what is the first minimum credit payment made by all customers on the group, in case of credit order. If left to "0", no minimal credit amount is required.' ),
                         ], [
                             'type' => 'textarea',
