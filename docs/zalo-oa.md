@@ -37,12 +37,40 @@ xác nhận đơn, trạng thái món, hóa đơn và khuyến mãi cho khách q
 > Không bao giờ ghi access token thật vào code hay commit lên Git. Token
 > chỉ nằm trong file `.env` trên máy chủ.
 
+## Xác minh chữ ký webhook
+
+Zalo ký mọi sự kiện webhook bằng header `X-ZEvent-Signature: mac=<hex>`,
+với `mac = sha256(appId + rawBody + timestamp + OAsecretKey)` (rawBody là
+body JSON gốc, timestamp là trường `timestamp` trong body). Endpoint
+`/api/zalo/webhook` kiểm tra chữ ký này trước khi xử lý sự kiện
+(`ZaloOaService::verifyWebhookSignature()`), dùng `ZALO_OA_APP_ID` (ID ứng
+dụng trên developers.zalo.me — khác với `ZALO_OA_ID` là ID của OA) và
+`ZALO_OA_SECRET`.
+
+**Mức độ kiểm chứng của công thức:** công thức này được nhiều nguồn độc lập
+xác nhận, kể cả tài liệu Zalo được trích dẫn lại, nhưng chưa được kiểm
+chứng bằng một sự kiện có chữ ký thật từ Zalo. Vì vậy chế độ cưỡng chế
+mặc định **tắt**: khi chữ ký sai, hệ thống chỉ ghi log cảnh báo
+(`Zalo OA webhook: signature verification failed.`) mà vẫn xử lý sự kiện
+như trước. Cách bật cưỡng chế an toàn:
+
+1. Điền đủ `ZALO_OA_APP_ID` và `ZALO_OA_SECRET` trong `.env`, giữ
+   `ZALO_OA_WEBHOOK_ENFORCE=false`.
+2. Gửi một sự kiện thử từ trang quản trị OA (hoặc bấm theo dõi OA) rồi xem
+   log: nếu thấy `Zalo OA webhook: signature verified.` thì công thức đã
+   đúng với OA của bạn.
+3. Đặt `ZALO_OA_WEBHOOK_ENFORCE=true`, chạy `php artisan config:clear`.
+   Từ lúc này, sự kiện không có chữ ký hoặc sai chữ ký sẽ bị trả 401 và
+   không được xử lý; sự kiện thiếu secret cấu hình cũng bị trả 401.
+
 ## Cấu hình (.env)
 
 ```env
 ZALO_OA_ENABLED=true
 ZALO_OA_DRY_RUN=true        # true = chỉ ghi log, không gửi thật
 ZALO_OA_ID=123456789012345
+ZALO_OA_APP_ID=1234567890123456789
+ZALO_OA_WEBHOOK_ENFORCE=false   # true = trả 401 khi chữ ký webhook sai (chỉ bật sau khi đã kiểm chứng, xem bên dưới)
 ZALO_OA_ACCESS_TOKEN=<token lấy ở bước trên>
 ZALO_OA_SECRET=             # dự phòng, hiện chưa dùng để xác thực webhook
 ZALO_OA_API_BASE_URL=https://openapi.zalo.me

@@ -45,5 +45,7 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
  * Zalo OA webhook: công khai (không cần auth:sanctum) vì Zalo gọi từ máy
  * chủ của họ. Route chỉ ghi log sự kiện `follow` / tin nhắn và không bao
  * giờ tạo hay sửa đơn hàng, nên không đặt trong nhóm InstalledStateMiddleware.
+ * Chữ ký webhook được xác minh trong ZaloWebhookController (xem
+ * routes/api/zalo.php và docs/zalo-oa.md).
  */
 include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'zalo.php';

@@ -36,9 +36,84 @@ class ZaloOaService
      */
     public const MESSAGE_ENDPOINT = '/v3.0/oa/message/cs';
 
+    /**
+     * Header chữ ký của Zalo webhook.
+     */
+    public const WEBHOOK_SIGNATURE_HEADER = 'X-ZEvent-Signature';
+
     public function isEnabled(): bool
     {
         return (bool) config( 'services.zalo.enabled', false );
+    }
+
+    /**
+     * Có bắt buộc xác minh chữ ký webhook không.
+     *
+     * Mặc định TẮT (log-only): công thức chữ ký
+     * sha256(appId + rawBody + timestamp + secret) được nhiều nguồn
+     * độc lập xác nhận (kể cả tài liệu Zalo được DeepWiki trích dẫn),
+     * nhưng chưa được kiểm chứng bằng một sự kiện có chữ ký thật từ
+     * Zalo. Bật cưỡng chế khi công thức còn sai sẽ làm Zalo trả 401
+     * cho 100% sự kiện thật, nên chỉ bật
+     * ZALO_OA_WEBHOOK_ENFORCE=true sau khi đã thấy log
+     * "signature verified" từ một sự kiện thật.
+     */
+    public function isWebhookEnforcementEnabled(): bool
+    {
+        return (bool) config( 'services.zalo.webhook_enforce', false );
+    }
+
+    /**
+     * Xác minh chữ ký webhook của Zalo OA.
+     *
+     * Công thức (theo tài liệu Zalo, xem docs/zalo-oa.md):
+     *   mac = sha256(appId + rawBody + timestamp + OAsecretKey)
+     * với rawBody là body JSON gốc (không serialize lại), timestamp
+     * là trường `timestamp` trong body, header mang dạng `mac=<hex>`.
+     * Không bao giờ log secret hay MAC kỳ vọng.
+     *
+     * Trả về [ 'valid' => bool, 'reason' => string ] với reason là
+     * một trong: ok, secret_not_configured, signature_missing,
+     * invalid_json, app_id_or_timestamp_missing, signature_mismatch.
+     */
+    public function verifyWebhookSignature( string $rawBody, ?string $signatureHeader ): array
+    {
+        $secret = (string) config( 'services.zalo.secret', '' );
+
+        if ( $secret === '' ) {
+            return [ 'valid' => false, 'reason' => 'secret_not_configured' ];
+        }
+
+        if ( $signatureHeader === null || trim( $signatureHeader ) === '' ) {
+            return [ 'valid' => false, 'reason' => 'signature_missing' ];
+        }
+
+        $payload = json_decode( $rawBody, true );
+
+        if ( ! is_array( $payload ) ) {
+            return [ 'valid' => false, 'reason' => 'invalid_json' ];
+        }
+
+        $appId = (string) ( $payload[ 'app_id' ] ?? $payload[ 'data' ][ 'app_id' ] ?? config( 'services.zalo.app_id', '' ) );
+        $timestamp = (string) ( $payload[ 'timestamp' ] ?? $payload[ 'data' ][ 'timestamp' ] ?? '' );
+
+        if ( $appId === '' || $timestamp === '' ) {
+            return [ 'valid' => false, 'reason' => 'app_id_or_timestamp_missing' ];
+        }
+
+        $provided = trim( (string) preg_replace( '/^mac\s*=\s*/i', '', trim( $signatureHeader ) ) );
+
+        if ( $provided === '' ) {
+            return [ 'valid' => false, 'reason' => 'signature_mismatch' ];
+        }
+
+        $expected = hash( 'sha256', $appId . $rawBody . $timestamp . $secret );
+
+        if ( ! hash_equals( $expected, strtolower( $provided ) ) ) {
+            return [ 'valid' => false, 'reason' => 'signature_mismatch' ];
+        }
+
+        return [ 'valid' => true, 'reason' => 'ok' ];
     }
 
     public function isDryRun(): bool
@@ -132,9 +207,9 @@ class ZaloOaService
         $name = $customer ? $this->getCustomerName( $customer ) : __( 'Customer' );
 
         return implode( "\n", [
-            __( 'Hello %s, your order %s has been confirmed.', [ $name, $order->code ] ),
-            __( 'Total: %s', [ $this->formatAmount( (float) $order->total ) ] ),
-            __( 'Payment status: %s', [ $this->getPaymentStatusLabel( (string) $order->payment_status ) ] ),
+            sprintf( __( 'Hello %s, your order %s has been confirmed.' ), $name, $order->code ),
+            sprintf( __( 'Total: %s' ), $this->formatAmount( (float) $order->total ) ),
+            sprintf( __( 'Payment status: %s' ), $this->getPaymentStatusLabel( (string) $order->payment_status ) ),
             __( 'Thank you for shopping with us!' ),
         ] );
     }
@@ -147,8 +222,8 @@ class ZaloOaService
         $statusLabel = $this->getProcessStatusLabel( $status ?? (string) $order->process_status );
 
         return implode( "\n", [
-            __( 'Your order %s is now %s.', [ $order->code, $statusLabel ] ),
-            __( 'Total: %s', [ $this->formatAmount( (float) $order->total ) ] ),
+            sprintf( __( 'Your order %s is now %s.' ), $order->code, $statusLabel ),
+            sprintf( __( 'Total: %s' ), $this->formatAmount( (float) $order->total ) ),
             __( 'Thank you for shopping with us!' ),
         ] );
     }
@@ -159,10 +234,11 @@ class ZaloOaService
     public function buildPaymentMessage( Order $order ): string
     {
         return implode( "\n", [
-            __( 'Your payment of %s for order %s has been received.', [
+            sprintf(
+                __( 'Your payment of %s for order %s has been received.' ),
                 $this->formatAmount( (float) $order->total ),
-                $order->code,
-            ] ),
+                $order->code
+            ),
             __( 'Thank you for shopping with us!' ),
         ] );
     }
@@ -173,10 +249,11 @@ class ZaloOaService
     public function buildInvoiceMessage( Order $order ): string
     {
         return implode( "\n", [
-            __( 'Your invoice for order %s is ready. Total: %s.', [
+            sprintf(
+                __( 'Your invoice for order %s is ready. Total: %s.' ),
                 $order->code,
-                $this->formatAmount( (float) $order->total ),
-            ] ),
+                $this->formatAmount( (float) $order->total )
+            ),
             __( 'Thank you for shopping with us!' ),
         ] );
     }
@@ -186,10 +263,11 @@ class ZaloOaService
      */
     public function buildPromotionMessage( Customer $customer, string $offer ): string
     {
-        return __( 'Hello %s! We have a special offer for you: %s', [
+        return sprintf(
+            __( 'Hello %s! We have a special offer for you: %s' ),
             $this->getCustomerName( $customer ),
-            $offer,
-        ] );
+            $offer
+        );
     }
 
     /**
@@ -228,7 +306,15 @@ class ZaloOaService
         }
 
         try {
-            $response = Http::withToken( (string) config( 'services.zalo.access_token' ) )
+            /**
+             * Zalo OA OpenAPI đọc token từ header `access_token`,
+             * KHÔNG phải Authorization: Bearer. Dùng withToken()
+             * trước đây gửi sai header nên mọi lần gửi live đều bị
+             * Zalo từ chối (api_error).
+             */
+            $response = Http::withHeaders( [
+                    'access_token' => (string) config( 'services.zalo.access_token' ),
+                ] )
                 ->timeout( (int) config( 'services.zalo.timeout', 10 ) )
                 ->acceptJson()
                 ->post( $this->getApiBaseUrl() . self::MESSAGE_ENDPOINT, [

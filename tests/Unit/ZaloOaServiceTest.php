@@ -49,6 +49,7 @@ class ZaloOaServiceTest extends TestCase
         $this->assertStringContainsString( 'TEST-001', $message );
         $this->assertStringContainsString( 'An Nguyen', $message );
         $this->assertStringContainsString( '150', $message );
+        $this->assertStringNotContainsString( '%s', $message );
     }
 
     public function test_builds_payment_and_invoice_messages(): void
@@ -59,6 +60,8 @@ class ZaloOaServiceTest extends TestCase
         $this->assertStringContainsString( 'TEST-001', $service->buildPaymentMessage( $order ) );
         $this->assertStringContainsString( 'TEST-001', $service->buildInvoiceMessage( $order ) );
         $this->assertStringContainsString( '150', $service->buildInvoiceMessage( $order ) );
+        $this->assertStringNotContainsString( '%s', $service->buildPaymentMessage( $order ) );
+        $this->assertStringNotContainsString( '%s', $service->buildInvoiceMessage( $order ) );
     }
 
     public function test_builds_order_status_message(): void
@@ -67,6 +70,7 @@ class ZaloOaServiceTest extends TestCase
         $message = $service->buildOrderStatusMessage( $this->makeOrder() );
 
         $this->assertStringContainsString( 'TEST-001', $message );
+        $this->assertStringNotContainsString( '%s', $message );
     }
 
     public function test_builds_promotion_message(): void
@@ -78,6 +82,7 @@ class ZaloOaServiceTest extends TestCase
 
         $this->assertStringContainsString( 'An Nguyen', $message );
         $this->assertStringContainsString( 'Giam 20% hom nay', $message );
+        $this->assertStringNotContainsString( '%s', $message );
     }
 
     public function test_dry_run_returns_simulated_result_without_http(): void
@@ -138,7 +143,65 @@ class ZaloOaServiceTest extends TestCase
         Http::assertSent( function ( $request ) {
             return $request->url() === 'https://openapi.zalo.me/v3.0/oa/message/cs'
                 && $request->data()[ 'recipient' ][ 'user_id' ] === 'zalo-user-123'
-                && $request->data()[ 'message' ][ 'text' ] === 'Hello';
+                && $request->data()[ 'message' ][ 'text' ] === 'Hello'
+                && $request->header( 'access_token' ) === [ 'test-access-token' ]
+                && $request->header( 'Authorization' ) === [];
         } );
+    }
+
+    public function test_verify_webhook_signature_accepts_valid_mac(): void
+    {
+        config( [
+            'services.zalo.secret' => 'test-secret',
+            'services.zalo.app_id' => 'test-app-id',
+        ] );
+
+        $rawBody = '{"app_id":"test-app-id","timestamp":"1700000000000","event_name":"follow"}';
+        $mac = hash( 'sha256', 'test-app-id' . $rawBody . '1700000000000' . 'test-secret' );
+
+        $service = new ZaloOaService;
+        $verdict = $service->verifyWebhookSignature( $rawBody, 'mac=' . $mac );
+
+        $this->assertTrue( $verdict[ 'valid' ] );
+        $this->assertSame( 'ok', $verdict[ 'reason' ] );
+    }
+
+    public function test_verify_webhook_signature_rejects_wrong_mac(): void
+    {
+        config( [
+            'services.zalo.secret' => 'test-secret',
+            'services.zalo.app_id' => 'test-app-id',
+        ] );
+
+        $rawBody = '{"app_id":"test-app-id","timestamp":"1700000000000","event_name":"follow"}';
+
+        $service = new ZaloOaService;
+        $verdict = $service->verifyWebhookSignature( $rawBody, 'mac=' . str_repeat( '0', 64 ) );
+
+        $this->assertFalse( $verdict[ 'valid' ] );
+        $this->assertSame( 'signature_mismatch', $verdict[ 'reason' ] );
+    }
+
+    public function test_verify_webhook_signature_rejects_missing_signature_and_secret(): void
+    {
+        config( [
+            'services.zalo.secret' => 'test-secret',
+            'services.zalo.app_id' => 'test-app-id',
+        ] );
+
+        $service = new ZaloOaService;
+        $rawBody = '{"app_id":"test-app-id","timestamp":"1700000000000","event_name":"follow"}';
+
+        $this->assertSame(
+            'signature_missing',
+            $service->verifyWebhookSignature( $rawBody, null )[ 'reason' ]
+        );
+
+        config( [ 'services.zalo.secret' => '' ] );
+
+        $this->assertSame(
+            'secret_not_configured',
+            $service->verifyWebhookSignature( $rawBody, 'mac=abc' )[ 'reason' ]
+        );
     }
 }
