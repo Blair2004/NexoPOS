@@ -61,4 +61,51 @@ class CreateCustomerGroupTest extends TestCase
 
         $this->assertSame( $groupCount, CustomerGroup::count() );
     }
+
+    public function test_flattened_minimal_credit_payment_is_rejected(): void
+    {
+        $this->attemptAuthenticate();
+
+        $groupCount = CustomerGroup::count();
+        $invalidValues = [
+            'over the limit' => 12000000,
+            'negative' => -1,
+        ];
+
+        foreach ( $invalidValues as $label => $value ) {
+            $response = $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/crud/ns.customers-groups', [
+                    'name' => 'Flattened Credit Group ' . $label . ' ' . uniqid(),
+                    'minimal_credit_payment' => $value,
+                    'general' => [
+                        'minimal_credit_payment' => 0,
+                    ],
+                ] );
+
+            $response->assertForbidden()->assertJsonPath( 'status', 'error' );
+        }
+
+        $this->assertSame( $groupCount, CustomerGroup::count() );
+    }
+
+    public function test_flattened_minimal_credit_payment_is_rejected_on_update(): void
+    {
+        $this->attemptAuthenticate();
+
+        $group = $this->attemptCreateCustomerGroup();
+        $originalCreditPayment = $group->minimal_credit_payment;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/crud/ns.customers-groups/' . $group->id, [
+                'name' => $group->name,
+                'minimal_credit_payment' => 12000000,
+                'general' => [
+                    'minimal_credit_payment' => 0,
+                ],
+            ] );
+
+        $response->assertForbidden()->assertJsonPath( 'status', 'error' );
+
+        $this->assertEquals( $originalCreditPayment, $group->fresh()->minimal_credit_payment );
+    }
 }
