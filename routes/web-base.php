@@ -20,6 +20,18 @@ Route::middleware( [ 'web' ] )->group( function () {
     Route::get( '/', Hook::filter( 'ns.welcome', [ HomeController::class, 'welcome' ] ) )->name( 'ns.welcome' );
 } );
 
+/**
+ * QR Order tại bàn + đặt món online (Tính năng 1).
+ * Route công khai, không cần đăng nhập, chỉ yêu cầu app đã cài đặt.
+ */
+Route::middleware( [
+    InstalledStateMiddleware::class,
+    CheckMigrationStatus::class,
+    SubstituteBindings::class,
+] )->group( function () {
+    require dirname( __FILE__ ) . '/web/qr-order.php';
+} );
+
 require dirname( __FILE__ ) . '/intermediate.php';
 
 Route::middleware( [

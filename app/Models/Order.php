@@ -76,6 +76,8 @@ class Order extends NsModel
 
     const TYPE_TAKEAWAY = 'takeaway';
 
+    const TYPE_DINE_IN = 'dine-in';
+
     const PAYMENT_PAID = 'paid';
 
     const PAYMENT_PARTIALLY = 'partially_paid';

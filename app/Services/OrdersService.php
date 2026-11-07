@@ -1702,8 +1702,8 @@ class OrdersService
      */
     public function updateProcessStatus( Order $order ): void
     {
-        if ( in_array( $order->type, [ 'delivery', 'takeaway' ] ) ) {
-            if ( $order->type === 'delivery' ) {
+        if ( in_array( $order->type, [ 'delivery', 'takeaway', 'dine-in' ] ) ) {
+            if ( $order->type === 'delivery' || $order->type === 'dine-in' ) {
                 $order->process_status = 'pending';
             } else {
                 $order->process_status = 'not-available';
@@ -1716,7 +1716,7 @@ class OrdersService
      */
     public function updateDeliveryStatus( Order $order ): void
     {
-        if ( in_array( $order->type, [ 'delivery', 'takeaway' ] ) ) {
+        if ( in_array( $order->type, [ 'delivery', 'takeaway', 'dine-in' ] ) ) {
             if ( $order->type === 'delivery' ) {
                 $order->delivery_status = 'pending';
             } else {
@@ -2591,6 +2591,17 @@ class OrdersService
                 'identifier' => 'delivery',
                 'label' => __( 'Delivery' ),
                 'icon' => '/images/delivery.png',
+                'selected' => false,
+            ],
+            /**
+             * QR order tại bàn (Tính năng 1). Không tự hiện trên POS:
+             * POS chỉ liệt kê các loại có trong option ns_pos_order_types,
+             * chủ cửa hàng bật "Dine In" trong Settings → POS khi cần.
+             */
+            'dine-in' => [
+                'identifier' => 'dine-in',
+                'label' => __( 'Dine In' ),
+                'icon' => '/images/groceries.png',
                 'selected' => false,
             ],
         ] );
