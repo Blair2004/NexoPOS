@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\KitchenController;
 use App\Http\Controllers\Dashboard\OrdersController;
 use App\Http\Middleware\NsRestrictAnyMiddleware;
 use App\Http\Middleware\NsRestrictMiddleware;
@@ -16,3 +17,11 @@ Route::get( '/orders/receipt/{order}', [ OrdersController::class, 'orderReceipt'
 Route::get( '/orders/refund-receipt/{refund}', [ OrdersController::class, 'orderRefundReceipt' ] )->middleware( $orderReadMiddleware )->name( ns()->routeName( 'ns.dashboard.orders-refund-receipt' ) );
 Route::get( '/orders/payment-receipt/{orderPayment}', [ OrdersController::class, 'getOrderPaymentReceipt' ] )->middleware( $orderReadMiddleware )->name( ns()->routeName( 'ns.dashboard.orders-payment-receipt' ) );
 Route::get( '/pos', [ OrdersController::class, 'showPOS' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.pos.access' ) )->name( ns()->routeName( 'ns.dashboard.pos' ) );
+
+/**
+ * Kitchen Display System (KDS) — MVP.
+ * The screen polls the kitchen API; the ticket is a printable
+ * browser page (autoprint opens the system print dialog).
+ */
+Route::get( '/kitchen', [ KitchenController::class, 'showKitchen' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.read.orders' ) )->name( ns()->routeName( 'ns.dashboard.kitchen' ) );
+Route::get( '/orders/{order}/kitchen-ticket/{zone?}', [ KitchenController::class, 'kitchenTicket' ] )->where( 'zone', '[0-9]+' )->middleware( $orderReadMiddleware )->name( ns()->routeName( 'ns.dashboard.orders-kitchen-ticket' ) );

@@ -40,6 +40,7 @@ const nsPaymentTypesReport          =   defineAsyncComponent( () => import( './p
 const nsCustomersStatementReport    =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-customers-statement-report.vue' ) );
 const nsStockAdjustment             =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-stock-adjustment.vue' ) );
 const nsOrderInvoice                =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
+const nsKitchenDisplay              =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-kitchen-display.vue' ) );
 const nsPrintLabel                  =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-print-label.vue' ) );
 const nsTransactionsRules           =   defineAsyncComponent( () => import( './pages/dashboard/transactions/ns-transactions-rules.vue' ) );
 const nsScaleSettingsPreview        =   defineAsyncComponent( () => import( './components/ns-scale-settings-preview.vue' ) );
@@ -91,6 +92,7 @@ const allComponents    =   Object.assign({
 
     nsStockAdjustment,
     nsOrderInvoice,
+    nsKitchenDisplay,
     nsScaleSettingsPreview,
     NsWireLessBarcodeSettingsTab: nsWirelessBarcodeSettingsTab,
     nsMarketplace,

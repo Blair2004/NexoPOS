@@ -18,6 +18,7 @@ class PosSettings extends SettingsPage
         $posSettingsTabs = Hook::filter( 'ns-pos-settings-tabs', [
             'layout' => include ( dirname( __FILE__ ) . '/pos/layout.php' ),
             'printing' => include ( dirname( __FILE__ ) . '/pos/printing.php' ),
+            'kitchen' => include ( dirname( __FILE__ ) . '/pos/kitchen.php' ),
             'registers' => include ( dirname( __FILE__ ) . '/pos/registers.php' ),
             'vat' => include ( dirname( __FILE__ ) . '/pos/vat.php' ),
             'shortcuts' => include ( dirname( __FILE__ ) . '/pos/shortcuts.php' ),

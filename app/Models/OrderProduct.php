@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string  $return_observations
  * @property string  $uuid
  * @property int     $status
+ * @property string  $kitchen_status KDS status: pending, preparing or done. Independent from `status` (sold/refunded).
  * @property Order   $order
  * @property Unit    $unit
  * @property Product $product
@@ -53,6 +54,21 @@ class OrderProduct extends NsModel
     const CONDITION_DAMAGED = 'damaged';
 
     const CONDITION_UNSPOILED = 'unspoiled';
+
+    /**
+     * Kitchen (KDS) statuses. Stored on `kitchen_status`, never on `status`.
+     */
+    const KITCHEN_PENDING = 'pending';
+
+    const KITCHEN_PREPARING = 'preparing';
+
+    const KITCHEN_DONE = 'done';
+
+    const KITCHEN_STATUSES = [
+        self::KITCHEN_PENDING,
+        self::KITCHEN_PREPARING,
+        self::KITCHEN_DONE,
+    ];
 
     protected $table = 'nexopos_' . 'orders_products';
 

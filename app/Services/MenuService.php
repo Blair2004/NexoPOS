@@ -38,6 +38,13 @@ class MenuService
                 href: ns()->url( '/dashboard/pos' ),
             ),
             AsideMenu::menu(
+                label: __( 'Kitchen Display' ),
+                icon: 'la-utensils',
+                identifier: 'kitchen',
+                permissions: [ 'nexopos.read.orders' ],
+                href: ns()->url( '/dashboard/kitchen' ),
+            ),
+            AsideMenu::menu(
                 label: __( 'Orders' ),
                 icon: 'la-list-ol',
                 identifier: 'orders',
