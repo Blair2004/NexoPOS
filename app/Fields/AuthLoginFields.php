@@ -9,6 +9,8 @@ use App\Services\FieldsService;
 
 class AuthLoginFields extends FieldsService
 {
+    public const PUBLIC_ACCESS = true;
+
     /**
      * The unique identifier of the form
      **/

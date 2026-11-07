@@ -125,6 +125,8 @@ class FormsProvider extends ServiceProvider
                      */
                     Hook::addFilter( 'ns.fields', function ( $identifier, $resource = null ) use ( $field, $params ) {
                         if ( $identifier === $field::IDENTIFIER ) {
+                            // Authorize before resolving Eloquent models or executing constructors.
+                            $field::authorizeAccess();
                             $resolved = collect( $params )->map( function ( $param ) use ( $resource, $field ) {
                                 $isBuiltin = $param[ 'isBuiltin' ];
 

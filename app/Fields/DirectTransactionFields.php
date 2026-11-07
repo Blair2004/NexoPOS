@@ -13,6 +13,8 @@ use App\Services\Helper;
 
 class DirectTransactionFields extends FieldsService
 {
+    public const REQUIRED_PERMISSION = 'nexopos.read.transactions';
+
     const IDENTIFIER = Transaction::TYPE_DIRECT;
 
     /**
