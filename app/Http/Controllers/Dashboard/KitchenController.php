@@ -35,6 +35,8 @@ class KitchenController extends DashboardController
      */
     public function showKitchen()
     {
+        $this->ensureEnabled();
+
         return View::make( 'pages.dashboard.orders.kitchen', [
             'title' => __( 'Kitchen Display' ),
             'config' => [
@@ -53,6 +55,8 @@ class KitchenController extends DashboardController
      */
     public function getKitchenOrders( Request $request )
     {
+        $this->ensureEnabled();
+
         $zoneId = $request->query( 'zone' );
 
         return $this->kitchenService->getKitchenOrders(
@@ -65,6 +69,7 @@ class KitchenController extends DashboardController
      */
     public function updateItemStatus( Request $request, OrderProduct $item )
     {
+        $this->ensureEnabled();
         $this->orderAccessService->authorizeOrFail( $request->user(), $item->order );
 
         $request->validate( [
@@ -83,6 +88,7 @@ class KitchenController extends DashboardController
      */
     public function kitchenTicket( Request $request, Order $order, $zone = null )
     {
+        $this->ensureEnabled();
         $this->orderAccessService->authorizeOrFail( $request->user(), $order );
 
         $order->load( 'customer' );
@@ -95,5 +101,16 @@ class KitchenController extends DashboardController
             'zone' => $zoneName ? [ 'id' => $zoneId, 'name' => $zoneName ] : null,
             'title' => sprintf( __( 'Kitchen Ticket — %s' ), $order->code ),
         ] );
+    }
+
+    /**
+     * Cài đặt ns_kds_enabled = "No" thì toàn bộ KDS tắt: màn hình,
+     * API, cập nhật món và phiếu bếp đều trả 404.
+     */
+    private function ensureEnabled(): void
+    {
+        if ( ! $this->kitchenService->isEnabled() ) {
+            abort( 404 );
+        }
     }
 }

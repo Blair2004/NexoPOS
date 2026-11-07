@@ -31,6 +31,10 @@ Nhánh: `viet-hoa` (NexoPOSHH, fork từ Blair2004/NexoPOS, GPLv3).
   của đơn đều xong, đơn tự chuyển `process_status` → ready (dùng lại
   `OrdersService::changeProcessingStatus` và event sẵn có).
   Cột `status` (sold/refunded) không bị động vào.
+- **Bật/tắt KDS**: cài đặt `ns_kds_enabled` trong Cài đặt POS →
+  tab "Màn hình bếp". Đặt "No" thì menu "Màn hình bếp" bị ẩn và
+  màn hình `/dashboard/kitchen`, API `/api/kitchen/orders`, cập
+  nhật món và phiếu bếp đều trả 404 (`KitchenService::isEnabled()`).
 - **Báo món chờ lâu**: đơn chờ ≥ ngưỡng (mặc định 15 phút, chỉnh ở
   Cài đặt POS → tab "Màn hình bếp") thì viền đỏ + nhãn "Chờ lâu".
 - **In bếp**: nút "In phiếu bếp" trên mỗi đơn mở phiếu in của trình
@@ -60,7 +64,8 @@ Nhánh: `viet-hoa` (NexoPOSHH, fork từ Blair2004/NexoPOS, GPLv3).
 
 | File | Nội dung |
 | --- | --- |
-| `database/migrations/update/2026_11_07_000000_add_kitchen_status_to_nexopos_orders_products_table.php` | Thêm cột `kitchen_status` (mặc định `pending`) |
+| `database/migrations/update/2026_11_07_000000_add_kitchen_status_to_nexopos_orders_products_table.php` | Thêm cột `kitchen_status` (mặc định `pending`) cho các bản cài sẵn có |
+| `database/migrations/create/2020_06_20_000000_create_orders_products_table.php` | Thêm cột `kitchen_status` vào bảng tạo mới, để bản cài mới (fresh install) cũng có cột này — migration update không chạy trên fresh install vì setup đánh dấu mọi update migration là đã chạy |
 | `app/Models/OrderProduct.php` | Hằng `KITCHEN_*` + docblock |
 | `app/Services/KitchenService.php` | Lấy đơn/khu theo ngày, đổi trạng thái món, món cho phiếu in |
 | `app/Http/Controllers/Dashboard/KitchenController.php` | Trang bếp, API JSON, đổi trạng thái món, phiếu in |

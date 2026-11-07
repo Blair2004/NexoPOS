@@ -43,6 +43,7 @@ class MenuService
                 identifier: 'kitchen',
                 permissions: [ 'nexopos.read.orders' ],
                 href: ns()->url( '/dashboard/kitchen' ),
+                show: ns()->option->get( 'ns_kds_enabled', 'yes' ) === 'yes',
             ),
             AsideMenu::menu(
                 label: __( 'Orders' ),

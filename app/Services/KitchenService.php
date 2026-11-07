@@ -34,6 +34,11 @@ class KitchenService
         //
     }
 
+    public function isEnabled(): bool
+    {
+        return $this->optionsService->get( 'ns_kds_enabled', 'yes' ) === 'yes';
+    }
+
     public function getLateAfterMinutes(): int
     {
         return (int) ( $this->optionsService->get( 'ns_kds_late_after_minutes', 15 ) ?: 15 );
@@ -109,7 +114,15 @@ class KitchenService
         return [
             'zones' => $this->getZones()->values()->toArray(),
             'orders' => $orders->map( function ( Order $order ) use ( $now, $lateAfterMinutes, $typeLabels, $categoryNames ) {
-                $waitingMinutes = (int) $now->diffInMinutes( Carbon::parse( $order->created_at ) );
+                /**
+                 * Với Carbon 3, diffInMinutes() có dấu: $now là phía
+                 * gọi (caller) và giờ đơn sớm hơn nên $now->diffInMinutes()
+                 * trả số âm, làm thời gian chờ hiển thị sai và highlight
+                 * "chờ lâu" không bao giờ kích hoạt. Đổi chiều: tính từ
+                 * giờ tạo đơn tới hiện tại thì luôn >= 0 (kẹp 0 phòng
+                 * trường hợp đồng hồ lệch).
+                 */
+                $waitingMinutes = max( 0, (int) Carbon::parse( $order->created_at )->diffInMinutes( $now ) );
 
                 return [
                     'id' => $order->id,

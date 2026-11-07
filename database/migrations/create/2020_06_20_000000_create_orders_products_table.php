@@ -34,6 +34,7 @@ return new class extends Migration
                 $table->string( 'tax_type' )->default( 0 );
                 $table->string( 'uuid' )->nullable();
                 $table->string( 'status' )->default( 'sold' ); // sold, refunded
+                $table->string( 'kitchen_status' )->default( 'pending' ); // KDS: pending, preparing, done (xem migration update 2026_11_07)
                 $table->text( 'return_observations' )->nullable();
                 $table->string( 'return_condition' )->nullable();
                 $table->string( 'discount_type' )->default( 'none' );
