@@ -81,6 +81,97 @@ describe( 'Tests Form Validation Class', () => {
         expect( validation.validateFields( fields ) ).toBe( false );
     })
 
+    test( 'Valid GTE Numeric Check', () => {
+        let fields  =   [{
+            label: 'Test',
+            value: '0',
+            name: 'field_name',
+            validation: 'gte:0'
+        }];
+
+        const validation    =   new FormValidation;
+
+        expect( validation.validateFields( fields ) ).toBe( true );
+    });
+
+    test( 'Invalid GTE Numeric Check', () => {
+        let fields  =   [{
+            label: 'Test',
+            value: '-1',
+            name: 'field_name',
+            validation: 'gte:0'
+        }];
+
+        const validation    =   new FormValidation;
+
+        expect( validation.validateFields( fields ) ).toBe( false );
+    });
+
+    test( 'Valid LTE Numeric Check', () => {
+        let fields  =   [{
+            label: 'Test',
+            value: '100',
+            name: 'field_name',
+            validation: 'lte:100'
+        }];
+
+        const validation    =   new FormValidation;
+
+        expect( validation.validateFields( fields ) ).toBe( true );
+    });
+
+    test( 'Invalid LTE Numeric Check', () => {
+        let fields  =   [{
+            label: 'Test',
+            value: '100.01',
+            name: 'field_name',
+            validation: 'lte:100'
+        }];
+
+        const validation    =   new FormValidation;
+
+        expect( validation.validateFields( fields ) ).toBe( false );
+    });
+
+    test( 'Invalid Numeric Range Check', () => {
+        let fields  =   [{
+            label: 'Test',
+            value: '12000000',
+            name: 'field_name',
+            validation: 'nullable|numeric|gte:0|lte:100'
+        }];
+
+        const validation    =   new FormValidation;
+
+        expect( validation.validateFields( fields ) ).toBe( false );
+    });
+
+    test( 'Valid Numeric Range Check', () => {
+        let fields  =   [{
+            label: 'Test',
+            value: '50',
+            name: 'field_name',
+            validation: 'nullable|numeric|gte:0|lte:100'
+        }];
+
+        const validation    =   new FormValidation;
+
+        expect( validation.validateFields( fields ) ).toBe( true );
+    });
+
+    test( 'Empty Nullable Numeric Range Check', () => {
+        let fields  =   [{
+            label: 'Test',
+            value: '',
+            name: 'field_name',
+            validation: 'nullable|numeric|gte:0|lte:100'
+        }];
+
+        const validation    =   new FormValidation;
+
+        expect( validation.validateFields( fields ) ).toBe( true );
+    });
+
     test( 'Valid Email Check', () => {
         let fields  =   [{
             label: 'Test',

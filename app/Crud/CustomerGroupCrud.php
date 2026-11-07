@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Classes\CrudTable;
+use App\Exceptions\NotAllowedException;
 use App\Models\CustomerGroup;
 use App\Models\RewardSystem;
 use App\Services\CrudEntry;
@@ -159,6 +160,7 @@ class CustomerGroupCrud extends CrudService
                             'name' => 'minimal_credit_payment',
                             'label' => __( 'Minimum Credit Amount' ),
                             'value' => $entry->minimal_credit_payment ?? '',
+                            'validation' => 'nullable|numeric|gte:0|lte:100',
                             'description' => __( 'Determine in percentage, what is the first minimum credit payment made by all customers on the group, in case of credit order. If left to "0", no minimal credit amount is required.' ),
                         ], [
                             'type' => 'textarea',
@@ -256,23 +258,51 @@ class CustomerGroupCrud extends CrudService
     }
 
     /**
-     * Before Delete
-     *
-     * @return void
+     * Validate the minimal credit payment before the entry is created.
      */
-    public function beforePost( $request )
+    public function beforePost( array $inputs ): array
     {
-        // ...
+        $this->validateMinimalCreditPayment( $inputs );
+
+        return $inputs;
     }
 
     /**
-     * Before Delete
+     * Validate the minimal credit payment before the entry is updated.
      *
-     * @return void
+     * @param mixed $entry
      */
-    public function beforePut( $request, $id )
+    public function beforePut( array $inputs, $entry ): array
     {
-        // ...
+        $this->validateMinimalCreditPayment( $inputs );
+
+        return $inputs;
+    }
+
+    /**
+     * Ensure the flattened value cannot bypass the form validation.
+     */
+    private function validateMinimalCreditPayment( array $inputs ): void
+    {
+        if ( ! array_key_exists( 'minimal_credit_payment', $inputs ) ) {
+            return;
+        }
+
+        $value = $inputs[ 'minimal_credit_payment' ];
+
+        if ( $value === null || $value === '' ) {
+            return;
+        }
+
+        if ( ! is_numeric( $value ) ) {
+            throw new NotAllowedException( __( 'The minimum credit payment must be a number between 0 and 100.' ) );
+        }
+
+        $percentage = (float) $value;
+
+        if ( $percentage < 0 || $percentage > 100 ) {
+            throw new NotAllowedException( __( 'The minimum credit payment must be between 0 and 100.' ) );
+        }
     }
 
     /**
