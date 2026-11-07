@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
  * @property int author_id
  * @property string gender
  * @property string phone
+ * @property string|null zalo_user_id
  * @property string email
  * @property string pobox
  * @property int group_id

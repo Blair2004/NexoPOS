@@ -34,6 +34,27 @@ return [
         'endpoint' => env( 'TRANSLATOR_ENDPOINT' ),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Zalo OA (Official Account)
+    |--------------------------------------------------------------------------
+    |
+    | Cấu hình gửi thông báo cho khách qua Zalo OA: xác nhận đơn, trạng thái
+    | món, hóa đơn và khuyến mãi. Không ghi access token thật vào file này;
+    | đặt qua biến môi trường ZALO_OA_ACCESS_TOKEN (xem docs/zalo-oa.md).
+    | Mặc định dry-run = true: chỉ ghi log, không gọi API thật.
+    |
+    */
+    'zalo' => [
+        'enabled' => env( 'ZALO_OA_ENABLED', false ),
+        'dry_run' => env( 'ZALO_OA_DRY_RUN', true ),
+        'oa_id' => env( 'ZALO_OA_ID' ),
+        'access_token' => env( 'ZALO_OA_ACCESS_TOKEN' ),
+        'secret' => env( 'ZALO_OA_SECRET' ),
+        'api_base_url' => env( 'ZALO_OA_API_BASE_URL', 'https://openapi.zalo.me' ),
+        'timeout' => env( 'ZALO_OA_TIMEOUT', 10 ),
+    ],
+
     'ollama' => [
         'endpoint' => env( 'OLLAMA_ENDPOINT', 'http://127.0.0.1:11434' ),
         'model' => env( 'OLLAMA_MODEL' ),
