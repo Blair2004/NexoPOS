@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
+use App\Http\Middleware\ClearRequestCacheMiddleware;
 use App\Http\Middleware\InstalledStateMiddleware;
 use App\Services\ModulesService;
 use Illuminate\Support\Facades\Route;
@@ -66,7 +67,8 @@ class ModuleRouting
             'web',
             InstalledStateMiddleware::class,
             CheckApplicationHealthMiddleware::class,
-            CheckMigrationStatus::class ] )
+            CheckMigrationStatus::class,
+            ClearRequestCacheMiddleware::class ] )
             ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
             ->group( $module[ 'routes-file' ] );
     }
@@ -74,7 +76,11 @@ class ModuleRouting
     public static function mapModuleApiRoutes( $module )
     {
         Route::prefix( 'api' )
-            ->middleware( [ InstalledStateMiddleware::class, 'api' ] )
+            ->middleware( [
+                InstalledStateMiddleware::class,
+                'api',
+                ClearRequestCacheMiddleware::class,
+            ] )
             ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
             ->group( $module[ 'api-file' ] );
     }

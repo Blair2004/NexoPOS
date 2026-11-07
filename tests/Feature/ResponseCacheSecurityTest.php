@@ -1,0 +1,160 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Classes\ModuleRouting;
+use App\Http\Middleware\ClearRequestCacheMiddleware;
+use App\Http\Middleware\VerifyCsrfToken;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\UserRoleRelation;
+use Illuminate\Cookie\CookieValuePrefix;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Laravel\Sanctum\Sanctum;
+use Symfony\Component\HttpFoundation\Cookie;
+use Tests\TestCase;
+
+class ResponseCacheSecurityTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutMiddleware( [ VerifyCsrfToken::class, ValidateCsrfToken::class ] );
+    }
+
+    public function test_authenticated_dashboard_response_is_not_stored_by_browsers(): void
+    {
+        $admin = $this->adminUser();
+
+        $response = $this->actingAs( $admin )->get( '/dashboard/users/profile' );
+
+        $response->assertOk();
+        $this->assertStringContainsString( 'no-store', (string) $response->headers->get( 'Cache-Control' ) );
+        $this->assertStringContainsString( 'private', (string) $response->headers->get( 'Cache-Control' ) );
+    }
+
+    public function test_authenticated_api_response_is_not_stored_by_browsers(): void
+    {
+        $admin = $this->adminUser();
+        Sanctum::actingAs( $admin, [ '*' ] );
+
+        $response = $this->getJson( '/api/user' );
+
+        $response->assertOk();
+        $this->assertStringContainsString( 'no-store', (string) $response->headers->get( 'Cache-Control' ) );
+        $this->assertStringContainsString( 'private', (string) $response->headers->get( 'Cache-Control' ) );
+    }
+
+    public function test_module_web_routes_are_not_stored_by_browsers(): void
+    {
+        $this->assertModuleRouteUsesCacheClearingMiddleware(
+            routeFile: base_path( 'tests/Fixtures/routes/module-web.php' ),
+            expectedUri: '__test-module-web',
+            register: fn ( string $routeFile ) => ModuleRouting::mapModuleWebRoutes( [
+                'namespace' => 'TestModule',
+                'routes-file' => $routeFile,
+            ] ),
+        );
+    }
+
+    public function test_module_api_routes_are_not_stored_by_browsers(): void
+    {
+        $this->assertModuleRouteUsesCacheClearingMiddleware(
+            routeFile: base_path( 'tests/Fixtures/routes/module-api.php' ),
+            expectedUri: 'api/__test-module-api',
+            register: fn ( string $routeFile ) => ModuleRouting::mapModuleApiRoutes( [
+                'namespace' => 'TestModule',
+                'api-file' => $routeFile,
+            ] ),
+        );
+    }
+
+    public function test_logout_invalidates_and_rotates_the_session(): void
+    {
+        $suffix = Str::random( 8 );
+        $user = User::create( [
+            'username' => 'logout-test-' . $suffix,
+            'email' => 'logout-test-' . $suffix . '@example.com',
+            'password' => Hash::make( 'password' ),
+            'active' => true,
+        ] );
+        $user->assignRole( Role::ADMIN );
+        $user->attribute()->create( [ 'language' => 'en' ] );
+
+        try {
+            $loginResponse = $this->post( '/auth/sign-in', [
+                'username' => $user->username,
+                'password' => 'password',
+            ] );
+            $loginResponse->assertRedirect();
+
+            $loginCookie = $this->sessionCookieFrom( $loginResponse );
+            $previousSessionId = $this->sessionIdFrom( $loginCookie );
+
+            $dashboardResponse = $this->withCookie(
+                $loginCookie->getName(),
+                $previousSessionId
+            )->get( '/dashboard/users/profile' );
+            $dashboardResponse->assertOk();
+
+            $dashboardCookie = $this->sessionCookieFrom( $dashboardResponse );
+            $this->assertSame( $previousSessionId, $this->sessionIdFrom( $dashboardCookie ) );
+
+            $signOutResponse = $this->withCookie(
+                $dashboardCookie->getName(),
+                $this->sessionIdFrom( $dashboardCookie )
+            )->get( '/sign-out' );
+            $signOutResponse->assertRedirect();
+
+            $signOutCookie = $this->sessionCookieFrom( $signOutResponse );
+
+            $this->assertNotSame( $previousSessionId, $this->sessionIdFrom( $signOutCookie ) );
+            $this->assertNotEmpty( session()->token() );
+            $this->assertGuest();
+        } finally {
+            UserRoleRelation::where( 'user_id', $user->id )->delete();
+            $user->attribute()->delete();
+            $user->delete();
+        }
+    }
+
+    private function adminUser(): User
+    {
+        return User::whereRelation( 'roles', 'namespace', Role::ADMIN )->firstOrFail();
+    }
+
+    private function assertModuleRouteUsesCacheClearingMiddleware( string $routeFile, string $expectedUri, callable $register ): void
+    {
+        $this->assertFileExists( $routeFile );
+
+        $register( $routeFile );
+
+        $route = collect( Route::getRoutes() )->first(
+            fn ( $route ) => $route->uri() === $expectedUri
+        );
+
+        $this->assertNotNull( $route, "Route [{$expectedUri}] was not registered." );
+        $this->assertContains( ClearRequestCacheMiddleware::class, $route->gatherMiddleware() );
+    }
+
+    private function sessionCookieFrom( $response ): Cookie
+    {
+        $cookie = collect( $response->headers->getCookies() )->first(
+            fn ( Cookie $cookie ) => $cookie->getName() === config( 'session.cookie' )
+        );
+
+        $this->assertInstanceOf( Cookie::class, $cookie, 'The response did not set a session cookie.' );
+
+        return $cookie;
+    }
+
+    private function sessionIdFrom( Cookie $cookie ): string
+    {
+        return CookieValuePrefix::remove( Crypt::decryptString( $cookie->getValue() ) );
+    }
+}

@@ -125,8 +125,8 @@ class AuthController extends Controller
     {
         Auth::logout();
 
-        $request->session()->flush();
-        $request->cookie( 'nexopos_session', null, 0 );
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect( ns()->route( 'ns.dashboard.home' ) );
     }
