@@ -53,7 +53,7 @@ class ResponseCacheSecurityTest extends TestCase
     public function test_module_web_routes_are_not_stored_by_browsers(): void
     {
         $this->assertModuleRouteUsesCacheClearingMiddleware(
-            routeUri: '__test-module-web',
+            routeFile: base_path( 'tests/Fixtures/routes/module-web.php' ),
             expectedUri: '__test-module-web',
             register: fn ( string $routeFile ) => ModuleRouting::mapModuleWebRoutes( [
                 'namespace' => 'TestModule',
@@ -65,7 +65,7 @@ class ResponseCacheSecurityTest extends TestCase
     public function test_module_api_routes_are_not_stored_by_browsers(): void
     {
         $this->assertModuleRouteUsesCacheClearingMiddleware(
-            routeUri: '__test-module-api',
+            routeFile: base_path( 'tests/Fixtures/routes/module-api.php' ),
             expectedUri: 'api/__test-module-api',
             register: fn ( string $routeFile ) => ModuleRouting::mapModuleApiRoutes( [
                 'namespace' => 'TestModule',
@@ -128,26 +128,18 @@ class ResponseCacheSecurityTest extends TestCase
         return User::whereRelation( 'roles', 'namespace', Role::ADMIN )->firstOrFail();
     }
 
-    private function assertModuleRouteUsesCacheClearingMiddleware( string $routeUri, string $expectedUri, callable $register ): void
+    private function assertModuleRouteUsesCacheClearingMiddleware( string $routeFile, string $expectedUri, callable $register ): void
     {
-        $routeFile = tempnam( sys_get_temp_dir(), 'pos-module-route-' );
-        file_put_contents( $routeFile, sprintf(
-            '<?php use Illuminate\\Support\\Facades\\Route; Route::get(%s, fn () => "ok");',
-            var_export( $routeUri, true )
-        ) );
+        $this->assertFileExists( $routeFile );
 
-        try {
-            $register( $routeFile );
+        $register( $routeFile );
 
-            $route = collect( Route::getRoutes() )->first(
-                fn ( $route ) => $route->uri() === $expectedUri
-            );
+        $route = collect( Route::getRoutes() )->first(
+            fn ( $route ) => $route->uri() === $expectedUri
+        );
 
-            $this->assertNotNull( $route, "Route [{$expectedUri}] was not registered." );
-            $this->assertContains( ClearRequestCacheMiddleware::class, $route->gatherMiddleware() );
-        } finally {
-            unlink( $routeFile );
-        }
+        $this->assertNotNull( $route, "Route [{$expectedUri}] was not registered." );
+        $this->assertContains( ClearRequestCacheMiddleware::class, $route->gatherMiddleware() );
     }
 
     private function sessionCookieFrom( $response ): Cookie
