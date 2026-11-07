@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @import "./typography.css";
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700&display=swap');
 html,
 body {
     height: 100%;
@@ -83,4 +83,18 @@ hr {
     h3 {
         @apply font-semibold;
     }
+}
+/* English font first, Lao font as fallback */
+:root {
+    --nexopos-font-stack:
+        "Jost",
+        "Noto Sans Lao",
+        sans-serif;
+}
+body,
+button,
+input,
+textarea,
+select {
+    font-family: var(--nexopos-font-stack);
 }
