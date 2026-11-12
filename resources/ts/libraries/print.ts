@@ -6,10 +6,12 @@ export default class Print {
     private urls;
     private options;
     private printingURL     =   {
-        'refund'    :   'refund_printing_url',
-        'sale'      :   'sale_printing_url',
-        'payment'   :   'payment_printing_url',
-        'z-report'  :   'z_report_printing_url',
+        'refund'        :   'refund_printing_url',
+        'sale'          :   'sale_printing_url',
+        'sale-receipt'  :   'sale_receipt_printing_url',
+        'sale-invoice'  :   'sale_invoice_printing_url',
+        'payment'       :   'payment_printing_url',
+        'z-report'      :   'z_report_printing_url',
     }
 
     constructor({ urls, options }) {
@@ -52,7 +54,13 @@ export default class Print {
     }
 
     processCustomPrinting( reference_id, gateway, document, mode = 'aloud' ) {
-        const params    =   { printed: false, reference_id, gateway, document, mode };
+        /**
+         * "document" keeps its historical family value ("sale") so
+         * existing gateways keep working, while "documentType" carries
+         * the exact variant ("sale", "sale-receipt", "sale-invoice", ...).
+         */
+        const documentFamily     =   document.startsWith( 'sale' ) ? 'sale' : document;
+        const params    =   { printed: false, reference_id, gateway, document: documentFamily, documentType: document, mode };
         const result =  nsHooks.applyFilters( 'ns-custom-print', {
             params,
             promise: () => new Promise( ( resolve, reject ) => {

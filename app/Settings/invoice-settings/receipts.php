@@ -1,45 +1,13 @@
 <?php
 
-use App\Classes\Hook;
 use App\Services\Helper;
 
-$tags = [
-    __( 'Available tags : ' ) . '<br>' .
-    __( '{store_name}: displays the store name.' ),
-    __( '{store_email}: displays the store email.' ),
-    __( '{store_phone}: displays the store phone number.' ),
-    __( '{cashier_name}: displays the cashier name.' ),
-    __( '{cashier_id}: displays the cashier id.' ),
-    __( '{order_code}: displays the order code.' ),
-    __( '{order_date}: displays the order date.' ),
-    __( '{order_date_only}: displays the order date without time.' ),
-    __( '{order_time}: displays the order time.' ),
-    __( '{order_type}: displays the order type.' ),
-    __( '{customer_first_name}: displays the customer first name.' ),
-    __( '{customer_last_name}: displays the customer last name.' ),
-    __( '{customer_email}: displays the customer email.' ),
-    __( '{shipping_first_name}: displays the shipping first name.' ),
-    __( '{shipping_last_name}: displays the shipping last name.' ),
-    __( '{shipping_phone}: displays the shipping phone.' ),
-    __( '{shipping_address_1}: displays the shipping address_1.' ),
-    __( '{shipping_address_2}: displays the shipping address_2.' ),
-    __( '{shipping_country}: displays the shipping country.' ),
-    __( '{shipping_city}: displays the shipping city.' ),
-    __( '{shipping_pobox}: displays the shipping pobox.' ),
-    __( '{shipping_company}: displays the shipping company.' ),
-    __( '{shipping_email}: displays the shipping email.' ),
-    __( '{billing_first_name}: displays the billing first name.' ),
-    __( '{billing_last_name}: displays the billing last name.' ),
-    __( '{billing_phone}: displays the billing phone.' ),
-    __( '{billing_address_1}: displays the billing address_1.' ),
-    __( '{billing_address_2}: displays the billing address_2.' ),
-    __( '{billing_country}: displays the billing country.' ),
-    __( '{billing_city}: displays the billing city.' ),
-    __( '{billing_pobox}: displays the billing pobox.' ),
-    __( '{billing_company}: displays the billing company.' ),
-    __( '{billing_email}: displays the billing email.' ),
-];
+$tags = include dirname( __FILE__ ) . '/tags.php';
 
+/**
+ * Receipt specific options. The options shared with the invoice
+ * document live on the "Display" tab (display.php).
+ */
 return [
     'label' => __( 'Receipts' ),
     'fields' => [
@@ -53,71 +21,28 @@ return [
             'value' => ns()->option->get( 'ns_invoice_receipt_template' ),
             'description' => __( 'Choose the template that applies to receipts' ),
         ], [
+            'label' => __( 'Receipt Font Scale' ),
+            'type' => 'select',
+            'options' => Helper::kvToJsOptions( [
+                70 => '70%',
+                80 => '80%',
+                90 => '90%',
+                100 => '100%',
+                110 => '110%',
+                120 => '120%',
+                130 => '130%',
+                150 => '150%',
+                200 => '200%',
+            ] ),
+            'name' => 'ns_invoice_receipt_font_scale',
+            'value' => ns()->option->get( 'ns_invoice_receipt_font_scale', 100 ),
+            'description' => __( 'Scale all receipt fonts by the selected percentage (100% is the default size).' ),
+        ], [
             'label' => __( 'Receipt Logo' ),
             'type' => 'media',
             'name' => 'ns_invoice_receipt_logo',
             'value' => ns()->option->get( 'ns_invoice_receipt_logo' ),
             'description' => __( 'Provide a URL to the logo.' ),
-        ], [
-            'label' => __( 'Merge Products On Receipt/Invoice' ),
-            'type' => 'switch',
-            'options' => Helper::kvToJsOptions( [
-                'no' => __( 'No' ),
-                'yes' => __( 'Yes' ),
-            ] ),
-            'name' => 'ns_invoice_merge_similar_products',
-            'value' => ns()->option->get( 'ns_invoice_merge_similar_products' ),
-            'description' => __( 'All similar products will be merged to avoid a paper waste for the receipt/invoice.' ),
-        ], [
-            'label' => __( 'Show Tax Breakdown' ),
-            'type' => 'switch',
-            'options' => Helper::kvToJsOptions( [
-                'no' => __( 'No' ),
-                'yes' => __( 'Yes' ),
-            ] ),
-            'name' => 'ns_invoice_display_tax_breakdown',
-            'value' => ns()->option->get( 'ns_invoice_display_tax_breakdown' ),
-            'description' => __( 'Will display the tax breakdown on the receipt/invoice.' ),
-        ], [
-            'label' => __( 'Show Product Unit' ),
-            'type' => 'switch',
-            'options' => Helper::kvToJsOptions( [
-                'yes' => __( 'Yes' ),
-                'no' => __( 'No' ),
-            ] ),
-            'name' => 'ns_invoice_show_product_unit',
-            'value' => ns()->option->get( 'ns_invoice_show_product_unit', 'yes' ),
-            'description' => __( 'Will display the unit name next to each product.' ),
-        ], [
-            'label' => __( 'Show Sub Total' ),
-            'type' => 'switch',
-            'options' => Helper::kvToJsOptions( [
-                'yes' => __( 'Yes' ),
-                'no' => __( 'No' ),
-            ] ),
-            'name' => 'ns_invoice_show_subtotal',
-            'value' => ns()->option->get( 'ns_invoice_show_subtotal', 'yes' ),
-            'description' => __( 'Will display the subtotal row on receipts.' ),
-        ], [
-            'label' => __( 'Show Payment Rows' ),
-            'type' => 'switch',
-            'options' => Helper::kvToJsOptions( [
-                'yes' => __( 'Yes' ),
-                'no' => __( 'No' ),
-            ] ),
-            'name' => 'ns_invoice_show_payment_rows',
-            'value' => ns()->option->get( 'ns_invoice_show_payment_rows', 'yes' ),
-            'description' => __( 'Will display per-payment type rows (Cash, Bank, etc.) on receipts.' ),
-        ], [
-            'label' => __( 'Show Change / Due' ),
-            'type' => 'switch',
-            'options' => Helper::kvToJsOptions( [
-                'yes' => __( 'Yes' ),
-                'no' => __( 'No' ),
-            ] ),
-            'name' => 'ns_invoice_show_change_due',
-            'value' => ns()->option->get( 'ns_invoice_show_change_due', 'yes' ),
-            'description' => __( 'Will display the Change or Due row on receipts.' ),
         ], [
             'label' => __( 'Receipt Footer' ),
             'type' => 'textarea',

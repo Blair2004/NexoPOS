@@ -1,4 +1,4 @@
-#alert-popup, #confirm-popup, #prompt-popup {
+#alert-popup, #confirm-popup, #prompt-popup, #pos-print-choice-popup {
     @apply bg-popup-surface;
 
     h2 {
