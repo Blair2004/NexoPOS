@@ -469,7 +469,7 @@ class ProductCrud extends CrudService
                                     'description' => __( 'Set the exact quantity to order when a scheduled low-stock check qualifies this product.' ),
                                     'label' => __( 'Scheduled Reorder Quantity' ),
                                     'validation' => 'nullable|numeric|gt:0',
-                                    'value' => $entry->scheduled_reorder_quantity ?? '',
+                                    'value' => ( $entry->scheduled_reorder_quantity ?? null ) ?: '',
                                 ], [
                                     'type' => 'switch',
                                     'description' => __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),

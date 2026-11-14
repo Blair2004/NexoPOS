@@ -727,7 +727,8 @@ class ProductService
         } elseif ( $field === 'units' ) {
             $product->unit_group = $fields[ 'units' ][ 'unit_group' ];
             $product->default_purchase_unit_id = $fields[ 'units' ][ 'default_purchase_unit_id' ] ?? null;
-            $product->scheduled_reorder_quantity = $fields[ 'units' ][ 'scheduled_reorder_quantity' ] ?? null;
+            $reorderQuantity = $fields[ 'units' ][ 'scheduled_reorder_quantity' ] ?? null;
+            $product->scheduled_reorder_quantity = $reorderQuantity === '' ? null : $reorderQuantity;
             $product->accurate_tracking = $fields[ 'units' ][ 'accurate_tracking' ] ?? false;
             $product->auto_cogs = $fields[ 'units' ][ 'auto_cogs' ] ?? false;
         }
@@ -742,16 +743,18 @@ class ProductService
     {
         $purchaseUnitId = data_get( $data, 'units.default_purchase_unit_id' );
         $reorderQuantity = data_get( $data, 'units.scheduled_reorder_quantity' );
+        $hasPurchaseUnit = $purchaseUnitId !== null && $purchaseUnitId !== '';
+        $hasReorderQuantity = $reorderQuantity !== null && $reorderQuantity !== '';
 
-        if ( $purchaseUnitId === null && ( $reorderQuantity === null || $reorderQuantity === '' ) ) {
+        if ( ! $hasPurchaseUnit ) {
+            if ( $hasReorderQuantity ) {
+                throw new NotAllowedException( __( 'A default purchase unit is required when a scheduled reorder quantity is configured.' ) );
+            }
+
             return;
         }
 
-        if ( $purchaseUnitId === null || $purchaseUnitId === '' ) {
-            throw new NotAllowedException( __( 'A default purchase unit is required when a scheduled reorder quantity is configured.' ) );
-        }
-
-        if ( $reorderQuantity === null || $reorderQuantity === '' || ! is_numeric( $reorderQuantity ) || (float) $reorderQuantity <= 0 ) {
+        if ( $hasReorderQuantity && ( ! is_numeric( $reorderQuantity ) || (float) $reorderQuantity <= 0 ) ) {
             throw new NotAllowedException( __( 'The scheduled reorder quantity must be greater than zero.' ) );
         }
 
