@@ -1490,9 +1490,9 @@ class CrudService
          * We'll provide the submit URL
          */
         if ( $entry !== null ) {
-            $replacementSubmitUrl = isset( $instance->getLinks()['put'] ) ? str_replace( '{id}', $entry->id, $instance->getLinks()['put'] ) : null;
+            $replacementSubmitUrl = self::resolveLink( $instance->getLinks()['put'] ?? null, $entry );
         } else {
-            $replacementSubmitUrl = isset( $instance->getLinks()['post'] ) ? $instance->getLinks()['post'] : null;
+            $replacementSubmitUrl = self::resolveLink( $instance->getLinks()['post'] ?? null );
         }
 
         $labels = Hook::filter( get_class( $instance ) . '@getLabels', $instance->getLabels() );
@@ -1574,6 +1574,19 @@ class CrudService
              */
             'submitUrl' => $config['submitUrl'] ?? $replacementSubmitUrl,
         ], $config );
+    }
+
+    private static function resolveLink( string|callable|null $link, mixed $entry = null ): ?string
+    {
+        if ( is_callable( $link ) ) {
+            return $link( $entry );
+        }
+
+        if ( $link === null ) {
+            return null;
+        }
+
+        return $entry === null ? $link : str_replace( '{id}', $entry->id, $link );
     }
 
     public function getOptionAttributes()

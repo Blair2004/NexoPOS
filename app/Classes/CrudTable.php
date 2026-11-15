@@ -56,7 +56,7 @@ class CrudTable
     /**
      * This define the structure of the links
      */
-    public static function links( string $list, string $create, string $edit, string $post, string $put ): array
+    public static function links( string|callable $list, string|callable $create, string|callable $edit, string|callable $post, string|callable $put ): array
     {
         return compact( 'list', 'create', 'edit', 'post', 'put' );
     }
