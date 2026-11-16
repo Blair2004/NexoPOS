@@ -1110,9 +1110,17 @@ class CrudService
         if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
             $columns = $this->getColumns();
 
-            $cannotSort =
-                array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) &&
-                $columns[$request->query( 'active' )]['$sort'] === false;
+            $active = $request->query( 'active' );
+
+            /**
+             * Only columns explicitly declared on the CRUD resource may be used
+             * to order the result, and only when they are not flagged as
+             * non-sortable. This prevents ordering by arbitrary or undeclared
+             * columns supplied through the request.
+             */
+            $isDeclared = array_key_exists( $active, $columns );
+
+            $cannotSort = ! $isDeclared || ( ( $columns[ $active ]['sort'] ?? true ) === false );
 
             /**
              * If for some reason, we're trying to sort
@@ -1121,12 +1129,12 @@ class CrudService
             if ( $cannotSort ) {
                 throw new NotAllowedException( sprintf(
                     __( 'Sorting is explicitly disabled for the column "%s".' ),
-                    $columns[$request->query( 'active' )]['label']
+                    $isDeclared ? $columns[ $active ]['label'] : $active
                 ) );
             }
 
             $query->orderBy(
-                $request->query( 'active' ),
+                $active,
                 $request->query( 'direction' )
             );
         }
