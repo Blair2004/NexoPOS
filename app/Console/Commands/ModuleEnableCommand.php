@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Exception;
 use Illuminate\Console\Command;
@@ -41,6 +42,12 @@ class ModuleEnableCommand extends Command
     public function handle()
     {
         try {
+            if ( ! Helper::installed() ) {
+                $this->error( __( 'NexoPOS is not installed, unable to proceed.' ) );
+
+                return self::FAILURE;
+            }
+
             $result = $this->modulesService->enable( $this->argument( 'identifier' ) );
 
             /**

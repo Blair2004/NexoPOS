@@ -85,11 +85,7 @@ class ResetService
             'nexopos_units_groups',
         ] );
 
-        foreach ( $tables as $table ) {
-            if ( Hook::filter( 'ns-reset-table', $table ) !== false && Schema::hasTable( Hook::filter( 'ns-reset-table', $table ) ) ) {
-                DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
-            }
-        }
+        $this->truncateTables( $tables );
 
         /**
          * @var CustomerService $customerService
@@ -129,6 +125,22 @@ class ResetService
             'status' => 'success',
             'message' => __( 'The table has been truncated.' ),
         ];
+    }
+
+    /**
+     * @param array<int, string> $tables
+     */
+    protected function truncateTables( array $tables ): void
+    {
+        Schema::withoutForeignKeyConstraints( function () use ( $tables ): void {
+            foreach ( $tables as $table ) {
+                $resetTable = Hook::filter( 'ns-reset-table', $table );
+
+                if ( $resetTable !== false && Schema::hasTable( $resetTable ) ) {
+                    DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
+                }
+            }
+        } );
     }
 
     /**

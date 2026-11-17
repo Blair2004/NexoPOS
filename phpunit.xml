@@ -68,6 +68,8 @@
       <directory suffix="ProviderRoutePermissionTest.php">./tests/Feature</directory>
       <directory suffix="ApiRoutePermissionTest.php">./tests/Feature</directory>
       <directory suffix="PermissionAccessAuthorizationTest.php">./tests/Feature</directory>
+      <directory suffix="CustomerScopeTest.php">./tests/Feature</directory>
+      <directory suffix="ResetServiceForeignKeyTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <coverage>
