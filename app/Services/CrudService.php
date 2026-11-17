@@ -36,7 +36,7 @@ class CrudService
     /**
      * Toggle feature array
      *
-     * @param bool
+     * @param bool $features
      */
     protected $features = [
         'bulk-actions' => true, // enable bulk action
@@ -51,13 +51,15 @@ class CrudService
 
     /**
      * Protected columns
+     *
+     * @var array $columns
      */
     protected $columns = [];
 
     /**
      * Query filters
      *
-     * @param array
+     * @param array $queryFilters
      */
     protected $queryFilters = [];
 
@@ -84,17 +86,21 @@ class CrudService
     /**
      * Bulk Options
      *
-     * @param array
+     * @param array $bulkActions
      */
     protected $bulkActions = [];
 
     /**
      * define where in statement
+     *
+     * @var array $whereIn
      */
     protected $whereIn = [];
 
     /**
      * define tabs relations
+     *
+     * @var array $tabsRelations
      */
     protected $tabsRelations = [];
 
@@ -114,13 +120,15 @@ class CrudService
     /**
      * define all fiels that shouldn't be used for saving
      *
-     * @param array
+     * @var array $skippable
      */
     public $skippable = [];
 
     /**
      * Define the files that are allowed
      * do be used while saving or updating an entry.
+     *
+     * @var array $fillable
      */
     public $fillable = [];
 
@@ -128,22 +136,30 @@ class CrudService
      * Define fields that should be removed from every
      * entry returned by getEntries. Takes precedence over
      * (and is merged with) the model's own $hidden array.
+     *
+     * @var array $hidden
      */
     protected $hidden = [];
 
     /**
      * Determine if the options column should display
-     * before the crud columns
+     * before the crud columns.
+     *
+     * @var bool
      */
     protected $prependOptions = false;
 
     /**
-     * Determine if actions should be displayed
+     * Determine if actions should be displayed.
+     *
+     * @var bool
      */
     protected $showOptions = true;
 
     /**
-     * Determine if checkboxes should be displayed
+     * Determine if checkboxes should be displayed.
+     *
+     * @var bool
      */
     protected $showCheckboxes = true;
 
@@ -151,19 +167,22 @@ class CrudService
      * Will enforce slug to be defined as
      * a protected property.
      *
-     * @param string
+     * @param string $slug
      */
     protected $slug;
 
     /**
      * Define the columns that should
      * be included on the exportation.
+     * @var array $exportColumns
      */
     protected $exportColumns = [];
 
     /**
      * This defines the casts that applies
      * to every entry on a crud table.
+     *
+     * @var array $casts
      */
     protected $casts = [
         'created_at' => DateCast::class,
@@ -182,41 +201,62 @@ class CrudService
      * Store the bulk messages for either successful
      * and unsuccessful operations.
      */
+    /**
+     * @var string $bulkDeleteSuccessMessage
+     */
     protected $bulkDeleteSuccessMessage;
 
+    /**
+     * @var string $bulkDeleteDangerMessage
+     */
     protected $bulkDeleteDangerMessage;
 
     /**
      * Store the values that should be
      * picked from relations
+     *
+     * @var array $pick
      */
-    protected $pick;
+    protected $pick = [];
 
     /**
      * Store relations that should be joined to every
      * request made to the database using the model provided
+     *
+     * @var array $relations
      */
     protected $relations = [];
 
     /**
      * Keeps the table name for the provided model
+     *
+     * @var string $table
      */
     protected $table;
 
     /**
      * Define the main route identifier.
+     *
+     * @var string $mainRoute
      */
     protected $mainRoute;
 
     /**
      * Define the attributes to use while using
      * the crud component on a search-select field.
+     *
+     * @var array $optionAttributes
      */
     protected $optionAttributes = [
         'label' => 'name',
         'value' => 'id',
     ];
 
+    /**
+     * Reflection instance for the current class
+     *
+     * @var ReflectionClass $reflection
+     */
     private $reflection;
 
     /**
@@ -1110,9 +1150,19 @@ class CrudService
         if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
             $columns = $this->getColumns();
 
+            /**
+             * We need to ensure the column we're trying to sort actually exists and is sortable.
+             */
+            if ( ! array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) ) {
+                throw new NotAllowedException( sprintf(
+                    __( 'Sorting is not allowed for the column "%s".' ),
+                    $request->query( 'active' )
+                ) );
+            }
+
             $cannotSort =
                 array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) &&
-                $columns[$request->query( 'active' )]['$sort'] === false;
+                $columns[$request->query( 'active' )]['sort'] === false;
 
             /**
              * If for some reason, we're trying to sort
@@ -1328,7 +1378,7 @@ class CrudService
      */
     public function getExtractedForm( $entry = null, $multiEntry = false )
     {
-        $form = $this->getForm( $entry );
+        $form = $this->getForm();
 
         $final = [];
 

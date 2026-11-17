@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Classes\CrudForm;
+use App\Classes\CrudTable;
 use App\Classes\FormInput;
 use App\Models\Unit;
 use App\Models\UnitGroup;
@@ -40,7 +41,7 @@ class UnitCrud extends CrudService
     /**
      * Define namespace
      *
-     * @param  string
+     * @param string $namespace The namespace for the CRUD class
      */
     protected $namespace = 'ns.units';
 
@@ -116,13 +117,20 @@ class UnitCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     *
+     * @param string $feature The feature to check
+     * @return bool
      **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
 
+    /**
+     * Hook to modify the query for the unit list
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return void
+     */
     public function hook( $query ): void
     {
         $query->addSelect( [
@@ -135,10 +143,10 @@ class UnitCrud extends CrudService
     }
 
     /**
-     * Fields
+     * Fields for the unit form
      *
-     * @param  object/null
-     * @return array of field
+     * @param  Unit|null $entry
+     * @return array of fields
      */
     public function getForm( $entry = null )
     {
@@ -208,8 +216,8 @@ class UnitCrud extends CrudService
     /**
      * Filter POST input fields
      *
-     * @param  array of fields
-     * @return array of fields
+     * @param array $inputs fields
+     * @return array $inputs
      */
     public function filterPostInputs( $inputs )
     {
@@ -223,8 +231,9 @@ class UnitCrud extends CrudService
     /**
      * Filter PUT input fields
      *
-     * @param  array of fields
-     * @return array of fields
+     * @param array $inputs fields
+     * @param Unit $entry
+     * @return array $inputs
      */
     public function filterPutInputs( $inputs, Unit $entry )
     {
@@ -258,9 +267,9 @@ class UnitCrud extends CrudService
     }
 
     /**
-     * get
+     * get a specific parameter of the CRUD class
      *
-     * @param  string
+     * @param  string $param
      * @return mixed
      */
     public function get( $param )
@@ -275,10 +284,10 @@ class UnitCrud extends CrudService
      * Before updating a record
      *
      * @param Request $request
-     * @param  object entry
+     * @param Unit $entry
      * @return void
      */
-    public function beforePut( $request, $entry )
+    public function beforePut( $request, Unit $entry )
     {
         return $request;
     }
@@ -287,10 +296,10 @@ class UnitCrud extends CrudService
      * After updating a record
      *
      * @param Request $request
-     * @param  object entry
+     * @param Unit $entry
      * @return void
      */
-    public function afterPut( $request, $entry )
+    public function afterPut( $request, Unit $entry )
     {
         return $request;
     }
@@ -298,6 +307,9 @@ class UnitCrud extends CrudService
     /**
      * Before Delete
      *
+     * @param string $namespace
+     * @param int $id
+     * @param Unit $model
      * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
@@ -310,48 +322,26 @@ class UnitCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'value' => [
-                'label' => __( 'Value' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'base_unit' => [
-                'label' => __( 'Base Unit' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'assigned_products' => [
-                'label' => __( 'Assigned Products' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'group_name' => [
-                'label' => __( 'Group' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'user_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column( 
+                identifier: 'name', 
+                label: __( 'Name' ),
+                sort: false
+            ),
+            CrudTable::column( 'value', __( 'Value' ) ),
+            CrudTable::column( 'base_unit', __( 'Base Unit' ) ),
+            CrudTable::column( 'assigned_products', __( 'Assigned Products' ) ),
+            CrudTable::column( 'group_name', __( 'Group' ) ),
+            CrudTable::column( 'user_username', __( 'Author' ) ),
+            CrudTable::column( 'created_at', __( 'Created At' ) )
+        );
     }
 
     /**
      * Define actions
+     *
+     * @param CrudEntry $entry
+     * @return CrudEntry
      */
     public function setActions( CrudEntry $entry ): CrudEntry
     {
@@ -381,8 +371,8 @@ class UnitCrud extends CrudService
     /**
      * Bulk Delete Action
      *
-     * @param    object Request with object
-     * @return  false/array
+     * @param Request $request
+     * @return false|array
      */
     public function bulkAction( Request $request )
     {

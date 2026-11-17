@@ -8,7 +8,6 @@ use App\Traits\NsCustomerAddress;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property int id
@@ -50,16 +49,23 @@ class Customer extends UserScope
         ];
     }
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::addGlobalScope( 'customers', function ( Builder $builder ) {
-            $role = DB::table( 'nexopos_roles' )->where( 'namespace', Role::STORECUSTOMER )->first();
+            $customerRoleIds = Role::query()
+                ->select( 'id' )
+                ->where( 'namespace', Role::STORECUSTOMER );
+            $administratorRoleIds = Role::query()
+                ->select( 'id' )
+                ->where( 'namespace', Role::ADMIN );
 
-            $userRoleRelations = DB::table( 'nexopos_users_roles_relations' )
-                ->where( 'role_id', $role->id )
-                ->get( [ 'user_id', 'role_id' ] );
-
-            $builder->whereIn( 'id', $userRoleRelations->map( fn( $role ) => $role->user_id )->toArray() );
+            $builder
+                ->whereIn( 'nexopos_users.id', UserRoleRelation::query()
+                    ->select( 'user_id' )
+                    ->whereIn( 'role_id', $customerRoleIds ) )
+                ->whereNotIn( 'nexopos_users.id', UserRoleRelation::query()
+                    ->select( 'user_id' )
+                    ->whereIn( 'role_id', $administratorRoleIds ) );
 
             CustomerModelBootedEvent::dispatch( $builder );
         } );
