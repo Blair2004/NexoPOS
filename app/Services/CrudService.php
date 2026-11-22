@@ -1120,6 +1120,13 @@ class CrudService
              */
             $isDeclared = array_key_exists( $active, $columns );
 
+            if ( ! $isDeclared ) {
+                throw new NotAllowedException( sprintf(
+                    __( 'Cannot sort an unknown column "%s".' ),
+                    $active
+                ) );
+            }
+
             $cannotSort = ! $isDeclared || ( ( $columns[ $active ]['sort'] ?? true ) === false );
 
             /**
