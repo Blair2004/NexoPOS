@@ -52,6 +52,8 @@ class CashRegistersService
 
     public function closeRegister( Register $register, $amount, $description )
     {
+        $this->ensureRegisterOwner( $register );
+
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
                 sprintf(
@@ -95,6 +97,8 @@ class CashRegistersService
 
     public function cashIng( Register $register, float $amount, ?string $description ): array
     {
+        $this->ensureRegisterOwner( $register );
+
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
                 sprintf(
@@ -202,6 +206,8 @@ class CashRegistersService
 
     public function cashOut( Register $register, float $amount, ?string $description ): array
     {
+        $this->ensureRegisterOwner( $register );
+
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
                 sprintf(
@@ -242,6 +248,13 @@ class CashRegistersService
                 'history' => $registerHistory,
             ],
         ];
+    }
+
+    private function ensureRegisterOwner( Register $register ): void
+    {
+        if ( Auth::id() === null || $register->used_by === null || (string) $register->used_by !== (string) Auth::id() ) {
+            throw new NotAllowedException( __( 'Only the cashier who opened this register can perform this action.' ) );
+        }
     }
 
     /**
