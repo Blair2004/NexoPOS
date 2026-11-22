@@ -284,6 +284,8 @@ export default class FormValidation {
         const execRule = (rule) => {
             const minRule = /(min):([0-9]+)/;
             const maxRule = /(max):([0-9]+)/;
+            const gteRule = /(gte):(-?[0-9.]+)/;
+            const lteRule = /(lte):(-?[0-9.]+)/;
             const sameRule = /(same):([^|]+)/;
             const diffRule = /(different):([^|]+)/;
             const sometimesRule = /(sometimes)/;
@@ -300,6 +302,8 @@ export default class FormValidation {
                     comparisonRule.exec(rule) ||
                     minRule.exec(rule) ||
                     maxRule.exec(rule) ||
+                    gteRule.exec(rule) ||
+                    lteRule.exec(rule) ||
                     sameRule.exec(rule) ||
                     diffRule.exec(rule) ||
                     sometimesRule.exec(rule) ||
@@ -523,6 +527,18 @@ export default class FormValidation {
                 max: (field, rule) => {
                     const fieldValue = this.getFieldValue( field );
                     return ! [ null, undefined ].includes( fieldValue ) && fieldValue.length > parseInt(rule.value);
+                },
+
+                gte: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
+                    const numericValue = parseFloat( fieldValue );
+                    return ! [ null, undefined, '' ].includes( fieldValue ) && ! Number.isNaN( numericValue ) && numericValue < parseFloat(rule.value);
+                },
+
+                lte: (field, rule) => {
+                    const fieldValue = this.getFieldValue( field );
+                    const numericValue = parseFloat( fieldValue );
+                    return ! [ null, undefined, '' ].includes( fieldValue ) && ! Number.isNaN( numericValue ) && numericValue > parseFloat(rule.value);
                 },
     
                 regex: (field, rule) => {
