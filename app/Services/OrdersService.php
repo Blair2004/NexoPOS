@@ -1899,6 +1899,14 @@ class OrdersService
 
             $refundUnitPrice = floatval( $product[ 'unit_price' ] );
 
+            if ( $refundUnitPrice < 0 ) {
+                throw new NotAllowedException( sprintf(
+                    __( 'The refund unit price (%s) for "%s" cannot be negative.' ),
+                    $refundUnitPrice,
+                    $orderProduct->name
+                ) );
+            }
+
             if ( $refundUnitPrice > $orderProduct->unit_price ) {
                 throw new NotAllowedException( sprintf(
                     __( 'The refund unit price (%s) for "%s" cannot exceed the original unit price (%s).' ),
