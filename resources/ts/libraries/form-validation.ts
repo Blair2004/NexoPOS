@@ -193,14 +193,18 @@ export default class FormValidation {
     } ) {
         if ( field.validation !== undefined ) {
             field.errors    =   [];
-            const rules     =   this.detectValidationRules( field.validation ).filter( rule => rule != undefined );
+            let rules       =   this.detectValidationRules( field.validation ).filter( rule => rule != undefined );
             const ruleNames =   rules.map( rule => rule.identifier );
+
+            if ( ruleNames.includes( 'nullable' ) && [ undefined, null, '' ].includes( field.value ) ) {
+                rules = rules.filter( rule => rule.identifier === 'required' );
+            }
 
             /**
              * when the rule "sometimes" is defined. The field will be processed only if there is a value provided.
              */
             if ( ruleNames.includes( 'sometimes' ) ) {
-                if ( ! [ undefined, null ].includes( field.value ) && field.value.length > 0 ) {
+                if ( ! [ undefined, null ].includes( field.value ) && ( field.value.length === undefined || field.value.length > 0 ) ) {
                     rules.forEach( rule => {
                         this.fieldPassCheck( field, rule, form, labels );
                     });
@@ -285,13 +289,15 @@ export default class FormValidation {
             const sometimesRule = /(sometimes)/;
             const regexRule = /(regex):\/(.+?)\/(?=\||$)/; // Update regex parsing
             const number = /(number)/;
+            const comparisonRule = /^(gte|lte|gt|lt):([^|]+)$/;
     
             let result;
     
-            if (['email', 'required'].includes(rule)) {
+            if (['email', 'required', 'nullable', 'numeric'].includes(rule)) {
                 return { identifier: rule };
             } else if (rule.length > 0) {
                 result =
+                    comparisonRule.exec(rule) ||
                     minRule.exec(rule) ||
                     maxRule.exec(rule) ||
                     sameRule.exec(rule) ||
@@ -452,6 +458,32 @@ export default class FormValidation {
         return fieldValue;
     }
 
+    private isNumeric( value ) {
+        return ( typeof value === 'number' || typeof value === 'string' )
+            && /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test( String( value ).trim() )
+            && Number.isFinite( Number( value ) );
+    }
+
+    private failsNumericComparison( field, rule, form ) {
+        const fieldValue = this.getFieldValue( field );
+        const referencedValue = this.getValueByDotNotation( form, rule.value );
+        const comparisonValue = referencedValue === undefined ? rule.value : referencedValue;
+
+        if ( ! this.isNumeric( fieldValue ) || ! this.isNumeric( comparisonValue ) ) {
+            return true;
+        }
+
+        const value = Number( fieldValue );
+        const limit = Number( comparisonValue );
+
+        switch ( rule.identifier ) {
+            case 'gte': return ! ( value >= limit );
+            case 'lte': return ! ( value <= limit );
+            case 'gt': return ! ( value > limit );
+            case 'lt': return ! ( value < limit );
+        }
+    }
+
     /**
      * This methods defines a set of rules that must returns "true" to 
      * indicate the field check was not successful.
@@ -502,7 +534,14 @@ export default class FormValidation {
                 number: ( field, rule ) => {
                     const fieldValue = this.getFieldValue( field );
                     return !/^[0-9]+$/.test( fieldValue )
-                }
+                },
+
+                numeric: ( field, rule ) => ! this.isNumeric( this.getFieldValue( field ) ),
+
+                gte: ( field, rule ) => this.failsNumericComparison( field, rule, form ),
+                lte: ( field, rule ) => this.failsNumericComparison( field, rule, form ),
+                gt: ( field, rule ) => this.failsNumericComparison( field, rule, form ),
+                lt: ( field, rule ) => this.failsNumericComparison( field, rule, form )
             };
     
             const ruleValidated = rules[rule.identifier];
