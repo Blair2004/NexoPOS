@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Classes\CrudForm;
+use App\Classes\CrudTable;
 use App\Classes\FormInput;
 use App\Models\Unit;
 use App\Models\UnitGroup;
@@ -40,7 +41,7 @@ class UnitCrud extends CrudService
     /**
      * Define namespace
      *
-     * @param  string
+     * @param $namespace string
      */
     protected $namespace = 'ns.units';
 
@@ -310,44 +311,43 @@ class UnitCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'value' => [
-                'label' => __( 'Value' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'base_unit' => [
-                'label' => __( 'Base Unit' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'assigned_products' => [
-                'label' => __( 'Assigned Products' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'group_name' => [
-                'label' => __( 'Group' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'user_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column(
+                label: __( 'Name' ),
+                identifier: 'name',
+                sort: true,
+            ),
+            CrudTable::column(
+                label: __( 'Value' ),
+                identifier: 'value',
+                sort: true,
+            ),
+            CrudTable::column(
+                label: __( 'Base Unit' ),
+                identifier: 'base_unit',
+                sort: true,
+            ),
+            CrudTable::column(
+                label: __( 'Assigned Products' ),
+                identifier: 'assigned_products',
+                sort: true,
+            ),
+            CrudTable::column(
+                label: __( 'Group' ),
+                identifier: 'group_name',
+                sort: true,
+            ),
+            CrudTable::column(
+                label: __( 'Author' ),
+                identifier: 'user_username',
+                sort: true,
+            ),
+            CrudTable::column(
+                label: __( 'Created At' ),
+                identifier: 'created_at',
+                sort: true,
+            ),
+        );
     }
 
     /**
