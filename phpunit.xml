@@ -8,6 +8,7 @@
       <directory suffix="TestLanguageFileValidity.php">./tests/Feature</directory>
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
+      <file>./tests/Feature/OrdersFooterCustomerLinkTest.php</file>
     </testsuite>
     <testsuite name="Parallel-1">
       <directory suffix="ExceptionsTest.php">./tests/Feature</directory>

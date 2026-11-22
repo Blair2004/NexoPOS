@@ -99,7 +99,7 @@
                     </h4>
                 </div>
                 <div class="font-semibold text-fontcolor-soft" v-if="order">
-                    <a class="border-b border-dashed border-info-primary" :href="systemUrls.customer_edit_url.replace( '#customer', order.customer.id )" target="_blank" rel="noopener noreferrer">{{ order.customer.first_name }} {{ order.customer.last_name }}</a>
+                    <a class="border-b border-dashed border-info-primary" :href="systemUrls.customer_edit_url.replace( '{customer}', order.customer.id )" target="_blank" rel="noopener noreferrer">{{ order.customer.first_name }} {{ order.customer.last_name }}</a>
                 </div>
             </div>
             <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">

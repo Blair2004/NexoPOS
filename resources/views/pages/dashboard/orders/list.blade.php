@@ -39,6 +39,7 @@ const systemUrls      =  <?php echo json_encode([
     'sale_printing_url'     =>  ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
     'payment_printing_url'  =>  ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
     'z_report_printing_url' =>  ns()->url( '/dashboard/cash-registers/z-report/{reference_id}?autoprint=true&dash-visibility=disabled' ),
+    'customer_edit_url'     =>  ns()->url( '/dashboard/customers/edit/{customer}' ),
 ]);?>
 
 document.addEventListener( 'DOMContentLoaded', () => {
